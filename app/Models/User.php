@@ -21,7 +21,22 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
+   public function hasAnyRole($roles): bool
+{
+    // Jika string diberikan, ubah menjadi array
+    if (is_string($roles)) {
+        $roles = [$roles];
+    }
+
+    return in_array($this->role, $roles);
+}
+
+
+
+
+   
 
     /**
      * The attributes that should be hidden for serialization.
