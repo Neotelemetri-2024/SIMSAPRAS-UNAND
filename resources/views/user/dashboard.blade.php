@@ -18,6 +18,6 @@
     @can('is-admin')
     <h1>ini admin kamu tidak bisa lihat</h1>
     @endcan
-    
+
 </body>
 </html>

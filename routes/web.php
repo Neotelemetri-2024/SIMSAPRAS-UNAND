@@ -18,6 +18,9 @@ use App\Http\Middleware\CheckRole;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/userpage', function () {
+    return view('user/main');
+});
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');

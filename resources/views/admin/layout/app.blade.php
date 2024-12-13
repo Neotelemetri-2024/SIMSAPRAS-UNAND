@@ -32,12 +32,12 @@
          // Toggle sidebar
          const sidebar = document.getElementById('sidebar');
          const toggleButtons = document.querySelectorAll('#toggleSidebar, #toggleSidebarMobile');
-         
+
          toggleButtons.forEach(button => {
              button.addEventListener('click', () => {
                  sidebar.classList.toggle('w-64');
                  sidebar.classList.toggle('w-16');
-                 
+
                  // Sembunyikan/tampilkan teks sidebar
                  const sidebarTexts = sidebar.querySelectorAll('span');
                  sidebarTexts.forEach(text => {

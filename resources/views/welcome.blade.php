@@ -4,7 +4,7 @@
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       @vite(['resources/css/app.css','resources/js/app.js'])
-      <title>Document</title>
+      <title>Simsapras Admin</title>
    </head>
    <body class="bg-gray-50">
       <div class="flex h-screen">
@@ -81,7 +81,7 @@
                         </svg>
                         <span class="flex-1 ml-3 whitespace-nowrap">Messages</span>
                         <span class="inline-flex justify-center items-center w-5 h-5 text-xs font-semibold rounded-full text-primary-800 bg-primary-100 dark:bg-primary-200 dark:text-primary-800">
-                        6   
+                        6
                         </span>
                      </a>
                   </li>
@@ -996,12 +996,12 @@
          // Toggle sidebar
          const sidebar = document.getElementById('sidebar');
          const toggleButtons = document.querySelectorAll('#toggleSidebar, #toggleSidebarMobile');
-         
+
          toggleButtons.forEach(button => {
              button.addEventListener('click', () => {
                  sidebar.classList.toggle('w-64');
                  sidebar.classList.toggle('w-16');
-                 
+
                  // Sembunyikan/tampilkan teks sidebar
                  const sidebarTexts = sidebar.querySelectorAll('span');
                  sidebarTexts.forEach(text => {

@@ -16,12 +16,25 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ["Figtree", ...defaultTheme.fontFamily.sans],
+                sans: ["Poppins", "Figtree", ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                unand: {
+                    'primary-green': '#2E8B57',   // Sea Green - Warna Utama
+                    'dark-green': '#1A5F3C',     // Hijau Gelap - Untuk kontras
+                    'light-green': '#8FBC8F',    // Dark Sea Green - Untuk elemen kedua
+                    'accent-green': '#3CB371',   // Medium Sea Green - Aksen
+                    'soft-white': '#F4F6F6',     // Background ringan
+                    'custom-gray': '#708090',             // Warna abu untuk netralitas
+                    'text-dark': '#2C3E50',      // Warna teks utama
+                    'dark-background': '#1C2833', // Background gelap
+                    'dark-surface': '#2C3E50',   // Surface gelap
+                },
+            }
         },
     },
 
     plugins: [
         forms,
-         require("flowbite/plugin")],
+        require("flowbite/plugin")],
 };
