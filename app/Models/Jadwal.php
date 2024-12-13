@@ -7,18 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Jadwal extends Model
 {
-    protected $table = 'jadwal';
-
-    protected $fillable = [
-        'shift', 'mulai', 'selesai'
+    use HasFactory;
+     protected $fillable = [
+        'shift',
+        'mulai',
+        'selesai',
     ];
 
-    protected $casts = [
-        'mulai' => 'datetime',
-        'selesai' => 'datetime'
-    ];
-
-    public function peminjamans()
+    public function peminjaman()
     {
         return $this->hasMany(Peminjaman::class, 'idJadwal');
     }

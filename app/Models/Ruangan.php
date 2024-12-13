@@ -7,18 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ruangan extends Model
 {
-    protected $table = 'ruangan';
-
-    protected $fillable = [
-        'idGedung', 'nama', 'gambar', 'deskripsi', 'kapasitas'
+    use HasFactory;
+     protected $fillable = [
+        'idSarana',
+        'nama',
+        'gambar',
+        'deskripsi',
+        'kapasitas',
     ];
 
-    public function gedung()
+    public function sarana()
     {
-        return $this->belongsTo(Gedung::class, 'idGedung');
+        return $this->belongsTo(Sarana::class, 'idSarana');
     }
 
-    public function peminjamans()
+    public function gambarRuangan()
+    {
+        return $this->hasMany(GambarRuangan::class, 'idRuangan');
+    }
+
+    public function peminjaman()
     {
         return $this->hasMany(Peminjaman::class, 'idRuangan');
     }

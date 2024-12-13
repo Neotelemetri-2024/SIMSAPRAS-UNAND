@@ -8,21 +8,18 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('ruangan', function (Blueprint $table) {
+        Schema::create('sarana', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('idGedung');
-            $table->string('nama');
+            $table->foreignId('IdKategori')->constrained('kategori_sarana');
             $table->string('gambar');
             $table->text('deskripsi');
-            $table->integer('kapasitas');
+            $table->string('nama');
             $table->timestamps();
-
-            $table->foreign('idGedung')->references('id')->on('gedung')->onDelete('cascade');
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('ruangan');
+        Schema::dropIfExists('sarana');
     }
 };

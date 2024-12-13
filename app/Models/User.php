@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'kontak'
     ];
    public function hasAnyRole($roles): bool
 {
@@ -32,6 +33,11 @@ class User extends Authenticatable
 
     return in_array($this->role, $roles);
 }
+
+    public function peminjaman()
+    {
+        return $this->hasMany(Peminjaman::class, 'idUser');
+    }
 
 
 

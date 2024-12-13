@@ -7,16 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class Peminjaman extends Model
 {
-    protected $table = 'peminjaman';
-
+    use HasFactory;
     protected $fillable = [
-        'idUser', 'idRuangan', 'idTanggal', 'kegiatan', 'idJadwal', 
-        'suratPeminjaman', 'rundown', 'estimasiPeserta', 'tarif', 
-        'feedbackPembatalan', 'feedbackPenolakan', 'status', 'evaluasi'
-    ];
-
-    protected $casts = [
-        'status' => 'string'
+        'idUser',
+        'idRuangan',
+        'idTanggal',
+        'idJadwal',
+        'idSarana',
+        'kegiatan',
+        'suratPeminjaman',
+        'rundown',
+        'instansi',
+        'estimasiPeserta',
+        'tarif',
+        'feedbackPenolakan',
+        'evaluasi',
+        'status',
+        'feedbackPembatalan',
     ];
 
     public function user()
@@ -29,7 +36,7 @@ class Peminjaman extends Model
         return $this->belongsTo(Ruangan::class, 'idRuangan');
     }
 
-    public function tanggal()
+    public function tanggalPeminjaman()
     {
         return $this->belongsTo(TanggalPeminjaman::class, 'idTanggal');
     }
@@ -37,5 +44,10 @@ class Peminjaman extends Model
     public function jadwal()
     {
         return $this->belongsTo(Jadwal::class, 'idJadwal');
+    }
+
+    public function sarana()
+    {
+        return $this->belongsTo(Sarana::class, 'idSarana');
     }
 }

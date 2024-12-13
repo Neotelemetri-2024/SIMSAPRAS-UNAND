@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('jadwal', function (Blueprint $table) {
             $table->id();
             $table->string('shift');
-            $table->timestamp('mulai');
-            $table->timestamp('selesai');
+            $table->time('mulai');
+            $table->time('selesai');
             $table->timestamps();
         });
     }
