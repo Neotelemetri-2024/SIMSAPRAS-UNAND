@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SaranaController;
+use App\Http\Controllers\KategoriController;
 use App\Http\Middleware\CheckRole;
 
 /*
@@ -37,21 +38,18 @@ Route::group(['middleware' => ['checkRole:superadmin,admin'], 'prefix' => 'admin
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
-    Route::get('/kategori', function () {
-        return view('admin.kategori');
-    })->name('admin.kategori');
+    Route::resource('kategori', KategoriController::class);
+    Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
 
     Route::get('/profile', function () {
         return view('admin.profile');
     })->name('admin.profile');
-  Route::resource('sarana', SaranaController::class);
-   Route::get('/sarana', [SaranaController::class, 'index'])->name('sarana.index'); // Menampilkan halaman daftar sarana
+    Route::resource('sarana', SaranaController::class);
+    Route::get('/sarana', [SaranaController::class, 'index'])->name('sarana.index'); // Menampilkan halaman daftar sarana
     Route::post('/sarana', [SaranaController::class, 'store'])->name('sarana.store'); // Menyimpan data sarana baru
     Route::put('/sarana/{sarana}', [SaranaController::class, 'update'])->name('sarana.update'); // Memperbarui data sarana
     Route::delete('/sarana/{sarana}', [SaranaController::class, 'destroy'])->name('sarana.destroy'); // Menghapus data sarana
     
-  
-
 });
 
 
