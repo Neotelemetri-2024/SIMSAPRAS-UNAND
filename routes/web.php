@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SaranaController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\RuanganController;
 use App\Http\Middleware\CheckRole;
 
 /*
@@ -49,7 +50,13 @@ Route::group(['middleware' => ['checkRole:superadmin,admin'], 'prefix' => 'admin
     Route::post('/sarana', [SaranaController::class, 'store'])->name('sarana.store'); // Menyimpan data sarana baru
     Route::put('/sarana/{sarana}', [SaranaController::class, 'update'])->name('sarana.update'); // Memperbarui data sarana
     Route::delete('/sarana/{sarana}', [SaranaController::class, 'destroy'])->name('sarana.destroy'); // Menghapus data sarana
+    Route::get('/sarana/{idSarana}/ruangan', [RuanganController::class, 'index'])->name('ruangan.index');
+    Route::post('/sarana/{idSarana}/ruangan', [RuanganController::class, 'store'])->name('ruangan.store');
+    Route::put('/sarana/{idSarana}/ruangan/{ruangan}', [RuanganController::class, 'update'])->name('ruangan.update');
+    Route::delete('/sarana/{idSarana}/ruangan/{ruangan}', [RuanganController::class, 'destroy'])->name('ruangan.destroy');
     
+    // Route untuk menghapus gambar ruangan
+Route::delete('/sarana/{idSarana}/ruangan/delete-image/{id}', [RuanganController::class, 'deleteImage'])->name('ruangan.delete-image');    
 });
 
 
