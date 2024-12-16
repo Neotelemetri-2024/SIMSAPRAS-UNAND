@@ -26,6 +26,9 @@ Route::get('/', function () {
 Route::get('/home', function () {
     return view('home');
 });
+Route::get('/sarana-prasarana', function () {
+    return view('sarana');
+});
 
 
 
