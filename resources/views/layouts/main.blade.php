@@ -14,8 +14,9 @@
     <!-- Sidebar -->
   <!-- Enhanced Sidebar -->
    @include('partials.sidebar')
-
-   @yield('content')
+   <div class="p-4 sm:ml-64 pt-20">
+       @yield('content')
+</div>
 
  <script>
     document.addEventListener('DOMContentLoaded', function() {

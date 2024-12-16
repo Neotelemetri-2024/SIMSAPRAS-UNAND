@@ -36,6 +36,10 @@ Route::group(['middleware' => ['checkRole:superadmin,admin'], 'prefix' => 'admin
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
+    Route::get('/kategori', function () {
+        return view('admin.kategori');
+    })->name('admin.kategori');
+
     Route::get('/profile', function () {
         return view('admin.profile');
     })->name('admin.profile');

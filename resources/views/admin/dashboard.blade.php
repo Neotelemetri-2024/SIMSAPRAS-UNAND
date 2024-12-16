@@ -3,7 +3,7 @@
 @extends('layouts.main')
 
 @section('content')
-     <div class="p-4 sm:ml-64 pt-20">
+    
         <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg">
             <div class="grid grid-cols-1 gap-4 mb-4">
                 <div class="flex items-center justify-center h-24 rounded bg-gray-50">
@@ -42,5 +42,5 @@
                 </div>
             </div>
         </div>
-    </div>
+   
 @endsection
