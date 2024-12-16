@@ -47,17 +47,23 @@
                         <span class="text-gray-400">-</span>
                         @endif
                      </td>
-                     <td class="px-6 py-4">
-                        <div class="flex space-x-2">
-                           <a href="" 
-                              class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200">
-                              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                              </svg>
-                              Ruangan
-                           </a>
-                        </div>
-                     </td>
+                      <td class="px-6 py-4">
+        <div class="flex space-x-2">
+            @if($item->kategoriSarana->jenis == 'Gedung Beruangan') 
+                <!-- Menampilkan tombol Ruangan jika kategori adalah Gedung Beruangan -->
+                <a href="" 
+                   class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                    Ruangan
+                </a>
+            @else
+                <!-- Menampilkan tulisan 'Tidak Tersedia' jika kategori bukan Gedung Beruangan -->
+                <span class="text-gray-400">Tidak Tersedia</span>
+            @endif
+        </div>
+    </td>
                     <td class="px-6 py-4">
     <div class="flex space-x-2">
         <button data-modal-target="editModal{{ $item->id }}" 
