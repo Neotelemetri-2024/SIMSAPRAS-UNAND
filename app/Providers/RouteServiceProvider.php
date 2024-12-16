@@ -27,7 +27,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         $user = Auth::user();
         if ($user && $user->hasAnyRole(['superadmin', 'admin', 'pimpinan'])) {
-            return '/dashboard';
+            return '/admin/dashboard';
         }
 
         return self::HOME; // Default to '/user'

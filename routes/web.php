@@ -15,13 +15,15 @@ use App\Http\Middleware\CheckRole;
 |
 */
 
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
+});
+Route::get('/home', function () {
+    return view('home');
 });
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -29,18 +31,23 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::group(['middleware' => ['checkRole:superadmin,admin']], function () {
+Route::group(['middleware' => ['checkRole:superadmin,admin'], 'prefix' => 'admin'], function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
-    })->name('admin-dashboard');
+    })->name('admin.dashboard');
 
-    // Route::get('/admin-dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
+    Route::get('/profile', function () {
+        return view('admin.profile');
+    })->name('admin.profile');
+
+    // Tambahkan route lain di sini, semuanya akan otomatis menggunakan prefix /admin
 });
 
+
 Route::group(['middleware' => ['checkRole:user']], function () {
-    Route::get('/user', function () {
+    Route::get('/profile', function () {
         return view('user.dashboard');
-    })->name('user-dashboard');
+    })->name('user.profile');
 
     // Route::get('/admin-dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
 });

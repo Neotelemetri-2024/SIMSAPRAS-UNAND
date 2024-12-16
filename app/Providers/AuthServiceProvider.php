@@ -14,9 +14,14 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Gate untuk cek sudah login
-        Gate::define('is-authenticated', function ($user) {
+        
+        Gate::define('is-auth', function ($user) {
             return auth()->check();
         });
+        Gate::define('not-auth', function ($user = null) {
+             return !auth()->check();
+        });
+
 
         // Gate untuk admin
         Gate::define('is-admin', function ($user) {
@@ -41,6 +46,13 @@ class AuthServiceProvider extends ServiceProvider
         // Gate kombinasi (contoh: admin atau superadmin)
         Gate::define('manage-users', function ($user) {
             return in_array($user->role, ['admin', 'superadmin']);
+        });
+         Gate::define('not-user', function ($user = null) {
+            // Jika user tidak login atau memiliki role 'pimpinan', 'admin', atau 'superadmin'
+            if (!$user || in_array(optional($user)->role, ['pimpinan', 'admin', 'superadmin'])) {
+                return true;
+            }
+            return false;
         });
     }
 }
