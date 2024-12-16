@@ -32,15 +32,21 @@ class JadwalController extends Controller
     // Memperbarui jadwal
     public function update(Request $request, Jadwal $jadwal)
     {
-        $validated = $request->validate([
-            'shift' => 'required|string|max:255',
-            'mulai' => 'required|date_format:H:i',
-            'selesai' => 'required|date_format:H:i',
-        ]);
-
-        $jadwal->update($validated);
-
-        return redirect()->route('jadwal.index')->with('success', 'Jadwal berhasil diperbarui');
+        try {
+            $validated = $request->validate([
+                'shift' => 'required|string|max:255',
+                'mulai' => 'required', // ubah validasi waktu
+                'selesai' => 'required', // ubah validasi waktu
+            ]);
+            // Format waktu sebelum update
+            $validated['mulai'] = date('H:i', strtotime($request->mulai));
+            $validated['selesai'] = date('H:i', strtotime($request->selesai));
+            $jadwal->update($validated);
+            return redirect()->route('jadwal.index')->with('success', 'Jadwal berhasil diperbarui');
+        } catch (\Exception $e) {
+            return redirect()->route('jadwal.index')
+                ->with('error', 'Gagal memperbarui jadwal: ' . $e->getMessage());
+        }
     }
 
     // Menghapus jadwal
