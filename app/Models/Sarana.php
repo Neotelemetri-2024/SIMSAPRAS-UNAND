@@ -15,6 +15,7 @@ class Sarana extends Model
         'gambar',
         'deskripsi',
         'nama',
+        'fasilitas'
     ];
 
     public function kategoriSarana()

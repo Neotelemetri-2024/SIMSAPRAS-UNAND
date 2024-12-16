@@ -14,6 +14,7 @@ class Ruangan extends Model
         'gambar',
         'deskripsi',
         'kapasitas',
+        'fasilitas'
     ];
 
     public function sarana()
