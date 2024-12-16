@@ -44,7 +44,6 @@
                </li>
             </ul>
          </li>
-         <!-- Sarana & Prasarana - menggunakan ikon yang merepresentasikan fasilitas -->
          <li class="relative">
             <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-200 rounded-lg group hover:bg-gray-100" data-collapse-toggle="sarana">
                <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -68,9 +67,8 @@
                </li>
             </ul>
          </li>
-         <!-- Jadwal Peminjaman - menggunakan ikon kalender -->
          <li>
-            <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group transition-colors duration-200">
+            <a href="{{route ('jadwal.index')}}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group transition-colors duration-200">
                <svg class="w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                </svg>
