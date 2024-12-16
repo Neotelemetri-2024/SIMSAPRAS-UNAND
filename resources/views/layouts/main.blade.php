@@ -6,6 +6,8 @@
     @vite(['resources/css/app.css','resources/js/app.js'])
     <title>SIMSAPRAS Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <!-- Di bagian head layout -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="bg-gray-50">
     <!-- Navbar -->

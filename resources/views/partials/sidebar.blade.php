@@ -57,12 +57,12 @@
             </button>
             <ul id="sarana" class="hidden py-2 space-y-1 transition-all duration-200">
                <li>
-                  <a href="kategori" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">
+                  <a href="{{route ('kategori.index')}}" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">
                   <span class="transition-opacity duration-200">Kategori Sarana</span>
                   </a>
                </li>
                <li>
-                  <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">
+                  <a href="{{route ('sarana.index')}}" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100">
                   <span class="transition-opacity duration-200">Daftar Sarana</span>
                   </a>
                </li>
