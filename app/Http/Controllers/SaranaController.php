@@ -13,7 +13,6 @@ class SaranaController extends Controller
     {
         $sarana = Sarana::with('kategoriSarana')->get();
         $kategori = KategoriSarana::all();
-        // dd($kategori);
 
         return view('admin.sarana', compact('sarana', 'kategori'));
     }
@@ -47,31 +46,30 @@ class SaranaController extends Controller
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-       if ($request->hasFile('gambar')) {
-    if ($sarana->gambar) {
-        Storage::disk('public')->delete($sarana->gambar);
-    }
-    $validated['gambar'] = $request->file('gambar')->store('sarana', 'public');
-}
-
+        if ($request->hasFile('gambar')) {
+            if ($sarana->gambar) {
+                Storage::disk('public')->delete($sarana->gambar);
+            }
+            $validated['gambar'] = $request->file('gambar')->store('sarana', 'public');
+        }
 
         $sarana->update($validated);
 
         return redirect()->route('sarana.index')->with('success', 'Data berhasil diperbarui');
     }
 
-  public function destroy(Sarana $sarana)
-{
-    try {
-        if ($sarana->gambar) {
-            Storage::disk('public')->delete($sarana->gambar);
-        }
-        $sarana->delete();
+    public function destroy(Sarana $sarana)
+    {
+        try {
+            if ($sarana->gambar) {
+                Storage::disk('public')->delete($sarana->gambar);
+            }
+            $sarana->delete();
 
-        return redirect()->route('sarana.index')->with('success', 'Data berhasil dihapus');
-    } catch (\Exception $e) {
-        return redirect()->route('sarana.index')->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+            return redirect()->route('sarana.index')->with('success', 'Data berhasil dihapus');
+        } catch (\Exception $e) {
+            return redirect()->route('sarana.index')->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+        }
     }
-}
 
 }
