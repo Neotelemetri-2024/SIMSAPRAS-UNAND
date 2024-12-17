@@ -7,6 +7,8 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Middleware\CheckRole;
+use App\Http\Controllers\PeminjamanController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -73,6 +75,9 @@ Route::group(['middleware' => ['checkRole:user']], function () {
 
 
 
+
+Route::get('/peminjaman/kalender/{idRuangan}', [PeminjamanController::class, 'kalenderRuangan'])
+    ->name('kalender.ruangan');
 
 
 
