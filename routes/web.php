@@ -6,6 +6,7 @@ use App\Http\Controllers\SaranaController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\JadwalController;
+use App\Http\Controllers\PenggunaController;
 use App\Http\Middleware\CheckRole;
 
 /*
@@ -38,7 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::group(['middleware' => ['checkRole:superadmin,admin'], 'prefix' => 'admin'], function () {
+Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' => 'admin'], function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
@@ -68,7 +69,11 @@ Route::group(['middleware' => ['checkRole:user']], function () {
     Route::get('/profile', function () {
         return view('user.dashboard');
     })->name('user.profile');
+});
 
+Route::group(['middleware' => ['checkRole:superadmin']], function () {
+    Route::resource('pengguna', PenggunaController::class);
+    Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
 });
 
 
