@@ -5,11 +5,29 @@
    <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
       <!-- Card Header -->
       <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-         <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Data Sarana</h5>
+         <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Daftar Sarana</h5>
          <button data-modal-target="createModal" data-modal-toggle="createModal" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
          + Tambah Sarana
          </button>
       </div>
+      {{-- Search Bar --}}
+      <div class="p-5 border-b border-gray-200 dark:border-gray-700">
+        <form method="GET" action="{{ route('sarana.index') }}" class="flex gap-3">
+           <div class="flex-1">
+              <div class="relative">
+                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                 </div>
+                 <input type="text" name="search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Cari kategori..." value="{{ request('search') }}">
+              </div>
+           </div>
+           <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+              Cari
+           </button>
+        </form>
+     </div>
       <!-- Card Body -->
       <div class="p-5">
          @if(session('success'))
@@ -35,7 +53,7 @@
                <tbody>
                   @foreach($sarana as $index => $item)
                   <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                     <td class="px-6 py-4">{{ $index + 1 }}</td>
+                     <td class="px-6 py-4">{{ $loop->iteration + ($sarana->currentPage() - 1) * $sarana->perPage() }}</td>
                      <td class="px-6 py-4 text-red">{{ $item->kategoriSarana->jenis ?? '-' }}</td>
                      <td class="px-6 py-4">{{ $item->nama }}</td>
                      <td class="px-6 py-4">{{ $item->deskripsi }}</td>
@@ -49,8 +67,8 @@
                      </td>
                       <td class="px-6 py-4">
         <div class="flex space-x-2">
-            @if($item->kategoriSarana->jenis == 'Gedung Beruangan') 
-          <a href="{{ route('ruangan.index', ['idSarana' => $item->id]) }}" 
+            @if($item->kategoriSarana->jenis == 'Gedung Beruangan')
+          <a href="{{ route('ruangan.index', ['idSarana' => $item->id]) }}"
    class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200">
     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
@@ -65,15 +83,15 @@
     </td>
                     <td class="px-6 py-4">
     <div class="flex space-x-2">
-        <button data-modal-target="editModal{{ $item->id }}" 
-                data-modal-toggle="editModal{{ $item->id }}" 
+        <button data-modal-target="editModal{{ $item->id }}"
+                data-modal-toggle="editModal{{ $item->id }}"
                 class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
             </svg>
         </button>
-        <button data-modal-target="deleteModal{{ $item->id }}" 
-                data-modal-toggle="deleteModal{{ $item->id }}" 
+        <button data-modal-target="deleteModal{{ $item->id }}"
+                data-modal-toggle="deleteModal{{ $item->id }}"
                 class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -86,6 +104,99 @@
                   @endforeach
                </tbody>
             </table>
+            <!-- Improved Pagination -->
+<div class="px-6 py-4">
+    @if ($sarana->hasPages())
+       <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center justify-between">
+          <div class="flex justify-between flex-1 sm:hidden">
+             @if ($sarana->onFirstPage())
+                <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-lg">
+                   Previous
+                </span>
+             @else
+                <a href="{{ $sarana->previousPageUrl() }}" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700">
+                   Previous
+                </a>
+             @endif
+
+             @if ($sarana->hasMorePages())
+                <a href="{{ $sarana->nextPageUrl() }}" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700">
+                   Next
+                </a>
+             @else
+                <span class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-lg">
+                   Next
+                </span>
+             @endif
+          </div>
+
+          <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+             <div>
+                <p class="text-sm text-gray-700 leading-5">
+                   Showing
+                   <span class="font-medium">{{ $sarana->firstItem() }}</span>
+                   to
+                   <span class="font-medium">{{ $sarana->lastItem() }}</span>
+                   of
+                   <span class="font-medium">{{ $sarana->total() }}</span>
+                   results
+                </p>
+             </div>
+
+             <div>
+                <span class="relative z-0 inline-flex shadow-sm rounded-md">
+                   {{-- Previous Page Link --}}
+                   @if ($sarana->onFirstPage())
+                      <span aria-disabled="true">
+                         <span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-l-lg leading-5">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                               <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                         </span>
+                      </span>
+                   @else
+                      <a href="{{ $sarana->previousPageUrl() }}" rel="prev" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-lg leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
+                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                         </svg>
+                      </a>
+                   @endif
+
+                   {{-- Pagination Elements --}}
+                   @foreach ($sarana->getUrlRange(1, $sarana->lastPage()) as $page => $url)
+                      @if ($page == $sarana->currentPage())
+                         <span aria-current="page">
+                            <span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-blue-600 bg-blue-50 border border-gray-300 cursor-default leading-5">{{ $page }}</span>
+                         </span>
+                      @else
+                         <a href="{{ $url }}" class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
+                            {{ $page }}
+                         </a>
+                      @endif
+                   @endforeach
+
+                   {{-- Next Page Link --}}
+                   @if ($sarana->hasMorePages())
+                      <a href="{{ $sarana->nextPageUrl() }}" rel="next" class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-lg leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
+                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                         </svg>
+                      </a>
+                   @else
+                      <span aria-disabled="true">
+                         <span class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-r-lg leading-5">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                               <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                            </svg>
+                         </span>
+                      </span>
+                   @endif
+                </span>
+             </div>
+          </div>
+       </nav>
+    @endif
+ </div>
          </div>
       </div>
    </div>
@@ -286,20 +397,20 @@
            modalElement.classList.add('hidden');
        }
    }
-   
+
    // Inisialisasi komponen modal
    const modals = document.querySelectorAll('[data-modal-toggle]');
    modals.forEach(modal => {
        modal.addEventListener('click', function() {
            const target = this.getAttribute('data-modal-target');
            const modalElement = document.getElementById(target);
-           
+
            if (modalElement) {
                modalElement.classList.remove('hidden');
            }
        });
    });
-   
+
    // Inisialisasi tombol close modal
    const closeButtons = document.querySelectorAll('[data-modal-hide]');
    closeButtons.forEach(button => {
@@ -308,7 +419,7 @@
            closeModal(target);
        });
    });
-   
+
    // Click outside modal to close
    window.addEventListener('click', function(event) {
        const modals = document.querySelectorAll('[id^="createModal"], [id^="editModal"], [id^="deleteModal"]');

@@ -6,15 +6,33 @@ use App\Models\Sarana;
 use App\Models\KategoriSarana;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+
+DB::enableQueryLog();
 
 class SaranaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $sarana = Sarana::with('kategoriSarana')->get();
+        $search = $request->input("search");
+        $filterKategori = $request->input("kategori");
+
+        $sarana = Sarana::with('kategoriSarana')
+        ->when($search, function ($query, $search) {
+            $query->where('nama', 'like', "%{$search}%")
+                  ->orWhere('deskripsi', 'like', "%{$search}%")
+                  ->orWhere('fasilitas', 'like', "%{$search}%");
+        })
+        ->when($filterKategori, function ($query, $filterKategori) {
+            $query->where('IdKategori', $filterKategori);
+        })
+        ->paginate(5);
+
+        //
+
         $kategori = KategoriSarana::all();
 
-        return view('admin.sarana', compact('sarana', 'kategori'));
+        return view('admin.sarana', compact('sarana', 'kategori', 'search', 'filterKategori'));
     }
 
     public function store(Request $request)
