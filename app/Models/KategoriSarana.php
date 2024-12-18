@@ -7,12 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class KategoriSarana extends Model
 {
-    use HasFactory;
-     protected $table = 'kategori_sarana';
+    protected $table = 'kategori_sarana';
 
     protected $fillable = [
         'jenis',
-        'deskripsi',
+        'deskripsi'
     ];
 
     public function sarana()

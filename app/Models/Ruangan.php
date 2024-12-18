@@ -7,9 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ruangan extends Model
 {
-    use HasFactory;
-     protected $table = 'ruangan';
-     protected $fillable = [
+    protected $fillable = [
         'idSarana',
         'nama',
         'gambar',
@@ -17,19 +15,20 @@ class Ruangan extends Model
         'kapasitas',
         'fasilitas'
     ];
+    protected $table = 'ruangan';
 
     public function sarana()
     {
         return $this->belongsTo(Sarana::class, 'idSarana');
     }
 
-    public function gambarRuangan()
+     public function gambarRuangan()
     {
-        return $this->hasMany(GambarRuangan::class, 'idRuangan');
+        return $this->hasMany(GambarRuangan::class, 'idRuangan', 'id');
     }
 
     public function peminjaman()
     {
-        return $this->hasMany(Peminjaman::class, 'idRuangan');
+        return $this->hasMany(Peminjaman::class);
     }
 }

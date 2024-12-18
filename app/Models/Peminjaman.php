@@ -1,18 +1,16 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Peminjaman extends Model
 {
-    use HasFactory;
     protected $table = 'peminjaman';
+    
     protected $fillable = [
         'idUser',
         'idRuangan',
-        'idTanggal',
         'idJadwal',
         'idSarana',
         'kegiatan',
@@ -24,7 +22,11 @@ class Peminjaman extends Model
         'feedbackPenolakan',
         'evaluasi',
         'status',
-        'feedbackPembatalan',
+        'feedbackPembatalan'
+    ];
+
+    protected $enums = [
+        'status' => ['diajukan', 'ditolak', 'diproses', 'disetujui']
     ];
 
     public function user()
@@ -37,11 +39,6 @@ class Peminjaman extends Model
         return $this->belongsTo(Ruangan::class, 'idRuangan');
     }
 
-    public function tanggalPeminjaman()
-    {
-        return $this->belongsTo(TanggalPeminjaman::class, 'idTanggal');
-    }
-
     public function jadwal()
     {
         return $this->belongsTo(Jadwal::class, 'idJadwal');
@@ -51,4 +48,15 @@ class Peminjaman extends Model
     {
         return $this->belongsTo(Sarana::class, 'idSarana');
     }
+
+    public function tanggalPeminjaman()
+    {
+        return $this->hasMany(TanggalPeminjaman::class, 'idPeminjaman');
+    }
+
+    public function notifikasi()
+    {
+        return $this->hasMany(Notifikasi::class, 'idPeminjaman');
+    }
 }
+

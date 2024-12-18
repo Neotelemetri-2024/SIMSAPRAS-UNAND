@@ -13,9 +13,9 @@ return new class extends Migration
             $table->foreignId('idSarana')->constrained('sarana');
             $table->string('nama');
             $table->string('gambar');
-            $table->string('fasilitas');
             $table->text('deskripsi');
             $table->integer('kapasitas');
+            $table->string('fasilitas')->nullable();
             $table->timestamps();
         });
     }
