@@ -29,10 +29,8 @@ Route::get('/', function () {
 Route::get('/home', function () {
     return view('home');
 });
-Route::get('/sarana-prasarana', function () {
-    return view('sarana');
-});
-
+ Route::get('/sarana-prasarana', [SaranaController::class, 'daftarSarana'])->name('user.sarana');  
+ Route::get('/sarana-prasarana/{sarana}', [SaranaController::class, 'userShow'])->name('user.sarana.show');
 
 
 Route::middleware('auth')->group(function () {

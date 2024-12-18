@@ -13,8 +13,8 @@ class GambarSarana extends Model
         'gambar'
     ];
 
-    public function sarana()
+  public function sarana()
     {
-        return $this->belongsTo(Sarana::class, 'idSarana');
+        return $this->belongsTo(Sarana::class, 'idSarana', 'id');
     }
 }

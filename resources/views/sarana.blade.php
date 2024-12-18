@@ -11,9 +11,10 @@
                 Temukan dan pinjam berbagai fasilitas dan ruangan yang tersedia di Universitas Andalas
             </p>
         </div>
-          <div class="mb-8">
-            <form action="#" method="GET" class="flex items-center justify-center gap-2">
-                <input type="text" name="search" placeholder="Cari gedung atau sarana..."
+
+        <div class="mb-8">
+            <form action="{{ route('user.sarana') }}" method="GET" class="flex items-center justify-center gap-2">
+                <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari gedung atau sarana..."
                     class="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-300 focus:outline-none" />
                 <button type="submit" class="px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300">
                     Cari
@@ -26,101 +27,30 @@
             <!-- Left Side - Building List -->
             <div class="lg:w-2/3">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Card Gedung PKM -->
+                    @forelse($sarana as $item)
                     <div class="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                        <img class="rounded-t-lg w-full h-48 object-cover" src="/assets/images/pkm.png" alt="Gedung PKM" />
+                        <img class="rounded-t-lg w-full h-48 object-cover" src="{{ asset('storage/' . $item->gambar) }}" alt="{{ $item->nama }}" />
                         <div class="p-5">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Gedung PKM</h5>
-                            <p class="mb-3 text-gray-600">Pusat Kegiatan Mahasiswa untuk berbagai aktivitas organisasi dan kegiatan kemahasiswaan.</p>
-                            <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300">
-                                Lihat Detail
-                                <svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                </svg>
-                            </a>
+                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ $item->nama }}</h5>
+                            <p class="mb-3 text-gray-600">{{ $item->deskripsi }}</p>
+                        <a href="{{ route('user.sarana.show', $item) }}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300">
+    Lihat Detail
+    <svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+    </svg>
+</a>
                         </div>
                     </div>
-                    <div class="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                        <img class="rounded-t-lg w-full h-48 object-cover" src="/assets/images/pkm.png" alt="Gedung PKM" />
-                        <div class="p-5">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Gedung PKM</h5>
-                            <p class="mb-3 text-gray-600">Pusat Kegiatan Mahasiswa untuk berbagai aktivitas organisasi dan kegiatan kemahasiswaan.</p>
-                            <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300">
-                                Lihat Detail
-                                <svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                </svg>
-                            </a>
-                        </div>
+                    @empty
+                    <div class="col-span-2 text-center py-8">
+                        <p class="text-gray-500">Tidak ada sarana yang ditemukan.</p>
                     </div>
-                    <div class="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                        <img class="rounded-t-lg w-full h-48 object-cover" src="/assets/images/pkm.png" alt="Gedung PKM" />
-                        <div class="p-5">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Gedung PKM</h5>
-                            <p class="mb-3 text-gray-600">Pusat Kegiatan Mahasiswa untuk berbagai aktivitas organisasi dan kegiatan kemahasiswaan.</p>
-                            <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300">
-                                Lihat Detail
-                                <svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                       <div class="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                        <img class="rounded-t-lg w-full h-48 object-cover" src="/assets/images/pkm.png" alt="Gedung PKM" />
-                        <div class="p-5">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Gedung PKM</h5>
-                            <p class="mb-3 text-gray-600">Pusat Kegiatan Mahasiswa untuk berbagai aktivitas organisasi dan kegiatan kemahasiswaan.</p>
-                            <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300">
-                                Lihat Detail
-                                <svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                       <div class="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                        <img class="rounded-t-lg w-full h-48 object-cover" src="/assets/images/pkm.png" alt="Gedung PKM" />
-                        <div class="p-5">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Gedung PKM</h5>
-                            <p class="mb-3 text-gray-600">Pusat Kegiatan Mahasiswa untuk berbagai aktivitas organisasi dan kegiatan kemahasiswaan.</p>
-                            <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300">
-                                Lihat Detail
-                                <svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                       <div class="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                        <img class="rounded-t-lg w-full h-48 object-cover" src="/assets/images/pkm.png" alt="Gedung PKM" />
-                        <div class="p-5">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Gedung PKM</h5>
-                            <p class="mb-3 text-gray-600">Pusat Kegiatan Mahasiswa untuk berbagai aktivitas organisasi dan kegiatan kemahasiswaan.</p>
-                            <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300">
-                                Lihat Detail
-                                <svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                       <div class="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                        <img class="rounded-t-lg w-full h-48 object-cover" src="/assets/images/pkm.png" alt="Gedung PKM" />
-                        <div class="p-5">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Gedung PKM</h5>
-                            <p class="mb-3 text-gray-600">Pusat Kegiatan Mahasiswa untuk berbagai aktivitas organisasi dan kegiatan kemahasiswaan.</p>
-                            <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300">
-                                Lihat Detail
-                                <svg class="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                    
+                    @endforelse
 
-                    <!-- Tambahkan Card Lainnya... -->
+                    <!-- Pagination -->
+                    <div class="col-span-2 mt-6">
+                        {{ $sarana->links() }}
+                    </div>
                 </div>
             </div>
 
@@ -134,7 +64,7 @@
                         <div class="mb-6">
                             <div class="flex items-center justify-between mb-3 pb-3 border-b">
                                 <span class="text-gray-600">Total Gedung</span>
-                                <span class="font-semibold">6 Gedung</span>
+                                <span class="font-semibold">{{ $sarana->total() }} Gedung</span>
                             </div>
                             <div class="flex items-center justify-between mb-3 pb-3 border-b">
                                 <span class="text-gray-600">Ruangan Tersedia</span>
@@ -179,5 +109,4 @@
         </div>
     </div>
 </section>
-
 @endsection

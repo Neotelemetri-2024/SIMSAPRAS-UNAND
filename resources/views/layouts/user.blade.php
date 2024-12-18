@@ -3,7 +3,7 @@
    <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>SIPENJARU - Sistem Informasi Peminjaman Ruang</title>
+      <title>SIMSAPRAS - UNAND</title>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
       @vite(['resources/css/app.css','resources/js/app.js'])
    </head>
@@ -23,6 +23,7 @@
          </svg>
       </button>
       <!-- Initialize back to top button -->
+      @stack('scripts')
       <script>
          // Get the button
          const mybutton = document.getElementById("btn-back-to-top");
