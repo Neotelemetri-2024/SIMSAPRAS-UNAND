@@ -8,7 +8,7 @@
             </svg>
          </div>
          <div class="flex flex-col">
-            <span class="text-xl font-semibold text-gray-900">SIPENJARU</span>
+            <span class="text-xl font-semibold text-gray-900">SISMSAPRAS</span>
             <span class="text-sm text-gray-500">Universitas Andalas</span>
          </div>
       </a>

@@ -54,7 +54,6 @@
                      <th scope="col" class="px-6 py-3">No</th>
                      <th scope="col" class="px-6 py-3">Nama</th>
                      <th scope="col" class="px-6 py-3">Email</th>
-                     <th scope="col" class="px-6 py-3">Role</th>
                      <th scope="col" class="px-6 py-3">Aksi</th>
                   </tr>
                </thead>
