@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TanggalPeminjaman extends Model
+class Notifikasi extends Model
 {
-    protected $table = 'tanggalpeminjaman';
-    
     protected $fillable = [
         'idPeminjaman',
-        'tanggal'
+        'judul',
+        'isi',
+        'isRead'
     ];
+    protected $table = 'notifikasi';
 
     public function peminjaman()
     {

@@ -6,10 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-     public function up()
+      public function up()
     {
-        Schema::create('tanggal_peminjaman', function (Blueprint $table) {
+        Schema::create('tanggalPeminjaman', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('idPeminjaman')->constrained('peminjaman');
             $table->date('tanggal');
             $table->timestamps();
         });
@@ -17,6 +18,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('tanggal_peminjaman');
+        Schema::dropIfExists('tanggalPeminjaman');
     }
 };

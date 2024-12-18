@@ -8,16 +8,18 @@ return new class extends Migration
 {
      public function up()
     {
-        Schema::create('gambar_ruangan', function (Blueprint $table) {
+        Schema::create('notifikasi', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('idRuangan')->constrained('ruangan');
-            $table->string('gambar');
+            $table->foreignId('idPeminjaman')->constrained('peminjaman');
+            $table->string('judul');
+            $table->text('isi');
+            $table->boolean('isRead');
             $table->timestamps();
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists('gambar_ruangan');
+        Schema::dropIfExists('notifikasi');
     }
 };

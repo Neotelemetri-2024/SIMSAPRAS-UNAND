@@ -7,16 +7,32 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
+    public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        $this->call([
+            // 1. Tabel independen (tidak memiliki foreign key)
+            UserSeeder::class,
+            KategoriSaranaSeeder::class,
+            JadwalSeeder::class,
+            PengumumanSeeder::class,
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+            // 2. Tabel yang bergantung pada kategori
+            SaranaSeeder::class,
+
+            // 3. Tabel yang bergantung pada sarana
+            RuanganSeeder::class,
+            GambarSaranaSeeder::class,
+            PenjagaSeeder::class,
+
+            // 4. Tabel yang bergantung pada ruangan
+            GambarRuanganSeeder::class,
+
+            // 5. Tabel yang bergantung pada multiple tabel
+            PeminjamanSeeder::class,
+
+            // 6. Tabel yang bergantung pada peminjaman
+            TanggalPeminjamanSeeder::class,
+            NotifikasiSeeder::class,
+        ]);
     }
 }

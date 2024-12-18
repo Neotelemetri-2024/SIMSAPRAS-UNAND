@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class GambarRuangan extends Model
 {
     use HasFactory;
-    protected $table = 'gambar_Ruangan';
+    protected $table = 'gambar_ruangan';
      protected $fillable = [
         'idRuangan',
         'gambar',
@@ -16,6 +16,6 @@ class GambarRuangan extends Model
 
     public function ruangan()
     {
-        return $this->belongsTo(Ruangan::class, 'idRuangan');
+        return $this->belongsTo(Ruangan::class, 'idRuangan', 'id');
     }
 }

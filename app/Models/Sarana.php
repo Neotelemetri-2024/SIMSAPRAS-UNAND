@@ -7,9 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sarana extends Model
 {
-    use HasFactory;
-      protected $table = 'sarana';
-
     protected $fillable = [
         'IdKategori',
         'gambar',
@@ -17,6 +14,7 @@ class Sarana extends Model
         'nama',
         'fasilitas'
     ];
+    protected $table = 'sarana';
 
     public function kategoriSarana()
     {
@@ -25,6 +23,21 @@ class Sarana extends Model
 
     public function ruangan()
     {
-        return $this->hasMany(Ruangan::class, 'idSarana');
+        return $this->hasMany(Ruangan::class);
+    }
+
+    public function gambarSarana()
+    {
+        return $this->hasMany(GambarSarana::class);
+    }
+
+    public function penjaga()
+    {
+        return $this->hasMany(Penjaga::class);
+    }
+
+    public function peminjaman()
+    {
+        return $this->hasMany(Peminjaman::class);
     }
 }

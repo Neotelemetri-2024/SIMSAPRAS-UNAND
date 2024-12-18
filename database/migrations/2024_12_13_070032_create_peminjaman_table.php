@@ -6,13 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+     public function up()
     {
         Schema::create('peminjaman', function (Blueprint $table) {
             $table->id();
             $table->foreignId('idUser')->constrained('users');
             $table->foreignId('idRuangan')->nullable()->constrained('ruangan');
-            $table->foreignId('idTanggal')->constrained('tanggal_peminjaman');
             $table->foreignId('idJadwal')->constrained('jadwal');
             $table->foreignId('idSarana')->constrained('sarana');
             $table->string('kegiatan');

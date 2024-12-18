@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+   public function up()
     {
         Schema::create('sarana', function (Blueprint $table) {
             $table->id();
@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('gambar');
             $table->text('deskripsi');
             $table->string('nama');
-            $table->string('fasilitas');
+            $table->string('fasilitas')->nullable();
             $table->timestamps();
         });
     }
