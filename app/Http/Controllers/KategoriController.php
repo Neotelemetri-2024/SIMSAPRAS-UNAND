@@ -8,11 +8,16 @@ use Illuminate\Http\Request;
 class KategoriController extends Controller
 {
     // Menampilkan semua kategori sarana
-    public function index()
+    public function index(Request $request)
     {
-        $kategori = KategoriSarana::all();
+        $search = $request->input("search");
+        $kategori = KategoriSarana::when($search, function ($query, $search){
 
-        return view('admin.kategori', compact('kategori'));
+            $query->where('jenis', 'like', "%{$search}%");
+        })
+        ->paginate(5);
+
+        return view('admin.kategori', compact('kategori', 'search'));
     }
 
     // Menyimpan kategori sarana baru
