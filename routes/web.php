@@ -8,6 +8,8 @@ use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Middleware\CheckRole;
+use App\Http\Controllers\PeminjamanController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -78,6 +80,9 @@ Route::group(['middleware' => ['checkRole:superadmin']], function () {
 
 
 
+
+Route::get('/peminjaman/kalender/{idRuangan}', [PeminjamanController::class, 'kalenderRuangan'])
+    ->name('kalender.ruangan');
 
 
 
