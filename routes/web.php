@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SaranaController;
@@ -8,8 +9,6 @@ use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Middleware\CheckRole;
-use App\Http\Controllers\PeminjamanController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -42,9 +41,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' => 'admin'], function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    Route::resource('dashboard', DashboardController::class);
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
 
     Route::resource('kategori', KategoriController::class);
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
@@ -53,16 +52,16 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' 
         return view('admin.profile');
     })->name('admin.profile');
     Route::resource('sarana', SaranaController::class);
-    Route::get('/sarana', [SaranaController::class, 'index'])->name('sarana.index');  
-    Route::post('/sarana', [SaranaController::class, 'store'])->name('sarana.store');  
-    Route::put('/sarana/{sarana}', [SaranaController::class, 'update'])->name('sarana.update'); 
-    Route::delete('/sarana/{sarana}', [SaranaController::class, 'destroy'])->name('sarana.destroy'); 
+    Route::get('/sarana', [SaranaController::class, 'index'])->name('sarana.index');
+    Route::post('/sarana', [SaranaController::class, 'store'])->name('sarana.store');
+    Route::put('/sarana/{sarana}', [SaranaController::class, 'update'])->name('sarana.update');
+    Route::delete('/sarana/{sarana}', [SaranaController::class, 'destroy'])->name('sarana.destroy');
     Route::get('/sarana/{idSarana}/ruangan', [RuanganController::class, 'index'])->name('ruangan.index');
     Route::post('/sarana/{idSarana}/ruangan', [RuanganController::class, 'store'])->name('ruangan.store');
     Route::put('/sarana/{idSarana}/ruangan/{ruangan}', [RuanganController::class, 'update'])->name('ruangan.update');
     Route::delete('/sarana/{idSarana}/ruangan/{ruangan}', [RuanganController::class, 'destroy'])->name('ruangan.destroy');
     Route::delete('/sarana/{idSarana}/ruangan/delete-image/{id}', [RuanganController::class, 'deleteImage'])->name('ruangan.delete-image');
-    
+
     Route::resource('jadwal', JadwalController::class);
     Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal.index');
 });
@@ -80,9 +79,6 @@ Route::group(['middleware' => ['checkRole:superadmin']], function () {
 
 
 
-
-Route::get('/peminjaman/kalender/{idRuangan}', [PeminjamanController::class, 'kalenderRuangan'])
-    ->name('kalender.ruangan');
 
 
 
