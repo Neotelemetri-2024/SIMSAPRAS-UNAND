@@ -10,17 +10,17 @@ class KategoriSaranaSeeder extends Seeder
     {
         $kategori = [
             [
-                'jenis' => 'Gedung',
+                'jenis' => 'Gedung Beruangan',
+                'deskripsi' => 'Sarana berupa gedung untuk berbagai kegiatan'
+            ],
+            [
+                'jenis' => 'Gedung Tunggal',
                 'deskripsi' => 'Sarana berupa gedung untuk berbagai kegiatan'
             ],
             [
                 'jenis' => 'Lapangan',
                 'deskripsi' => 'Sarana olahraga outdoor'
             ],
-            [
-                'jenis' => 'Auditorium',
-                'deskripsi' => 'Ruang pertemuan besar'
-            ]
         ];
 
         foreach ($kategori as $k) {

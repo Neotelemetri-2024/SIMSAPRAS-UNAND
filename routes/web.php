@@ -9,6 +9,8 @@ use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\PeminjamanAdminController;
 use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\PenjagaController;
+use App\Http\Controllers\PeminjamanController;
 use App\Http\Middleware\CheckRole;
 
 /*
@@ -31,6 +33,8 @@ Route::get('/home', function () {
 });
  Route::get('/sarana-prasarana', [SaranaController::class, 'daftarSarana'])->name('user.sarana');
  Route::get('/sarana-prasarana/{sarana}', [SaranaController::class, 'userShow'])->name('user.sarana.show');
+Route::get('sarana-prasarana/ruangan/{ruangan}', [RuanganController::class, 'show'])
+    ->name('ruangan.show');
 
 
 Route::middleware('auth')->group(function () {
@@ -65,12 +69,35 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' 
 
     Route::resource('jadwal', JadwalController::class);
     Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal.index');
+
+    Route::resource('penjaga', PenjagaController::class);
+    Route::get('/penjaga', [PenjagaController::class, 'index'])->name('penjaga.index');
 });
 
 Route::group(['middleware' => ['checkRole:user']], function () {
     Route::get('/profile', function () {
         return view('user.dashboard');
     })->name('user.profile');
+
+     Route::get('/peminjaman/create', [PeminjamanController::class, 'create'])
+        ->name('peminjaman.create');
+    
+    // Menyimpan data peminjaman
+    Route::post('/peminjaman', [PeminjamanController::class, 'store'])
+        ->name('peminjaman.store');
+    
+    // Menampilkan daftar peminjaman user
+    Route::get('/peminjaman', [PeminjamanController::class, 'index'])
+        ->name('peminjaman.index');
+    
+    // Menampilkan detail peminjaman
+    Route::get('/peminjaman/{peminjaman}', [PeminjamanController::class, 'show'])
+        ->name('peminjaman.show');
+    
+    // Membatalkan peminjaman
+    Route::post('/peminjaman/{peminjaman}/cancel', [PeminjamanController::class, 'cancel'])
+        ->name('peminjaman.cancel');
+
 });
 
 Route::group(['middleware' => ['checkRole:superadmin']], function () {

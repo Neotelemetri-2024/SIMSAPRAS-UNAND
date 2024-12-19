@@ -9,6 +9,20 @@
 
     <!-- Di bagian head layout -->
 <meta name="csrf-token" content="{{ csrf_token() }}">
+@push('styles')
+<style>
+.fc-event {
+    cursor: pointer;
+}
+.fc-toolbar-title {
+    font-size: 1.2em !important;
+}
+.fc-header-toolbar {
+    margin-bottom: 1em !important;
+    font-size: 0.8em !important;
+}
+</style>
+@endpush
 </head>
 <body class="bg-gray-50">
     <!-- Navbar -->

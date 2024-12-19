@@ -26,15 +26,15 @@ class Sarana extends Model
         return $this->hasMany(Ruangan::class,'idSarana', 'id');
     }
 
-public function gambarSarana()
-{
-    return $this->hasMany(GambarSarana::class, 'idSarana', 'id');
-}
+    public function gambarSarana()
+    {
+        return $this->hasMany(GambarSarana::class, 'idSarana', 'id');
+    }
 
-public function penjaga()
-{
-    return $this->hasMany(Penjaga::class, 'idSarana', 'id');
-}
+    public function penjaga()
+    {
+        return $this->hasMany(Penjaga::class, 'idSarana', 'id');
+    }
 
     public function peminjaman()
     {

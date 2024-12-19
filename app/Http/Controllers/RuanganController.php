@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ruangan;
 use App\Models\GambarRuangan;
+use App\Models\Peminjaman;
 use App\Models\Sarana;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -195,5 +196,32 @@ class RuanganController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
+    }
+    public function show(Ruangan $ruangan)
+    {
+        // Load relationships
+        $ruangan->load(['sarana', 'gambarRuangan']);
+        
+        // Get peminjaman data
+        $peminjaman = Peminjaman::with(['tanggalPeminjaman', 'jadwal'])
+            ->where('idRuangan', $ruangan->id)
+            ->whereIn('status', ['diajukan', 'disetujui'])
+            ->get();
+            
+        // Format events for calendar
+        $events = [];
+        foreach($peminjaman as $item) {
+            foreach($item->tanggalPeminjaman as $tanggal) {
+                $events[] = [
+                    'id' => $item->id,
+                    'title' => $item->kegiatan,
+                    'start' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $item->jadwal->mulai,
+                    'end' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $item->jadwal->selesai,
+                    'status' => $item->status
+                ];
+            }
+        }
+        
+        return view('detailruangan', compact('ruangan', 'events'));
     }
 }
