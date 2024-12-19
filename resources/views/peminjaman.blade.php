@@ -43,8 +43,8 @@
                         <!-- Kegiatan -->
                         <div class="form-group">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Nama Kegiatan</label>
-                            <input type="text" name="kegiatan" 
-                                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" 
+                            <input type="text" name="kegiatan"
+                                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                                    value="{{ old('kegiatan') }}" required>
                             @error('kegiatan')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -54,8 +54,8 @@
                         <!-- Instansi -->
                         <div class="form-group">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Instansi</label>
-                            <input type="text" name="instansi" 
-                                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" 
+                            <input type="text" name="instansi"
+                                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                                    value="{{ old('instansi') }}" required>
                             @error('instansi')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -65,7 +65,7 @@
                         <!-- Jadwal -->
                         <div class="form-group">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Waktu Penggunaan</label>
-                            <select name="idJadwal" 
+                            <select name="idJadwal"
                                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
                                 @foreach($jadwals as $jadwal)
                                     <option value="{{ $jadwal->id }}">{{ $jadwal->mulai }} - {{ $jadwal->selesai }}</option>
@@ -84,9 +84,9 @@
                                     <span class="text-gray-500">(Maks. {{ $ruangan->kapasitas }} orang)</span>
                                 @endif
                             </label>
-                            <input type="number" name="estimasiPeserta" 
-                                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" 
-                                   value="{{ old('estimasiPeserta') }}" 
+                            <input type="number" name="estimasiPeserta"
+                                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                                   value="{{ old('estimasiPeserta') }}"
                                    required
                                    @if(isset($ruangan)) max="{{ $ruangan->kapasitas }}" @endif>
                             @error('estimasiPeserta')
@@ -151,11 +151,11 @@
 
                 <!-- Form Actions -->
                 <div class="mt-8 flex justify-end space-x-4">
-                    <button type="button" onclick="history.back()" 
+                    <button type="button" onclick="history.back()"
                             class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                         Batal
                     </button>
-                    <button type="submit" 
+                    <button type="submit"
                             class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                         Ajukan Peminjaman
                     </button>

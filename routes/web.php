@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SaranaController;
@@ -11,7 +10,9 @@ use App\Http\Controllers\PeminjamanAdminController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PenjagaController;
 use App\Http\Controllers\PeminjamanController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\CheckRole;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +49,8 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
     Route::resource('peminjaman', PeminjamanAdminController::class);
-    Route::get('/peminjaman-masuk', [PeminjamanAdminController::class, 'PeminjamanMasuk'])->name('peminjaman.masuk');
+    Route::get('/peminjaman-masuk', [PeminjamanAdminController::class, 'PeminjamanMasuk'])->name('peminjaman.admin.masuk');
+    Route::put('/peminjaman/{id}/update-status', [PeminjamanAdminController::class, 'updateStatus'])->name('peminjaman.updateStatus');
 
     Route::resource('kategori', KategoriController::class);
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
@@ -81,19 +83,19 @@ Route::group(['middleware' => ['checkRole:user']], function () {
 
      Route::get('/peminjaman/create', [PeminjamanController::class, 'create'])
         ->name('peminjaman.create');
-    
+
     // Menyimpan data peminjaman
     Route::post('/peminjaman', [PeminjamanController::class, 'store'])
         ->name('peminjaman.store');
-    
+
     // Menampilkan daftar peminjaman user
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])
         ->name('peminjaman.index');
-    
+
     // Menampilkan detail peminjaman
     Route::get('/peminjaman/{peminjaman}', [PeminjamanController::class, 'show'])
         ->name('peminjaman.show');
-    
+
     // Membatalkan peminjaman
     Route::post('/peminjaman/{peminjaman}/cancel', [PeminjamanController::class, 'cancel'])
         ->name('peminjaman.cancel');
