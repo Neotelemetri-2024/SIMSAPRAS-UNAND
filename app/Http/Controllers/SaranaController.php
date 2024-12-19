@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Sarana;
 use App\Models\KategoriSarana;
 use Illuminate\Http\Request;
+use App\Models\Peminjaman;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
@@ -115,11 +116,39 @@ class SaranaController extends Controller
         return redirect()->route('sarana.index')->with('success', 'Data berhasil diperbarui');
     }
     public function daftarSarana(Request $request)
-    {
-        $search = $request->input("search");
-        $filterKategori = $request->input("kategori");
+{
+    $search = $request->input("search");
+    $filterKategori = $request->input("kategori");
 
-        $sarana = Sarana::with('kategoriSarana')
+    $sarana = Sarana::with('kategoriSarana')
+        ->when($search, function ($query, $search) {
+            $query->where('nama', 'like', "%{$search}%")
+                  ->orWhere('deskripsi', 'like', "%{$search}%")
+                  ->orWhere('fasilitas', 'like', "%{$search}%");
+        })
+        ->when($filterKategori, function ($query, $filterKategori) {
+            $query->where('IdKategori', $filterKategori);
+        })
+        ->paginate(6); // Mengubah jumlah item per halaman menjadi 6 agar sesuai dengan grid
+
+    return view('sarana', compact('sarana', 'search', 'filterKategori'));
+}
+
+public function userShow(Sarana $sarana, Request $request)
+{
+    $search = $request->input('search');
+    
+    // Load relationships
+    $sarana->load(['kategoriSarana', 'gambarSarana', 'penjaga']);
+    
+    // Initialize $ruangan and $events as empty collections by default
+    $ruangan = collect();
+    $events = [];  // Change to array instead of collection
+    
+    // Query ruangan if kategori is Gedung Beruangan
+    if ($sarana->kategoriSarana->jenis === 'Gedung Beruangan') {
+        $ruangan = $sarana->ruangan()
+>>>>>>> main
             ->when($search, function ($query, $search) {
                 $query->where('nama', 'like', "%{$search}%")
                     ->orWhere('deskripsi', 'like', "%{$search}%")
