@@ -49,7 +49,7 @@ class Peminjaman extends Model
         return $this->belongsTo(Sarana::class, 'idSarana');
     }
 
-    public function tanggalPeminjaman()
+ public function tanggalPeminjaman()
     {
         return $this->hasMany(TanggalPeminjaman::class, 'idPeminjaman');
     }

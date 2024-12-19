@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Sarana;
 use App\Models\KategoriSarana;
 use Illuminate\Http\Request;
+use App\Models\Peminjaman;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
@@ -135,6 +136,7 @@ public function update(Request $request, Sarana $sarana)
 
     return view('sarana', compact('sarana', 'search', 'filterKategori'));
 }
+
 public function userShow(Sarana $sarana, Request $request)
 {
     $search = $request->input('search');
@@ -142,10 +144,11 @@ public function userShow(Sarana $sarana, Request $request)
     // Load relationships
     $sarana->load(['kategoriSarana', 'gambarSarana', 'penjaga']);
     
-    // Initialize $ruangan as empty collection by default
+    // Initialize $ruangan and $events as empty collections by default
     $ruangan = collect();
+    $events = [];  // Change to array instead of collection
     
-    // Query ruangan jika kategori adalah Gedung Beruangan
+    // Query ruangan if kategori is Gedung Beruangan
     if ($sarana->kategoriSarana->jenis === 'Gedung Beruangan') {
         $ruangan = $sarana->ruangan()
             ->when($search, function ($query, $search) {
@@ -153,9 +156,27 @@ public function userShow(Sarana $sarana, Request $request)
                       ->orWhere('deskripsi', 'like', "%{$search}%");
             })
             ->paginate(6);
+    } else {
+        // Get peminjaman data for non-Gedung Beruangan
+        $peminjaman = Peminjaman::with(['tanggalPeminjaman', 'jadwal'])
+            ->where('idSarana', $sarana->id)
+            ->whereIn('status', ['diajukan', 'disetujui'])
+            ->get();
+            
+        // Create events array
+        foreach($peminjaman as $item) {
+            foreach($item->tanggalPeminjaman as $tanggal) {
+                $events[] = [
+                    'id' => $item->id,
+                    'title' => $item->kegiatan,
+                    'start' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $item->jadwal->mulai,
+                    'end' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $item->jadwal->selesai,
+                    'status' => $item->status
+                ];
+            }
+        }
     }
     
-    return view('detailsarana', compact('sarana', 'ruangan', 'search'));
+    return view('detailsarana', compact('sarana', 'ruangan', 'search', 'events'));
 }
-
 }
