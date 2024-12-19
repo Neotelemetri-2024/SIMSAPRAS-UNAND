@@ -77,9 +77,15 @@
                       <td class="px-6 py-4">{{ $item->nama }}</td>
                      <td class="px-6 py-4 text-red">{{ $item->kategoriSarana->jenis ?? '-' }}</td>
                      <td class="px-6 py-4">{{ $item->fasilitas }}</td>
-                     <td class="px-6 py-4">
+               <td class="px-6 py-4">
                         @if($item->gambar)
-                        <img src="{{ Storage::url($item->gambar) }}" alt="Gambar" class="w-24 h-24 object-cover rounded">
+                        <div class="relative group">
+                            <img src="{{ Storage::url($item->gambar) }}" 
+                                 alt="Gambar" 
+                                 class="w-24 h-24 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                                 onclick="showImagePreview('{{ Storage::url($item->gambar) }}')"
+                            >
+                        </div>
                         @else
                         <span class="text-gray-400">-</span>
                         @endif
@@ -331,9 +337,14 @@
                         <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>{{ $item->fasilitas }}</textarea>
                      </div>
                      <div>
-                        <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Utama</label>
+                             <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Utama</label>
                         @if($item->gambar)
-                        <img src="{{ Storage::url($item->gambar) }}" class="w-32 h-32 object-cover rounded mb-2">
+                        <div class="relative group mb-2">
+                            <img src="{{ Storage::url($item->gambar) }}" 
+                                 class="w-32 h-32 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                                 onclick="showImagePreview('{{ Storage::url($item->gambar) }}')"
+                                 alt="Gambar Utama">
+                        </div>
                         @endif
                         <input type="file" name="gambar" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50">
                      </div>
