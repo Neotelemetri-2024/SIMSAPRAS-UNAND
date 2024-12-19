@@ -7,6 +7,7 @@ use App\Http\Controllers\SaranaController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\JadwalController;
+use App\Http\Controllers\PeminjamanAdminController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Middleware\CheckRole;
 
@@ -28,7 +29,7 @@ Route::get('/', function () {
 Route::get('/home', function () {
     return view('home');
 });
- Route::get('/sarana-prasarana', [SaranaController::class, 'daftarSarana'])->name('user.sarana');  
+ Route::get('/sarana-prasarana', [SaranaController::class, 'daftarSarana'])->name('user.sarana');
  Route::get('/sarana-prasarana/{sarana}', [SaranaController::class, 'userShow'])->name('user.sarana.show');
 
 
@@ -42,6 +43,8 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' 
     Route::resource('dashboard', DashboardController::class);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
+    Route::resource('peminjaman', PeminjamanAdminController::class);
+    Route::get('/peminjaman-masuk', [PeminjamanAdminController::class, 'PeminjamanMasuk'])->name('peminjaman.masuk');
 
     Route::resource('kategori', KategoriController::class);
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
@@ -74,10 +77,5 @@ Route::group(['middleware' => ['checkRole:superadmin']], function () {
     Route::resource('pengguna', PenggunaController::class);
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
 });
-
-
-
-
-
 
 require __DIR__.'/auth.php';
