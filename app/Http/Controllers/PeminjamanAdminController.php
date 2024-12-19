@@ -7,18 +7,66 @@ use Illuminate\Http\Request;
 
 class PeminjamanAdminController extends Controller
 {
-    public function PeminjamanMasuk(Request $request) {
+    private function getPeminjaman(Request $request, $status, $title)
+    {
         $search = $request->input('search');
+        $sort = $request->input('sort');
 
-            $peminjamanMasuk = Peminjaman::with(['user', 'sarana', 'jadwal', 'tanggalPeminjaman'])
-            ->where('status', 'diajukan')
-            ->when($search, function ($query, $search) {
-                return $query->where('nama', 'like', '%' . $search . '%');
+        $query = Peminjaman::with(['user', 'sarana', 'jadwal', 'tanggalPeminjaman'])
+            ->where('status', $status);
+
+        // Pencarian
+        if ($search) {
+            $query->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+
+        // Sorting berdasarkan tanggal
+        if ($sort && in_array($sort, ['asc', 'desc'])) {
+            $query->whereHas('tanggalPeminjaman', function($q) {
+                $q->select('idPeminjaman');
             })
-            ->paginate(10);
+            ->addSelect(['earliest_date' => function($query) {
+                $query->select('tanggal')
+                    ->from('tanggalpeminjaman')
+                    ->whereColumn('idPeminjaman', 'peminjaman.id')
+                    ->orderBy('tanggal', 'asc')
+                    ->limit(1);
+            }])
+            ->orderBy('earliest_date', $sort);
+        }
 
-        // Kembalikan data ke view
-        return view('admin.peminjaman', compact('peminjamanMasuk', 'search'));
+        // Gunakan appends untuk menambahkan query string ke pagination
+        $peminjamanMasuk = $query->paginate(10);
+        if ($search) {
+            $peminjamanMasuk->appends('search', $search);
+        }
+        if ($sort) {
+            $peminjamanMasuk->appends('sort', $sort);
+        }
+
+        return view('admin.peminjaman', compact('peminjamanMasuk', 'search', 'title'));
+    }
+
+    public function PeminjamanMasuk(Request $request)
+    {
+        return $this->getPeminjaman($request, 'diajukan', 'Peminjaman Masuk');
+    }
+
+    public function PeminjamanDiproses(Request $request)
+    {
+        return $this->getPeminjaman($request, 'diproses', 'Peminjaman Diproses');
+    }
+
+    public function PeminjamanDisetujui(Request $request)
+    {
+        return $this->getPeminjaman($request, 'disetujui', 'Peminjaman Disetujui');
+    }
+
+    public function PeminjamanDitolak(Request $request)
+    {
+        return $this->getPeminjaman($request, 'ditolak', 'Peminjaman Ditolak');
     }
 
     public function updateStatus(Request $request, $id)

@@ -50,6 +50,9 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' 
 
     Route::resource('peminjaman', PeminjamanAdminController::class);
     Route::get('/peminjaman-masuk', [PeminjamanAdminController::class, 'PeminjamanMasuk'])->name('peminjaman.admin.masuk');
+    Route::get('/peminjaman-proses', [PeminjamanAdminController::class, 'PeminjamanDiproses'])->name('peminjaman.admin.diproses');
+    Route::get('/peminjaman-setuju', [PeminjamanAdminController::class, 'PeminjamanDisetujui'])->name('peminjaman.admin.disetujui');
+    Route::get('/peminjaman-tolak', [PeminjamanAdminController::class, 'PeminjamanDitolak'])->name('peminjaman.admin.ditolak');
     Route::put('/peminjaman/{id}/update-status', [PeminjamanAdminController::class, 'updateStatus'])->name('peminjaman.updateStatus');
 
     Route::resource('kategori', KategoriController::class);
