@@ -6,6 +6,7 @@
     @vite(['resources/css/app.css','resources/js/app.js'])
     <title>SIMSAPRAS Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+
     <!-- Di bagian head layout -->
 <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
@@ -19,7 +20,6 @@
    <div class="p-4 sm:ml-64 pt-20">
        @yield('content')
 </div>
-
  <script>
     document.addEventListener('DOMContentLoaded', function() {
         const sidebar = document.getElementById('sidebar');
@@ -28,7 +28,7 @@
         const pageContent = document.querySelector('.p-4.sm\\:ml-64');
         const dropdownButton = document.querySelector('[data-collapse-toggle="dropdown-example"]');
         const dropdownContent = document.getElementById('dropdown-example');
-        
+
         function closeDropdown() {
             if (dropdownContent) {
                 dropdownContent.classList.add('hidden');
@@ -39,18 +39,18 @@
 
         function toggleSidebarView() {
             const isCollapsed = sidebar.classList.contains('w-16');
-            
+
             if (isCollapsed) {
                 // Expand sidebar
                 sidebar.classList.remove('w-16');
                 sidebar.classList.add('w-64');
-                
+
                 // Show text with fade effect
                 document.querySelectorAll('#sidebar span').forEach(el => {
                     el.classList.remove('opacity-0');
                     el.classList.remove('hidden');
                 });
-                
+
                 // Adjust main content
                 pageContent.classList.remove('sm:ml-16');
                 pageContent.classList.add('sm:ml-64');
@@ -58,22 +58,22 @@
                 // Collapse sidebar
                 sidebar.classList.remove('w-64');
                 sidebar.classList.add('w-16');
-                
+
                 // Hide text with fade effect
                 document.querySelectorAll('#sidebar span').forEach(el => {
                     el.classList.add('opacity-0');
                     setTimeout(() => el.classList.add('hidden'), 200);
                 });
-                
+
                 // Close any open dropdowns
                 closeDropdown();
-                
+
                 // Adjust main content
                 pageContent.classList.remove('sm:ml-64');
                 pageContent.classList.add('sm:ml-16');
             }
         }
-        
+
         // Enhanced dropdown functionality
         if (dropdownButton) {
             dropdownButton.addEventListener('click', function() {
@@ -87,19 +87,19 @@
                 }
             });
         }
-        
+
         // Toggle for desktop
         toggleSidebarMobile.addEventListener('click', function(e) {
             e.preventDefault();
             toggleSidebarView();
         });
-        
+
         // Toggle for mobile
         toggleSidebar.addEventListener('click', function(e) {
             e.preventDefault();
             sidebar.classList.toggle('-translate-x-full');
         });
-        
+
         // Enhanced window resize handler
         window.addEventListener('resize', function() {
             if (window.innerWidth >= 640) {
@@ -108,5 +108,7 @@
         });
     });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @stack('scripts')
 </body>
 </html>

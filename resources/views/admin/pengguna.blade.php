@@ -5,7 +5,7 @@
       <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
          <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Data Pengguna</h5>
          <button data-modal-target="createModal" data-modal-toggle="createModal" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
-         + Tambah Pengguna 
+         + Tambah Pengguna
          </button>
       </div>
       <div class="p-5">
@@ -54,6 +54,7 @@
                      <th scope="col" class="px-6 py-3">No</th>
                      <th scope="col" class="px-6 py-3">Nama</th>
                      <th scope="col" class="px-6 py-3">Email</th>
+                     <th scope="col" class="px-6 py-3">Role</th>
                      <th scope="col" class="px-6 py-3">Aksi</th>
                   </tr>
                </thead>
@@ -65,7 +66,7 @@
                      $pimpinanCount = 1;
                   @endphp
                   @foreach($pengguna as $item)
-                  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 role-row" data-role="{{ $item->role }}">                
+                  <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 role-row" data-role="{{ $item->role }}">
                      <td class="px-6 py-4">
                         @if($item->role == 'user')
                             {{ $userCount++ }}
@@ -77,12 +78,13 @@
                             {{ $pimpinanCount++ }}
                         @endif
                     </td>
+                     <td class="px-6 py-4">{{ $item->name }}</td>
                      <td class="px-6 py-4">{{ $item->email }}</td>
                      <td class="px-6 py-4">{{ $item->role }}</td>
                      <td class="px-6 py-4">
                         <div class="flex space-x-2">
-                           <button data-modal-target="deleteModal{{ $item->id }}" 
-                                   data-modal-toggle="deleteModal{{ $item->id }}" 
+                           <button data-modal-target="deleteModal{{ $item->id }}"
+                                   data-modal-toggle="deleteModal{{ $item->id }}"
                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200">
                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -184,19 +186,19 @@
            modalElement.classList.add('hidden');
        }
    }
-   
+
    const modals = document.querySelectorAll('[data-modal-toggle]');
    modals.forEach(modal => {
        modal.addEventListener('click', function() {
            const target = this.getAttribute('data-modal-target');
            const modalElement = document.getElementById(target);
-           
+
            if (modalElement) {
                modalElement.classList.remove('hidden');
            }
        });
    });
-   
+
    const closeButtons = document.querySelectorAll('[data-modal-hide]');
    closeButtons.forEach(button => {
        button.addEventListener('click', function() {
@@ -204,7 +206,7 @@
            closeModal(target);
        });
    });
-   
+
    window.addEventListener('click', function(event) {
        const modals = document.querySelectorAll('[id^="createModal"], [id^="deleteModal"]');
        modals.forEach(modal => {
@@ -222,23 +224,23 @@
          document.querySelectorAll('.role-row').forEach(row => {
                row.style.display = 'none';
          });
-         
+
          // Tampilkan baris yang sesuai dengan role
          document.querySelectorAll(`.role-row[data-role="${role}"]`).forEach(row => {
                row.style.display = 'table-row';
          });
-         
+
          // Update tampilan tab aktif
          document.querySelectorAll('.tab-button').forEach(tab => {
                tab.classList.remove('text-blue-600', 'border-blue-600', 'active', 'dark:text-blue-500', 'dark:border-blue-500');
                tab.classList.add('border-transparent');
          });
-         
+
          const activeTab = document.querySelector(`.tab-button[data-role="${role}"]`);
          activeTab.classList.add('text-blue-600', 'border-blue-600', 'active', 'dark:text-blue-500', 'dark:border-blue-500');
          activeTab.classList.remove('border-transparent');
       }
-      
+
       // Event listener untuk tab buttons
       document.querySelectorAll('.tab-button').forEach(button => {
          button.addEventListener('click', function() {
@@ -246,9 +248,9 @@
                showRoleData(role);
          });
       });
-      
+
       // Tampilkan data user saat halaman pertama kali dimuat
       showRoleData('user');
    });
 </script>
-@endsection 
+@endsection

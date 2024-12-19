@@ -10,24 +10,45 @@
          + Tambah Sarana
          </button>
       </div>
-      {{-- Search Bar --}}
-      <div class="p-5 border-b border-gray-200 dark:border-gray-700">
-        <form method="GET" action="{{ route('sarana.index') }}" class="flex gap-3">
-           <div class="flex-1">
-              <div class="relative">
-                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+      {{-- Search and Filter Bar --}}
+<div class="p-5 border-b border-gray-200 dark:border-gray-700">
+    <form method="GET" action="{{ route('sarana.index') }}" class="flex gap-3">
+        {{-- Search Input --}}
+        <div class="flex-1">
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                     </svg>
-                 </div>
-                 <input type="text" name="search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Cari kategori..." value="{{ request('search') }}">
-              </div>
-           </div>
-           <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-              Cari
-           </button>
-        </form>
-     </div>
+                </div>
+                <input type="text"
+                       name="search"
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                       placeholder="Cari sarana..."
+                       value="{{ request('search') }}">
+            </div>
+        </div>
+
+        {{-- Category Filter Dropdown --}}
+        <div class="w-48">
+            <select name="kategori"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                <option value="">Semua Kategori</option>
+                @foreach($kategori as $kat)
+                    <option value="{{ $kat->id }}" {{ request('kategori') == $kat->id ? 'selected' : '' }}>
+                        {{ $kat->jenis }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        {{-- Search Button --}}
+        <button type="submit"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+            Cari
+        </button>
+    </form>
+</div>
       <!-- Card Body -->
       <div class="p-5">
          @if(session('success'))
@@ -235,7 +256,7 @@
                         <textarea name="deskripsi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required></textarea>
                      </div>
                   </div>
-                  
+
                   <!-- Kolom Kanan -->
                   <div class="space-y-6">
                      <div>
@@ -302,7 +323,7 @@
                         <textarea name="deskripsi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>{{ $item->deskripsi }}</textarea>
                      </div>
                   </div>
-                  
+
                   <!-- Kolom Kanan -->
                   <div class="space-y-6">
                      <div>
@@ -323,21 +344,21 @@
     <div class="grid grid-cols-3 gap-2 mb-2">
         @foreach($item->gambarSarana as $gambar)
         <div class="relative group">
-            <img src="{{ Storage::url($gambar->gambar) }}" 
-                 alt="Gambar Tambahan" 
+            <img src="{{ Storage::url($gambar->gambar) }}"
+                 alt="Gambar Tambahan"
                  class="w-full h-20 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
                  onclick="showImagePreview('{{ Storage::url($gambar->gambar) }}')">
-            
+
             <!-- Tombol Delete dengan Icon Trash -->
             <div class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <input type="checkbox" name="delete_images[]" value="{{ $gambar->id }}" 
+                <input type="checkbox" name="delete_images[]" value="{{ $gambar->id }}"
                        id="delete_image_{{ $gambar->id }}"
                        class="hidden">
-                <label for="delete_image_{{ $gambar->id }}" 
-                       class="p-1 bg-red-500 hover:bg-red-600 rounded-lg cursor-pointer text-white flex items-center justify-center 
+                <label for="delete_image_{{ $gambar->id }}"
+                       class="p-1 bg-red-500 hover:bg-red-600 rounded-lg cursor-pointer text-white flex items-center justify-center
                               transition-colors deleteImageBtn">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                     </svg>
                 </label>
@@ -353,7 +374,7 @@
         @endforeach
     </div>
     @endif
-    <input type="file" name="gambar_tambahan[]" multiple 
+    <input type="file" name="gambar_tambahan[]" multiple
            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50">
     <p class="mt-1 text-xs text-gray-500">Tambah gambar baru (opsional)</p>
 </div>
@@ -405,7 +426,7 @@
 @endforeach
 
 <!-- Modal Preview Gambar untuk Edit Modal -->
-<div id="previewModal" tabindex="-1" aria-hidden="true" 
+<div id="previewModal" tabindex="-1" aria-hidden="true"
      class="fixed top-0 left-0 right-0 bottom-0 z-[60] hidden w-full p-4 flex items-center justify-center bg-black bg-opacity-50">
     <div class="relative max-w-4xl w-full">
         <div class="relative">
@@ -460,35 +481,35 @@
        });
    });
 
-     
+
     // Fungsi untuk menampilkan preview gambar
     function showImagePreview(imageSrc) {
         const previewModal = document.getElementById('previewModal');
         const previewImage = document.getElementById('previewImage');
-        
+
         previewImage.src = imageSrc;
         previewModal.classList.remove('hidden');
-        
+
         // Mencegah scroll pada body
         document.body.style.overflow = 'hidden';
     }
-    
+
     // Fungsi untuk menutup preview gambar
     function closeImagePreview() {
         const previewModal = document.getElementById('previewModal');
         previewModal.classList.add('hidden');
-        
+
         // Mengembalikan scroll pada body
         document.body.style.overflow = 'auto';
     }
-    
+
     // Menutup preview saat mengklik area di luar gambar
     document.getElementById('previewModal').addEventListener('click', function(e) {
         if (e.target === this) {
             closeImagePreview();
         }
     });
-    
+
     // Menutup preview dengan tombol ESC
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && !document.getElementById('previewModal').classList.contains('hidden')) {
@@ -501,10 +522,10 @@ document.querySelectorAll('.deleteImageBtn').forEach(btn => {
         const checkbox = this.parentElement.querySelector('input[type="checkbox"]');
         const imageContainer = this.closest('.relative');
         const deleteIndicator = imageContainer.querySelector('.deleteIndicator');
-        
+
         console.log('Checkbox value:', checkbox.value); // Debug
         console.log('Checkbox checked:', checkbox.checked); // Debug
-        
+
         if (checkbox.checked) {
             checkbox.checked = false;
             deleteIndicator.classList.add('hidden');
