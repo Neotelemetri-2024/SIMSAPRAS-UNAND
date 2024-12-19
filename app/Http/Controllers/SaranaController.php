@@ -134,56 +134,34 @@ class SaranaController extends Controller
     return view('sarana', compact('sarana', 'search', 'filterKategori'));
 }
 
-public function userShow(Sarana $sarana, Request $request)
-{
-    $search = $request->input('search');
-    
-    // Load relationships
-    $sarana->load(['kategoriSarana', 'gambarSarana', 'penjaga']);
-    
-    // Initialize $ruangan and $events as empty collections by default
-    $ruangan = collect();
-    $events = [];  // Change to array instead of collection
-    
-    // Query ruangan if kategori is Gedung Beruangan
-    if ($sarana->kategoriSarana->jenis === 'Gedung Beruangan') {
-        $ruangan = $sarana->ruangan()
->>>>>>> main
-            ->when($search, function ($query, $search) {
-                $query->where('nama', 'like', "%{$search}%")
-                    ->orWhere('deskripsi', 'like', "%{$search}%")
-                    ->orWhere('fasilitas', 'like', "%{$search}%");
-            })
-            ->when($filterKategori, function ($query, $filterKategori) {
-                $query->where('IdKategori', $filterKategori);
-            })
-            ->paginate(6); // Mengubah jumlah item per halaman menjadi 6 agar sesuai dengan grid
-
-        return view('sarana', compact('sarana', 'search', 'filterKategori'));
-    }
     public function userShow(Sarana $sarana, Request $request)
     {
         $search = $request->input('search');
+        $filterKategori = $request->input('kategori');
         
         // Load relationships
         $sarana->load(['kategoriSarana', 'gambarSarana', 'penjaga']);
         
-        // Initialize $ruangan as empty collection by default
+        // Initialize $ruangan and $events as empty collections by default
         $ruangan = collect();
+        $events = [];  // Change to array instead of collection
         
-        // Query ruangan jika kategori adalah Gedung Beruangan
+        // Query ruangan if kategori is Gedung Beruangan
         if ($sarana->kategoriSarana->jenis === 'Gedung Beruangan') {
             $ruangan = $sarana->ruangan()
                 ->when($search, function ($query, $search) {
                     $query->where('nama', 'like', "%{$search}%")
-                        ->orWhere('deskripsi', 'like', "%{$search}%");
+                        ->orWhere('deskripsi', 'like', "%{$search}%")
+                        ->orWhere('fasilitas', 'like', "%{$search}%");
                 })
-                ->paginate(6);
-        }
-        
-        return view('detailsarana', compact('sarana', 'ruangan', 'search'));
-    }
+                ->when($filterKategori, function ($query, $filterKategori) {
+                    $query->where('IdKategori', $filterKategori);
+                })
+                ->paginate(6); // Mengubah jumlah item per halaman menjadi 6 agar sesuai dengan grid
 
+            return view('sarana', compact('sarana', 'search', 'filterKategori'));
+        }
+    }
     public function destroy(Sarana $sarana)
     {
         // Hapus file gambar
