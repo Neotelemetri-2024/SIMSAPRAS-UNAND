@@ -8,6 +8,7 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\PenjagaController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Middleware\CheckRole;
 
@@ -65,6 +66,9 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' 
 
     Route::resource('jadwal', JadwalController::class);
     Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal.index');
+
+    Route::resource('penjaga', PenjagaController::class);
+    Route::get('/penjaga', [PenjagaController::class, 'index'])->name('penjaga.index');
 });
 
 Route::group(['middleware' => ['checkRole:user']], function () {
@@ -97,10 +101,5 @@ Route::group(['middleware' => ['checkRole:superadmin']], function () {
     Route::resource('pengguna', PenggunaController::class);
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
 });
-
-
-
-
-
 
 require __DIR__.'/auth.php';
