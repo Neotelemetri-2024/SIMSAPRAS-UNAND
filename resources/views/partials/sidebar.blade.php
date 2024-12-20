@@ -112,7 +112,7 @@
           </li>
 
           <!-- Pengguna -->
-          @can('is-superadmin')
+          @if (Gate::any(['is-superadmin', 'is-pimpinan']))
           <li>
              <a href="{{ route('pengguna.index') }}"
                 class="flex items-center p-2 rounded-lg group transition-colors duration-200 {{ request()->routeIs('pengguna.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
@@ -122,7 +122,7 @@
                 <span class="ml-3">Pengguna</span>
              </a>
           </li>
-          @endcan
+          @endif
        </ul>
     </div>
  </aside>

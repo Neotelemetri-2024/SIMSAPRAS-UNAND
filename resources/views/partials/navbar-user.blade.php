@@ -8,7 +8,7 @@
             </svg>
          </div>
          <div class="flex flex-col">
-            <span class="text-xl font-semibold text-gray-900">SIMSAPRAS</span>
+            <span class="text-xl font-semibold text-green-700">SIMSAPRAS</span>
             <span class="text-sm text-gray-500">Universitas Andalas</span>
          </div>
       </a>
@@ -29,7 +29,7 @@
             <!-- Features Dropdown -->
             <li class="relative w-full md:w-auto">
                <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" class="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-600 md:p-0 md:w-auto">
-                  Fitur 
+                  Fitur
                   <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                   </svg>
@@ -52,7 +52,7 @@
             <!-- Resources Dropdown -->
             <li class="relative w-full md:w-auto">
                <button id="dropdownNavbarLink2" data-dropdown-toggle="dropdownNavbar2" class="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-600 md:p-0 md:w-auto">
-                  Sumber Daya 
+                  Sumber Daya
                   <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
                   </svg>
@@ -91,36 +91,39 @@
             @can('is-user')
             <!-- Profile Dropdown for authenticated users -->
             <li class="relative flex items-center h-full md:ml-8">
-               <div class="flex items-center">
-                  <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
-                  <span class="sr-only">Open user menu</span>
-                  <img class="w-8 h-8 rounded-full" src="https://flowbite.com/application-ui/demo/images/users/neil-sims.png" alt="user photo">
-                  </button>
-                  <!-- User Dropdown Menu -->
-                  <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
-                     <div class="px-4 py-3">
-                        {{-- <span class="block text-sm text-gray-900 dark:text-white">{{ $pengguna->name }}</span> --}}
-                        {{-- <span class="block text-sm text-gray-500 truncate dark:text-gray-400">{{ $pengguna->email }}</span> --}}
-                     </div>
-                     <ul class="py-2" aria-labelledby="user-menu-button">
-                        <li>
-                           <a href="{{ route('profile.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Dashboard</a>
-                        </li>
-                        <li>
-                           <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Settings</a>
-                        </li>
-                        <li>
-                           <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Earnings</a>
-                        </li>
-                        <form method="POST" action="{{ route('logout') }}">
-                           <li class="hover:bg-gray-100"> 
-                              @csrf
-                              <button class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100" type="submit">Logout</button>
-                           </li>
-                        </form>
-                     </ul>
-                  </div>
-               </div>
+<!-- User Dropdown Menu -->
+<div class="relative">
+    <!-- Button to toggle dropdown -->
+    <button type="button" class="flex items-center text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+       <span class="sr-only">Open user menu</span>
+       <!-- Replace this with dynamic image or default image if not available -->
+       <img class="w-8 h-8 rounded-full" src="{{ auth()->user()->photo_profile ? Storage::url(auth()->user()->photo_profile) : 'https://flowbite.com/application-ui/demo/images/users/neil-sims.png' }}" alt="user photo">
+    </button>
+
+    <!-- Dropdown menu -->
+    <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
+       <div class="px-4 py-3">
+          <!-- Dynamic username -->
+          <span class="block text-sm text-gray-900 dark:text-white">{{ auth()->user()->name }}</span>
+          <span class="block text-sm text-gray-500 truncate dark:text-gray-400">{{ auth()->user()->email }}</span>
+       </div>
+       <ul class="py-2" aria-labelledby="user-menu-button">
+          <li>
+             <a href={{ route('home') }} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Dashboard</a>
+          </li>
+          <li>
+             <a href={{ Route('profile.index') }} class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Profile</a>
+          </li>
+          <form method="POST" action="{{ route('logout') }}">
+             <li class="hover:bg-gray-100">
+                @csrf
+                <button class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100" type="submit">Logout</button>
+             </li>
+          </form>
+       </ul>
+    </div>
+ </div>
+
             </li>
             @endcan
          </ul>

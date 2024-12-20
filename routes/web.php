@@ -30,7 +30,7 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', function () {
     return view('home');
-});
+})->name('home');
 Route::get('/home', function () {
     return view('home');
 });
@@ -103,7 +103,7 @@ Route::group(['middleware' => ['checkRole:user']], function () {
 
 });
 
-Route::group(['middleware' => ['checkRole:superadmin']], function () {
+Route::group(['middleware' => ['checkRole:superadmin,pimpinan']], function () {
     Route::resource('pengguna', PenggunaController::class);
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
 });

@@ -7,52 +7,52 @@
         <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
            <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">{{ $title }}</h5>
         </div>
-        <div class="p-5 border-b border-gray-200 dark:border-gray-700">
-            <div class="flex flex-col md:flex-row gap-4">
-                <!-- Form Pencarian -->
-                <form method="GET" action="{{ url()->current() }}" class="flex-1">
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                            </svg>
-                        </div>
-                        <div class="flex gap-2">
-                            <input type="text"
-                                name="search"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                placeholder="Cari data peminjaman..."
-                                value="{{ $search }}">
-                            <button type="submit"
-                                    class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800">
-                                Cari
-                            </button>
-                        </div>
-                    </div>
-                </form>
-
-                <!-- Form Filter/Sort -->
-                <form method="GET" action="{{ url()->current() }}" class="flex gap-3">
-                    <!-- Pertahankan parameter search jika ada -->
-                    @if($search)
-                        <input type="hidden" name="search" value="{{ $search }}">
-                    @endif
-
-                    <div class="w-48">
-                        <select name="sort"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                            <option value="" {{ !request('sort') ? 'selected' : '' }}>Urutkan Tanggal</option>
-                            <option value="asc" {{ request('sort') === 'asc' ? 'selected' : '' }}>Terlama</option>
-                            <option value="desc" {{ request('sort') === 'desc' ? 'selected' : '' }}>Terbaru</option>
-                        </select>
-                    </div>
+    <div class="p-5 border-b border-gray-200 dark:border-gray-700">
+    <div class="flex flex-col md:flex-row gap-4">
+        <!-- Form Pencarian -->
+        <form method="GET" action="{{ url()->current() }}" class="flex-1">
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                </div>
+                <div class="flex gap-2">
+                    <input type="text"
+                        name="search"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                        placeholder="Cari data peminjaman..."
+                        value="{{ $search }}">
                     <button type="submit"
                             class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800">
-                        Terapkan
+                        Cari
                     </button>
-                </form>
+                </div>
             </div>
-        </div>
+        </form>
+
+        <!-- Form Filter/Sort -->
+        <form method="GET" action="{{ url()->current() }}" class="flex gap-3">
+            <!-- Pertahankan parameter search jika ada -->
+            @if($search)
+                <input type="hidden" name="search" value="{{ $search }}">
+            @endif
+
+            <div class="w-48">
+                <select name="sort"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                    <option value="" {{ !request('sort') ? 'selected' : '' }}>Urutkan Tanggal</option>
+                    <option value="asc" {{ request('sort') === 'asc' ? 'selected' : '' }}>Terlama</option>
+                    <option value="desc" {{ request('sort') === 'desc' ? 'selected' : '' }}>Terbaru</option>
+                </select>
+            </div>
+            <button type="submit"
+                    class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800">
+                Terapkan
+            </button>
+        </form>
+    </div>
+</div>
       <!-- Card Body -->
       <div class="p-5">
         @if(session('success'))
@@ -128,7 +128,7 @@
                             @endswitch
                         </td>
                         <td class="px-6 py-4">
-                            @if(($item->status === 'diajukan' || $item->status === 'diproses') || (auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan'))
+                            @if(($item->status === 'diajukan' || $item->status === 'diproses') || (auth()->user()->role === 'pimpinan'))
                                 <button data-modal-target="editModal{{ $item->id }}"
                                         data-modal-toggle="editModal{{ $item->id }}"
                                         class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">
