@@ -15,6 +15,7 @@ class RuanganController extends Controller
     public function index($idSarana)
     {
         $search = request('search');
+        $status = request('status');
         
         $ruangan = Ruangan::with(['gambarRuangan'])
             ->where('idSarana', $idSarana)
@@ -24,6 +25,9 @@ class RuanganController extends Controller
                       ->orWhere('deskripsi', 'like', "%{$search}%")
                       ->orWhere('fasilitas', 'like', "%{$search}%");
                 });
+            })
+            ->when($status, function ($query, $status) {
+                $query->where('status', $status);
             })
             ->paginate(5);
             

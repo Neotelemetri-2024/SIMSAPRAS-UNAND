@@ -34,6 +34,13 @@
                                value="{{ request('search') }}">
                     </div>
                 </div>
+                <div class="w-48">
+                    <select name="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                       <option value="">Semua Ruangan</option>
+                       <option value="aktif" {{ request('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                       <option value="nonaktif" {{ request('status') == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                    </select>
+                 </div>
                 <button type="submit"
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                     Cari
@@ -120,7 +127,7 @@
                                     </button>
                             
                                     <!-- Tombol Sampah (Hanya jika status Nonaktif) -->
-                                    @if($item->status == "nonaktif")
+                                    @if($item->status == "aktif")
                                     <button data-modal-target="deleteModal{{ $item->id }}"
                                             data-modal-toggle="deleteModal{{ $item->id }}"
                                             class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200">
@@ -411,7 +418,7 @@
                 <svg class="mx-auto mb-4 text-gray-400 w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                 </svg>
-                <h3 class="mb-5 text-lg font-normal text-gray-500">Apakah Anda yakin ingin menghapus ruangan ini?</h3>
+                <h3 class="mb-5 text-lg font-normal text-gray-500">Apakah Anda yakin ingin menonaktifkan ruangan ini?</h3>
                 <form action="{{ route('ruangan.destroy', ['idSarana' => $sarana->id, 'ruangan' => $item->id]) }}" method="POST" class="inline">
                     @csrf
                     @method('DELETE')

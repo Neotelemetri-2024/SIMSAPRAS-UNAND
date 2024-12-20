@@ -13,25 +13,37 @@ DB::enableQueryLog();
 
 class SaranaController extends Controller
 {
-   public function index(Request $request)
+    public function index(Request $request)
     {
         $search = $request->input("search");
-        $filterKategori = $request->input("kategori");
+        $filter = $request->input("filter");
         
-        $sarana = Sarana::with(['kategoriSarana', 'gambarSarana'])
-            ->when($search, function ($query, $search) {
-                $query->where('nama', 'like', "%{$search}%")
-                    ->orWhere('deskripsi', 'like', "%{$search}%")
-                    ->orWhere('fasilitas', 'like', "%{$search}%");
-            })
-            ->when($filterKategori, function ($query, $filterKategori) {
-                $query->where('IdKategori', $filterKategori);
-            })
-            ->paginate(5);
-
+        $query = Sarana::with(['kategoriSarana', 'gambarSarana']);
+        
+        // Handle pencarian
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('deskripsi', 'like', "%{$search}%")
+                  ->orWhere('fasilitas', 'like', "%{$search}%");
+            });
+        }
+        
+        // Handle filter
+        if ($filter) {
+            if (str_starts_with($filter, 'kategori_')) {
+                $kategoriId = substr($filter, 9); // Mengambil ID setelah 'kategori_'
+                $query->where('IdKategori', $kategoriId);
+            } elseif (str_starts_with($filter, 'status_')) {
+                $status = substr($filter, 7); // Mengambil status setelah 'status_'
+                $query->where('status', $status);
+            }
+        }
+        
+        $sarana = $query->paginate(5);
         $kategori = KategoriSarana::all();
-
-        return view('admin.sarana', compact('sarana', 'kategori', 'search', 'filterKategori'));
+        
+        return view('admin.sarana', compact('sarana', 'kategori', 'search', 'filter'));
     }
 
     public function store(Request $request)

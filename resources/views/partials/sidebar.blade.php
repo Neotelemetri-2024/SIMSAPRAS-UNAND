@@ -3,7 +3,7 @@
        <ul class="space-y-2 font-medium mt-8">
           <!-- Dashboard -->
           <li>
-             <a href="{{ route('dashboard.index') }}" class="flex items-center p-2 rounded-lg group transition-colors duration-200 {{ request()->routeIs('dashboard.index') ? 'bg-gray-100 text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+             <a href="{{ route('dashboard.index') }}" class="flex items-center p-2 rounded-lg group transition-colors duration-200 {{ request()->routeIs('dashboard.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
                 <svg class="w-5 h-5 transition duration-75 {{ request()->routeIs('dashboard.index') ? 'text-green-600' : 'text-gray-500 group-hover:text-gray-900' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
                 </svg>
@@ -22,7 +22,7 @@
           @endphp
           <li class="relative">
              <button type="button"
-                     class="flex items-center w-full p-2 text-base rounded-lg group transition duration-200 {{ request()->routeIs($peminjamanRoutes) ? 'bg-gray-100 text-green-600' : 'text-gray-900 hover:bg-gray-100' }}"
+                     class="flex items-center w-full p-2 text-base rounded-lg group transition duration-200 {{ request()->routeIs($peminjamanRoutes) ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}"
                      data-collapse-toggle="dropdown-example"
                      aria-expanded="{{ request()->routeIs($peminjamanRoutes) ? 'true' : 'false' }}">
                 <svg class="flex-shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs($peminjamanRoutes) ? 'text-green-600' : 'text-gray-500 group-hover:text-gray-900' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -36,25 +36,25 @@
              <ul id="dropdown-example" class="{{ request()->routeIs($peminjamanRoutes) ? 'block' : 'hidden' }} py-2 space-y-1">
                 <li>
                    <a href="{{ route('peminjaman.admin.masuk') }}"
-                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.masuk') ? 'bg-gray-100 text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.masuk') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
                       Peminjaman Masuk
                    </a>
                 </li>
                 <li>
                    <a href="{{ route('peminjaman.admin.diproses') }}"
-                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.diproses') ? 'bg-gray-100 text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.diproses') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
                       Peminjaman Diproses
                    </a>
                 </li>
                 <li>
                    <a href="{{ route('peminjaman.admin.disetujui') }}"
-                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.disetujui') ? 'bg-gray-100 text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.disetujui') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
                       Peminjaman Disetujui
                    </a>
                 </li>
                 <li>
                    <a href="{{ route('peminjaman.admin.ditolak') }}"
-                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.ditolak') ? 'bg-gray-100 text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.ditolak') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
                       Peminjaman Ditolak
                    </a>
                 </li>
@@ -67,7 +67,7 @@
           @endphp
           <li class="relative">
              <button type="button"
-                     class="flex items-center w-full p-2 text-base rounded-lg group transition duration-200 {{ request()->routeIs($saranaRoutes) ? 'bg-gray-100 text-green-600' : 'text-gray-900 hover:bg-gray-100' }}"
+                     class="flex items-center w-full p-2 text-base rounded-lg group transition duration-200 {{ request()->routeIs($saranaRoutes) ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}"
                      data-collapse-toggle="sarana"
                      aria-expanded="{{ request()->routeIs($saranaRoutes) ? 'true' : 'false' }}">
                 <svg class="flex-shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs($saranaRoutes) ? 'text-green-600' : 'text-gray-500 group-hover:text-gray-900' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -81,19 +81,19 @@
              <ul id="sarana" class="{{ request()->routeIs($saranaRoutes) ? 'block' : 'hidden' }} py-2 space-y-1">
                 <li>
                    <a href="{{ route('kategori.index') }}"
-                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('kategori.index') ? 'bg-gray-100 text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('kategori.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
                       Kategori Sarana
                    </a>
                 </li>
                 <li>
                    <a href="{{ route('sarana.index') }}"
-                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('sarana.index') ? 'bg-gray-100 text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('sarana.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
                       Daftar Sarana
                    </a>
                 </li>
                 <li>
                    <a href="{{ route('penjaga.index') }}"
-                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('penjaga.index') ? 'bg-gray-100 text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('penjaga.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
                       Daftar Penjaga
                    </a>
                 </li>
@@ -103,7 +103,7 @@
           <!-- Jadwal -->
           <li>
              <a href="{{ route('jadwal.index') }}"
-                class="flex items-center p-2 rounded-lg group transition-colors duration-200 {{ request()->routeIs('jadwal.index') ? 'bg-gray-100 text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                class="flex items-center p-2 rounded-lg group transition-colors duration-200 {{ request()->routeIs('jadwal.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
                 <svg class="w-5 h-5 transition duration-75 {{ request()->routeIs('jadwal.index') ? 'text-green-600' : 'text-gray-500 group-hover:text-gray-900' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                 </svg>
@@ -115,7 +115,7 @@
           @can('is-superadmin')
           <li>
              <a href="{{ route('pengguna.index') }}"
-                class="flex items-center p-2 rounded-lg group transition-colors duration-200 {{ request()->routeIs('pengguna.index') ? 'bg-gray-100 text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                class="flex items-center p-2 rounded-lg group transition-colors duration-200 {{ request()->routeIs('pengguna.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
                 <svg class="w-5 h-5 transition duration-75 {{ request()->routeIs('pengguna.index') ? 'text-green-600' : 'text-gray-500 group-hover:text-gray-900' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                 </svg>

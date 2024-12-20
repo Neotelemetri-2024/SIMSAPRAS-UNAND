@@ -99,8 +99,8 @@
                   <!-- User Dropdown Menu -->
                   <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
                      <div class="px-4 py-3">
-                        <span class="block text-sm text-gray-900 dark:text-white">{{ $pengguna->name }}</span>
-                        <span class="block text-sm text-gray-500 truncate dark:text-gray-400">{{ $pengguna->email }}</span>
+                        {{-- <span class="block text-sm text-gray-900 dark:text-white">{{ $pengguna->name }}</span> --}}
+                        {{-- <span class="block text-sm text-gray-500 truncate dark:text-gray-400">{{ $pengguna->email }}</span> --}}
                      </div>
                      <ul class="py-2" aria-labelledby="user-menu-button">
                         <li>
@@ -115,7 +115,7 @@
                         <form method="POST" action="{{ route('logout') }}">
                            <li class="hover:bg-gray-100"> 
                               @csrf
-                              <button class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100" type="submit">logout </button>
+                              <button class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100" type="submit">Logout</button>
                            </li>
                         </form>
                      </ul>
