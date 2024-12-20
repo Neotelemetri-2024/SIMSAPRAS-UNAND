@@ -7,12 +7,14 @@ use App\Http\Controllers\SaranaController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\JadwalController;
+use App\Http\Controllers\PeminjamanAdminController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PenjagaController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\CheckRole;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,8 +27,15 @@ use App\Http\Middleware\CheckRole;
 |
 */
 
-Route::get('/sarana-prasarana', [SaranaController::class, 'daftarSarana'])->name('user.sarana');  
-Route::get('/sarana-prasarana/{sarana}', [SaranaController::class, 'userShow'])->name('user.sarana.show');
+
+Route::get('/', function () {
+    return view('home');
+});
+Route::get('/home', function () {
+    return view('home');
+});
+ Route::get('/sarana-prasarana', [SaranaController::class, 'daftarSarana'])->name('user.sarana');
+ Route::get('/sarana-prasarana/{sarana}', [SaranaController::class, 'userShow'])->name('user.sarana.show');
 Route::get('sarana-prasarana/ruangan/{ruangan}', [RuanganController::class, 'show'])
     ->name('ruangan.show');
 
@@ -42,6 +51,12 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' 
     Route::resource('dashboard', DashboardController::class);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
+    Route::resource('peminjaman', PeminjamanAdminController::class);
+    Route::get('/peminjaman-masuk', [PeminjamanAdminController::class, 'PeminjamanMasuk'])->name('peminjaman.admin.masuk');
+    Route::get('/peminjaman-proses', [PeminjamanAdminController::class, 'PeminjamanDiproses'])->name('peminjaman.admin.diproses');
+    Route::get('/peminjaman-setuju', [PeminjamanAdminController::class, 'PeminjamanDisetujui'])->name('peminjaman.admin.disetujui');
+    Route::get('/peminjaman-tolak', [PeminjamanAdminController::class, 'PeminjamanDitolak'])->name('peminjaman.admin.ditolak');
+    Route::put('/peminjaman/{id}/update-status', [PeminjamanAdminController::class, 'updateStatus'])->name('peminjaman.updateStatus');
 
     Route::resource('kategori', KategoriController::class);
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
@@ -71,16 +86,16 @@ Route::group(['middleware' => ['checkRole:user']], function () {
 
      Route::get('/peminjaman/create', [PeminjamanController::class, 'create'])
         ->name('peminjaman.create');
-    
+
     Route::post('/peminjaman', [PeminjamanController::class, 'store'])
         ->name('peminjaman.store');
-    
+
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])
         ->name('peminjaman.index');
-    
+
     Route::get('/peminjaman/{peminjaman}', [PeminjamanController::class, 'show'])
         ->name('peminjaman.show');
-    
+
     Route::post('/peminjaman/{peminjaman}/cancel', [PeminjamanController::class, 'cancel'])
         ->name('peminjaman.cancel');
 
