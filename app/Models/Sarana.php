@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sarana extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'IdKategori',
         'gambar',

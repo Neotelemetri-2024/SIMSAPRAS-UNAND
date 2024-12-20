@@ -67,6 +67,7 @@
                      <th scope="col" class="px-6 py-3">Fasilitas</th>
                      <th scope="col" class="px-6 py-3">Gambar</th>
                      <th scope="col" class="px-6 py-3">Kelola Ruangan</th>
+                     <th scope="col" class="px-6 py-3">Status</th>
                      <th scope="col" class="px-6 py-3">Aksi</th>
                   </tr>
                </thead>
@@ -91,40 +92,54 @@
                         @endif
                      </td>
                       <td class="px-6 py-4">
-        <div class="flex space-x-2">
-            @if($item->kategoriSarana->jenis == 'Gedung Beruangan')
-          <a href="{{ route('ruangan.index', ['idSarana' => $item->id]) }}"
-   class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200">
-    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-    </svg>
-    Ruangan
-</a>
-            @else
-                <!-- Menampilkan tulisan 'Tidak Tersedia' jika kategori bukan Gedung Beruangan -->
-                <span class="text-gray-400">Tidak Tersedia</span>
-            @endif
-        </div>
-    </td>
-                    <td class="px-6 py-4">
-    <div class="flex space-x-2">
-        <button data-modal-target="editModal{{ $item->id }}"
-                data-modal-toggle="editModal{{ $item->id }}"
-                class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-            </svg>
-        </button>
-        <button data-modal-target="deleteModal{{ $item->id }}"
-                data-modal-toggle="deleteModal{{ $item->id }}"
-                class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-            </svg>
-        </button>
-    </div>
-</td>
-
+                        <div class="flex space-x-2">
+                              @if($item->kategoriSarana->jenis == 'Gedung Beruangan')
+                           <a href="{{ route('ruangan.index', ['idSarana' => $item->id]) }}"
+                              class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200">
+                              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                              </svg>
+                              Ruangan
+                           </a>
+                              @else
+                                 <span class="text-gray-400">Tidak Tersedia</span>
+                              @endif
+                        </div>
+                     </td>
+                     <td class="px-6 py-4">
+                        @if($item->status == "aktif")
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-100">
+                            Aktif
+                        </span>
+                        @else
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-100">
+                            Nonaktif
+                        </span>
+                        @endif
+                     </td>
+                     <td class="px-6 py-4">
+                        <div class="flex space-x-2">
+                            <!-- Tombol Edit -->
+                            <button data-modal-target="editModal{{ $item->id }}"
+                                    data-modal-toggle="editModal{{ $item->id }}"
+                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                            </button>
+                    
+                            <!-- Tombol Sampah (Hanya jika status Nonaktif) -->
+                            @if($item->status == "nonaktif")
+                            <button data-modal-target="deleteModal{{ $item->id }}"
+                                    data-modal-toggle="deleteModal{{ $item->id }}"
+                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </button>
+                            @endif
+                        </div>
+                     </td>  
                   </tr>
                   @endforeach
                </tbody>

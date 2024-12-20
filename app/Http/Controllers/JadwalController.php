@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class JadwalController extends Controller
 {
-    // Menampilkan semua jadwal
     public function index()
     {
         $jadwal = Jadwal::all();
@@ -15,7 +14,6 @@ class JadwalController extends Controller
         return view('admin.jadwal', compact('jadwal'));
     }
 
-    // Menyimpan jadwal baru
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -29,7 +27,6 @@ class JadwalController extends Controller
         return redirect()->route('jadwal.index')->with('success', 'Jadwal berhasil ditambahkan');
     }
 
-    // Memperbarui jadwal
     public function update(Request $request, Jadwal $jadwal)
     {
         try {
@@ -38,7 +35,6 @@ class JadwalController extends Controller
                 'mulai' => 'required',
                 'selesai' => 'required',
             ]);
-            // Format waktu sebelum update
             $validated['mulai'] = date('H:i', strtotime($request->mulai));
             $validated['selesai'] = date('H:i', strtotime($request->selesai));
             $jadwal->update($validated);
@@ -49,7 +45,6 @@ class JadwalController extends Controller
         }
     }
 
-    // Menghapus jadwal
     public function destroy(Jadwal $jadwal)
     {
         try {

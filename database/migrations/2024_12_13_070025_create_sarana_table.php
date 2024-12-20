@@ -10,11 +10,14 @@ return new class extends Migration
     {
         Schema::create('sarana', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('IdKategori')->constrained('kategori_sarana');
+            $table->foreignId('IdKategori')
+                  ->constrained('kategori_sarana')
+                  ->onDelete('cascade');
             $table->string('gambar');
             $table->text('deskripsi');
             $table->string('nama');
             $table->string('fasilitas')->nullable();
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
         });
     }

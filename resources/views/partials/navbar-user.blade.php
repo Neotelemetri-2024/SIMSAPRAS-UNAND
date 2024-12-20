@@ -1,14 +1,14 @@
 <nav class="bg-white dark:bg-gray-900 fixed w-full z-50 border-b border-gray-200 h-20">
    <div class="max-w-screen-xl h-full flex flex-wrap items-center justify-between mx-auto px-4">
       <!-- Logo Section remains the same -->
-      <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
+      <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
          <div class="bg-green-600 text-white p-2 rounded-lg">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
             </svg>
          </div>
          <div class="flex flex-col">
-            <span class="text-xl font-semibold text-gray-900">SISMSAPRAS</span>
+            <span class="text-xl font-semibold text-gray-900">SIMSAPRAS</span>
             <span class="text-sm text-gray-500">Universitas Andalas</span>
          </div>
       </a>
@@ -24,7 +24,7 @@
          <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:items-center md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white h-full">
             <!-- Home -->
             <li class="flex items-center h-full">
-               <a href="#" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-600 md:p-0"aria-current="page">Beranda</a>
+               <a href="{{ route('home') }}" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-600 md:p-0"aria-current="page">Beranda</a>
             </li>
             <!-- Features Dropdown -->
             <li class="relative w-full md:w-auto">
@@ -99,12 +99,12 @@
                   <!-- User Dropdown Menu -->
                   <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
                      <div class="px-4 py-3">
-                        <span class="block text-sm text-gray-900 dark:text-white">Asep</span>
-                        <span class="block text-sm text-gray-500 truncate dark:text-gray-400">Asep@gmail.com</span>
+                        <span class="block text-sm text-gray-900 dark:text-white">{{ $pengguna->name }}</span>
+                        <span class="block text-sm text-gray-500 truncate dark:text-gray-400">{{ $pengguna->email }}</span>
                      </div>
                      <ul class="py-2" aria-labelledby="user-menu-button">
                         <li>
-                           <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Dashboard</a>
+                           <a href="{{ route('profile.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Dashboard</a>
                         </li>
                         <li>
                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Settings</a>
@@ -112,9 +112,12 @@
                         <li>
                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Earnings</a>
                         </li>
-                        <li>
-                           <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
-                        </li>
+                        <form method="POST" action="{{ route('logout') }}">
+                           <li class="hover:bg-gray-100"> 
+                              @csrf
+                              <button class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100" type="submit">logout </button>
+                           </li>
+                        </form>
                      </ul>
                   </div>
                </div>

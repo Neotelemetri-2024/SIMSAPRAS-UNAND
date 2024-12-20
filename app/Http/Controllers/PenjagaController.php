@@ -13,17 +13,21 @@ class PenjagaController extends Controller
     public function index(Request $request)
     {
         $search = $request->input("search");
+        $selectedSarana = $request->input("sarana"); // Ubah default menjadi string kosong
 
         $penjaga = Penjaga::with('sarana')
             ->when($search, function ($query, $search) {
                 $query->where('nama', 'like', "%{$search}%")
-                      ->orWhere('kontak', 'like', "%{$search}%");
+                    ->orWhere('kontak', 'like', "%{$search}%");
+            })
+            ->when($selectedSarana, function ($query) use ($selectedSarana) {
+                $query->where('idSarana', $selectedSarana);
             })
             ->paginate(5);
-
+        
         $sarana = Sarana::all();
-
-        return view('admin.penjaga', compact('penjaga', 'sarana', 'search'));
+        
+        return view('admin.penjaga', compact('penjaga', 'sarana', 'search', 'selectedSarana'));
     }
 
     public function store(Request $request)
