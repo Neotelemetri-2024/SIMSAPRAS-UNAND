@@ -11,15 +11,28 @@ class KategoriSaranaSeeder extends Seeder
         $kategori = [
             [
                 'jenis' => 'Gedung Beruangan',
-                'deskripsi' => 'Sarana berupa gedung untuk berbagai kegiatan'
+                'deskripsi' => 'Sarana berupa gedung untuk berbagai kegiatan',
+                'status' => 'aktif'
             ],
             [
                 'jenis' => 'Gedung Tunggal',
-                'deskripsi' => 'Sarana berupa gedung untuk berbagai kegiatan'
+                'deskripsi' => 'Sarana berupa gedung untuk berbagai kegiatan',
+                'status' => 'nonaktif'
             ],
             [
                 'jenis' => 'Lapangan',
-                'deskripsi' => 'Sarana olahraga outdoor'
+                'deskripsi' => 'Sarana olahraga outdoor',
+                'status' => 'aktif'
+            ],
+            [
+                'jenis' => 'Perpustakaan',
+                'deskripsi' => 'Sarana berupa gedung untuk berbagai kegiatan',
+                'status' => 'aktif'
+            ],
+            [
+                'jenis' => 'Laboratorium',
+                'deskripsi' => 'Sarana berupa gedung untuk berbagai kegiatan',
+                'status' => 'nonaktif'
             ],
         ];
 

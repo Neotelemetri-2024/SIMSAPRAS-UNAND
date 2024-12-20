@@ -24,6 +24,17 @@
                         value="{{ request('search') }}">
                 </div>
             </div>
+            <div class="w-48">
+               <select name="sarana"
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                   <option value="">Semua Gedung</option>
+                   @foreach($sarana as $sar)
+                       <option value="{{ $sar->id }}" {{ request('sarana') == $sar->id ? 'selected' : '' }}>
+                           {{ $sar->nama }}
+                       </option>
+                   @endforeach
+               </select>
+           </div>
             <button type="submit"
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                 Cari
@@ -37,6 +48,7 @@
             {{ session('success') }}
          </div>
          @endif
+
          <!-- Table -->
          <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -337,6 +349,37 @@
            if (event.target === modal) {
                closeModal(modal.id);
            }
+       });
+   });
+
+   document.addEventListener('DOMContentLoaded', function() {
+       const tabButtons = document.querySelectorAll('.tab-button');
+       const tableRows = document.querySelectorAll('tbody tr');
+
+       tabButtons.forEach(button => {
+           button.addEventListener('click', function() {
+               // Remove active class from all buttons
+               tabButtons.forEach(btn => {
+                   btn.classList.remove('text-blue-600', 'border-blue-600', 'active');
+                   btn.classList.add('border-transparent');
+               });
+
+               // Add active class to clicked button
+               this.classList.add('text-blue-600', 'border-blue-600', 'active');
+               this.classList.remove('border-transparent');
+
+               const selectedSarana = this.getAttribute('data-sarana');
+
+               // Show/hide table rows based on sarana
+               tableRows.forEach(row => {
+                   const saranaId = row.getAttribute('data-sarana-id');
+                   if (selectedSarana === 'all' || saranaId === selectedSarana) {
+                       row.classList.remove('hidden');
+                   } else {
+                       row.classList.add('hidden');
+                   }
+               });
+           });
        });
    });
 </script>
