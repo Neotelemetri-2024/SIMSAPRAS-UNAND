@@ -10,7 +10,9 @@ return new class extends Migration
     {
         Schema::create('penjaga', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('idSarana')->constrained('sarana');
+            $table->foreignId('idSarana')
+                  ->constrained('sarana')
+                  ->onDelete('cascade');
             $table->string('kontak');
             $table->string('nama');
             $table->timestamps();

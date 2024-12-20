@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('jenis')->nullable();
             $table->text('deskripsi')->nullable();
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
         });
     }

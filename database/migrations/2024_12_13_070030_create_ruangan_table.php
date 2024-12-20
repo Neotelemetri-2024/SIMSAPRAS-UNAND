@@ -10,12 +10,15 @@ return new class extends Migration
     {
         Schema::create('ruangan', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('idSarana')->constrained('sarana');
+            $table->foreignId('idSarana')
+                  ->constrained('sarana')
+                  ->onDelete('cascade');
             $table->string('nama');
             $table->string('gambar');
             $table->text('deskripsi');
             $table->integer('kapasitas');
             $table->string('fasilitas')->nullable();
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
         });
     }

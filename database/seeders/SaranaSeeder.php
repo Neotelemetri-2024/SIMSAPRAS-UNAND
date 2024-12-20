@@ -15,21 +15,24 @@ class SaranaSeeder extends Seeder
                 'nama' => 'Gedung A',
                 'gambar' => 'gedung-a.jpg',
                 'deskripsi' => 'Gedung perkuliahan 4 lantai',
-                'fasilitas' => 'AC, Proyektor, Wifi'
+                'fasilitas' => 'AC, Proyektor, Wifi',
+                'status' => 'aktif'
             ],
             [
                 'IdKategori' => 2,
                 'nama' => 'Lapangan Sepakbola',
                 'gambar' => 'lapangan.jpg',
                 'deskripsi' => 'Lapangan sepakbola standar internasional',
-                'fasilitas' => 'Rumput sintetis, Tribun, Lampu sorot'
+                'fasilitas' => 'Rumput sintetis, Tribun, Lampu sorot',
+                'status' => 'nonaktif'
             ],
             [
                 'IdKategori' => 3,
                 'nama' => 'Auditorium Utama',
                 'gambar' => 'audi.jpg',
                 'deskripsi' => 'Auditorium dengan kapasitas 1000 orang',
-                'fasilitas' => 'Sound system, AC, Lighting'
+                'fasilitas' => 'Sound system, AC, Lighting',
+                'status' => 'aktif'
             ]
         ];
 

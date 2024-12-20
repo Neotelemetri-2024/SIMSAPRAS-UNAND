@@ -16,15 +16,17 @@ class RuanganSeeder extends Seeder
                 'gambar' => 'ruang-101.jpg',
                 'deskripsi' => 'Ruang kuliah lantai 1',
                 'kapasitas' => 40,
-                'fasilitas' => 'AC, Proyektor, 40 kursi'
+                'fasilitas' => 'AC, Proyektor, 40 kursi',
+                'status' => 'aktif'
             ],
             [
-                'idSarana' => 1,
+                'idSarana' => 2,
                 'nama' => 'Ruang 102',
                 'gambar' => 'ruang-102.jpg',
                 'deskripsi' => 'Ruang kuliah lantai 1',
                 'kapasitas' => 40,
-                'fasilitas' => 'AC, Proyektor, 40 kursi'
+                'fasilitas' => 'AC, Proyektor, 40 kursi',
+                'status' => 'nonaktif'
             ],
             [
                 'idSarana' => 3,
@@ -32,7 +34,8 @@ class RuanganSeeder extends Seeder
                 'gambar' => 'vip.jpg',
                 'deskripsi' => 'Ruang VIP Auditorium',
                 'kapasitas' => 20,
-                'fasilitas' => 'AC, Sofa, TV'
+                'fasilitas' => 'AC, Sofa, TV',
+                'status' => 'aktif'
             ]
         ];
 

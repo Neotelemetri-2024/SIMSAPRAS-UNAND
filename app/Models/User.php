@@ -39,11 +39,6 @@ class User extends Authenticatable
         return $this->hasMany(Peminjaman::class, 'idUser');
     }
 
-
-
-
-   
-
     /**
      * The attributes that should be hidden for serialization.
      *
