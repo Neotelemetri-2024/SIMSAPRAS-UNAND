@@ -5,7 +5,7 @@
       <!-- Card Header -->
       <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
          <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Data Jadwal</h5>
-         <button data-modal-target="createModal" data-modal-toggle="createModal" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
+         <button data-modal-target="createModal" data-modal-toggle="createModal" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
          + Tambah Jadwal
          </button>
       </div>

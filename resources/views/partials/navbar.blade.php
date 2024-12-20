@@ -56,7 +56,7 @@
                                 <li class="hover:bg-gray-100">
                                        
                 @csrf
-            <button class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100" type="submit">logout </button>
+            <button class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100" type="submit">Logout</button>
          
 
                                 </li>

@@ -10,14 +10,19 @@ class KategoriController extends Controller
     // Menampilkan semua kategori sarana
     public function index(Request $request)
     {
-        $search = $request->input("search");
-        $kategori = KategoriSarana::when($search, function ($query, $search){
+        $search = $request->input('search');
+        $status = $request->input('status');
 
-            $query->where('jenis', 'like', "%{$search}%");
-        })
-        ->paginate(5);
+        $kategori = KategoriSarana::query()
+            ->when($search, function ($query, $search) {
+                $query->where('jenis', 'like', "%{$search}%");
+            })
+            ->when($status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->paginate(5);
 
-        return view('admin.kategori', compact('kategori', 'search'));
+        return view('admin.kategori', compact('kategori'));
     }
 
     // Menyimpan kategori sarana baru
