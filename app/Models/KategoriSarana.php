@@ -13,7 +13,8 @@ class KategoriSarana extends Model
 
     protected $fillable = [
         'jenis',
-        'deskripsi'
+        'deskripsi',
+        'status',
     ];
 
     public function sarana()

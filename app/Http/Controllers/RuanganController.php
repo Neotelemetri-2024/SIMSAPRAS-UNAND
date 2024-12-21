@@ -29,6 +29,7 @@ class RuanganController extends Controller
             ->when($status, function ($query, $status) {
                 $query->where('status', $status);
             })
+            ->latest()
             ->paginate(5);
             
         $sarana = Sarana::findOrFail($idSarana);
@@ -153,30 +154,35 @@ class RuanganController extends Controller
     public function destroy($idSarana, $id)
     {
         $ruangan = Ruangan::findOrFail($id);
-
+        
         DB::beginTransaction();
-
         try {
-            // Delete main image
+            // Nonaktifkan ruangan
+            $ruangan->update(['status' => 'nonaktif']);
+            
+            // Hapus gambar utama dari storage
             if ($ruangan->gambar) {
-                Storage::delete($ruangan->gambar);
+                Storage::disk()->delete($ruangan->gambar);
             }
-
-            // Delete additional images
+            
+            // Hapus gambar tambahan dari storage dan database
             foreach ($ruangan->gambarRuangan as $gambar) {
-                Storage::delete($gambar->gambar);
+                Storage::disk()->delete($gambar->gambar);
                 $gambar->delete();
             }
-
-            // Delete ruangan
-            $ruangan->delete();
-
+            
             DB::commit();
-            return redirect()->route('ruangan.index', $idSarana)
-                           ->with('success', 'Ruangan berhasil dihapus');
+            
+            return redirect()
+                ->route('ruangan.index', $idSarana)
+                ->with('success', 'Ruangan berhasil dinonaktifkan dan gambar terkait berhasil dihapus');
+                
         } catch (\Exception $e) {
             DB::rollback();
-            return back()->with('error', 'Terjadi kesalahan saat menghapus ruangan');
+            
+            return redirect()
+                ->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
@@ -201,6 +207,7 @@ class RuanganController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
+    
     public function show(Ruangan $ruangan)
     {
         // Load relationships

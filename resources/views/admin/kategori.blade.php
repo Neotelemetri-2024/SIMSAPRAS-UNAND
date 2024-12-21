@@ -77,18 +77,17 @@
                         @endif
                      </td>
                      <td class="px-6 py-4">
-                        <div class="flex space-x-2">
-                            <!-- Tombol Edit -->
-                            <button data-modal-target="editModal{{ $item->id }}"
-                                    data-modal-toggle="editModal{{ $item->id }}"
-                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                </svg>
-                            </button>
-                    
+                        <div class="flex space-x-2">                    
                             <!-- Tombol Sampah (Hanya jika status Nonaktif) -->
                             @if($item->status == "aktif")
+                            <!-- Tombol Edit -->
+                            <button data-modal-target="editModal{{ $item->id }}"
+                              data-modal-toggle="editModal{{ $item->id }}"
+                              class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                              </svg>
+                           </button>
                             <button data-modal-target="deleteModal{{ $item->id }}"
                                     data-modal-toggle="deleteModal{{ $item->id }}"
                                     class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200">
@@ -275,7 +274,6 @@
 </div>
 @endforeach
 
-<!-- Delete Confirmation Modals -->
 @foreach($kategori as $item)
 <div id="deleteModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
    <div class="relative w-full max-w-md max-h-full">
@@ -294,7 +292,7 @@
                @csrf
                @method('DELETE')
                <button type="submit" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
-                  Ya, saya yakin
+                  Ya, Nonaktifkan
                </button>
                <button type="button" data-modal-hide="deleteModal{{ $item->id }}" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
                   Tidak, batal
