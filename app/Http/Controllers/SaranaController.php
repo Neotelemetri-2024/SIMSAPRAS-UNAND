@@ -40,43 +40,62 @@ class SaranaController extends Controller
             }
         }
         
-        $sarana = $query->paginate(5);
-        $kategori = KategoriSarana::all();
-        
+        $sarana = $query->latest()->paginate(5);
+        $kategori = KategoriSarana::where('status', 'aktif')->get();
+                
         return view('admin.sarana', compact('sarana', 'kategori', 'search', 'filter'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'IdKategori' => 'required|exists:kategori_sarana,id',
-            'nama' => 'required|string|max:255|unique:sarana,nama',
-            'deskripsi' => 'required|string',
-            'fasilitas' => 'required|string',
-            'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Gambar utama
-            'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Gambar tambahan
-        ]);
+        try {
+            // Validasi input
+            $validated = $request->validate([
+                'IdKategori' => 'required|exists:kategori_sarana,id',
+                'nama' => 'required|string|max:255',
+                'deskripsi' => 'required|string',
+                'fasilitas' => 'required|string',
+                'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            ]);
 
-        // Handle gambar utama
-        if ($request->hasFile('gambar')) {
-            $validated['gambar'] = $request->file('gambar')->store('sarana', 'public');
-        }
+            // Cek sarana dengan nama yang sama dan status aktif
+            $existingSarana = Sarana::where('nama', $validated['nama'])
+                ->where('status', 'aktif')
+                ->exists();
 
-        // Create sarana
-        $sarana = Sarana::create($validated);
-
-        // Handle gambar tambahan
-        if ($request->hasFile('gambar_tambahan')) {
-            foreach($request->file('gambar_tambahan') as $image) {
-                $path = $image->store('sarana/tambahan', 'public');
-                $sarana->gambarSarana()->create([
-                    'gambar' => $path
-                ]);
+            if ($existingSarana) {
+                return redirect()->route('sarana.index')->with('error', 'Sarana dengan nama tersebut sudah ada dan masih aktif');
             }
-        }
 
-        return redirect()->route('sarana.index')->with('success', 'Data berhasil ditambahkan');
+            // Handle upload gambar utama
+            if ($request->hasFile('gambar')) {
+                $validated['gambar'] = $request->file('gambar')->store('sarana', 'public');
+            }
+
+            // Buat record sarana baru
+            $sarana = Sarana::create($validated);
+
+            // Handle upload gambar tambahan
+            if ($request->hasFile('gambar_tambahan')) {
+                foreach ($request->file('gambar_tambahan') as $image) {
+                    $path = $image->store('sarana/tambahan', 'public');
+                    $sarana->gambarSarana()->create([
+                        'gambar' => $path,
+                    ]);
+                }
+            }
+
+            return redirect()
+                ->route('sarana.index')
+                ->with('success', 'Data sarana berhasil ditambahkan');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('sarana.index')
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
+
 
     public function update(Request $request, Sarana $sarana)
     {
@@ -127,95 +146,124 @@ class SaranaController extends Controller
 
         return redirect()->route('sarana.index')->with('success', 'Data berhasil diperbarui');
     }
+    
     public function daftarSarana(Request $request)
-{
-    $search = $request->input("search");
-    $filterKategori = $request->input("kategori");
+    {
+        $search = $request->input("search");
+        $filterKategori = $request->input("kategori");
 
-    $sarana = Sarana::with('kategoriSarana')
-        ->when($search, function ($query, $search) {
-            $query->where('nama', 'like', "%{$search}%")
-                  ->orWhere('deskripsi', 'like', "%{$search}%")
-                  ->orWhere('fasilitas', 'like', "%{$search}%");
-        })
-        ->when($filterKategori, function ($query, $filterKategori) {
-            $query->where('IdKategori', $filterKategori);
-        })
-        ->paginate(6); // Mengubah jumlah item per halaman menjadi 6 agar sesuai dengan grid
-
-    return view('sarana', compact('sarana', 'search', 'filterKategori'));
-}
-
-  public function userShow(Sarana $sarana, Request $request)
-{
-    $search = $request->input('search');
-    
-    // Load relationships
-    $sarana->load(['kategoriSarana', 'gambarSarana', 'penjaga']);
-    
-    // Initialize $ruangan and $events as empty collections by default
-    $ruangan = collect();
-    $events = [];  // Change to array instead of collection
-    
-    // Query ruangan if kategori is Gedung Beruangan
-    if ($sarana->kategoriSarana->jenis === 'Gedung Beruangan') {
-        $ruangan = $sarana->ruangan()
+        $sarana = Sarana::with('kategoriSarana')
             ->when($search, function ($query, $search) {
                 $query->where('nama', 'like', "%{$search}%")
-                      ->orWhere('deskripsi', 'like', "%{$search}%");
+                    ->orWhere('deskripsi', 'like', "%{$search}%")
+                    ->orWhere('fasilitas', 'like', "%{$search}%");
             })
-            ->paginate(6);
-    } else {
-        // Get peminjaman data for non-Gedung Beruangan
-        $peminjaman = Peminjaman::with(['tanggalPeminjaman', 'jadwal'])
-            ->where('idSarana', $sarana->id)
-            ->whereIn('status', ['diajukan', 'disetujui'])
-            ->get();
-            
-        // Create events array
-        foreach($peminjaman as $item) {
-            foreach($item->tanggalPeminjaman as $tanggal) {
-                $events[] = [
-                    'id' => $item->id,
-                    'title' => $item->kegiatan,
-                    'start' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $item->jadwal->mulai,
-                    'end' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $item->jadwal->selesai,
-                    'status' => $item->status
-                ];
+            ->when($filterKategori, function ($query, $filterKategori) {
+                $query->where('IdKategori', $filterKategori);
+            })
+            ->latest()
+            ->where('status', 'aktif')
+            ->paginate(6); // Mengubah jumlah item per halaman menjadi 6 agar sesuai dengan grid
+
+        return view('sarana', compact('sarana', 'search', 'filterKategori'));
+    }
+
+    public function userShow(Sarana $sarana, Request $request)
+    {
+        $search = $request->input('search');
+        
+        // Load relationships
+        $sarana->load(['kategoriSarana', 'gambarSarana', 'penjaga']);
+        
+        // Initialize $ruangan and $events as empty collections by default
+        $ruangan = collect();
+        $events = [];  // Change to array instead of collection
+        
+        // Query ruangan if kategori is Gedung Beruangan
+        if ($sarana->kategoriSarana->jenis === 'Gedung Beruangan') {
+            $ruangan = $sarana->ruangan()
+                ->when($search, function ($query, $search) {
+                    $query->where('nama', 'like', "%{$search}%")
+                        ->orWhere('deskripsi', 'like', "%{$search}%");
+                })
+                ->latest()
+                ->where('status', 'aktif')
+                ->paginate(6);
+        } else {
+            // Get peminjaman data for non-Gedung Beruangan
+            $peminjaman = Peminjaman::with(['tanggalPeminjaman', 'jadwal'])
+                ->where('idSarana', $sarana->id)
+                ->whereIn('status', ['diajukan', 'disetujui'])
+                ->get();
+                
+            // Create events array
+            foreach($peminjaman as $item) {
+                foreach($item->tanggalPeminjaman as $tanggal) {
+                    $events[] = [
+                        'id' => $item->id,
+                        'title' => $item->kegiatan,
+                        'start' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $item->jadwal->mulai,
+                        'end' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $item->jadwal->selesai,
+                        'status' => $item->status
+                    ];
+                }
             }
         }
+        
+        return view('detailsarana', compact('sarana', 'ruangan', 'search', 'events'));
     }
     
-    return view('detailsarana', compact('sarana', 'ruangan', 'search', 'events'));
-}
     public function destroy(Sarana $sarana)
     {
-        // Hapus file gambar
-        if ($sarana->gambar) {
-            Storage::disk('public')->delete($sarana->gambar);
-        }
+        try {
+            // Mulai transaksi database
+            DB::beginTransaction();
 
-        // Hapus gambar sarana
-        $sarana->gambarSarana->each(function ($gambar) {
-            Storage::disk('public')->delete($gambar->gambar);
-        });
-
-        // Hapus gambar ruangan
-        $sarana->ruangan->each(function ($ruangan) {
-            $ruangan->gambarRuangan->each(function ($gambar) {
+            // Nonaktifkan sarana
+            $sarana->update(['status' => 'nonaktif']);
+            
+            // Hapus gambar utama sarana
+            if ($sarana->gambar) {
+                Storage::disk('public')->delete($sarana->gambar);
+            }
+            
+            // Hapus gambar tambahan sarana
+            foreach ($sarana->gambarSarana as $gambar) {
                 Storage::disk('public')->delete($gambar->gambar);
-            });
-            $ruangan->gambarRuangan()->delete();
-            // Hapus peminjaman terkait ruangan
-            $ruangan->peminjaman()->delete();
-        });
+                $gambar->delete();
+            }
+            
+            // Nonaktifkan ruangan terkait dan hapus gambarnya
+            foreach ($sarana->ruangan as $ruangan) {
+                // Nonaktifkan ruangan
+                $ruangan->update(['status' => 'nonaktif']);
+                
+                // Hapus gambar utama ruangan
+                if ($ruangan->gambar) {
+                    Storage::disk()->delete($ruangan->gambar);
+                }
+                
+                // Hapus gambar tambahan ruangan
+                foreach ($ruangan->gambarRuangan as $gambar) {
+                    Storage::disk()->delete($gambar->gambar);
+                    $gambar->delete();
+                }
+            }
 
-        // Lanjutkan dengan penghapusan lainnya
-        $sarana->gambarSarana()->delete();
-        $sarana->ruangan()->delete();
-        $sarana->penjaga()->delete();
-        $sarana->delete();
+            // Commit transaksi jika semua operasi berhasil
+            DB::commit();
 
-        return redirect()->route('sarana.index')->with('success', 'Data berhasil dihapus');
+            return redirect()
+                ->route('sarana.index')
+                ->with('success', 'Sarana berhasil dinonaktifkan dan gambar-gambar terkait berhasil dihapus');
+                
+        } catch (\Exception $e) {
+            // Rollback transaksi jika terjadi error
+            DB::rollBack();
+            
+            return redirect()
+                ->route('sarana.index')
+                ->with('error', 'Gagal menonaktifkan sarana: ' . $e->getMessage());
+        }
     }
 }

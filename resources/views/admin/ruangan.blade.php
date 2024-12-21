@@ -12,9 +12,11 @@
                 </a>
                 <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Data Ruangan - {{ $sarana->nama }}</h5>
             </div>
+            @if($sarana->status == "aktif")
             <button data-modal-target="createModal" data-modal-toggle="createModal" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
                 + Tambah Ruangan
             </button>
+            @endif
         </div>
 
         <!-- Search Bar -->
@@ -52,6 +54,11 @@
             @if(session('success'))
             <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
                 {{ session('success') }}
+            </div>
+            @endif
+            @if(session('error'))
+            <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                {{ session('error') }}
             </div>
             @endif
 
@@ -117,17 +124,17 @@
                              </td>
                              <td class="px-6 py-4">
                                 <div class="flex space-x-2">
-                                    <!-- Tombol Edit -->
-                                    <button data-modal-target="editModal{{ $item->id }}"
-                                            data-modal-toggle="editModal{{ $item->id }}"
-                                            class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                        </svg>
-                                    </button>
                             
                                     <!-- Tombol Sampah (Hanya jika status Nonaktif) -->
                                     @if($item->status == "aktif")
+                                    <!-- Tombol Edit -->
+                                    <button data-modal-target="editModal{{ $item->id }}"
+                                        data-modal-toggle="editModal{{ $item->id }}"
+                                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                </button>
                                     <button data-modal-target="deleteModal{{ $item->id }}"
                                             data-modal-toggle="deleteModal{{ $item->id }}"
                                             class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200">
@@ -423,7 +430,7 @@
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
-                        Ya, saya yakin
+                        Ya, Nonaktifkan
                     </button>
                     <button type="button" data-modal-hide="deleteModal{{ $item->id }}" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900">
                         Tidak, batal
