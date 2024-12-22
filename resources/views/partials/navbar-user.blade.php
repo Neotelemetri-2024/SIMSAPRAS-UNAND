@@ -49,6 +49,12 @@
                   </ul>
                </div>
             </li>
+            {{-- Riwayat --}}
+            @can('is-user')
+            <li class="flex items-center h-full">
+                <a href="{{ route('riwayat.index') }}" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-600 md:p-0">Riwayat</a>
+             </li>
+             @endcan
             <!-- Resources Dropdown -->
             <li class="relative w-full md:w-auto">
                <button id="dropdownNavbarLink2" data-dropdown-toggle="dropdownNavbar2" class="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-600 md:p-0 md:w-auto">

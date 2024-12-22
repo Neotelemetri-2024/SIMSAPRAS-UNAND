@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Peminjaman extends Model
 {
     protected $table = 'peminjaman';
-    
+
     protected $fillable = [
         'idUser',
         'idRuangan',
@@ -22,7 +22,8 @@ class Peminjaman extends Model
         'feedbackPenolakan',
         'evaluasi',
         'status',
-        'feedbackPembatalan'
+        'feedbackPembatalan',
+        'buktiPembayaran'
     ];
 
     protected $enums = [
@@ -59,4 +60,3 @@ class Peminjaman extends Model
         return $this->hasMany(Notifikasi::class, 'idPeminjaman');
     }
 }
-

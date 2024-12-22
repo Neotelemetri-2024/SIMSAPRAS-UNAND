@@ -93,8 +93,8 @@
                <td class="px-6 py-4">
                         @if($item->gambar)
                         <div class="relative group">
-                            <img src="{{ Storage::url($item->gambar) }}" 
-                                 alt="Gambar" 
+                            <img src="{{ Storage::url($item->gambar) }}"
+                                 alt="Gambar"
                                  class="w-24 h-24 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
                                  onclick="showImagePreview('{{ Storage::url($item->gambar) }}')"
                             >
@@ -130,7 +130,7 @@
                         @endif
                      </td>
                      <td class="px-6 py-4">
-                        <div class="flex space-x-2">                    
+                        <div class="flex space-x-2">
                             <!-- Tombol Sampah (Hanya jika status Nonaktif) -->
                             @if($item->status == "aktif")
                             <!-- Tombol Edit -->
@@ -150,7 +150,7 @@
                             </button>
                             @endif
                         </div>
-                     </td>  
+                     </td>
                   </tr>
                   @endforeach
                </tbody>
@@ -366,7 +366,7 @@
                              <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Utama</label>
                         @if($item->gambar)
                         <div class="relative group mb-2">
-                            <img src="{{ Storage::url($item->gambar) }}" 
+                            <img src="{{ Storage::url($item->gambar) }}"
                                  class="w-32 h-32 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
                                  onclick="showImagePreview('{{ Storage::url($item->gambar) }}')"
                                  alt="Gambar Utama">

@@ -15,14 +15,12 @@ class PeminjamanAdminController extends Controller
         $query = Peminjaman::with(['user', 'sarana', 'jadwal', 'tanggalPeminjaman'])
             ->where('status', $status);
 
-        // Pencarian
         if ($search) {
             $query->whereHas('user', function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
             });
         }
 
-        // Sorting berdasarkan tanggal
         if ($sort && in_array($sort, ['asc', 'desc'])) {
             $query->whereHas('tanggalPeminjaman', function($q) {
                 $q->select('idPeminjaman');

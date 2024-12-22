@@ -13,6 +13,7 @@ use App\Http\Controllers\PenjagaController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RiwayatController;
 use App\Http\Middleware\CheckRole;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
@@ -100,6 +101,10 @@ Route::group(['middleware' => ['checkRole:user']], function () {
         ->name('peminjaman.cancel');
 
     Route::get('/profile', [DetailProfileController::class, 'index'])->name('profile.index');
+
+    Route::resource('riwayat', RiwayatController::class);
+    Route::get('/riwayat', [RiwayatController::class, 'index'])->name('riwayat.index');
+    Route::post('/riwayat/{id}/upload-bukti', [RiwayatController::class, 'uploadBuktiPembayaran'])->name('riwayat.upload-bukti');
 
 });
 
