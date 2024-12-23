@@ -14,22 +14,27 @@ class TanggalPeminjamanSeeder extends Seeder
         $tanggal = [
             [
                 'idPeminjaman' => 1,
+                'idJadwal' => 1,
                 'tanggal' => Carbon::now()->format('Y-m-d')
             ],
             [
                 'idPeminjaman' => 1,
+                'idJadwal' => 2,
                 'tanggal' => Carbon::now()->addDays(1)->format('Y-m-d')
             ],
             [
                 'idPeminjaman' => 1,
+                'idJadwal' => 2,
                 'tanggal' => Carbon::now()->addDays(2)->format('Y-m-d')
             ],
             [
                 'idPeminjaman' => 2,
+                'idJadwal' => 3,
                 'tanggal' => Carbon::now()->addDays(7)->format('Y-m-d')
             ],
             [
                 'idPeminjaman' => 2,
+                'idJadwal' => 3,
                 'tanggal' => Carbon::now()->addDays(8)->format('Y-m-d')
             ]
         ];

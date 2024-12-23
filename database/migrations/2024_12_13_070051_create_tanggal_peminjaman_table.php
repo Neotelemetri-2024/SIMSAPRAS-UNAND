@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('tanggalPeminjaman', function (Blueprint $table) {
             $table->id();
             $table->foreignId('idPeminjaman')->constrained('peminjaman');
+            $table->foreignId('idJadwal')->constrained('jadwal');
             $table->date('tanggal');
             $table->timestamps();
         });

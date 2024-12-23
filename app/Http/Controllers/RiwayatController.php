@@ -11,8 +11,12 @@ class RiwayatController extends Controller
     public function index(Request $request) {
         $user = auth()->user();
         $sort = $request->input('sort', 'newest'); // Default to newest
-
-        $peminjaman = Peminjaman::with(['user', 'sarana', 'jadwal', 'tanggalPeminjaman'])
+    
+        $peminjaman = Peminjaman::with([
+            'user', 
+            'sarana', 
+            'tanggalPeminjaman.jadwal' // Load jadwal through tanggalPeminjaman
+        ])
             ->where('idUser', $user->id)
             ->when($sort == 'newest', function ($query) {
                 return $query->orderBy('updated_at', 'desc');
@@ -21,7 +25,7 @@ class RiwayatController extends Controller
                 return $query->orderBy('updated_at', 'asc');
             })
             ->paginate(5);
-
+    
         return view('riwayat', compact('peminjaman', 'sort'));
     }
 

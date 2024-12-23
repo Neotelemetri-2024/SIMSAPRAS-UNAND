@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('idUser')->constrained('users');
             $table->foreignId('idRuangan')->nullable()->constrained('ruangan');
-            $table->foreignId('idJadwal')->constrained('jadwal');
             $table->foreignId('idSarana')->constrained('sarana');
             $table->string('kegiatan');
             $table->string('suratPeminjaman');

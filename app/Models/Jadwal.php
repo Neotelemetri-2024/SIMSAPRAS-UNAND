@@ -14,8 +14,9 @@ class Jadwal extends Model
     ];
     protected $table = 'jadwal';
 
-    public function peminjaman()
+    public function jadwal()
     {
         return $this->hasMany(Peminjaman::class);
     }
+    
 }

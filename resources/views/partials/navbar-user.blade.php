@@ -2,10 +2,10 @@
    <div class="max-w-screen-xl h-full flex flex-wrap items-center justify-between mx-auto px-4">
       <!-- Logo Section remains the same -->
       <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
-         <div class="bg-green-600 text-white p-2 rounded-lg">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-            </svg>
+         <div class="h-12 w-12"> <!-- Atur ukuran sesuai kebutuhan -->
+            <img src="/assets/images/unand.png" 
+                 alt="Logo Unand" 
+                 class="h-full w-full object-contain">
          </div>
          <div class="flex flex-col">
             <span class="text-xl font-semibold text-green-700">SIMSAPRAS</span>
@@ -26,29 +26,10 @@
             <li class="flex items-center h-full">
                <a href="{{ route('home') }}" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-600 md:p-0"aria-current="page">Beranda</a>
             </li>
-            <!-- Features Dropdown -->
-            <li class="relative w-full md:w-auto">
-               <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" class="flex items-center justify-between w-full py-2 px-3 text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-600 md:p-0 md:w-auto">
-                  Fitur
-                  <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-                  </svg>
-               </button>
-               <!-- Dropdown menu -->
-               <div id="dropdownNavbar" class="z-10 hidden w-full md:w-44 font-normal bg-white divide-y divide-gray-100 md:rounded-lg shadow md:absolute md:left-0">
-                  <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownLargeButton">
-                     <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Peminjaman Ruang</a>
-                     </li>
-                     <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Jadwal Ruangan</a>
-                     </li>
-                     <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Statistik Penggunaan</a>
-                     </li>
-                  </ul>
-               </div>
-            </li>
+            <li class="flex items-center h-full">
+                <a href="{{ route('user.sarana') }}" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-600 md:p-0">Peminjaman</a>
+             </li>
+          
             {{-- Riwayat --}}
             @can('is-user')
             <li class="flex items-center h-full">
