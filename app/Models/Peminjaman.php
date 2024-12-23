@@ -11,7 +11,6 @@ class Peminjaman extends Model
     protected $fillable = [
         'idUser',
         'idRuangan',
-        'idJadwal',
         'idSarana',
         'kegiatan',
         'suratPeminjaman',
@@ -40,10 +39,7 @@ class Peminjaman extends Model
         return $this->belongsTo(Ruangan::class, 'idRuangan');
     }
 
-    public function jadwal()
-    {
-        return $this->belongsTo(Jadwal::class, 'idJadwal');
-    }
+ 
 
     public function sarana()
     {

@@ -69,8 +69,7 @@
                                 <th scope="col" class="px-6 py-3">No</th>
                                 <th scope="col" class="px-6 py-3">Nama Peminjam</th>
                                 <th scope="col" class="px-6 py-3">Instansi</th>
-                                <th scope="col" class="px-6 py-3">Tanggal Peminjaman</th>
-                                <th scope="col" class="px-6 py-3">Jadwal Peminjaman</th>
+                                <th scope="col" class="px-6 py-3">Tanggal & Jadwal Peminjaman</th>
                                 <th scope="col" class="px-6 py-3">Sarana yang Dipinjam</th>
                                 <th scope="col" class="px-6 py-3">Kegiatan</th>
                                 <th scope="col" class="px-6 py-3">Status</th>
@@ -87,12 +86,13 @@
                                     <td class="px-6 py-4">{{ $item->user->name }}</td>
                                     <td class="px-6 py-4">{{ $item->instansi }}</td>
                                     <td class="px-6 py-4">
-                                        <!-- Tampilkan semua tanggal -->
-                                        @foreach ($item->tanggalPeminjaman as $tanggal)
-                                            <span class="block">{{ $tanggal->tanggal }}</span>
-                                        @endforeach
-                                    </td>
-                                    <td class="px-6 py-4">{{ $item->jadwal->shift }}</td>
+    @foreach ($item->tanggalPeminjaman as $tanggal)
+        <div class="mb-2">
+            <div class="font-medium">{{ \Carbon\Carbon::parse($tanggal->tanggal)->format('d/m/Y') }}</div>
+            <div class="text-sm text-gray-600">{{ $tanggal->jadwal->mulai }} - {{ $tanggal->jadwal->selesai }}</div>
+        </div>
+    @endforeach
+</td>
                                     <td class="px-6 py-4">{{ $item->sarana->nama }}</td>
                                     <td class="px-6 py-4">{{ $item->kegiatan }}</td>
                                     <td class="px-6 py-4">
@@ -367,7 +367,7 @@
                         </button>
                     </div>
 
-                    <form action="{{ route('peminjaman.updateStatus', $item->id) }}" method="POST"
+                    <form id="updateForm{{ $item->id }}" action="{{ route('peminjaman.updateStatus', $item->id) }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
@@ -488,14 +488,16 @@
                         <!-- Modal Footer -->
                         <div
                             class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 bg-gray-50 rounded-b">
-                            <button type="submit"
-                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7" />
-                                </svg>
-                                Simpan Perubahan
-                            </button>
+  <!-- Ubah button type dari "submit" menjadi "button" -->
+<button type="button" 
+    onclick="confirmUpdate({{ $item->id }})"
+    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center">
+    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M5 13l4 4L19 7" />
+    </svg>
+    Simpan Perubahan
+</button>
                             <button type="button"
                                 class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 flex items-center"
                                 data-modal-hide="editModal{{ $item->id }}">
@@ -511,7 +513,7 @@
             </div>
         </div>
     @endforeach
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         // Fungsi untuk menutup modal
@@ -565,5 +567,117 @@
                 feedbackForm.classList.add('hidden');
             }
         }
+
+        function confirmUpdate(id) {
+    event.preventDefault();
+    
+    const status = document.getElementById(`statusSelect${id}`).value;
+    let title, text;
+    
+    // Sesuaikan pesan berdasarkan status
+    switch(status) {
+        case 'disetujui':
+            title = 'Konfirmasi Persetujuan';
+            text = 'Apakah Anda yakin ingin menyetujui peminjaman ini?';
+            break;
+        case 'ditolak':
+            title = 'Konfirmasi Penolakan';
+            text = 'Apakah Anda yakin ingin menolak peminjaman ini?';
+            break;
+        case 'diproses':
+            title = 'Konfirmasi Pemrosesan';
+            text = 'Apakah Anda yakin ingin memproses peminjaman ini?';
+            break;
+        default:
+            title = 'Konfirmasi Perubahan';
+            text = 'Apakah Anda yakin ingin mengubah status peminjaman ini?';
+    }
+    
+    Swal.fire({
+        title: title,
+        text: text,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Lanjutkan!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            submitForm(id);
+        }
+    });
+}
+
+function submitForm(id) {
+    const form = document.getElementById(`updateForm${id}`);
+    const formData = new FormData(form);
+    const status = document.getElementById(`statusSelect${id}`).value;
+    
+    // Tambahkan CSRF token
+    formData.append('_token', '{{ csrf_token() }}');
+    formData.append('_method', 'PUT');
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Sesuaikan pesan sukses berdasarkan status
+            let successMessage;
+            switch(status) {
+                case 'disetujui':
+                    successMessage = 'Peminjaman berhasil disetujui';
+                    break;
+                case 'ditolak':
+                    successMessage = 'Peminjaman berhasil ditolak';
+                    break;
+                case 'diproses':
+                    successMessage = 'Peminjaman berhasil diproses';
+                    break;
+                default:
+                    successMessage = 'Status peminjaman berhasil diperbarui';
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: successMessage,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.reload();
+                }
+            });
+        } else {
+            throw new Error(data.message || 'Terjadi kesalahan');
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: error.message,
+        });
+    });
+}
+
+// Inisialisasi feedback form saat modal dibuka
+document.addEventListener('DOMContentLoaded', function() {
+    const modals = document.querySelectorAll('[id^="editModal"]');
+    modals.forEach(modal => {
+        const id = modal.id.replace('editModal', '');
+        const select = document.getElementById(`statusSelect${id}`);
+        if (select) {
+            toggleFeedbackForm(id);
+        }
+    });
+});
+
     </script>
 @endsection

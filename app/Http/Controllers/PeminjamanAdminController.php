@@ -11,16 +11,20 @@ class PeminjamanAdminController extends Controller
     {
         $search = $request->input('search');
         $sort = $request->input('sort');
-
-        $query = Peminjaman::with(['user', 'sarana', 'jadwal', 'tanggalPeminjaman'])
+    
+        $query = Peminjaman::with([
+            'user', 
+            'sarana', 
+            'tanggalPeminjaman.jadwal' // Update relationship loading
+        ])
             ->where('status', $status);
-
+    
         if ($search) {
             $query->whereHas('user', function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
             });
         }
-
+    
         if ($sort && in_array($sort, ['asc', 'desc'])) {
             $query->whereHas('tanggalPeminjaman', function($q) {
                 $q->select('idPeminjaman');
@@ -34,8 +38,7 @@ class PeminjamanAdminController extends Controller
             }])
             ->orderBy('earliest_date', $sort);
         }
-
-        // Gunakan appends untuk menambahkan query string ke pagination
+    
         $peminjamanMasuk = $query->paginate(10);
         if ($search) {
             $peminjamanMasuk->appends('search', $search);
@@ -43,7 +46,7 @@ class PeminjamanAdminController extends Controller
         if ($sort) {
             $peminjamanMasuk->appends('sort', $sort);
         }
-
+    
         return view('admin.peminjaman', compact('peminjamanMasuk', 'search', 'title'));
     }
 
@@ -69,6 +72,7 @@ class PeminjamanAdminController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
+    try {
         $request->validate([
             'status' => 'required|in:disetujui,diproses,ditolak',
             'feedbackPenolakan' => 'nullable|required_if:status,ditolak|string|max:500',
@@ -107,7 +111,16 @@ class PeminjamanAdminController extends Controller
         }
 
         $peminjaman->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'Status peminjaman berhasil diperbarui'
+        ]);
 
-        return redirect()->back()->with('success', 'Status peminjaman berhasil diperbarui.');
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+        ], 500);
     }
+}
 }

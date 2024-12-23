@@ -1,74 +1,128 @@
 @extends('layouts.user')
 @section('content')
-<div class="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-    <div class="relative bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden">
-        <!-- Header Section with Avatar -->
-        <div class="relative bg-gradient-to-r from-green-600 to-green-400 p-12">
-            <!-- Background Pattern -->
-            <div class="absolute inset-0 opacity-10">
-                <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                        <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"/>
-                    </pattern>
-                    <rect width="100" height="100" fill="url(#grid)"/>
-                </svg>
+<!-- Hero Section -->
+<div class="relative overflow-hidden">
+    <!-- Background with overlay -->
+    <div class="absolute inset-0 bg-gradient-to-r from-green-600 to-green-800"></div>
+    
+    <!-- Navigation -->
+    <nav class="relative z-10 border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="text-white font-semibold text-xl">MyProfile</div>
+                <button onclick="toggleEditForm()" class="bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition-colors text-white flex items-center space-x-2">
+                    <i class="fas fa-pen"></i>
+                    <span>Edit Profile</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Content -->
+    <div class="relative z-10 max-w-7xl mx-auto px-6 py-24">
+        <div class="flex flex-col md:flex-row items-center gap-12">
+            <!-- Profile Image -->
+            <div class="relative">
+                <div class="w-32 h-32 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-user text-white/80 text-4xl"></i>
+                </div>
+                <div class="absolute -bottom-2 -right-2 w-6 h-6 bg-emerald-400 rounded-full border-4 border-green-800"></div>
             </div>
 
-            <!-- Edit Button -->
-            <button
-                class="absolute top-4 right-4 bg-white/30 hover:bg-white/50 rounded-full p-3 transition-all flex items-center justify-center group"
-                onclick="toggleEditForm()"
-            >
-                <i class="fas fa-pen text-white text-lg group-hover:scale-110 transition-transform"></i>
-            </button>
-
             <!-- Profile Info -->
-            <div class="flex flex-col items-center relative">
-                <!-- Avatar Container with Animation -->
-                <div class="relative mb-6">
-                    <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform duration-300">
-                        <i class="fas fa-user text-5xl text-gray-400"></i>
-                    </div>
-                    <!-- Status Indicator -->
-                    <div class="absolute bottom-2 right-2 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
-                </div>
-
-                <!-- User Info Container -->
-                <div class="space-y-3 text-center">
-                    <h2 class="text-3xl font-bold text-white mb-2 text-center" id="name">
-                        {{ $pengguna->name ?? 'Tidak diketahui' }}
-                    </h2>
-                    
-                    <!-- Contact Info with Icons -->
-                    <div class="flex items-center justify-center space-x-2 text-green-50">
+            <div class="text-center md:text-left">
+                <h1 class="text-4xl font-bold text-white mb-4">{{ $pengguna->name ?? 'Tidak diketahui' }}</h1>
+                <div class="flex flex-col md:flex-row gap-6 text-lg text-white/80">
+                    <div class="flex items-center gap-2">
                         <i class="fas fa-phone-alt"></i>
-                        <p class="text-green-50" id="kontak">
-                            {{ $pengguna->kontak ?? 'Tidak diketahui' }}
-                        </p>
+                        <span>{{ $pengguna->kontak ?? 'Tidak diketahui' }}</span>
                     </div>
-                    
-                    <div class="flex items-center justify-center space-x-2 text-green-50">
+                    <div class="flex items-center gap-2">
                         <i class="fas fa-envelope"></i>
-                        <p class="text-green-50" id="email">
-                            {{ $pengguna->email ?? 'Tidak diketahui' }}
-                        </p>
+                        <span>{{ $pengguna->email ?? 'Tidak diketahui' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="bg-green-50">
+    <div class="max-w-7xl mx-auto px-6 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Stat Card 1 -->
+            <div class="bg-white rounded-xl p-6 hover:shadow-lg transition-all border border-green-100">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Total Peminjaman</h3>
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-book text-green-600"></i>
+                    </div>
+                </div>
+                <p class="text-3xl font-bold text-gray-900">0</p>
+                <p class="text-sm text-gray-500 mt-1">Peminjaman aktif</p>
+            </div>
+
+            <!-- Stat Card 2 -->
+            <div class="bg-white rounded-xl p-6 hover:shadow-lg transition-all border border-green-100">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Status Akun</h3>
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-check text-green-600"></i>
+                    </div>
+                </div>
+                <p class="text-3xl font-bold text-green-600">Aktif</p>
+                <p class="text-sm text-gray-500 mt-1">Status saat ini</p>
+            </div>
+
+            <!-- Stat Card 3 -->
+            <div class="bg-white rounded-xl p-6 hover:shadow-lg transition-all border border-green-100">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Bergabung Sejak</h3>
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-calendar text-green-600"></i>
+                    </div>
+                </div>
+                <p class="text-3xl font-bold text-gray-900">2024</p>
+                <p class="text-sm text-gray-500 mt-1">Tahun bergabung</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Additional Info Section -->
+<div class="max-w-7xl mx-auto px-6 py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <!-- Recent Activity -->
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Aktivitas Terbaru</h2>
+            <div class="space-y-4">
+                <div class="flex items-center gap-4 p-4 bg-white rounded-xl hover:shadow-md transition-all border border-green-100">
+                    <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-book text-green-600"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">Belum ada aktivitas</p>
+                        <p class="text-sm text-gray-500">Aktivitas akan muncul di sini</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Additional Info Section -->
-        <div class="p-6 bg-white">
+        <!-- Quick Actions -->
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Aksi Cepat</h2>
             <div class="grid grid-cols-2 gap-4">
-                <!-- Stats or Additional Info -->
-                <div class="bg-gray-50 p-4 rounded-xl text-center hover:shadow-md transition-shadow">
-                    <p class="text-gray-500 text-sm">Total Peminjaman</p>
-                    <p class="text-2xl font-bold text-green-600">0</p>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-xl text-center hover:shadow-md transition-shadow">
-                    <p class="text-gray-500 text-sm">Status</p>
-                    <p class="text-2xl font-bold text-green-600">Aktif</p>
-                </div>
+                <button class="group p-4 bg-white rounded-xl hover:bg-green-600 hover:shadow-md transition-all text-left border border-green-100">
+                    <i class="fas fa-book text-green-600 mb-2 group-hover:text-white"></i>
+                    <h3 class="font-semibold text-gray-900 group-hover:text-white">Pinjam Buku</h3>
+                    <p class="text-sm text-gray-500 group-hover:text-white/80">Mulai peminjaman baru</p>
+                </button>
+                <button class="group p-4 bg-white rounded-xl hover:bg-green-600 hover:shadow-md transition-all text-left border border-green-100">
+                    <i class="fas fa-history text-green-600 mb-2 group-hover:text-white"></i>
+                    <h3 class="font-semibold text-gray-900 group-hover:text-white">Riwayat</h3>
+                    <p class="text-sm text-gray-500 group-hover:text-white/80">Lihat riwayat peminjaman</p>
+                </button>
             </div>
         </div>
     </div>

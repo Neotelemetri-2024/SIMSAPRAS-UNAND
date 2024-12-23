@@ -177,7 +177,7 @@ class SaranaController extends Controller
         
         // Initialize $ruangan and $events as empty collections by default
         $ruangan = collect();
-        $events = [];  // Change to array instead of collection
+        $events = []; 
         
         // Query ruangan if kategori is Gedung Beruangan
         if ($sarana->kategoriSarana->jenis === 'Gedung Beruangan') {
@@ -191,7 +191,7 @@ class SaranaController extends Controller
                 ->paginate(6);
         } else {
             // Get peminjaman data for non-Gedung Beruangan
-            $peminjaman = Peminjaman::with(['tanggalPeminjaman', 'jadwal'])
+            $peminjaman = Peminjaman::with(['tanggalPeminjaman.jadwal']) // Changed this line
                 ->where('idSarana', $sarana->id)
                 ->whereIn('status', ['diajukan', 'disetujui'])
                 ->get();
@@ -202,8 +202,8 @@ class SaranaController extends Controller
                     $events[] = [
                         'id' => $item->id,
                         'title' => $item->kegiatan,
-                        'start' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $item->jadwal->mulai,
-                        'end' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $item->jadwal->selesai,
+                        'start' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $tanggal->jadwal->mulai,
+                        'end' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $tanggal->jadwal->selesai,
                         'status' => $item->status
                     ];
                 }
@@ -212,7 +212,6 @@ class SaranaController extends Controller
         
         return view('detailsarana', compact('sarana', 'ruangan', 'search', 'events'));
     }
-    
     public function destroy(Sarana $sarana)
     {
         try {
