@@ -213,8 +213,8 @@ class RuanganController extends Controller
         // Load relationships
         $ruangan->load(['sarana', 'gambarRuangan']);
         
-        // Get peminjaman data
-        $peminjaman = Peminjaman::with(['tanggalPeminjaman', 'jadwal'])
+        // Get peminjaman data with tanggalPeminjaman and its jadwal
+        $peminjaman = Peminjaman::with(['tanggalPeminjaman.jadwal'])
             ->where('idRuangan', $ruangan->id)
             ->whereIn('status', ['diajukan', 'disetujui'])
             ->get();
@@ -226,8 +226,8 @@ class RuanganController extends Controller
                 $events[] = [
                     'id' => $item->id,
                     'title' => $item->kegiatan,
-                    'start' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $item->jadwal->mulai,
-                    'end' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $item->jadwal->selesai,
+                    'start' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $tanggal->jadwal->mulai,
+                    'end' => date('Y-m-d', strtotime($tanggal->tanggal)) . 'T' . $tanggal->jadwal->selesai,
                     'status' => $item->status
                 ];
             }

@@ -37,72 +37,82 @@ class PeminjamanController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi dasar
-        $validationRules = [
-            'idSarana' => 'required|exists:sarana,id',
-            'idJadwal' => 'required|exists:jadwal,id',
-            'kegiatan' => 'required|string|max:255',
-            'suratPeminjaman' => 'required|file|mimes:pdf,doc,docx|max:2048',
-            'rundown' => 'required|file|mimes:pdf,doc,docx|max:2048',
-            'instansi' => 'required|string|max:255',
-            'estimasiPeserta' => 'required|integer|min:1',
-            'selected_dates' => 'required|string'
-        ];
-
-        // Tambahkan validasi ruangan jika ada
-        if ($request->has('idRuangan')) {
-            $validationRules['idRuangan'] = 'required|exists:ruangan,id';
-            
-            // Validasi kapasitas ruangan
-            $ruangan = Ruangan::find($request->idRuangan);
-            if ($request->estimasiPeserta > $ruangan->kapasitas) {
-                return back()
-                    ->withInput()
-                    ->withErrors(['estimasiPeserta' => 'Jumlah peserta melebihi kapasitas ruangan']);
+        try {
+            // Validasi dasar
+            $validationRules = [
+                'idSarana' => 'required|exists:sarana,id',
+                'jadwal_dates' => 'required|array', // Changed from idJadwal
+                'jadwal_dates.*.date' => 'required|date', // Validate each date
+                'jadwal_dates.*.jadwal_id' => 'required|exists:jadwal,id', // Validate each jadwal_id
+                'kegiatan' => 'required|string|max:255',
+                'suratPeminjaman' => 'required|file|mimes:pdf,doc,docx|max:2048',
+                'rundown' => 'required|file|mimes:pdf,doc,docx|max:2048',
+                'instansi' => 'required|string|max:255',
+                'estimasiPeserta' => 'required|integer|min:1',
+            ];
+    
+            // Tambahkan validasi ruangan jika ada
+            if ($request->has('idRuangan')) {
+                $validationRules['idRuangan'] = 'required|exists:ruangan,id';
+                
+                // Validasi kapasitas ruangan
+                $ruangan = Ruangan::find($request->idRuangan);
+                if ($request->estimasiPeserta > $ruangan->kapasitas) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Jumlah peserta melebihi kapasitas ruangan'
+                    ], 422);
+                }
             }
-        }
-
-        $validated = $request->validate($validationRules);
-
-        // Upload files
-        $suratPath = $request->file('suratPeminjaman')
-            ->store('peminjaman/surat', 'public');
-        $rundownPath = $request->file('rundown')
-            ->store('peminjaman/rundown', 'public');
-
-        // Buat array data peminjaman
-        $peminjamanData = [
-            'idUser' => auth()->id(),
-            'idSarana' => $validated['idSarana'],
-            'idJadwal' => $validated['idJadwal'],
-            'kegiatan' => $validated['kegiatan'],
-            'suratPeminjaman' => $suratPath,
-            'rundown' => $rundownPath,
-            'instansi' => $validated['instansi'],
-            'estimasiPeserta' => $validated['estimasiPeserta'],
-            'status' => 'diajukan'
-        ];
-
-        // Tambahkan idRuangan jika ada
-        if ($request->has('idRuangan')) {
-            $peminjamanData['idRuangan'] = $validated['idRuangan'];
-        }
-
-        // Create peminjaman
-        $peminjaman = Peminjaman::create($peminjamanData);
-
-        // Create tanggal peminjaman
-        $selectedDates = json_decode($validated['selected_dates']);
-        foreach ($selectedDates as $date) {
-            $peminjaman->tanggalPeminjaman()->create([
-                'tanggal' => $date
+    
+            $validated = $request->validate($validationRules);
+    
+            // Upload files
+            $suratPath = $request->file('suratPeminjaman')
+                ->store('peminjaman/surat', 'public');
+            $rundownPath = $request->file('rundown')
+                ->store('peminjaman/rundown', 'public');
+    
+            // Buat array data peminjaman
+            $peminjamanData = [
+                'idUser' => auth()->id(),
+                'idSarana' => $validated['idSarana'],
+                'kegiatan' => $validated['kegiatan'],
+                'suratPeminjaman' => $suratPath,
+                'rundown' => $rundownPath,
+                'instansi' => $validated['instansi'],
+                'estimasiPeserta' => $validated['estimasiPeserta'],
+                'status' => 'diajukan'
+            ];
+    
+            if ($request->has('idRuangan')) {
+                $peminjamanData['idRuangan'] = $validated['idRuangan'];
+            }
+    
+            // Create peminjaman
+            $peminjaman = Peminjaman::create($peminjamanData);
+    
+            // Create tanggal peminjaman with respective jadwal
+            foreach ($validated['jadwal_dates'] as $jadwalDate) {
+                $peminjaman->tanggalPeminjaman()->create([
+                    'tanggal' => $jadwalDate['date'],
+                    'idJadwal' => $jadwalDate['jadwal_id']
+                ]);
+            }
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Pengajuan peminjaman berhasil dikirim',
+                'redirect' => route('riwayat.index')
             ]);
+    
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
-
-        return redirect()->route('peminjaman.index')
-            ->with('success', 'Pengajuan peminjaman berhasil dikirim');
     }
-
     public function show(Peminjaman $peminjaman)
     {
         // Load relationships

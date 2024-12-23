@@ -13,7 +13,6 @@ class PeminjamanSeeder extends Seeder
             [
                 'idUser' => 2,
                 'idRuangan' => 1,
-                'idJadwal' => 1,
                 'idSarana' => 1,
                 'kegiatan' => 'Seminar Tugas Akhir',
                 'suratPeminjaman' => 'surat-1.pdf',
@@ -26,7 +25,6 @@ class PeminjamanSeeder extends Seeder
             [
                 'idUser' => 2,
                 'idRuangan' => 2,
-                'idJadwal' => 2,
                 'idSarana' => 1,
                 'kegiatan' => 'Rapat Himpunan',
                 'suratPeminjaman' => 'surat-2.pdf',

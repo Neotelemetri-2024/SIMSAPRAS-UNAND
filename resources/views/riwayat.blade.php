@@ -50,11 +50,13 @@
                                 {{ $pinjam->sarana->nama }}
                             </td>
                             <td class="px-6 py-4 text-green-500">
-                                @foreach ($pinjam->tanggalPeminjaman as $jadwal)
-                                    {{ $jadwal->tanggal }}<br>
-                                    <span class="text-xs text-gray-500">13:00 - 17:00</span><br>
-                                @endforeach
-                            </td>
+    @foreach ($pinjam->tanggalPeminjaman as $tanggal)
+        {{ $tanggal->tanggal }}<br>
+        <span class="text-xs text-gray-500">
+            {{ $tanggal->jadwal->mulai }} - {{ $tanggal->jadwal->selesai }}
+        </span><br>
+    @endforeach
+</td>
                             <td class="px-6 py-4">
                                 {{ $pinjam->kegiatan }}
                             </td>
@@ -221,26 +223,26 @@
                             </div>
                         </div>
 
-                        <!-- Jadwal Section -->
-                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                <svg class="w-5 h-5 mr-2 text-indigo-500" xmlns="http://www.w3.org/2000/svg"
-                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                Jadwal Peminjaman
-                            </h4>
-                            <div class="space-y-2">
-                                @foreach ($pinjam->tanggalPeminjaman as $jadwal)
-                                    <div class="flex items-center text-sm bg-white p-2 rounded-lg border border-gray-100">
-                                        <span class="font-medium text-gray-600">{{ $jadwal->tanggal }}</span>
-                                        <span class="mx-2 text-gray-400">|</span>
-                                        <span class="text-gray-500">13:00 - 17:00</span>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
+                  <!-- Jadwal Section -->
+<div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+        <svg class="w-5 h-5 mr-2 text-indigo-500" xmlns="http://www.w3.org/2000/svg"
+            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        Jadwal Peminjaman
+    </h4>
+    <div class="space-y-2">
+        @foreach ($pinjam->tanggalPeminjaman as $tanggal)
+            <div class="flex items-center text-sm bg-white p-2 rounded-lg border border-gray-100">
+                <span class="font-medium text-gray-600">{{ $tanggal->tanggal }}</span>
+                <span class="mx-2 text-gray-400">|</span>
+                <span class="text-gray-500">{{ $tanggal->jadwal->mulai }} - {{ $tanggal->jadwal->selesai }}</span>
+            </div>
+        @endforeach
+    </div>
+</div>
 
                         <!-- Lampiran Section -->
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">

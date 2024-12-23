@@ -11,11 +11,16 @@ class TanggalPeminjaman extends Model
     
     protected $fillable = [
         'idPeminjaman',
+        'idJadwal',
         'tanggal'
     ];
 
     public function peminjaman()
     {
         return $this->belongsTo(Peminjaman::class, 'idPeminjaman');
+    }
+    public function jadwal()
+    {
+        return $this->belongsTo(Jadwal::class, 'idJadwal');
     }
 }
