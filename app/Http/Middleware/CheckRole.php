@@ -25,11 +25,9 @@ class CheckRole
 
         $user = auth()->user();
         
-
         // Jika user role ada dalam roles yang diizinkan, lanjutkan request
         if (in_array($user->role, $roles)) {
             return $next($request);
-
         }
 
         // Redirect berdasarkan role jika mencoba mengakses area yang tidak sesuai
