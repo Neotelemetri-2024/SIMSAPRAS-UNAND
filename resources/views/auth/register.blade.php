@@ -1,26 +1,12 @@
 <x-guest-layout>
-    <!-- Navbar -->
 
-
-    <nav class="bg-white border-b border-gray-200">
-        <div class="max-w-screen-xl mx-auto px-4 py-3">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                    <img src="{{ asset('assets/images/unand.png') }}" alt="Logo UNAND" class="w-10 h-10">
-                    <div>
-                        <span class="text-green-600 font-bold">SIMSAPRAS</span>
-                        <span class="text-gray-600 text-sm ml-2">Universitas Andalas</span>
-                    </div>
-                </div>
-                <div>
-                    <a href="/" class="text-sm text-gray-600 hover:text-green-600">Kembali ke Beranda</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="max-w-screen-xl mx-auto px-4 py-8">
+    <a
+      href="{{ route('home') }}"
+      class="fixed top-4 left-4 flex items-center text-gray-600 hover:text-green-600 transition-colors"
+    >
+      <span class="font-medium">< Kembali ke Beranda</span>
+    </a>
+    <div class="max-w-screen-xl mx-auto pt-24">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <!-- Left Side - Register Form -->
             <div class="bg-white rounded-2xl shadow-xl p-8">
@@ -51,6 +37,27 @@
                                 placeholder="Masukkan nama lengkap" />
                         </div>
                         <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                    </div>
+
+                    <div>
+                        <x-input-label for="kontak" :value="__('Kontak')" class="block text-sm font-medium text-gray-700 mb-2"/>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                </svg>
+                            </div>
+                            <x-text-input id="kontak"
+                                class="pl-10 w-full border-2 border-gray-200 rounded-lg py-3 focus:ring-green-500 focus:border-green-500"
+                                type="text"
+                                name="kontak"
+                                :value="old('kontak')"
+                                required
+                                autofocus
+                                autocomplete="kontak"
+                                placeholder="Masukkan nomor Handphone" />
+                        </div>
+                        <x-input-error :messages="$errors->get('kontak')" class="mt-2" />
                     </div>
 
                     <!-- Email -->

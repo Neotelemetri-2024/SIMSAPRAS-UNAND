@@ -8,7 +8,7 @@
                   Sistem Informasi Peminjaman <span class="text-green-600 block">Sarana & Prasarana</span>
                </h1>
                <p class="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl">
-                  Kelola peminjaman Sarana & Prasaranan Universitas Andalas dengan mudah dan efisien. Sistem modern untuk manajemen fasilitas kampus yang lebih baik.
+                  Kelola peminjaman Sarana & Prasarana Universitas Andalas dengan mudah dan efisien. Sistem modern untuk manajemen fasilitas kampus yang lebih baik.
                </p>
                <a href="#" class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300">
                   Mulai Sekarang
@@ -36,8 +36,8 @@
                         <path d="M2 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V4zM8 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1H9a1 1 0 01-1-1V4zM15 3a1 1 0 00-1 1v12a1 1 0 001 1h2a1 1 0 001-1V4a1 1 0 00-1-1h-2z"></path>
                      </svg>
                   </div>
-                  <h3 class="mb-2 text-xl font-bold">Manajemen Ruangan</h3>
-                  <p class="text-gray-500">Kelola seluruh ruangan PKM dengan mudah. Lihat status ketersediaan secara real-time.</p>
+                  <h3 class="mb-2 text-xl font-bold">Transparansi Peminjaman</h3>
+                  <p class="text-gray-500">Lihat status ketersediaan secara real-time.</p>
                </div>
                <!-- Feature 2 -->
                <div class="p-6 bg-white rounded-lg shadow-md">
@@ -99,10 +99,10 @@
          <div class="max-w-screen-xl px-4 py-8 mx-auto lg:py-16 lg:px-6">
             <div class="max-w-screen-sm mx-auto text-center">
                <h2 class="mb-4 text-3xl font-extrabold leading-tight text-white">
-                  Mulai Gunakan SIPENJARU
+                  Mulai Gunakan SIMSAPRAS
                </h2>
                <p class="mb-6 font-light text-green-100">
-                  Kelola peminjaman ruang PKM dengan lebih efisien
+                  Pinjam sarana dan prasarana dengan lebih efisien
                </p>
                <a href="#" class="text-green-600 bg-white hover:bg-green-50 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none">
                Daftar Sekarang
@@ -144,7 +144,7 @@
                   <!-- FAQ Item 1 -->
                   <h2 id="accordion-flush-heading-1">
                      <button type="button" class="flex items-center justify-between w-full py-5 font-medium text-left text-gray-500 border-b border-gray-200" data-accordion-target="#accordion-flush-body-1" aria-expanded="true" aria-controls="accordion-flush-body-1">
-                        <span>Bagaimana cara mendaftar di SIPENJARU?</span>
+                        <span>Bagaimana cara mendaftar di SIMSAPRAS?</span>
                         <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                         </svg>
@@ -152,7 +152,7 @@
                   </h2>
                   <div id="accordion-flush-body-1" class="hidden" aria-labelledby="accordion-flush-heading-1">
                      <div class="py-5 border-b border-gray-200">
-                        <p class="mb-2 text-gray-500">Pendaftaran SIPENJARU menggunakan akun Single Sign On (SSO) Universitas Andalas. Anda cukup login menggunakan akun yang sama dengan yang digunakan untuk sistem akademik.</p>
+                        <p class="mb-2 text-gray-500">Pendaftaran SIMSAPRAS menggunakan akun Single Sign On (SSO) Universitas Andalas. Anda cukup login menggunakan akun yang sama dengan yang digunakan untuk sistem akademik.</p>
                      </div>
                   </div>
                   <!-- FAQ Item 2 -->
