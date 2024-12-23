@@ -34,6 +34,8 @@
    <div class="p-4 sm:ml-64 pt-20">
        @yield('content')
 </div>
+<script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
+<script src="/js/notif.js"></script>
  <script>
 document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');

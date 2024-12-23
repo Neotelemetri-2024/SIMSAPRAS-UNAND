@@ -23,6 +23,8 @@
          </svg>
       </button>
       <!-- Initialize back to top button -->
+      <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
+      <script src="/js/notif.js"></script>
       @stack('scripts')
       <script>
          // Get the button
@@ -48,6 +50,7 @@
              document.body.scrollTop = 0;
              document.documentElement.scrollTop = 0;
          }
+
       </script>
    </body>
 </html>

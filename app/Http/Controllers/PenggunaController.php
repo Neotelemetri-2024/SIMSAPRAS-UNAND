@@ -20,6 +20,7 @@ class PenggunaController extends Controller
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
+                'kontak' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|string|min:8',
                 'role' => 'required|in:user,admin,superadmin,pimpinan',
@@ -38,6 +39,7 @@ class PenggunaController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'kontak' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $pengguna->id,
             'role' => 'required|in:user,admin,superadmin,pimpinan',
         ]);

@@ -34,11 +34,6 @@
                         </button>
                     </li>
                     <li class="mr-2">
-                        <button class="tab-button inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" data-role="superadmin">
-                            Superadmin
-                        </button>
-                    </li>
-                    <li class="mr-2">
                         <button class="tab-button inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" data-role="pimpinan">
                             Pimpinan
                         </button>
@@ -53,6 +48,7 @@
                   <tr>
                      <th scope="col" class="px-6 py-3">No</th>
                      <th scope="col" class="px-6 py-3">Nama</th>
+                     <th scope="col" class="px-6 py-3">Kontak</th>
                      <th scope="col" class="px-6 py-3">Email</th>
                      <th scope="col" class="px-6 py-3">Role</th>
                      <th scope="col" class="px-6 py-3">Aksi</th>
@@ -79,6 +75,7 @@
                         @endif
                     </td>
                      <td class="px-6 py-4">{{ $item->name }}</td>
+                     <td class="px-6 py-4">{{ $item->kontak }}</td>
                      <td class="px-6 py-4">{{ $item->email }}</td>
                      <td class="px-6 py-4">{{ $item->role }}</td>
                      <td class="px-6 py-4">
@@ -120,6 +117,10 @@
                <div>
                   <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama</label>
                   <input type="text" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+               </div>
+               <div>
+                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kontak</label>
+                  <input type="text" name="kontak" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
                </div>
                <div>
                   <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
