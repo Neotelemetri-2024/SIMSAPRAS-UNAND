@@ -47,6 +47,7 @@ class CheckRole
                 str_starts_with($currentRoute, 'kategori.') ||
                 str_starts_with($currentRoute, 'jadwal.') ||
                 str_starts_with($currentRoute, 'penjaga.') ||
+                str_starts_with($currentRoute, 'ruangan.') ||
                 str_starts_with($currentRoute, 'pengguna.')) {
                 return $next($request);
             }
@@ -70,6 +71,7 @@ class CheckRole
             if (str_starts_with($currentRoute, 'peminjaman.') || 
                 str_starts_with($currentRoute, 'riwayat.') ||
                 str_starts_with($currentRoute, 'home') ||
+                str_starts_with($currentRoute, 'profile.') ||
                 str_starts_with($currentRoute, 'user.')) {
                 return $next($request);
             }

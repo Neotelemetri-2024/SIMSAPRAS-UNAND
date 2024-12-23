@@ -3,25 +3,15 @@
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <!-- Navbar -->
-    <nav class="bg-white border-b border-gray-200">
-        <div class="max-w-screen-xl mx-auto px-4 py-3">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                    <img src="{{ asset('assets/images/unand.png') }}" alt="Logo UNAND" class="w-10 h-10">
-                    <div>
-                        <span class="text-green-600 font-bold">SIMSAPRAS</span>
-                        <span class="text-gray-600 text-sm ml-2">Universitas Andalas</span>
-                    </div>
-                </div>
-                <div>
-                    <a href="/" class="text-sm text-gray-600 hover:text-green-600">Kembali ke Beranda</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <a
+      href="{{ route('home') }}"
+      class="fixed top-4 left-4 flex items-center text-gray-600 hover:text-green-600 transition-colors"
+    >
+      <span class="font-medium">< Kembali ke Beranda</span>
+    </a>
 
     <!-- Main Content -->
-    <div class="max-w-screen-xl mx-auto px-4 py-8">
+    <div class="max-w-screen-xl mx-auto px-4 py-8 pt-36">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <!-- Left Side - Login Form -->
             <div class="bg-white rounded-2xl shadow-xl p-8">
