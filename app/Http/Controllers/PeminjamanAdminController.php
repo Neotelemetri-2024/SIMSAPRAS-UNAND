@@ -134,20 +134,12 @@ class PeminjamanAdminController extends Controller
     
             // Kirim notifikasi ke user
             $notificationSent = $this->notificationService->sendToUser(
-                $peminjaman,
+                $peminjaman->user->id,  // Langsung kirim userId
                 "Update Status Peminjaman",
-                $userMessage
+                $userMessage,
+                $peminjaman->id
             );
-    
-            // Kirim notifikasi ke admin untuk kasus khusus
-            if ($peminjaman->status === 'diproses') {
-                $this->notificationService->sendToRoles(
-                    ['admin', 'staff'],
-                    $peminjaman,
-                    "Verifikasi Pembayaran Diperlukan",
-                    "Peminjaman dari {$peminjaman->user->name} memerlukan verifikasi pembayaran"
-                );
-            }
+            //
     
             $response = [
                 'success' => true,
