@@ -2,115 +2,89 @@
 
 namespace App\Services;
 
-use App\Models\Peminjaman;
 use App\Models\Notifikasi;
+use App\Models\Peminjaman;
 use Pusher\PushNotifications\PushNotifications;
 
 class NotificationService
 {
     protected $beams;
 
-    public function __construct(PushNotifications $beams)
+    public function __construct()
     {
-        $this->beams = $beams;
+        $this->beams = new PushNotifications([
+            'instanceId' => config('services.pusher.beams_instance_id'),
+            'secretKey' => config('services.pusher.beams_secret_key'),
+        ]);
     }
 
-    // Kirim ke user spesifik
-    public function sendToUser(Peminjaman $peminjaman, $title, $message)
+    public function sendToUser(int $userId, string $title, string $message, ?int $idPeminjaman = null): bool
     {
         try {
-            // Simpan ke database
-            Notifikasi::create([
-                'idPeminjaman' => $peminjaman->id,
+            \Log::info('Attempting to send notification to user: ' . $userId);
+            \Log::info('Message: ' . $message);
+            
+            // Create notification record in database
+            $notification = Notifikasi::create([
+                'idPeminjaman' => $idPeminjaman,
                 'judul' => $title,
                 'isi' => $message,
-                'isRead' => false,
-                'userId' => $peminjaman->user->id
+                'isRead' => false
             ]);
+            
+            \Log::info('Notification created in database with ID: ' . $notification->id);
 
-            // Kirim via Beams ke user spesifik
-            $this->beams->publishToUsers(
-                [(string)$peminjaman->user->id],
+            // Send push notification to specific user using userId
+            $response = $this->beams->publishToUsers(
+                [strval($userId)],  // Convert userId to string as required by Pusher Beams
                 [
-                    'web' => [
-                        'notification' => [
-                            'title' => $title,
-                            'body' => $message,
-                            'deep_link' => route('peminjaman.detail', $peminjaman->id),
-                            'data' => [
-                                'peminjaman_id' => $peminjaman->id,
-                                'type' => 'user_notification',
-                                'status' => $peminjaman->status
-                            ]
+                    "web" => [
+                        "notification" => [
+                            "title" => $title,
+                            "body" => $message,
                         ]
                     ]
                 ]
             );
-
+            
+            \Log::info('Pusher response: ' . json_encode($response));
             return true;
         } catch (\Exception $e) {
             \Log::error('Notification error: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
             return false;
         }
     }
 
-    // Kirim ke semua (broadcast)
-    public function sendToAll($title, $message, $data = [])
+    public function sendToAll(string $title, string $message): bool
     {
         try {
-            $this->beams->publishToInterests(
-                ['all-users'],
+            // Create notification records for all users
+            $users = \App\Models\User::all();
+            foreach ($users as $user) {
+                Notifikasi::create([
+                    'idPeminjaman' => null,
+                    'judul' => $title,
+                    'isi' => $message,
+                    'isRead' => false
+                ]);
+            }
+
+            // Send broadcast to all users
+            $response = $this->beams->publishToAll(
                 [
-                    'web' => [
-                        'notification' => [
-                            'title' => $title,
-                            'body' => $message,
-                            'data' => array_merge(['type' => 'broadcast'], $data)
+                    "web" => [
+                        "notification" => [
+                            "title" => $title,
+                            "body" => $message,
                         ]
                     ]
                 ]
             );
+
             return true;
         } catch (\Exception $e) {
             \Log::error('Broadcast notification error: ' . $e->getMessage());
-            return false;
-        }
-    }
-
-    // Kirim ke admin dengan interest
-    public function sendToAdmin(Peminjaman $peminjaman, $title, $message)
-    {
-        try {
-            // Simpan ke database
-            Notifikasi::create([
-                'idPeminjaman' => $peminjaman->id,
-                'judul' => $title,
-                'isi' => $message,
-                'isRead' => false,
-                'type' => 'admin'
-            ]);
-
-            // Broadcast ke admin
-            $this->beams->publishToInterests(
-                ['peminjamanadmin'],
-                [
-                    'web' => [
-                        'notification' => [
-                            'title' => $title,
-                            'body' => $message,
-                            'deep_link' => route('admin.peminjaman.detail', $peminjaman->id),
-                            'data' => [
-                                'peminjaman_id' => $peminjaman->id,
-                                'type' => 'admin_notification'
-                            ]
-                        ]
-                    ]
-                ]
-            );
-
-            return true;
-        } catch (\Exception $e) {
-            \Log::error('Admin notification error: ' . $e->getMessage());
             return false;
         }
     }
