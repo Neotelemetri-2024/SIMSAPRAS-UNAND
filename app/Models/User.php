@@ -13,7 +13,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     *u The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
@@ -37,6 +37,24 @@ class User extends Authenticatable
     public function peminjaman()
     {
         return $this->hasMany(Peminjaman::class, 'idUser');
+    }
+
+    public function beamsInterest()
+    {
+        // Generate interest berdasarkan user ID dan role
+        $interests = ['user-' . $this->id];
+        
+        // Tambahkan interest berdasarkan role
+        if ($this->role) {
+            $interests[] = 'role-' . $this->role;
+        }
+        
+        return $interests;
+    }
+
+    public function routeNotificationForBeams()
+    {
+        return $this->beamsInterest();
     }
 
     /**
