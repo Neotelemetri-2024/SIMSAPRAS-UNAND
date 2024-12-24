@@ -3,6 +3,9 @@
    <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="csrf-token" content="{{ csrf_token() }}">
+      <meta name="user-id" content="{{ Auth::id() }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
       <title>SIMSAPRAS - UNAND</title>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
       @vite(['resources/css/app.css','resources/js/app.js'])
@@ -23,6 +26,7 @@
          </svg>
       </button>
       <!-- Initialize back to top button -->
+
       <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
       <script src="/js/notif.js"></script>
       @stack('scripts')

@@ -3,10 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\Peminjaman;
+use App\Models\Notifikasi;
 use Illuminate\Http\Request;
+use App\Services\NotificationService;
+
 
 class PeminjamanAdminController extends Controller
 {
+    protected $notificationService;
+
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
+
+
+
     private function getPeminjaman(Request $request, $status, $title)
     {
         $search = $request->input('search');
@@ -72,55 +84,88 @@ class PeminjamanAdminController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-    try {
-        $request->validate([
-            'status' => 'required|in:disetujui,diproses,ditolak',
-            'feedbackPenolakan' => 'nullable|required_if:status,ditolak|string|max:500',
-            'suratPeminjaman' => 'nullable|file|mimes:pdf|max:2048',
-            'rundown' => 'nullable|file|mimes:pdf|max:2048',
-            'estimasiPeserta' => 'nullable|integer|min:0',
-            'tarif' => 'nullable|integer|min:0',
-        ]);
-
-        $peminjaman = Peminjaman::findOrFail($id);
-
-        // Update status
-        $peminjaman->status = $request->status;
-
-        // Handle feedback for rejection
-        if ($request->status === 'ditolak') {
-            $peminjaman->feedbackPenolakan = $request->feedbackPenolakan;
+        try {
+            $request->validate([
+                'status' => 'required|in:disetujui,diproses,ditolak',
+                'feedbackPenolakan' => 'nullable|required_if:status,ditolak|string|max:500',
+                'suratPeminjaman' => 'nullable|file|mimes:pdf|max:2048',
+                'rundown' => 'nullable|file|mimes:pdf|max:2048',
+                'estimasiPeserta' => 'nullable|integer|min:0',
+                'tarif' => 'nullable|integer|min:0',
+            ]);
+    
+            $peminjaman = Peminjaman::with('user')->findOrFail($id);
+            $oldStatus = $peminjaman->status;
+    
+            // Update file uploads dan data lainnya
+            if ($request->hasFile('suratPeminjaman')) {
+                $peminjaman->suratPeminjaman = $request->file('suratPeminjaman')->store('peminjaman/lampiran');
+            }
+            if ($request->hasFile('rundown')) {
+                $peminjaman->rundown = $request->file('rundown')->store('peminjaman/lampiran');
+            }
+            if ($request->has('estimasiPeserta')) {
+                $peminjaman->estimasiPeserta = $request->estimasiPeserta;
+            }
+            if ($request->has('tarif')) {
+                $peminjaman->tarif = $request->tarif;
+            }
+    
+            // Update status
+            $peminjaman->status = $request->status;
+            if ($request->status === 'ditolak') {
+                $peminjaman->feedbackPenolakan = $request->feedbackPenolakan;
+            }
+    
+            // Auto-update status jika ada tarif
+            if ($request->status === 'disetujui' && $peminjaman->tarif > 0) {
+                $peminjaman->status = 'diproses';
+            }
+    
+            $peminjaman->save();
+    
+            // Siapkan pesan notifikasi untuk user
+            $userMessage = match($peminjaman->status) {
+                'ditolak' => "Peminjaman Anda ditolak dengan alasan: " . $request->feedbackPenolakan,
+                'diproses' => "Peminjaman Anda sedang diproses. Silakan melakukan pembayaran sebesar Rp " . number_format($peminjaman->tarif, 0, ',', '.'),
+                'disetujui' => "Selamat! Peminjaman Anda telah disetujui.",
+                default => "Status peminjaman Anda telah diubah menjadi " . $peminjaman->status
+            };
+    
+            // Kirim notifikasi ke user
+            $notificationSent = $this->notificationService->sendToUser(
+                $peminjaman,
+                "Update Status Peminjaman",
+                $userMessage
+            );
+    
+            // Kirim notifikasi ke admin untuk kasus khusus
+            if ($peminjaman->status === 'diproses') {
+                $this->notificationService->sendToRoles(
+                    ['admin', 'staff'],
+                    $peminjaman,
+                    "Verifikasi Pembayaran Diperlukan",
+                    "Peminjaman dari {$peminjaman->user->name} memerlukan verifikasi pembayaran"
+                );
+            }
+    
+            $response = [
+                'success' => true,
+                'message' => 'Status peminjaman berhasil diperbarui'
+            ];
+    
+            if (!$notificationSent) {
+                $response['notification_status'] = 'Notification might have failed to send';
+            }
+    
+            return response()->json($response);
+    
+        } catch (\Exception $e) {
+            \Log::error('Update status error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
-
-        if ($request->hasFile('suratPeminjaman')) {
-            $peminjaman->suratPeminjaman = $request->file('suratPeminjaman')->store('peminjaman/lampiran');
-        }
-        if ($request->hasFile('rundown')) {
-            $peminjaman->rundown = $request->file('rundown')->store('peminjaman/lampiran');
-        }
-        if ($request->has('estimasiPeserta')) {
-            $peminjaman->estimasiPeserta = $request->estimasiPeserta;
-        }
-        if ($request->has('tarif')) {
-            $peminjaman->tarif = $request->tarif;
-        }
-
-        // Auto-update status based on tarif
-        if ($request->status === 'disetujui' && $peminjaman->tarif > 0) {
-            $peminjaman->status = 'diproses';
-        }
-
-        $peminjaman->save();
-        return response()->json([
-            'success' => true,
-            'message' => 'Status peminjaman berhasil diperbarui'
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-        ], 500);
     }
-}
 }

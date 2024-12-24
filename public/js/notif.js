@@ -1,75 +1,86 @@
-if ("serviceWorker" in navigator) {
-    console.log("Starting service worker registration");
+// Definisikan TokenProvider
+const beamsTokenProvider = new PusherPushNotifications.TokenProvider({
+    url: "/beams/auth"
+});
 
-    // Unregister existing service workers
-    navigator.serviceWorker
-        .getRegistrations()
-        .then(function (registrations) {
-            console.log("Found existing registrations:", registrations);
-            return Promise.all(registrations.map((r) => r.unregister()));
-        })
-        .then(() => {
-            console.log("All old service workers unregistered");
+async function initializeNotifications() {
+    if (!("serviceWorker" in navigator) || !("Notification" in window)) {
+        console.error("Push notifications not supported");
+        return;
+    }
 
-            return navigator.serviceWorker.register("/service-worker.js");
-        })
-        .then((registration) => {
-            console.log("Service Worker registered:", registration);
+    try {
+        // Register service worker
+        const registration = await navigator.serviceWorker.register('/service-worker.js');
+        console.log('Service Worker registered:', registration);
 
-            // Initialize Beams
-            const beamsClient = new PusherPushNotifications.Client({
-                instanceId: "1c9ef4d6-c234-4989-852b-378a54f8d770",
-            });
+        const permission = await Notification.requestPermission();
+        console.log('Notification permission status:', permission);
+        
+        if (permission !== "granted") {
+            console.warn("Notification permission denied");
+            return;
+        }
 
-            console.log("Initializing Beams client");
+        // Get user ID from meta tag
+        const userId = document.querySelector('meta[name="user-id"]').content;
+        console.log('User ID:', userId);
 
-            return beamsClient
-                .start()
-                .then(() => {
-                    console.log("Beams started");
-                    return beamsClient.addDeviceInterest("debug-peminjaman");
-                })
-                .then(() => {
-                    console.log("Successfully added device interest");
-                    console.log(
-                        "Current service worker:",
-                        navigator.serviceWorker.controller
-                    );
-                });
-        })
-        .catch((error) => {
-            console.error("Setup failed:", error);
+        // Initialize Beams Client dengan TokenProvider
+        const beamsClient = new PusherPushNotifications.Client({
+            instanceId: "1c9ef4d6-c234-4989-852b-378a54f8d770",
+            tokenProvider: beamsTokenProvider
         });
 
-    // Listen for messages
-    navigator.serviceWorker.addEventListener("message", function (event) {
-        console.log("Message received from SW:", event.data);
-        if (event.data.type === "PUSH_NOTIFICATION") {
-            console.log("Processing notification:", event.data.data);
-            // Use the createNotificationBox function directly
-            const notifData = event.data.data;
-            createNotificationBox(
-                notifData.title || "New Notification",
-                notifData.message || notifData.body || ""
-            );
+        // Start dan setup Beams Client
+        await beamsClient.start()
+            .then(() => beamsClient.setUserId(userId, beamsTokenProvider))
+            .then(() => console.log('Notification setup complete'))
+            .catch(error => {
+                console.error('Beams setup error:', error);
+                throw error;
+            });
 
-            // Optional: Add to notification list if needed
-            if (typeof displaylisnotifpage === "function") {
-                displaylisnotifpage(event.data.data);
+        // Setup event listener untuk service worker
+        navigator.serviceWorker.addEventListener('message', function(event) {
+            console.log('Received message from service worker:', event);
+            if (event.data.type === 'PUSH_NOTIFICATION') {
+                createNotificationBox(event.data.data.title, event.data.data.body);
             }
-        }
-    });
+        });
+
+        // Cleanup function
+        window.handlePushNotificationLogout = async () => {
+            try {
+                await beamsClient.stop();
+                console.log('Beams client stopped successfully');
+                
+                const registration = await navigator.serviceWorker.ready;
+                await registration.unregister();
+                console.log('Service worker unregistered');
+            } catch (error) {
+                console.error('Error during push notification logout:', error);
+            }
+        };
+
+    } catch (error) {
+        console.error('Notification setup failed:', error);
+        createNotificationBox('Notification Error', error.message);
+    }
 }
 
-// Add this to check permission
-if ("Notification" in window) {
-    Notification.requestPermission().then(function (permission) {
-        console.log("Notification permission:", permission);
-    });
-}
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', initializeNotifications);
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+    if (window.handlePushNotificationLogout) {
+        window.handlePushNotificationLogout();
+    }
+});
 
 function createNotificationBox(title, message) {
-    console.log("Creating notification box:", { title, message }); // Debug log
+    console.log("Creating notification box:", { title, message });
     const notifBox = document.createElement("div");
     notifBox.className =
         "bg-white border border-gray-200 rounded-lg shadow-lg p-4 mb-3 max-w-sm transform transition-all duration-300 opacity-0";
@@ -89,7 +100,6 @@ function createNotificationBox(title, message) {
         </div>
     `;
 
-    // Ensure notification container exists
     let container = document.getElementById("notification-container");
     if (!container) {
         container = document.createElement("div");
@@ -100,20 +110,17 @@ function createNotificationBox(title, message) {
 
     container.appendChild(notifBox);
 
-    // Trigger animation after a brief delay
     requestAnimationFrame(() => {
         notifBox.style.transform = "translateX(0)";
         notifBox.style.opacity = "1";
     });
 
-    // Auto-remove after 5 seconds
     setTimeout(() => {
         notifBox.style.transform = "translateX(100%)";
         notifBox.style.opacity = "0";
         setTimeout(() => notifBox.remove(), 300);
     }, 5000);
 
-    // Close button handler
     notifBox.querySelector("button").addEventListener("click", () => {
         notifBox.style.transform = "translateX(100%)";
         notifBox.style.opacity = "0";

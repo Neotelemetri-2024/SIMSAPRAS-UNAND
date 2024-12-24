@@ -13,7 +13,10 @@ use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RiwayatController;
+use App\Http\Controllers\BeamsAuthController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Pusher\PushNotifications\PushNotifications;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +28,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+Route::get('/beams/auth', [BeamsAuthController::class, 'auth'])->middleware('auth');
+// Authentication Routes
 // Home Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home', fn() => view('home'));
@@ -101,5 +105,9 @@ Route::group(['middleware' => ['checkRole:superadmin,pimpinan']], function () {
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
 });
 
-// Authentication Routes
+
+
+
+
+
 require __DIR__.'/auth.php';
