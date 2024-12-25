@@ -15,6 +15,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\BeamsAuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NotifikasiController;
 use Illuminate\Http\Request;
 use Pusher\PushNotifications\PushNotifications;
 
@@ -97,6 +98,8 @@ Route::group(['middleware' => ['checkRole:user']], function () {
 
     Route::resource('riwayat', RiwayatController::class);
     Route::post('/riwayat/{id}/upload-bukti', [RiwayatController::class, 'uploadBuktiPembayaran'])->name('riwayat.upload-bukti');
+
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
 });
 
 // Pengguna Management (Superadmin & Pimpinan)
