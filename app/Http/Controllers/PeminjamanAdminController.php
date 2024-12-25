@@ -123,34 +123,64 @@ class PeminjamanAdminController extends Controller
             }
     
             $peminjaman->save();
+            // / Siapkan pesan notifikasi dan kirim
+        $userMessage = match($peminjaman->status) {
+            'ditolak' => "Peminjaman Anda ditolak dengan alasan: " . $request->feedbackPenolakan,
+            'diproses' => "Peminjaman Anda sedang diproses. Silakan melakukan pembayaran sebesar Rp " . number_format($peminjaman->tarif, 0, ',', '.'),
+            'disetujui' => "Selamat! Peminjaman Anda telah disetujui.",
+            default => "Status peminjaman Anda telah diubah menjadi " . $peminjaman->status
+        };
+
+        // Tulis ke database dulu
+        Notifikasi::create([
+            'idPeminjaman' => $peminjaman->id,
+            'judul' => "Update Status Peminjaman",
+            'isi' => $userMessage,
+            'isRead' => false
+        ]);
+
+        // Kirim response sukses
+        $response = ['success' => true, 'message' => 'Status peminjaman berhasil diperbarui'];
+
+        // Kirim notifikasi Pusher secara terpisah
+        $this->notificationService->sendToUser(
+            $peminjaman->user->id,
+            "Update Status Peminjaman",
+            $userMessage,
+            $peminjaman->id
+        );
+
+        return response()->json($response);
     
             // Siapkan pesan notifikasi untuk user
-            $userMessage = match($peminjaman->status) {
-                'ditolak' => "Peminjaman Anda ditolak dengan alasan: " . $request->feedbackPenolakan,
-                'diproses' => "Peminjaman Anda sedang diproses. Silakan melakukan pembayaran sebesar Rp " . number_format($peminjaman->tarif, 0, ',', '.'),
-                'disetujui' => "Selamat! Peminjaman Anda telah disetujui.",
-                default => "Status peminjaman Anda telah diubah menjadi " . $peminjaman->status
-            };
-    
+           
             // Kirim notifikasi ke user
-            $notificationSent = $this->notificationService->sendToUser(
-                $peminjaman->user->id,  // Langsung kirim userId
-                "Update Status Peminjaman",
-                $userMessage,
-                $peminjaman->id
-            );
-            //
+            // $notificationSent = $this->notificationService->sendToUser(
+            //     $peminjaman->user->id,  // Langsung kirim userId
+            //     "Update Status Peminjaman",
+            //     $userMessage,
+            //     $peminjaman->id
+            // );
+      
+            // dispatch(function() use ($peminjaman, $userMessage) {
+            //     $this->notificationService->sendToUser(
+            //         $peminjaman->user->id,
+            //         "Update Status Peminjaman",
+            //         $userMessage,
+            //         $peminjaman->id
+            //     );
+            // })->afterResponse();
     
-            $response = [
-                'success' => true,
-                'message' => 'Status peminjaman berhasil diperbarui'
-            ];
+            // $response = [
+            //     'success' => true,
+            //     'message' => 'Status peminjaman berhasil diperbarui'
+            // ];
+
+            // if (!$notificationSent) {
+            //     $response['notification_status'] = 'Notification might have failed to send';
+            // }
     
-            if (!$notificationSent) {
-                $response['notification_status'] = 'Notification might have failed to send';
-            }
-    
-            return response()->json($response);
+            // return response()->json($response);
     
         } catch (\Exception $e) {
             \Log::error('Update status error: ' . $e->getMessage());

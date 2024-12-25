@@ -18,40 +18,25 @@ class NotificationService
         ]);
     }
 
-    public function sendToUser(int $userId, string $title, string $message, ?int $idPeminjaman = null): bool
+    public function sendToUser(int $userId, string $title, string $message): bool
     {
         try {
-            \Log::info('Attempting to send notification to user: ' . $userId);
-            \Log::info('Message: ' . $message);
-            
-            // Create notification record in database
-            $notification = Notifikasi::create([
-                'idPeminjaman' => $idPeminjaman,
-                'judul' => $title,
-                'isi' => $message,
-                'isRead' => false
-            ]);
-            
-            \Log::info('Notification created in database with ID: ' . $notification->id);
-
-            // Send push notification to specific user using userId
-            $response = $this->beams->publishToUsers(
-                [strval($userId)],  // Convert userId to string as required by Pusher Beams
+            $this->beams->publishToUsers(
+                [strval($userId)],
                 [
                     "web" => [
                         "notification" => [
                             "title" => $title,
                             "body" => $message,
+                            "urgent" => true,
+                            "priority" => "high"
                         ]
                     ]
                 ]
             );
-            
-            \Log::info('Pusher response: ' . json_encode($response));
             return true;
         } catch (\Exception $e) {
             \Log::error('Notification error: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
             return false;
         }
     }
@@ -59,29 +44,19 @@ class NotificationService
     public function sendToAll(string $title, string $message): bool
     {
         try {
-            // Create notification records for all users
-            $users = \App\Models\User::all();
-            foreach ($users as $user) {
-                Notifikasi::create([
-                    'idPeminjaman' => null,
-                    'judul' => $title,
-                    'isi' => $message,
-                    'isRead' => false
-                ]);
-            }
-
-            // Send broadcast to all users
-            $response = $this->beams->publishToAll(
+            $this->beams->publishToInterests(
+                ['peminjamanadmin'], // array of interests
                 [
                     "web" => [
                         "notification" => [
                             "title" => $title,
                             "body" => $message,
+                            "urgent" => true,
+                            "priority" => "high"
                         ]
                     ]
                 ]
             );
-
             return true;
         } catch (\Exception $e) {
             \Log::error('Broadcast notification error: ' . $e->getMessage());
