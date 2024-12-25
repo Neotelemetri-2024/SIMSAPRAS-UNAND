@@ -235,58 +235,61 @@
                return selectInfo.start >= minDate;
            },
            dateClick: function(info) {
-               const clickedDate = new Date(info.dateStr);
-               if (clickedDate < minDate) {
-                   // Show warning message for disabled dates
-                   const warningMessage = document.createElement('div');
-                   warningMessage.className = 'warning-popup';
-                   warningMessage.innerHTML = `
-                       <div class="warning-content">
-                           <p>Peminjaman harus dilakukan minimal 7 hari sebelum jadwal yang diinginkan</p>
-                           <button type="button" class="close-warning">Tutup</button>
-                       </div>
-                   `;
-                   document.body.appendChild(warningMessage);
-   
-                   // Add event listener to close button
-                   warningMessage.querySelector('.close-warning').addEventListener('click', function() {
-                       warningMessage.remove();
-                   });
-   
-                   // Auto remove after 3 seconds
-                   setTimeout(() => {
-                       if (document.body.contains(warningMessage)) {
-                           warningMessage.remove();
-                       }
-                   }, 3000);
-                   return;
-               }
-   
-               // Handle date selection for valid dates
-               if (selectedDates.has(info.dateStr)) {
-                   selectedDates.delete(info.dateStr);
-                   info.dayEl.classList.remove('selected-date');
-               } else {
-                   selectedDates.add(info.dateStr);
-                   info.dayEl.classList.add('selected-date');
-               }
-               updateSelectedDatesDisplay();
-           },
-           eventDidMount: function(info) {
-               if (info.event.extendedProps.status === 'diajukan') {
-                   info.el.style.backgroundColor = '#F97316';
-               } else if (info.event.extendedProps.status === 'disetujui') {
-                   info.el.style.backgroundColor = '#059669';
-               }
-           },
-           dayCellDidMount: function(arg) {
-               if (arg.date < minDate) {
-                   arg.el.classList.add('fc-disabled-date');
-               }
-               if (selectedDates.has(arg.el.dataset.date)) {
-                   arg.el.classList.add('selected-date');
-               }
-           },
+            const clickedDate = new Date(info.dateStr);
+            
+            // Check if date is before minimum date
+            if (clickedDate < minDate) {
+                showWarning('Peminjaman harus dilakukan minimal 7 hari sebelum jadwal yang diinginkan');
+                return;
+            }
+            
+            // Check if date has existing events
+            const hasEvent = calendar.getEvents().some(event => {
+                const eventDate = new Date(event.start);
+                return eventDate.toDateString() === clickedDate.toDateString();
+            });
+            
+            if (hasEvent) {
+                showWarning('Tanggal ini sudah ada peminjaman yang diajukan atau disetujui');
+                return;
+            }
+
+            // Handle date selection for valid dates
+            if (selectedDates.has(info.dateStr)) {
+                selectedDates.delete(info.dateStr);
+                info.dayEl.classList.remove('selected-date');
+            } else {
+                selectedDates.add(info.dateStr);
+                info.dayEl.classList.add('selected-date');
+            }
+            updateSelectedDatesDisplay();
+        },
+        eventDidMount: function(info) {
+            if (info.event.extendedProps.status === 'diajukan') {
+                info.el.style.backgroundColor = '#F97316';
+            } else if (info.event.extendedProps.status === 'disetujui') {
+                info.el.style.backgroundColor = '#059669';
+            }
+        },
+        dayCellDidMount: function(arg) {
+            if (arg.date < minDate) {
+                arg.el.classList.add('fc-disabled-date');
+            }
+            
+            // Add class for dates with events
+            const hasEvent = calendar.getEvents().some(event => {
+                const eventDate = new Date(event.start);
+                return eventDate.toDateString() === arg.date.toDateString();
+            });
+            
+            if (hasEvent) {
+                arg.el.classList.add('fc-has-event');
+            }
+            
+            if (selectedDates.has(arg.el.dataset.date)) {
+                arg.el.classList.add('selected-date');
+            }
+        },
            eventDisplay: 'block',
            height: 'auto',
            slotMinTime: '07:00:00',
@@ -300,6 +303,28 @@
            },
            locale: 'id'
        });
+
+       function showWarning(message) {
+        const warningMessage = document.createElement('div');
+        warningMessage.className = 'warning-popup';
+        warningMessage.innerHTML = `
+            <div class="warning-content">
+                <p>${message}</p>
+                <button type="button" class="close-warning">Tutup</button>
+            </div>
+        `;
+        document.body.appendChild(warningMessage);
+
+        warningMessage.querySelector('.close-warning').addEventListener('click', function() {
+            warningMessage.remove();
+        });
+
+        setTimeout(() => {
+            if (document.body.contains(warningMessage)) {
+                warningMessage.remove();
+            }
+        }, 3000);
+    }
        
        function updateSelectedDatesDisplay() {
            if (selectedDates.size === 0) {
@@ -359,6 +384,10 @@
    .fc-event {
    cursor: pointer;
    }
+   .fc-has-event {
+    background-color: rgba(203, 213, 225, 0.3) !important;
+    cursor: not-allowed !important;
+    }
    .fc-timegrid-slot-minor {
    border-top-style: none;
    }
