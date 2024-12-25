@@ -11,12 +11,14 @@ class NotifikasiSeeder extends Seeder
         $notifikasi = [
             [
                 'idPeminjaman' => 1,
+                'penerima' => 4,
                 'judul' => 'Peminjaman Disetujui',
                 'isi' => 'Peminjaman ruangan untuk Seminar Tugas Akhir telah disetujui',
                 'isRead' => false
             ],
             [
                 'idPeminjaman' => 2,
+                'penerima' => 4,
                 'judul' => 'Peminjaman Diajukan',
                 'isi' => 'Peminjaman ruangan untuk Rapat Himpunan telah diajukan dan menunggu persetujuan',
                 'isRead' => false

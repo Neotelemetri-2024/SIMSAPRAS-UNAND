@@ -16,6 +16,7 @@ use App\Http\Controllers\RiwayatController;
 use App\Http\Controllers\BeamsAuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotifikasiController;
+use App\Http\Controllers\NotifikasiAdminController;
 use Illuminate\Http\Request;
 use Pusher\PushNotifications\PushNotifications;
 
@@ -86,6 +87,10 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' 
 
     // Profile
     Route::get('/profile', fn() => view('admin.profile'))->name('admin.profile');
+
+    // Notifikasi
+    Route::get('/notifikasi', [NotifikasiAdminController::class, 'index'])->name('notifikasi.admin.index');
+    Route::post('/notifikasi/{notifikasi}/mark-as-read', [NotifikasiAdminController::class, 'markAsRead'])->name('notifikasi.admin.mark-as-read');
 });
 
 // User Routes
@@ -100,6 +105,7 @@ Route::group(['middleware' => ['checkRole:user']], function () {
     Route::post('/riwayat/{id}/upload-bukti', [RiwayatController::class, 'uploadBuktiPembayaran'])->name('riwayat.upload-bukti');
 
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
+    Route::post('/notifikasi/{notifikasi}/mark-as-read', [NotifikasiController::class, 'markAsRead'])->name('notifikasi.mark-as-read');
 });
 
 // Pengguna Management (Superadmin & Pimpinan)

@@ -35,7 +35,11 @@
                 <!-- Unread Notifications -->
                 <div id="unread-content">
                     @forelse($unreadNotifications as $notification)
-                        <div class="p-4 bg-white rounded-lg border border-gray-100 hover:border-gray-200 transition-all duration-200">
+                    <div 
+                        class="p-4 bg-white rounded-lg border border-gray-100 hover:border-gray-200 transition-all duration-200 cursor-pointer"
+                        onclick="markAsRead({{ $notification->id }})"
+                        id="notification-{{ $notification->id }}"
+                    >
                             <div class="flex justify-between items-start gap-4">
                                 <!-- Status Icon -->
                                 <div class="flex-shrink-0">
@@ -145,5 +149,57 @@
             readContent.classList.remove('hidden');
             unreadContent.classList.add('hidden');
         });
+
+        function markAsRead(notifikasiId) {
+        // Get the notification element
+        const notifikasi = document.getElementById(`notification-${notifikasiId}`);
+        if (!notifikasi) {
+            console.error('Notification element not found');
+            return;
+        }
+        const unreadContent = document.getElementById('unread-content');
+        const readContent = document.getElementById('read-content');
+
+        // Clone the notification element
+        const readNotifikasi = notifikasi.cloneNode(true);
+        readNotifikasi.classList.remove('bg-white', 'cursor-pointer', 'hover:border-gray-200');
+        readNotifikasi.classList.add('bg-gray-50');
+        readNotifikasi.removeAttribute('onclick');
+
+        // Add to read tab and remove from unread tab
+        readContent.insertBefore(readNotifikasi, readContent.firstChild);
+        notifikasi.remove();
+
+        // Update the unread counter
+        const unreadCount = document.querySelector('#unread-tab span');
+        if (unreadCount) {
+            const currentCount = parseInt(unreadCount.textContent);
+            if (currentCount > 1) {
+                unreadCount.textContent = currentCount - 1;
+            } else {
+                unreadCount.remove();
+            }
+        }
+
+        // Check if unread tab is empty
+        if (unreadContent.children.length === 0) {
+            unreadContent.innerHTML = `
+                <div class="text-center py-8 text-gray-500">
+                    Tidak ada notifikasi baru
+                </div>
+            `;
+        }
+
+        // Send request to server in background
+        fetch(`/notifikasi/${notifikasiId}/mark-as-read`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+        })
+        .catch(error => console.error('Error:', error));
+    }
     </script>
 @endsection

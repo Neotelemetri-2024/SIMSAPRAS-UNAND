@@ -119,6 +119,7 @@ class PeminjamanController extends Controller
                 ->map(function ($admin) use ($peminjaman) {
                     return [
                         'idPeminjaman' => $peminjaman->id,
+                        'penerima' => $admin->id,
                         'judul' => 'Peminjaman Baru',
                         'isi' => "Peminjaman " . ($peminjaman->ruangan ? $peminjaman->ruangan->nama : $peminjaman->sarana->nama) . " dari " . auth()->user()->name . " untuk kegiatan " . $peminjaman->kegiatan,
                         'isRead' => false,

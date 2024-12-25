@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('notifikasi', function (Blueprint $table) {
             $table->id();
             $table->foreignId('idPeminjaman')->constrained('peminjaman');
+            $table->foreignId('penerima')->constrained('users');
             $table->string('judul');
             $table->text('isi');
             $table->boolean('isRead');
