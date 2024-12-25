@@ -21,17 +21,8 @@
             <!-- Bagian kanan (notifications & profile) -->
             <div class="flex items-center space-x-3">
                 <!-- Notification button -->
-                <button type="button" class="p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 transition-colors">
-                    <span class="sr-only">View notifications</span>
-                    <div class="relative">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path>
-                        </svg>
-                        <!-- Notification badge - uncomment jika diperlukan -->
-                        <!-- <div class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
-                            <span class="text-xs text-white">3</span>
-                        </div> -->
-                    </div>
+                <button type="button" class="notification-button p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 transition-colors">
+                    
                 </button>
 
                 <!-- Profile dropdown -->
