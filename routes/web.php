@@ -56,6 +56,7 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' 
 
     // Peminjaman
     Route::resource('peminjaman', PeminjamanAdminController::class);
+    Route::get('/overview', [PeminjamanAdminController::class, 'overview'])->name('admin.overview');
     Route::get('/peminjaman-masuk', [PeminjamanAdminController::class, 'PeminjamanMasuk'])->name('peminjaman.admin.masuk');
     Route::get('/peminjaman-proses', [PeminjamanAdminController::class, 'PeminjamanDiproses'])->name('peminjaman.admin.diproses');
     Route::get('/peminjaman-setuju', [PeminjamanAdminController::class, 'PeminjamanDisetujui'])->name('peminjaman.admin.disetujui');
@@ -87,6 +88,7 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' 
 
     // Profile
     Route::get('/profile', fn() => view('admin.profile'))->name('admin.profile');
+    
 
     // Notifikasi
     Route::get('/notifikasi', [NotifikasiAdminController::class, 'index'])->name('notifikasi.admin.index');

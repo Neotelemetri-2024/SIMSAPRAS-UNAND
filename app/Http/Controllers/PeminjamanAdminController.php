@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Peminjaman;
 use App\Models\Notifikasi;
+use App\Models\Sarana;
+use App\Models\TanggalPeminjaman;
+use App\Models\Ruangan;
 use Illuminate\Http\Request;
 use App\Services\NotificationService;
 
@@ -188,5 +191,72 @@ class PeminjamanAdminController extends Controller
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+
+
+    public function overview()
+    {
+        // Get all sarana for the filter dropdown
+        $saranas = Sarana::all();
+        
+        // Get peminjaman with all necessary relationships
+        $peminjamans = Peminjaman::with([
+            'user', 
+            'sarana',
+            'ruangan',
+            'tanggalPeminjaman'
+        ])->get();
+    
+        $events = $peminjamans->map(function($peminjaman) {
+            // Get the first date for the event
+            $tanggal = $peminjaman->tanggalPeminjaman->first();
+            
+            return [
+                'saranaName' => $peminjaman->sarana->nama, // For initial view
+                'kegiatan' => $peminjaman->kegiatan, // For filtered view
+                'start' => optional($tanggal)->tanggal,
+                'status' => $peminjaman->status,
+                // Extended properties for modal
+                'peminjam' => $peminjaman->user->name ?? 'Anonim',
+                'instansi' => $peminjaman->instansi ?? '-',
+                'sarana' => $peminjaman->sarana->nama ?? '-',
+                'ruangan' => $peminjaman->ruangan->nama ?? '-',
+                'saranaId' => $peminjaman->sarana->id,
+                'estimasiPeserta' => $peminjaman->estimasiPeserta,
+                // Color coding based on status
+                'backgroundColor' => match($peminjaman->status) {
+                    'disetujui' => '#059669',
+                    'diproses' => '#f97316', 
+                    'ditolak' => '#dc2626',
+                    'diajukan' => '#3b82f6',
+                    default => '#6b7280'
+                },
+                'borderColor' => match($peminjaman->status) {
+                    'disetujui' => '#047857',
+                    'diproses' => '#ea580c',
+                    'ditolak' => '#b91c1c',
+                    'diajukan' => '#2563eb',
+                    default => '#4b5563'
+                },
+                // Additional info for tooltip and display
+                'extendedProps' => [
+                    'status' => $peminjaman->status,
+                    'peminjam' => $peminjaman->user->name ?? 'Anonim',
+                    'instansi' => $peminjaman->instansi ?? '-',
+                    'kegiatan' => $peminjaman->kegiatan ?? '-',
+                    'sarana' => $peminjaman->sarana->nama ?? '-',
+                    'ruangan' => $peminjaman->ruangan->nama ?? '-',
+                    'estimasiPeserta' => $peminjaman->estimasiPeserta
+                ]
+            ];
+        })->filter(function ($event) {
+            return !empty($event['start']);
+        })->values();
+    
+        return view('admin.overview', [
+            'events' => $events,
+            'saranas' => $saranas
+        ]);
     }
 }

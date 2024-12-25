@@ -6,6 +6,7 @@
         @vite(['resources/css/app.css','resources/js/app.js'])
         <title>SIMSAPRAS Dashboard</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+        <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet'>
 
         <!-- Di bagian head layout -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -23,6 +24,7 @@
         }
         </style>
         @endpush
+        @yield('styles')
     </head>
     <body class="bg-gray-50">
         <!-- Navbar -->
@@ -35,6 +37,9 @@
             @yield('content')
         </div>
         <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
+        
+        
+        
         <script src="/js/notifadmin.js"></script>
         <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -154,5 +159,6 @@
         </script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         @stack('scripts')
+        @yield('scripts')
     </body>
 </html>
