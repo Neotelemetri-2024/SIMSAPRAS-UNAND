@@ -6,6 +6,14 @@ const beamsTokenProvider = new PusherPushNotifications.TokenProvider({
 let beamsClient = null; // Simpan instance beamsClient secara global
 
 async function initializeNotifications() {
+    // Cek dulu apakah ada meta user-id (user login)
+    const userIdMeta = document.querySelector('meta[name="user-id"]');
+    if (!userIdMeta || !userIdMeta.content) {
+        // User tidak login, exit quietly tanpa error
+        console.log('User not logged in, skipping notification setup');
+        return;
+    }
+
     if (!("serviceWorker" in navigator) || !("Notification" in window)) {
         console.error("Push notifications not supported");
         return;
@@ -20,7 +28,7 @@ async function initializeNotifications() {
 
         // Register service worker
         const registration = await navigator.serviceWorker.register('/service-worker.js');
-        await navigator.serviceWorker.ready; // Tunggu sampai service worker aktif
+        await navigator.serviceWorker.ready;
         console.log('Service Worker registered and activated:', registration);
 
         const permission = await Notification.requestPermission();
@@ -32,22 +40,19 @@ async function initializeNotifications() {
         }
 
         // Get user ID from meta tag
-        const userId = document.querySelector('meta[name="user-id"]').content;
-        if (!userId) {
-            throw new Error('User ID not found');
-        }
+        const userId = userIdMeta.content; // Gunakan userIdMeta yang sudah dicek di awal
         console.log('User ID:', userId);
 
         // Initialize Beams Client dengan TokenProvider
         beamsClient = new PusherPushNotifications.Client({
             instanceId: "1c9ef4d6-c234-4989-852b-378a54f8d770",
-            serviceWorkerRegistration: registration, // Tambahkan ini
+            serviceWorkerRegistration: registration,
             tokenProvider: beamsTokenProvider
         });
 
         // Start dan setup Beams Client
         await beamsClient.start();
-        await beamsClient.setUserId(String(userId), beamsTokenProvider); // Pastikan userId string
+        await beamsClient.setUserId(String(userId), beamsTokenProvider);
         console.log('Notification setup complete');
 
         // Setup event listener untuk service worker
@@ -63,7 +68,10 @@ async function initializeNotifications() {
 
     } catch (error) {
         console.error('Notification setup failed:', error);
-        createNotificationBox('Notification Error', error.message);
+        // Hanya tampilkan error notification box jika error bukan karena user tidak login
+        if (!(error.message.includes('User ID not found'))) {
+            createNotificationBox('Notification Error', error.message);
+        }
         
         // Attempt cleanup on error
         if (beamsClient) {

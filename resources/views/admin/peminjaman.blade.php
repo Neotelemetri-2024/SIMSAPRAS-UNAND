@@ -618,6 +618,23 @@ function submitForm(id) {
     formData.append('_token', '{{ csrf_token() }}');
     formData.append('_method', 'PUT');
 
+    // Tampilkan alert sukses terlebih dahulu
+    let successMessage;
+    switch(status) {
+        case 'disetujui':
+            successMessage = 'Peminjaman berhasil disetujui';
+            break;
+        case 'ditolak':
+            successMessage = 'Peminjaman berhasil ditolak';
+            break;
+        case 'diproses':
+            successMessage = 'Peminjaman berhasil diproses';
+            break;
+        default:
+            successMessage = 'Status peminjaman berhasil diperbarui';
+    }
+
+    // Kirim request ke server di background
     fetch(form.action, {
         method: 'POST',
         body: formData,
@@ -625,48 +642,19 @@ function submitForm(id) {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
             'X-Requested-With': 'XMLHttpRequest'
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Sesuaikan pesan sukses berdasarkan status
-            let successMessage;
-            switch(status) {
-                case 'disetujui':
-                    successMessage = 'Peminjaman berhasil disetujui';
-                    break;
-                case 'ditolak':
-                    successMessage = 'Peminjaman berhasil ditolak';
-                    break;
-                case 'diproses':
-                    successMessage = 'Peminjaman berhasil diproses';
-                    break;
-                default:
-                    successMessage = 'Status peminjaman berhasil diperbarui';
-            }
+    });
 
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: successMessage,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.reload();
-                }
-            });
-        } else {
-            throw new Error(data.message || 'Terjadi kesalahan');
-        }
-    })
-    .catch(error => {
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: error.message,
-        });
+    // Tampilkan alert sukses langsung
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: successMessage,
+        timer: 1500, // Auto close setelah 1.5 detik
+        showConfirmButton: false
+    }).then(() => {
+        window.location.reload();
     });
 }
-
 // Inisialisasi feedback form saat modal dibuka
 document.addEventListener('DOMContentLoaded', function() {
     const modals = document.querySelectorAll('[id^="editModal"]');

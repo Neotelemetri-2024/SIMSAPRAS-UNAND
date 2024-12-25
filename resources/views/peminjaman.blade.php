@@ -299,6 +299,10 @@ document.getElementById('peminjamanForm').addEventListener('submit', function(e)
 });
 
 function submitForm(form) {
+    const submitButton = form.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<span class="spinner">Mengirim...</span>';
+
     const formData = new FormData(form);
 
     fetch(form.action, {
@@ -316,7 +320,8 @@ function submitForm(form) {
                 icon: 'success',
                 title: 'Berhasil!',
                 text: data.message,
-                confirmButtonColor: '#059669'
+                timer: 1500,
+                showConfirmButton: false
             }).then(() => {
                 window.location.href = data.redirect;
             });
@@ -328,9 +333,14 @@ function submitForm(form) {
         Swal.fire({
             icon: 'error',
             title: 'Gagal!',
-            text: error.message || 'Terjadi kesalahan saat mengirim pengajuan',
-            confirmButtonColor: '#DC2626'
+            text: error.message || 'Terjadi kesalahan',
+            timer: 2000,
+            showConfirmButton: false
         });
+    })
+    .finally(() => {
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Ajukan Peminjaman';
     });
 }
 
