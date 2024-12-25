@@ -10,15 +10,22 @@ class NotifikasiController extends Controller
     {
         $pengguna = auth()->user();
         
-        // Get notifications through peminjaman relationship
-        $unreadNotifications = Notifikasi::whereHas('peminjaman', function($query) use ($pengguna) {
-            $query->where('idUser', $pengguna->id);
-        })->where('isRead', false)->latest()->get();
+        $unreadNotifications = Notifikasi::where('penerima', $pengguna->id)
+            ->where('isRead', false)
+            ->latest()
+            ->get();
         
-        $readNotifications = Notifikasi::whereHas('peminjaman', function($query) use ($pengguna) {
-            $query->where('idUser', $pengguna->id);
-        })->where('isRead', true)->latest()->get();
+        $readNotifications = Notifikasi::where('penerima', $pengguna->id)
+            ->where('isRead', true)
+            ->latest()
+            ->get();
         
         return view('notif', compact('unreadNotifications', 'readNotifications'));
+    }
+
+    public function markAsRead(Notifikasi $notifikasi)
+    {
+        $notifikasi->update(['isRead' => true]);
+        return response()->json(['success' => true]);
     }
 }

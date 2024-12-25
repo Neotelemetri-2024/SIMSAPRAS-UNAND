@@ -25,18 +25,23 @@ class User extends Authenticatable
         'kontak'
     ];
    public function hasAnyRole($roles): bool
-{
-    // Jika string diberikan, ubah menjadi array
-    if (is_string($roles)) {
-        $roles = [$roles];
-    }
+    {
+        // Jika string diberikan, ubah menjadi array
+        if (is_string($roles)) {
+            $roles = [$roles];
+        }
 
-    return in_array($this->role, $roles);
-}
+        return in_array($this->role, $roles);
+    }
 
     public function peminjaman()
     {
         return $this->hasMany(Peminjaman::class, 'idUser');
+    }
+
+    public function notifikasi()
+    {
+        return $this->hasMany(Notifikasi::class, 'penerima');
     }
 
     public function beamsInterest()

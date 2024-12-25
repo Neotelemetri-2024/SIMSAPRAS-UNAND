@@ -11,7 +11,7 @@ class PeminjamanSeeder extends Seeder
     {
         $peminjaman = [
             [
-                'idUser' => 2,
+                'idUser' => 4,
                 'idRuangan' => 1,
                 'idSarana' => 1,
                 'kegiatan' => 'Seminar Tugas Akhir',
@@ -23,7 +23,7 @@ class PeminjamanSeeder extends Seeder
                 'status' => 'disetujui'
             ],
             [
-                'idUser' => 2,
+                'idUser' => 4,
                 'idRuangan' => 2,
                 'idSarana' => 1,
                 'kegiatan' => 'Rapat Himpunan',

@@ -17,8 +17,6 @@ class PeminjamanAdminController extends Controller
         $this->notificationService = $notificationService;
     }
 
-
-
     private function getPeminjaman(Request $request, $status, $title)
     {
         $search = $request->input('search');
@@ -125,7 +123,7 @@ class PeminjamanAdminController extends Controller
             $peminjaman->save();
             // / Siapkan pesan notifikasi dan kirim
         $userMessage = match($peminjaman->status) {
-            'ditolak' => "Peminjaman Anda ditolak dengan alasan: " . $request->feedbackPenolakan,
+            'ditolak' => "Peminjaman Anda ditolak dengan alasan " . $request->feedbackPenolakan,
             'diproses' => "Peminjaman Anda sedang diproses. Silakan melakukan pembayaran sebesar Rp " . number_format($peminjaman->tarif, 0, ',', '.'),
             'disetujui' => "Selamat! Peminjaman Anda telah disetujui.",
             default => "Status peminjaman Anda telah diubah menjadi " . $peminjaman->status
@@ -134,6 +132,7 @@ class PeminjamanAdminController extends Controller
         // Tulis ke database dulu
         Notifikasi::create([
             'idPeminjaman' => $peminjaman->id,
+            'penerima' => $peminjaman->user->id,
             'judul' => "Update Status Peminjaman",
             'isi' => $userMessage,
             'isRead' => false

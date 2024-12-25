@@ -8,6 +8,7 @@ class Notifikasi extends Model
 {
     protected $fillable = [
         'idPeminjaman',
+        'penerima',
         'judul',
         'isi',
         'isRead'
@@ -17,5 +18,10 @@ class Notifikasi extends Model
     public function peminjaman()
     {
         return $this->belongsTo(Peminjaman::class, 'idPeminjaman');
+    }
+
+    public function penerima()
+    {
+        return $this->belongsTo(User::class, 'penerima');
     }
 }

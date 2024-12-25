@@ -2,7 +2,7 @@ let hasNewNotifications = false;
 
 function isNotificationPage() {
     // Sesuaikan dengan URL halaman notifikasi Anda
-    return window.location.pathname === "/notifications";
+    return window.location.pathname === "/admin/notifikasi";
 }
 
 function updateNotificationBadge(show) {
@@ -43,9 +43,7 @@ if ("serviceWorker" in navigator) {
                 .start()
                 .then(() => {
                     console.log("Beams started");
-                    return beamsClient.addDeviceInterest(
-                        "debug-peminjamanadmin"
-                    );
+                    return beamsClient.addDeviceInterest("peminjamanadmin");
                 })
                 .then(() => {
                     console.log("Successfully added device interest");
@@ -254,7 +252,7 @@ function handleNotificationClick() {
     updateNotificationBadge(false);
 
     // Redirect ke halaman notifikasi
-    window.location.href = "/notifications"; // Sesuaikan dengan route Anda
+    window.location.href = "/admin/notifikasi"; // Sesuaikan dengan route Anda
 }
 
 function hideNotification(notifBox) {
