@@ -156,6 +156,18 @@
                 }
             });
         });
+        function logout() {
+    // Panggil fungsi cleanup notifikasi
+    cleanupNotifications().then(() => {
+        // Lanjutkan dengan proses logout normal (misalnya redirect ke halaman logout)
+        window.location.href = '/logout';
+    }).catch(error => {
+        console.error("Error during cleanup:", error);
+        // Tetap lanjutkan logout meskipun ada error
+        window.location.href = '/logout';
+    });
+}
+
         </script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         @stack('scripts')

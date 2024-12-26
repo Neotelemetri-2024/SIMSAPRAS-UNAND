@@ -48,6 +48,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [DetailProfileController::class, 'index'])->name('profile.index');
 });
 
+Route::group(['middleware' => ['checkRole:superadmin,pimpinan'], 'prefix' => 'admin'], function () {
+    // Route yang lain...
+    Route::put('/peminjaman/{id}/batal', [PeminjamanAdminController::class, 'batalkanPeminjaman'])->name('peminjaman.admin.batal');
+});
 // Admin Routes
 Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' => 'admin'], function () {
     // Dashboard
@@ -61,6 +65,8 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' 
     Route::get('/peminjaman-proses', [PeminjamanAdminController::class, 'PeminjamanDiproses'])->name('peminjaman.admin.diproses');
     Route::get('/peminjaman-setuju', [PeminjamanAdminController::class, 'PeminjamanDisetujui'])->name('peminjaman.admin.disetujui');
     Route::get('/peminjaman-tolak', [PeminjamanAdminController::class, 'PeminjamanDitolak'])->name('peminjaman.admin.ditolak');
+    // Di web.php
+Route::get('/peminjaman-batal', [PeminjamanAdminController::class, 'PeminjamanDibatalkan'])->name('peminjaman.admin.dibatalkan');
     Route::put('/peminjaman/{id}/update-status', [PeminjamanAdminController::class, 'updateStatus'])->name('peminjaman.updateStatus');
 
     // Kategori

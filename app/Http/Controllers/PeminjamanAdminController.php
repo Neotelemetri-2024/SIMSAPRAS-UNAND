@@ -19,6 +19,58 @@ class PeminjamanAdminController extends Controller
     {
         $this->notificationService = $notificationService;
     }
+    public function batalkanPeminjaman(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'feedbackPembatalan' => 'required|string|max:500',
+            ]);
+    
+            $peminjaman = Peminjaman::with('user')->findOrFail($id);
+            $peminjaman->status = 'dibatalkan';
+            $peminjaman->feedbackPembatalan = $request->feedbackPembatalan;
+            $peminjaman->save();
+    
+            // Buat notifikasi untuk user
+            Notifikasi::create([
+                'idPeminjaman' => $peminjaman->id,
+                'penerima' => $peminjaman->user->id,
+                'judul' => "Pembatalan Peminjaman",
+                'isi' => "Peminjaman Anda telah dibatalkan dengan alasan: " . $request->feedbackPembatalan,
+                'isRead' => false
+            ]);
+    
+            // Kirim notifikasi realtime
+            $this->notificationService->sendToUser(
+                $peminjaman->user->id,
+                "Pembatalan Peminjaman",
+                "Peminjaman Anda telah dibatalkan dengan alasan: " . $request->feedbackPembatalan,
+                $peminjaman->id
+            );
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Peminjaman berhasil dibatalkan'
+            ]);
+    
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Pembatalan error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+public function PeminjamanDibatalkan(Request $request)
+{
+    return $this->getPeminjaman($request, 'dibatalkan', 'Peminjaman Dibatalkan');
+}
 
     private function getPeminjaman(Request $request, $status, $title)
     {
@@ -192,7 +244,7 @@ class PeminjamanAdminController extends Controller
             ], 500);
         }
     }
-
+    
 
 
     public function overview()

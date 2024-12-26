@@ -27,11 +27,7 @@ async function initializeNotifications() {
 
     try {
         // Unregister existing service workers
-        const existingRegistrations =
-            await navigator.serviceWorker.getRegistrations();
-        for (let reg of existingRegistrations) {
-            await reg.unregister();
-        }
+       
 
         // Register service worker
         const registration = await navigator.serviceWorker.register(
@@ -54,7 +50,7 @@ async function initializeNotifications() {
 
         // Initialize Beams Client dengan TokenProvider
         beamsClient = new PusherPushNotifications.Client({
-            instanceId: "1c9ef4d6-c234-4989-852b-378a54f8d770",
+            instanceId: "a4ee9c23-af7c-4ff5-906a-76a948d016b1",
             serviceWorkerRegistration: registration,
             tokenProvider: beamsTokenProvider,
         });
