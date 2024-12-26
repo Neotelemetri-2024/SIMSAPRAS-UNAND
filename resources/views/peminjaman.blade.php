@@ -59,13 +59,20 @@
                                     {{ \Carbon\Carbon::parse($date)->isoFormat('dddd, D MMMM Y') }}
                                 </p>
                                 <select name="jadwal_dates[{{ $loop->index }}][jadwal_id]"
-                                        class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500">
+                                        class="w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500"
+                                        required>
+                                    <option value="">Pilih Jadwal</option>
                                     @foreach($jadwals as $jadwal)
-                                        <option value="{{ $jadwal->id }}">
-                                            {{ $jadwal->mulai }} - {{ $jadwal->selesai }}
-                                        </option>
+                                        @if(!in_array($jadwal->id, $bookedJadwals[$date] ?? []))
+                                            <option value="{{ $jadwal->id }}">
+                                                {{ $jadwal->mulai }} - {{ $jadwal->selesai }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 </select>
+                                @if(count($bookedJadwals[$date] ?? []) == $jadwals->count())
+                                    <p class="text-red-500 mt-2 text-sm">Semua jadwal telah dibooking untuk tanggal ini</p>
+                                @endif
                                 <input type="hidden" name="jadwal_dates[{{ $loop->index }}][date]" value="{{ $date }}">
                             </div>
                         @endforeach

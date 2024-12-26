@@ -395,17 +395,6 @@
                    showWarning('Peminjaman harus dilakukan minimal 7 hari sebelum jadwal yang diinginkan');
                    return;
                }
-               
-               // Check if date has existing events
-               const hasEvent = calendar.getEvents().some(event => {
-                   const eventDate = new Date(event.start);
-                   return eventDate.toDateString() === clickedDate.toDateString();
-               });
-               
-               if (hasEvent) {
-                   showWarning('Tanggal ini sudah ada peminjaman yang diajukan atau disetujui');
-                   return;
-               }
    
                // Handle date selection
                if (selectedDates.has(info.dateStr)) {

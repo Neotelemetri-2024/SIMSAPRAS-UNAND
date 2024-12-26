@@ -39,8 +39,6 @@ class Peminjaman extends Model
         return $this->belongsTo(Ruangan::class, 'idRuangan');
     }
 
- 
-
     public function sarana()
     {
         return $this->belongsTo(Sarana::class, 'idSarana');

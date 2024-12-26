@@ -224,25 +224,25 @@
                         </div>
 
                   <!-- Jadwal Section -->
-<div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-        <svg class="w-5 h-5 mr-2 text-indigo-500" xmlns="http://www.w3.org/2000/svg"
-            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        Jadwal Peminjaman
-    </h4>
-    <div class="space-y-2">
-        @foreach ($pinjam->tanggalPeminjaman as $tanggal)
-            <div class="flex items-center text-sm bg-white p-2 rounded-lg border border-gray-100">
-                <span class="font-medium text-gray-600">{{ $tanggal->tanggal }}</span>
-                <span class="mx-2 text-gray-400">|</span>
-                <span class="text-gray-500">{{ $tanggal->jadwal->mulai }} - {{ $tanggal->jadwal->selesai }}</span>
-            </div>
-        @endforeach
-    </div>
-</div>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-indigo-500" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                Jadwal Peminjaman
+                            </h4>
+                            <div class="space-y-2">
+                                @foreach ($pinjam->tanggalPeminjaman as $tanggal)
+                                    <div class="flex items-center text-sm bg-white p-2 rounded-lg border border-gray-100">
+                                        <span class="font-medium text-gray-600">{{ $tanggal->tanggal }}</span>
+                                        <span class="mx-2 text-gray-400">|</span>
+                                        <span class="text-gray-500">{{ $tanggal->jadwal->mulai }} - {{ $tanggal->jadwal->selesai }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
 
                         <!-- Lampiran Section -->
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
@@ -277,6 +277,23 @@
                                 </a>
                             </div>
                         </div>
+
+                        <!-- Status Section -->
+                        @if($pinjam->status == 'ditolak')
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                                    </svg>
+                                    Feedback Penolakan
+                                </h4>
+                                <div class="space-y-3">
+                                    <div class="p-3 bg-white rounded-lg border border-gray-200">
+                                        <p class="text-sm font-medium text-gray-600">{{ $pinjam->feedbackPenolakan }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                         @if ($pinjam->status == 'diproses' && empty($pinjam->buktiPembayaran))
                             <!-- Pembayaran Section -->
                             <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
