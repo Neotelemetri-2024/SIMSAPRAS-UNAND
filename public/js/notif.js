@@ -75,11 +75,11 @@ async function initializeNotifications() {
             }
         });
     } catch (error) {
-        console.error("Notification setup failed:", error);
-        // Hanya tampilkan error notification box jika error bukan karena user tidak login
-        if (!error.message.includes("User ID not found")) {
-            createNotificationBox("Notification Error", error.message);
-        }
+        // console.error("Notification setup failed:", error);
+        // // Hanya tampilkan error notification box jika error bukan karena user tidak login
+        // if (!error.message.includes("User ID not found")) {
+        //     createNotificationBox("Notification Error", error.message);
+        // }
 
         // Attempt cleanup on error
         if (beamsClient) {
