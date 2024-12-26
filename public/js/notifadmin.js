@@ -19,43 +19,44 @@ if ("serviceWorker" in navigator) {
 
     // Unregister existing service workers
     navigator.serviceWorker
-        .getRegistrations()
-        .then(function (registrations) {
-            console.log("Found existing registrations:", registrations);
-            return Promise.all(registrations.map((r) => r.unregister()));
-        })
-        .then(() => {
-            console.log("All old service workers unregistered");
+    .getRegistrations()
+    .then(() => {
+        console.log("All old service workers unregistered");
 
-            return navigator.serviceWorker.register("/service-worker.js");
-        })
-        .then((registration) => {
-            console.log("Service Worker registered:", registration);
+        return navigator.serviceWorker.register("/service-worker.js");
+    })
+    .then((registration) => {
+        console.log("Service Worker registered:", registration);
 
-            // Initialize Beams
-            const beamsClient = new PusherPushNotifications.Client({
-                instanceId: "1c9ef4d6-c234-4989-852b-378a54f8d770",
-            });
-
-            console.log("Initializing Beams client");
-
-            return beamsClient
-                .start()
-                .then(() => {
-                    console.log("Beams started");
-                    return beamsClient.addDeviceInterest("peminjamanadmin");
-                })
-                .then(() => {
-                    console.log("Successfully added device interest");
-                    console.log(
-                        "Current service worker:",
-                        navigator.serviceWorker.controller
-                    );
-                });
-        })
-        .catch((error) => {
-            console.error("Setup failed:", error);
+        // Initialize Beams
+        const beamsClient = new PusherPushNotifications.Client({
+            instanceId: "a4ee9c23-af7c-4ff5-906a-76a948d016b1",
         });
+
+        console.log("Initializing Beams client");
+
+        return beamsClient
+            .start()
+            .then(() => {
+                console.log("Beams started");
+
+                return beamsClient.getDeviceInterests();
+            })
+            .then((interests) => {
+                console.log("Current device interests:", interests);
+
+                if (!interests.includes("peminjamanadmin")) {
+                    console.log("Adding device interest: peminjamanadmin");
+                    return beamsClient.addDeviceInterest("peminjamanadmin");
+                } else {
+                    console.log("Device already subscribed to interest");
+                }
+            });
+    })
+    .catch((error) => {
+        console.error("Setup failed:", error);
+    });
+
 
     // Listen for messages
     navigator.serviceWorker.addEventListener("message", function (event) {

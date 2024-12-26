@@ -56,6 +56,17 @@
              document.body.scrollTop = 0;
              document.documentElement.scrollTop = 0;
          }
+         function logout() {
+    // Panggil fungsi cleanup notifikasi
+    cleanupNotifications().then(() => {
+        // Lanjutkan dengan proses logout normal (misalnya redirect ke halaman logout)
+        window.location.href = '/logout';
+    }).catch(error => {
+        console.error("Error during cleanup:", error);
+        // Tetap lanjutkan logout meskipun ada error
+        window.location.href = '/logout';
+    });
+}
 
       </script>
       <div id="notification-container" class="fixed bottom-5 right-5 z-50"></div>

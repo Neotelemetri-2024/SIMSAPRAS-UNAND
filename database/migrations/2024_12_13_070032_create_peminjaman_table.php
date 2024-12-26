@@ -21,7 +21,10 @@ return new class extends Migration
             $table->integer('tarif')->nullable();
             $table->text('feedbackPenolakan')->nullable();
             $table->string('evaluasi')->nullable();
-            $table->enum('status', ['diajukan', 'ditolak', 'diproses', 'disetujui']);
+            $table->enum('status', ['diajukan', 'ditolak', 'diproses', 'disetujui', 'dibatalkan', 'diajukanbatal']);
+            $table->enum('statusPembayaran', ['lunas', 'tidak'])->nullable();
+            $table->enum('statusPengembalian', ['sudah', 'belum'])->nullable();
+            $table->string('buktiPembayaran')->nullable();
             $table->text('feedbackPembatalan')->nullable();
             $table->timestamps();
         });

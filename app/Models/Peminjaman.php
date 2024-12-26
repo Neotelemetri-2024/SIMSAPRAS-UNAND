@@ -10,7 +10,7 @@ class Peminjaman extends Model
 
     protected $fillable = [
         'idUser',
-        'idRuangan',
+        'idRuangan', 
         'idSarana',
         'kegiatan',
         'suratPeminjaman',
@@ -21,14 +21,17 @@ class Peminjaman extends Model
         'feedbackPenolakan',
         'evaluasi',
         'status',
+        'statusPembayaran',
+        'statusPengembalian',
         'feedbackPembatalan',
         'buktiPembayaran'
     ];
 
     protected $enums = [
-        'status' => ['diajukan', 'ditolak', 'diproses', 'disetujui']
+        'status' => ['diajukan', 'ditolak', 'diproses', 'disetujui', 'dibatalkan', 'diajukanbatal'],
+        'statusPembayaran' => ['lunas', 'tidak'],
+        'statusPengembalian' => ['sudah', 'belum']
     ];
-
     public function user()
     {
         return $this->belongsTo(User::class, 'idUser');
