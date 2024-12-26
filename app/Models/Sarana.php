@@ -15,6 +15,7 @@ class Sarana extends Model
         'deskripsi',
         'nama',
         'fasilitas',
+        'kapasitas',
         'status',
     ];
     protected $table = 'sarana';

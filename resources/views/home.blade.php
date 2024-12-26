@@ -18,7 +18,7 @@
                </a>
             </div>
             <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
-               <img src="/assets/images/unand.jpg" alt="mockup" class="rounded-lg shadow-lg">
+               <img src="/assets/images/unandnosky.png" alt="mockup" >
             </div>
          </div>
       </section>

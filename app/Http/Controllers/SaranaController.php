@@ -55,6 +55,7 @@ class SaranaController extends Controller
                 'nama' => 'required|string|max:255',
                 'deskripsi' => 'required|string',
                 'fasilitas' => 'required|string',
+                'kapasitas' => 'required|integer|min:1', // Add this line
                 'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
                 'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
@@ -105,6 +106,7 @@ class SaranaController extends Controller
             'nama' => 'required|string|max:255|unique:sarana,nama,'.$sarana->id,
             'deskripsi' => 'required|string',
             'fasilitas' => 'required|string',
+            'kapasitas' => 'required|integer|min:1', // Add this line
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);

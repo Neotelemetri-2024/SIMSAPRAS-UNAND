@@ -287,6 +287,10 @@
                         <label class="block mb-2 text-sm font-medium text-gray-900">Deskripsi</label>
                         <textarea name="deskripsi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required></textarea>
                      </div>
+                     <div>
+    <label class="block mb-2 text-sm font-medium text-gray-900">Kapasitas</label>
+    <input type="number" name="kapasitas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+</div>
                   </div>
 
                   <!-- Kolom Kanan -->
@@ -354,6 +358,10 @@
                         <label class="block mb-2 text-sm font-medium text-gray-900">Deskripsi</label>
                         <textarea name="deskripsi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>{{ $item->deskripsi }}</textarea>
                      </div>
+                     <div>
+    <label class="block mb-2 text-sm font-medium text-gray-900">Kapasitas</label>
+    <input type="number" name="kapasitas" value="{{ $item->kapasitas }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+</div>
                   </div>
 
                   <!-- Kolom Kanan -->
