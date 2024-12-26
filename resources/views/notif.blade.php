@@ -1,8 +1,8 @@
 @extends('layouts.user')
 
 @section('content')
-    <div class="py-24 px-4 mx-auto max-w-screen-xl">
-        <div class="max-w-3xl mx-auto">
+<div class="pt-24 pb-16 ">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="mb-6">
                 <h2 class="text-xl font-semibold text-gray-900">Notifikasi</h2>

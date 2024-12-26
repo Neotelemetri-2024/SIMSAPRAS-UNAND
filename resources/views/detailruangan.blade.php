@@ -1,4 +1,150 @@
 @extends('layouts.user')
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css" rel="stylesheet">
+<!-- Updated styles -->
+<style>
+   .fc { 
+   height: 100%;
+   background-color: white;
+   border-radius: 0.5rem;
+   }
+   .fc .fc-view-harness {
+   height: auto !important;
+   margin-bottom: 0 !important;
+   }
+   .fc-daygrid-body {
+   height: auto !important;
+   }
+   .fc-header-toolbar {
+   padding: 1rem;
+   }
+   #calendar {
+   height: auto !important;
+   /* height: 7px; */
+   min-height: 600px !important;
+   margin-bottom: 0 !important;
+   }
+   .calendar-wrapper {
+   background-color: white;
+   padding: 1.5rem;
+   border-radius: 0.75rem;
+   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+   }
+   /* Changed button colors to green */
+   .fc .fc-button {
+   background-color: #ffffff !important;
+   border: 1px solid #e5e7eb !important;
+   color: #374151 !important;
+   }
+   .fc .fc-button:hover {
+   background-color: #f9fafb !important;
+   border-color: #16a34a !important;
+   }
+   .fc .fc-button-primary:not(:disabled).fc-button-active,
+   .fc .fc-button-primary:not(:disabled):active {
+   background-color: #16a34a !important;
+   border-color: #15803d !important;
+   color: #ffffff !important;
+   }
+   .fc .fc-button-primary:disabled {
+   background-color: #f3f4f6 !important;
+   border-color: #e5e7eb !important;
+   color: #9ca3af !important;
+   }
+   .fc .fc-toolbar-title {
+   font-size: 1.25rem;
+   font-weight: 600;
+   color: #111827;
+   }
+   .fc-theme-standard td, 
+   .fc-theme-standard th {
+   border-color: #f3f4f6;
+   }
+   .fc .fc-day-today {
+   background-color: #f0f9ff !important;
+   }
+   .fc-event {
+   padding: 2px 4px;
+   font-size: 0.875rem;
+   border-radius: 4px;
+   color: white !important;
+   }
+   /* Remove blue dot from events */
+   .fc-daygrid-event-dot {
+   display: none !important;
+   }
+   /* Remove any default event styles */
+   .fc-event, .fc-event-dot {
+   background-color: transparent !important;
+   border: none !important;
+   }
+   .selected-date {
+   background-color: rgba(34, 197, 94, 0.2) !important;
+   }
+   .fc-day.fc-disabled-date {
+   background-color: rgba(239, 68, 68, 0.1) !important;
+   cursor: not-allowed !important;
+   }
+   .fc-has-event {
+   background-color: rgba(203, 213, 225, 0.3) !important;
+   cursor: not-allowed !important;
+   }
+   /* Centered warning popup with close button */
+   .warning-popup {
+   position: fixed !important;
+   top: 50% !important;
+   left: 50% !important;
+   transform: translate(-50%, -50%) !important;
+   z-index: 1000 !important;
+   }
+   .warning-content {
+   background-color: #ef4444 !important;
+   color: white !important;
+   padding: 1.5rem !important;
+   border-radius: 8px !important;
+   text-align: center !important;
+   max-width: 300px !important;
+   display: flex !important;
+   flex-direction: column !important;
+   gap: 1rem !important;
+   }
+   .warning-close-btn {
+   background-color: white !important;
+   color: #ef4444 !important;
+   border: none !important;
+   padding: 0.5rem 1rem !important;
+   border-radius: 6px !important;
+   font-weight: 500 !important;
+   cursor: pointer !important;
+   }
+   /* Event status colors - adjusted to match legend */
+   .status-disetujui { 
+   background-color: #059669 !important;
+   border-color: #047857 !important;
+   }
+   .status-diproses { 
+   background-color: #f97316 !important;
+   border-color: #ea580c !important;
+   }
+   .status-ditolak { 
+   background-color: #dc2626 !important;
+   border-color: #b91c1c !important;
+   }
+   .status-diajukan { 
+   background-color: #f97316 !important; /* Changed to match legend (orange) */
+   border-color: #ea580c !important;
+   }
+   @media (max-width: 640px) {
+   .fc .fc-toolbar {
+   flex-direction: column;
+   gap: 1rem;
+   }
+   .fc .fc-toolbar-title {
+   font-size: 1.2em;
+   }
+   }
+</style>
+@endpush
 @section('content')
 <section class="bg-white pt-24 pb-12">
    <div class="max-w-screen-xl mx-auto px-4 lg:px-6">
@@ -203,8 +349,6 @@
        window.addEventListener('beforeunload', stopAutoplay);
    });
 </script>
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 <script>
    document.addEventListener('DOMContentLoaded', function() {
@@ -220,13 +364,22 @@
        
        var calendar = new FullCalendar.Calendar(calendarEl, {
            initialView: 'dayGridMonth',
+           locale: 'id',
            headerToolbar: {
                left: 'prev,next today',
                center: 'title',
                right: 'dayGridMonth,timeGridWeek,timeGridDay'
            },
-           events: @json($events),
-           eventColor: '#3788d8',
+           events: @json($events).map(event => {
+               const start = new Date(event.start);
+               const end = new Date(event.end);
+               return {
+                   ...event,
+                   title: `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}-${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`,
+                   className: `status-${event.status}`
+               };
+           }),
+           displayEventTime: false,
            selectable: true,
            selectConstraint: {
                start: minDate.toISOString().split('T')[0],
@@ -235,96 +388,55 @@
                return selectInfo.start >= minDate;
            },
            dateClick: function(info) {
-            const clickedDate = new Date(info.dateStr);
-            
-            // Check if date is before minimum date
-            if (clickedDate < minDate) {
-                showWarning('Peminjaman harus dilakukan minimal 7 hari sebelum jadwal yang diinginkan');
-                return;
-            }
-            
-            // Check if date has existing events
-            const hasEvent = calendar.getEvents().some(event => {
-                const eventDate = new Date(event.start);
-                return eventDate.toDateString() === clickedDate.toDateString();
-            });
-            
-            if (hasEvent) {
-                showWarning('Tanggal ini sudah ada peminjaman yang diajukan atau disetujui');
-                return;
-            }
-
-            // Handle date selection for valid dates
-            if (selectedDates.has(info.dateStr)) {
-                selectedDates.delete(info.dateStr);
-                info.dayEl.classList.remove('selected-date');
-            } else {
-                selectedDates.add(info.dateStr);
-                info.dayEl.classList.add('selected-date');
-            }
-            updateSelectedDatesDisplay();
-        },
-        eventDidMount: function(info) {
-            if (info.event.extendedProps.status === 'diajukan') {
-                info.el.style.backgroundColor = '#F97316';
-            } else if (info.event.extendedProps.status === 'disetujui') {
-                info.el.style.backgroundColor = '#059669';
-            }
-        },
-        dayCellDidMount: function(arg) {
-            if (arg.date < minDate) {
-                arg.el.classList.add('fc-disabled-date');
-            }
-            
-            // Add class for dates with events
-            const hasEvent = calendar.getEvents().some(event => {
-                const eventDate = new Date(event.start);
-                return eventDate.toDateString() === arg.date.toDateString();
-            });
-            
-            if (hasEvent) {
-                arg.el.classList.add('fc-has-event');
-            }
-            
-            if (selectedDates.has(arg.el.dataset.date)) {
-                arg.el.classList.add('selected-date');
-            }
-        },
-           eventDisplay: 'block',
+               const clickedDate = new Date(info.dateStr);
+               
+               // Check if date is before minimum date
+               if (clickedDate < minDate) {
+                   showWarning('Peminjaman harus dilakukan minimal 7 hari sebelum jadwal yang diinginkan');
+                   return;
+               }
+               
+               // Check if date has existing events
+               const hasEvent = calendar.getEvents().some(event => {
+                   const eventDate = new Date(event.start);
+                   return eventDate.toDateString() === clickedDate.toDateString();
+               });
+               
+               if (hasEvent) {
+                   showWarning('Tanggal ini sudah ada peminjaman yang diajukan atau disetujui');
+                   return;
+               }
+   
+               // Handle date selection
+               if (selectedDates.has(info.dateStr)) {
+                   selectedDates.delete(info.dateStr);
+                   info.dayEl.classList.remove('selected-date');
+               } else {
+                   selectedDates.add(info.dateStr);
+                   info.dayEl.classList.add('selected-date');
+               }
+               updateSelectedDatesDisplay();
+           },
            height: 'auto',
-           slotMinTime: '07:00:00',
-           slotMaxTime: '18:00:00',
-           allDaySlot: false,
            buttonText: {
                today: 'Hari Ini',
                month: 'Bulan',
                week: 'Minggu',
                day: 'Hari'
-           },
-           locale: 'id'
+           }
        });
-
+   
        function showWarning(message) {
-        const warningMessage = document.createElement('div');
-        warningMessage.className = 'warning-popup';
-        warningMessage.innerHTML = `
-            <div class="warning-content">
-                <p>${message}</p>
-                <button type="button" class="close-warning">Tutup</button>
-            </div>
-        `;
-        document.body.appendChild(warningMessage);
-
-        warningMessage.querySelector('.close-warning').addEventListener('click', function() {
-            warningMessage.remove();
-        });
-
-        setTimeout(() => {
-            if (document.body.contains(warningMessage)) {
-                warningMessage.remove();
-            }
-        }, 3000);
-    }
+           const warningMessage = document.createElement('div');
+           warningMessage.className = 'warning-popup';
+           warningMessage.innerHTML = `
+               <div class="warning-content">
+                   <p>${message}</p>
+                   <button class="warning-close-btn" onclick="this.closest('.warning-popup').remove()">Tutup</button>
+               </div>
+           `;
+           document.body.appendChild(warningMessage);
+       }
        
        function updateSelectedDatesDisplay() {
            if (selectedDates.size === 0) {
@@ -368,99 +480,6 @@
        
        calendar.render();
    });
-       
 </script>
-<style>
-   .fc {
-   max-width: 100%;
-   height: auto;
-   }
-   .fc .fc-toolbar.fc-header-toolbar {
-   margin-bottom: 1.5em;
-   }
-   .fc .fc-toolbar-title {
-   font-size: 1.5em;
-   }
-   .fc-event {
-   cursor: pointer;
-   }
-   .fc-has-event {
-    background-color: rgba(203, 213, 225, 0.3) !important;
-    cursor: not-allowed !important;
-    }
-   .fc-timegrid-slot-minor {
-   border-top-style: none;
-   }
-   .fc-no-events {
-   font-size: 1.2em;
-   color: #666;
-   padding: 20px;
-   text-align: center;
-   }
-   /* Selected date styling */
-   .selected-date {
-   background-color: rgba(34, 197, 94, 0.2) !important;
-   }
-   /* Disabled dates styling */
-   .fc-day.fc-disabled-date {
-   background-color: rgba(239, 68, 68, 0.1) !important;
-   cursor: pointer !important;
-   }
-   /* Warning popup styling */
-   .warning-popup {
-   position: fixed;
-   top: 50%;
-   left: 50%;
-   transform: translate(-50%, -50%);
-   z-index: 1000;
-   animation: fadeIn 0.3s ease-out;
-   }
-   .warning-content {
-   background-color: #ef4444;
-   color: white;
-   padding: 1rem 1.5rem;
-   border-radius: 8px;
-   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-   text-align: center;
-   max-width: 300px;
-   }
-   .close-warning {
-   background-color: white;
-   color: #ef4444;
-   border: none;
-   padding: 0.5rem 1rem;
-   border-radius: 4px;
-   margin-top: 0.75rem;
-   cursor: pointer;
-   font-weight: 500;
-   transition: background-color 0.2s;
-   }
-   .close-warning:hover {
-   background-color: #f3f4f6;
-   }
-   @keyframes fadeIn {
-   from {
-   opacity: 0;
-   transform: translate(-50%, -40%);
-   }
-   to {
-   opacity: 1;
-   transform: translate(-50%, -50%);
-   }
-   }
-   @media (max-width: 640px) {
-   .fc .fc-toolbar {
-   flex-direction: column;
-   gap: 1rem;
-   }
-   .fc .fc-toolbar-title {
-   font-size: 1.2em;
-   }
-   .warning-content {
-   max-width: 250px;
-   font-size: 14px;
-   }
-   }
-</style>
 @endpush
 @endsection
