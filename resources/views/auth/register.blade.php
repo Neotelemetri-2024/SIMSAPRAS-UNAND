@@ -1,12 +1,5 @@
 <x-guest-layout>
-
-    <a
-      href="{{ route('home') }}"
-      class="fixed top-4 left-4 flex items-center text-gray-600 hover:text-green-600 transition-colors"
-    >
-      <span class="font-medium">< Kembali ke Beranda</span>
-    </a>
-    <div class="max-w-screen-xl mx-auto pt-24">
+    <div class="max-w-screen-xl mx-auto pt-10 pb-10">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <!-- Left Side - Register Form -->
             <div class="bg-white rounded-2xl shadow-xl p-8">
@@ -124,7 +117,7 @@
                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                     </div>
 
-                    <div class="flex items-center justify-end">
+                    <div class="flex items-center justify-between">
                         <a href="{{ route('login') }}" class="text-sm text-green-600 hover:text-green-700">
                             {{ __('Sudah mendaftar?') }}
                         </a>
