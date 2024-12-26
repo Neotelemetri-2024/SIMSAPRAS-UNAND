@@ -2,16 +2,16 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <!-- Navbar -->
+    {{-- <!-- Navbar -->
     <a
       href="{{ route('home') }}"
       class="fixed top-4 left-4 flex items-center text-gray-600 hover:text-green-600 transition-colors"
     >
       <span class="font-medium">< Kembali ke Beranda</span>
-    </a>
+    </a> --}}
 
     <!-- Main Content -->
-    <div class="max-w-screen-xl mx-auto px-4 py-8 pt-36">
+    <div class="max-w-screen-xl mx-auto px-4 py-8 pt-20">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <!-- Left Side - Login Form -->
             <div class="bg-white rounded-2xl shadow-xl p-8">
@@ -42,7 +42,7 @@
                                 autocomplete="username"
                                 placeholder="nama@unand.ac.id" />
                         </div>
-                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                        <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-600" />
                     </div>
 
                     <!-- Password -->
@@ -98,11 +98,14 @@
                         </div>
                     </div>
 
-                    <div class="text-center text-sm text-gray-600">
-                        Belum punya akun?
-                        <a href="{{ route('register') }}" class="font-medium text-green-600 hover:text-green-700 ml-1">
-                            Daftar Sekarang
-                        </a>
+                    <div class="text-sm text-gray-600 flex items-center justify-between">
+                        <a href="{{ route('home') }}" class="font-medium text-green-600 hover:text-green-700 ml-1">Lihat Beranda</a>
+                        <div class="ml-auto">
+                            Belum punya akun?
+                            <a href="{{ route('register') }}" class="font-medium text-green-600 hover:text-green-700 ml-1">
+                                Daftar Sekarang
+                            </a>
+                        </div>
                     </div>
                 </form>
             </div>
