@@ -65,9 +65,10 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' 
     Route::get('/peminjaman-proses', [PeminjamanAdminController::class, 'PeminjamanDiproses'])->name('peminjaman.admin.diproses');
     Route::get('/peminjaman-setuju', [PeminjamanAdminController::class, 'PeminjamanDisetujui'])->name('peminjaman.admin.disetujui');
     Route::get('/peminjaman-tolak', [PeminjamanAdminController::class, 'PeminjamanDitolak'])->name('peminjaman.admin.ditolak');
-    // Di web.php
-Route::get('/peminjaman-batal', [PeminjamanAdminController::class, 'PeminjamanDibatalkan'])->name('peminjaman.admin.dibatalkan');
+    Route::get('/peminjaman-batal', [PeminjamanAdminController::class, 'PeminjamanDibatalkan'])->name('peminjaman.admin.dibatalkan');
+    Route::get('/pengajuan-batal', [PeminjamanAdminController::class, 'PeminjamanDiajukanBatal'])->name('peminjaman.admin.diajukanbatal');
     Route::put('/peminjaman/{id}/update-status', [PeminjamanAdminController::class, 'updateStatus'])->name('peminjaman.updateStatus');
+
 
     // Kategori
     Route::resource('kategori', KategoriController::class);
@@ -107,13 +108,15 @@ Route::group(['middleware' => ['checkRole:user']], function () {
     Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::get('/peminjaman/{peminjaman}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
-    Route::post('/peminjaman/{peminjaman}/cancel', [PeminjamanController::class, 'cancel'])->name('peminjaman.cancel');
+    // Route::post('/peminjaman/{peminjaman}/cancel', [PeminjamanController::class, 'cancel'])->name('peminjaman.cancel');
 
     Route::resource('riwayat', RiwayatController::class);
     Route::post('/riwayat/{id}/upload-bukti', [RiwayatController::class, 'uploadBuktiPembayaran'])->name('riwayat.upload-bukti');
 
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
     Route::post('/notifikasi/{notifikasi}/mark-as-read', [NotifikasiController::class, 'markAsRead'])->name('notifikasi.mark-as-read');
+
+    Route::post('/peminjaman/{peminjaman}/cancel', [PeminjamanController::class, 'cancel'])->name('peminjaman.cancel');
 });
 
 // Pengguna Management (Superadmin & Pimpinan)

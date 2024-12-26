@@ -127,6 +127,27 @@
                                         </svg>
                                         {{ $displayStatus }}
                                     </span>
+                                @elseif($pinjam->status == "diajukanbatal")
+                                    <span
+                                        class="inline-flex items-center bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                                        <svg class="w-3 h-3 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                            fill="currentColor" viewBox="0 0 20 20">
+                                            <path
+                                                d="M10 0C4.477 0 0 4.477 0 10c0 5.523 4.477 10 10 10s10-4.477 10-10C20 4.477 15.523 0 10 0zm1 15H9v-2h2v2zm0-4H9V5h2v6z" />
+                                        </svg>
+                                        Pembatalan Diajukan
+                                    </span>
+                                @elseif($pinjam->status == "dibatalkan")
+                                    <span
+                                        class="bg-red-100 text-red-800 text-xs font-medium px-3 py-1.5 rounded-full border border-red-400 flex items-center w-fit gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                            class="w-4 h-4">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        {{ $displayStatus }}
+                                    </span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
@@ -386,6 +407,112 @@
                                 </div>
                             </div>
                         @endif
+                        @if ($pinjam->status == "diajukan" && $pinjam->alasanTolakBatal)
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Alasan Pembatalan Ditolak
+                                </h4>
+                                <div class="space-y-3">
+                                    <div class="p-3 bg-white rounded-lg border border-gray-200">
+                                        <p class="text-sm font-medium text-gray-600">{{ $pinjam->alasanTolakBatal }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if ($pinjam->status == "diajukanbatal")
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Alasan Pembatalan
+                                </h4>
+                                <div class="space-y-3">
+                                    <div class="p-3 bg-white rounded-lg border border-gray-200">
+                                        <p class="text-sm font-medium text-gray-600">{{ $pinjam->alasanPembatalan }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if ($pinjam->status == "dibatalkan")
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Alasan Pembatalan
+                                </h4>
+                                <div class="space-y-3">
+                                    <div class="p-3 bg-white rounded-lg border border-gray-200">
+                                        <p class="text-sm font-medium text-gray-600">{{ $pinjam->alasanPembatalan }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if($pinjam->canBeCancelled())
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Pembatalan Peminjaman
+                                </h4>
+                                <div class="space-y-3">
+                                    <p class="text-sm text-gray-600">Anda dapat membatalkan peminjaman ini karena:</p>
+                                    <ul class="list-disc list-inside text-sm text-gray-600 ml-2">
+                                        <li>Status peminjaman masih dalam tahap {{$pinjam->status}}</li>
+                                        <li>Masih lebih dari 3 hari sebelum tanggal peminjaman</li>
+                                    </ul>
+                                    <button onclick="showCancellationForm('{{ $pinjam->id }}')"
+                                            class="w-full mt-3 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors">
+                                        Batalkan Peminjaman
+                                    </button>
+                                </div>
+                            </div>  
+                        <!-- Cancellation Form Modal -->
+                        <div id="cancellationModal{{ $pinjam->id }}" class="fixed inset-0 z-50 hidden overflow-y-auto">
+                            <div class="min-h-screen px-4 text-center flex items-center justify-center">
+                                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+                                
+                                <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg">
+                                    <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Konfirmasi Pembatalan</h3>
+                                    
+                                    <form action="{{ route('peminjaman.cancel', $pinjam->id) }}" method="POST" class="space-y-4">
+                                        @csrf
+                                        <div>
+                                            <label for="alasan_pembatalan" class="block text-sm font-medium text-gray-700 mb-2">
+                                                Alasan Pembatalan <span class="text-red-500">*</span>
+                                            </label>
+                                            <textarea name="alasan_pembatalan" id="alasan_pembatalan" rows="4" 
+                                                    class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500"
+                                                    placeholder="Mohon berikan alasan pembatalan peminjaman minimal 10 karakter" required></textarea>
+                                        </div>
+                                        
+                                        <div class="flex items-center justify-end space-x-3">
+                                            <button type="button" onclick="hideCancellationForm('{{ $pinjam->id }}')"
+                                                    class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg text-sm font-medium">
+                                                Batal
+                                            </button>
+                                            <button type="submit"
+                                                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium">
+                                                Konfirmasi Pembatalan
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -442,6 +569,17 @@
 
                 reader.readAsDataURL(input.files[0]);
             }
+        }
+        function showCancellationForm(id) {
+            document.getElementById('cancellationModal' + id).classList.remove('hidden');
+            // Prevent main modal from scrolling
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideCancellationForm(id) {
+            document.getElementById('cancellationModal' + id).classList.add('hidden');
+            // Restore scrolling
+            document.body.style.overflow = 'auto';
         }
     </script>
 @endsection

@@ -26,6 +26,9 @@ return new class extends Migration
             $table->enum('statusPengembalian', ['sudah', 'belum'])->nullable();
             $table->string('buktiPembayaran')->nullable();
             $table->text('feedbackPembatalan')->nullable();
+            $table->text('alasanPembatalan')->nullable();
+            $table->text('alasanTolakBatal')->nullable();
+            $table->string('statusSebelumBatal')->nullable();
             $table->timestamps();
         });
     }

@@ -86,13 +86,13 @@
                                     <td class="px-6 py-4">{{ $item->user->name }}</td>
                                     <td class="px-6 py-4">{{ $item->instansi }}</td>
                                     <td class="px-6 py-4">
-    @foreach ($item->tanggalPeminjaman as $tanggal)
-        <div class="mb-2">
-            <div class="font-medium">{{ \Carbon\Carbon::parse($tanggal->tanggal)->format('d/m/Y') }}</div>
-            <div class="text-sm text-gray-600">{{ $tanggal->jadwal->mulai }} - {{ $tanggal->jadwal->selesai }}</div>
-        </div>
-    @endforeach
-</td>
+                                        @foreach ($item->tanggalPeminjaman as $tanggal)
+                                            <div class="mb-2">
+                                                <div class="font-medium">{{ \Carbon\Carbon::parse($tanggal->tanggal)->format('d/m/Y') }}</div>
+                                                <div class="text-sm text-gray-600">{{ $tanggal->jadwal->mulai }} - {{ $tanggal->jadwal->selesai }}</div>
+                                            </div>
+                                        @endforeach
+                                    </td>
                                     <td class="px-6 py-4">{{ $item->sarana->nama }}</td>
                                     <td class="px-6 py-4">{{ $item->kegiatan }}</td>
                                     <td class="px-6 py-4">
@@ -145,37 +145,49 @@
                                                 </span>
                                             @break
                                             @case('dibatalkan')
-    <span class="inline-flex items-center bg-gray-100 text-gray-800 text-sm font-medium px-3 py-1.5 rounded-full dark:bg-gray-900 dark:text-gray-300">
-        <svg class="w-3 h-3 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
-        </svg>
-        Dibatalkan
-    </span>
-@break
+                                                <span
+                                                    class="inline-flex items-center bg-red-100 text-red-800 text-sm font-medium px-3 py-1.5 rounded-full dark:bg-red-900 dark:text-red-300">
+                                                    <svg class="w-3 h-3 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                        fill="currentColor" viewBox="0 0 20 20">
+                                                        <path
+                                                            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
+                                                    </svg>
+                                                    Dibatalkan
+                                                </span>
+                                            @break
+                                            @case('diajukanbatal')
+                                                <span
+                                                    class="inline-flex items-center bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                                                    <svg class="w-3 h-3 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                        fill="currentColor" viewBox="0 0 20 20">
+                                                        <path
+                                                            d="M10 0C4.477 0 0 4.477 0 10c0 5.523 4.477 10 10 10s10-4.477 10-10C20 4.477 15.523 0 10 0zm1 15H9v-2h2v2zm0-4H9V5h2v6z" />
+                                                    </svg>
+                                                    Pembatalan Diajukan
+                                                </span>
                                         @endswitch
                                     </td>
                                     <td class="px-6 py-4">
-    @if ($item->status === 'diajukan' || $item->status === 'diproses' || auth()->user()->role === 'pimpinan')
-        <button data-modal-target="editModal{{ $item->id }}"
-            data-modal-toggle="editModal{{ $item->id }}"
-            class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-        </button>
-    @endif
+                                        @if ($item->status === 'diajukan' || $item->status === 'diproses' || $item->status === 'diajukanbatal' || auth()->user()->role === 'pimpinan')
+                                            <button data-modal-target="editModal{{ $item->id }}"
+                                                data-modal-toggle="editModal{{ $item->id }}"
+                                                class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </button>
+                                        @endif
 
-    @if ((auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan') && $item->status === 'disetujui')
-    <button type="button" onclick="showBatalkanModal({{ $item->id }})"
-        class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:ring-4 focus:ring-red-200 ml-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-    </button>
-@endif
-</td>
+                                        @if ((auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan') && $item->status === 'disetujui')
+                                        <button type="button" onclick="showBatalkanModal({{ $item->id }})"
+                                            class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:ring-4 focus:ring-red-200 ml-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -296,65 +308,6 @@
             </div>
         </div>
     </div>
-    </div>
-    </div>
-    <!-- Create Modal -->
-    <div id="createModal" tabindex="-1" aria-hidden="true"
-        class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative w-full max-w-2xl max-h-full">
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                        Tambah Penjaga
-                    </h3>
-                    <button type="button"
-                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                        data-modal-hide="createModal">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                        </svg>
-                    </button>
-                </div>
-                <form action="{{ route('penjaga.store') }}" method="POST">
-                    @csrf
-                    <div class="p-6 space-y-6">
-                        <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama</label>
-                            <input type="text" name="nama"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                required>
-                        </div>
-                        <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kontak</label>
-                            <input type="text" name="kontak"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                required>
-                        </div>
-                        <div>
-                            <label class="block mb-2 text-sm font-medium text-gray-900">Gedung</label>
-                            <select name="idSarana"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                required>
-                                <option value="">Pilih Gedung</option>
-                                @foreach ($peminjamanMasuk as $sar)
-                                    <option value="{{ $sar->id }}">{{ $sar->nama }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
-                        <button type="submit"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Simpan</button>
-                        <button type="button"
-                            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10"
-                            data-modal-hide="createModal">Batal</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
     @foreach ($peminjamanMasuk as $item)
         <div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true"
@@ -463,7 +416,54 @@
                                 </div>
                             </div>
 
+                            @if ($item->status == "diajukanbatal")
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Alasan Pembatalan
+                                </h4>
+                                <div class="space-y-3">
+                                    <div class="p-3 bg-white rounded-lg border border-gray-200">
+                                        <p class="text-sm font-medium text-gray-600">{{ $item->alasanPembatalan }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    </svg>
+                                    Aksi
+                                </h4>
+                                <div class="space-y-4">
+                                    <select id="statusSelect{{ $item->id }}" name="status"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        required onchange="toggleFeedbackForm({{ $item->id }})">
+                                        <option value="dibatalkan" @if ($item->status == 'dibatalkan') selected @endif>
+                                                Setujui Pembatalan</option>
+                                        <option value="diajukan" @if ($item->status == 'diajukan') selected @endif>Tolak Pembatalan
+                                        </option>   
+                                    </select>
+
+                                    <div id="feedbackForm{{ $item->id }}" class="hidden">
+                                        <label class="block mb-2 text-sm font-medium text-gray-900">Alasan Penolakan</label>
+                                        <textarea name="alasanTolakBatal" rows="4"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                            placeholder="Masukkan alasan penolakan..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                            
                             <!-- Status Section -->
+                            @if ($item->status != "diajukanbatal")
                             <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                                 <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                                     <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor"
@@ -498,21 +498,23 @@
                                     </div>
                                 </div>
                             </div>
+                            @endif
                         </div>
+
 
                         <!-- Modal Footer -->
                         <div
                             class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 bg-gray-50 rounded-b">
-  <!-- Ubah button type dari "submit" menjadi "button" -->
-<button type="button" 
-    onclick="confirmUpdate({{ $item->id }})"
-    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center">
-    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M5 13l4 4L19 7" />
-    </svg>
-    Simpan Perubahan
-</button>
+                            <!-- Ubah button type dari "submit" menjadi "button" -->
+                            <button type="button" 
+                                onclick="confirmUpdate({{ $item->id }})"
+                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7" />
+                                </svg>
+                                Simpan Perubahan
+                            </button>
                             <button type="button"
                                 class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 flex items-center"
                                 data-modal-hide="editModal{{ $item->id }}">
@@ -641,7 +643,7 @@
         function toggleFeedbackForm(id) {
             const status = document.getElementById(`statusSelect${id}`).value;
             const feedbackForm = document.getElementById(`feedbackForm${id}`);
-            if (status === 'ditolak') {
+            if (status === 'ditolak' || status === 'diajukan') {
                 feedbackForm.classList.remove('hidden');
             } else {
                 feedbackForm.classList.add('hidden');
@@ -667,6 +669,14 @@
         case 'diproses':
             title = 'Konfirmasi Pemrosesan';
             text = 'Apakah Anda yakin ingin memproses peminjaman ini?';
+            break;
+        case 'dibatalkan':
+            title = 'Konfirmasi Pembatalan';
+            text = 'Apakah Anda yakin ingin menyetujui pembatalan peminjaman ini?';
+            break;
+        case 'diajukan':
+            title = 'Konfirmasi Penolakan Pembatalan';
+            text = 'Apakah Anda yakin ingin menolak pembatalan peminjaman ini?';
             break;
         default:
             title = 'Konfirmasi Perubahan';
@@ -709,6 +719,12 @@ function submitForm(id) {
             break;
         case 'diproses':
             successMessage = 'Peminjaman berhasil diproses';
+            break;
+        case 'dibatalkan':
+            successMessage = 'Pembatalan peminjaman berhasil disetujui';
+            break;
+        case 'diajukan':
+            successMessage = 'Pembatalan peminjaman berhasil ditolak';
             break;
         default:
             successMessage = 'Status peminjaman berhasil diperbarui';

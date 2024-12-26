@@ -14,10 +14,13 @@
           <!-- Peminjaman -->
           @php
              $peminjamanRoutes = [
+                 'admin.overview',
                  'peminjaman.admin.masuk',
                  'peminjaman.admin.diproses',
                  'peminjaman.admin.disetujui',
-                 'peminjaman.admin.ditolak'
+                 'peminjaman.admin.ditolak',
+                 'peminjaman.admin.dibatalkan',
+                 'peminjaman.admin.diajukanbatal',
              ];
           @endphp
           <li class="relative">
@@ -65,8 +68,14 @@
                    </a>
                 </li>
                 <li>
+                  <a href="{{ route('peminjaman.admin.diajukanbatal') }}"
+                     class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.diajukanbatal') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                     Pengajuan Pembatalan
+                  </a>
+               </li>
+                <li>
                    <a href="{{ route('peminjaman.admin.dibatalkan') }}"
-                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.ditolak') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.dibatalkan') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
                       Peminjaman Dibatalkan
                    </a>
                 </li>
