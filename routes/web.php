@@ -17,8 +17,7 @@ use App\Http\Controllers\BeamsAuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\NotifikasiAdminController;
-use Illuminate\Http\Request;
-use Pusher\PushNotifications\PushNotifications;
+use App\Http\Controllers\PasswordChangeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,18 +41,18 @@ Route::get('/sarana-prasarana/{sarana}', [SaranaController::class, 'userShow'])-
 Route::get('/sarana-prasarana/ruangan/{ruangan}', [RuanganController::class, 'show'])->name('ruangan.show');
 
 // Profile Routes (Authenticated Users)
-Route::middleware('auth')->group(function () {
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [DetailProfileController::class, 'index'])->name('profile.index');
+    Route::get('/change-password', [PasswordChangeController::class, 'edit'])->name('password.change');
+    Route::post('/change-password', [PasswordChangeController::class, 'update'])->name('password.change.update');
 });
 
-Route::group(['middleware' => ['checkRole:superadmin,pimpinan'], 'prefix' => 'admin'], function () {
+Route::group(['middleware' => ['checkRole:superadmin,pimpinan', 'verified'], 'prefix' => 'admin'], function () {
     // Route yang lain...
     Route::put('/peminjaman/{id}/batal', [PeminjamanAdminController::class, 'batalkanPeminjaman'])->name('peminjaman.admin.batal');
 });
 // Admin Routes
-Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' => 'admin'], function () {
+Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'], 'prefix' => 'admin'], function () {
     // Dashboard
     Route::resource('dashboard', DashboardController::class);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
@@ -103,7 +102,7 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan'], 'prefix' 
 });
 
 // User Routes
-Route::group(['middleware' => ['checkRole:user']], function () {
+Route::group(['middleware' => ['checkRole:user', 'verified']], function () {
     Route::get('/peminjaman/create', [PeminjamanController::class, 'create'])->name('peminjaman.create');
     Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
@@ -120,7 +119,7 @@ Route::group(['middleware' => ['checkRole:user']], function () {
 });
 
 // Pengguna Management (Superadmin & Pimpinan)
-Route::group(['middleware' => ['checkRole:superadmin,pimpinan']], function () {
+Route::group(['middleware' => ['checkRole:superadmin,pimpinan', 'verified']], function () {
     Route::resource('pengguna', PenggunaController::class);
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
 });
