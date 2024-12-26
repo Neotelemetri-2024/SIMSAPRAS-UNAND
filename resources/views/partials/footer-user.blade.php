@@ -8,10 +8,10 @@
                <div>
                   <h3 class="mb-6 text-sm font-semibold text-white uppercase">Link Cepat</h3>
                   <ul class="text-gray-400">
-                     <li class="mb-4"><a href="#" class="hover:underline">Beranda</a></li>
-                     <li class="mb-4"><a href="#features" class="hover:underline">Fitur</a></li>
-                     <li class="mb-4"><a href="#how-it-works" class="hover:underline">Cara Kerja</a></li>
-                     <li class="mb-4"><a href="#contact" class="hover:underline">Kontak</a></li>
+                     <li class="mb-4"><a href="{{ route('home') }}" class="hover:underline">Beranda</a></li>
+                     <li class="mb-4"><a href="{{ route('home') }}#features" class="hover:underline">Fitur</a></li>
+                     <li class="mb-4"><a href="{{ route('home') }}#how-it-works" class="hover:underline">Cara Kerja</a></li>
+                     <li class="mb-4"><a href="{{ route('home') }}#contact" class="hover:underline">Kontak</a></li>
                   </ul>
                </div>
                <div>

@@ -8,7 +8,7 @@ use App\Models\Jadwal;
 use App\Models\Ruangan;
 use App\Models\User;
 use App\Models\Notifikasi;
-use App\Models\Tanggal;
+use App\Models\TanggalPeminjaman;
 use App\Models\Sarana;
 use App\Services\NotificationService;
 
@@ -23,28 +23,56 @@ class PeminjamanController extends Controller
 
     public function create(Request $request)
     {
-        // Validasi request
         if (!$request->has('sarana_id') && !$request->has('ruangan_id')) {
             return redirect()
                 ->back()
                 ->with('error', 'Data tidak lengkap');
         }
 
-        $jadwals = Jadwal::all();
         $selectedDates = $request->selected_dates;
+        
+        // Get all base jadwal
+        $jadwals = Jadwal::all();
+        
+        // Get booked schedules for the selected dates
+        $bookedJadwals = $this->getBookedJadwals($request->selected_dates, $request->ruangan_id ?? null, $request->sarana_id ?? null);
 
-        // Jika peminjaman ruangan
+        // If booking ruangan
         if ($request->has('ruangan_id')) {
             $ruangan = Ruangan::with('sarana')->findOrFail($request->ruangan_id);
             $sarana = $ruangan->sarana;
 
-            return view('peminjaman', compact('sarana', 'ruangan', 'selectedDates', 'jadwals'));
+            return view('peminjaman', compact('sarana', 'ruangan', 'selectedDates', 'jadwals', 'bookedJadwals'));
         }
 
-        // Jika peminjaman sarana langsung
+        // If booking sarana directly
         $sarana = Sarana::findOrFail($request->sarana_id);
 
-        return view('peminjaman', compact('sarana', 'selectedDates', 'jadwals'));
+        return view('peminjaman', compact('sarana', 'selectedDates', 'jadwals', 'bookedJadwals'));
+    }
+
+    private function getBookedJadwals($selectedDates, $ruanganId = null, $saranaId = null)
+    {
+        $dates = json_decode($selectedDates);
+        $bookedJadwals = [];
+
+        foreach ($dates as $date) {
+            $query = TanggalPeminjaman::whereDate('tanggal', $date)
+                ->whereHas('peminjaman', function ($q) use ($ruanganId, $saranaId) {
+                    $q->whereIn('status', ['diajukan', 'diproses', 'disetujui']);
+                    
+                    if ($ruanganId) {
+                        $q->where('idRuangan', $ruanganId);
+                    }
+                    if ($saranaId) {
+                        $q->where('idSarana', $saranaId);
+                    }
+                });
+
+            $bookedJadwals[$date] = $query->pluck('idJadwal')->toArray();
+        }
+
+        return $bookedJadwals;
     }
 
     public function store(Request $request)
