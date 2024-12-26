@@ -9,6 +9,7 @@ use App\Models\TanggalPeminjaman;
 use App\Models\Ruangan;
 use Illuminate\Http\Request;
 use App\Services\NotificationService;
+use Illuminate\Validation\ValidationException;
 
 
 class PeminjamanAdminController extends Controller
@@ -67,10 +68,10 @@ class PeminjamanAdminController extends Controller
         }
     }
 
-public function PeminjamanDibatalkan(Request $request)
-{
-    return $this->getPeminjaman($request, 'dibatalkan', 'Peminjaman Dibatalkan');
-}
+    public function PeminjamanDibatalkan(Request $request)
+    {
+        return $this->getPeminjaman($request, 'dibatalkan', 'Peminjaman Dibatalkan');
+    }
 
     private function getPeminjaman(Request $request, $status, $title)
     {
@@ -135,107 +136,96 @@ public function PeminjamanDibatalkan(Request $request)
         return $this->getPeminjaman($request, 'ditolak', 'Peminjaman Ditolak');
     }
 
+    public function PeminjamanDiajukanBatal(Request $request)
+    {
+        return $this->getPeminjaman($request, 'diajukanbatal', 'Pengajuan Pembatalan');
+    }
+
     public function updateStatus(Request $request, $id)
     {
         try {
             $request->validate([
-                'status' => 'required|in:disetujui,diproses,ditolak',
+                'status' => 'required|in:disetujui,diproses,ditolak,dibatalkan,diajukan',
                 'feedbackPenolakan' => 'nullable|required_if:status,ditolak|string|max:500',
+                'alasanTolakBatal' => 'nullable|required_if:status,diajukan|string|max:500',
                 'suratPeminjaman' => 'nullable|file|mimes:pdf|max:2048',
                 'rundown' => 'nullable|file|mimes:pdf|max:2048',
                 'estimasiPeserta' => 'nullable|integer|min:0',
                 'tarif' => 'nullable|integer|min:0',
             ]);
-    
+
             $peminjaman = Peminjaman::with('user')->findOrFail($id);
             $oldStatus = $peminjaman->status;
-    
-            // Update file uploads dan data lainnya
-            if ($request->hasFile('suratPeminjaman')) {
-                $peminjaman->suratPeminjaman = $request->file('suratPeminjaman')->store('peminjaman/lampiran');
+
+            // Handle pembatalan
+            if ($request->status === 'diajukan') {
+                // $peminjaman->status = $oldStatus; // Kembalikan ke status sebelumnya
+                $peminjaman->status = $peminjaman->statusSebelumBatal; // kembalikan ke status sebelumnya
+                $peminjaman->alasanTolakBatal = $request->alasanTolakBatal;
+                $peminjaman->statusSebelumBatal = null;
+            } elseif ($request->status === 'dibatalkan') {
+                $peminjaman->status = 'dibatalkan';
+            } else {
+                // Update file uploads dan data lainnya
+                if ($request->hasFile('suratPeminjaman')) {
+                    $peminjaman->suratPeminjaman = $request->file('suratPeminjaman')->store('peminjaman/lampiran');
+                }
+                if ($request->hasFile('rundown')) {
+                    $peminjaman->rundown = $request->file('rundown')->store('peminjaman/lampiran');
+                }
+                if ($request->has('estimasiPeserta')) {
+                    $peminjaman->estimasiPeserta = $request->estimasiPeserta;
+                }
+                if ($request->has('tarif')) {
+                    $peminjaman->tarif = $request->tarif;
+                }
+
+                // Update status
+                $peminjaman->status = $request->status;
+                if ($request->status === 'ditolak') {
+                    $peminjaman->feedbackPenolakan = $request->feedbackPenolakan;
+                }
+
+                // Auto-update status jika ada tarif
+                if ($request->status === 'disetujui' && $peminjaman->tarif > 0) {
+                    $peminjaman->status = 'diproses';
+                }
             }
-            if ($request->hasFile('rundown')) {
-                $peminjaman->rundown = $request->file('rundown')->store('peminjaman/lampiran');
-            }
-            if ($request->has('estimasiPeserta')) {
-                $peminjaman->estimasiPeserta = $request->estimasiPeserta;
-            }
-            if ($request->has('tarif')) {
-                $peminjaman->tarif = $request->tarif;
-            }
-    
-            // Update status
-            $peminjaman->status = $request->status;
-            if ($request->status === 'ditolak') {
-                $peminjaman->feedbackPenolakan = $request->feedbackPenolakan;
-            }
-    
-            // Auto-update status jika ada tarif
-            if ($request->status === 'disetujui' && $peminjaman->tarif > 0) {
-                $peminjaman->status = 'diproses';
-            }
-    
+
             $peminjaman->save();
-            // / Siapkan pesan notifikasi dan kirim
-        $userMessage = match($peminjaman->status) {
-            'ditolak' => "Peminjaman Anda ditolak dengan alasan " . $request->feedbackPenolakan,
-            'diproses' => "Peminjaman Anda sedang diproses. Silakan melakukan pembayaran sebesar Rp " . number_format($peminjaman->tarif, 0, ',', '.'),
-            'disetujui' => "Selamat! Peminjaman Anda telah disetujui.",
-            default => "Status peminjaman Anda telah diubah menjadi " . $peminjaman->status
-        };
 
-        // Tulis ke database dulu
-        Notifikasi::create([
-            'idPeminjaman' => $peminjaman->id,
-            'penerima' => $peminjaman->user->id,
-            'judul' => "Update Status Peminjaman",
-            'isi' => $userMessage,
-            'isRead' => false
-        ]);
+            // Siapkan pesan notifikasi dan kirim
+            $userMessage = match($peminjaman->status) {
+                'ditolak' => "Peminjaman Anda ditolak dengan alasan " . $request->feedbackPenolakan,
+                'diproses' => "Peminjaman Anda sedang diproses. Silakan melakukan pembayaran sebesar Rp " . number_format($peminjaman->tarif, 0, ',', '.'),
+                'disetujui' => "Selamat! Peminjaman Anda telah disetujui.",
+                'dibatalkan' => "Pembatalan peminjaman Anda telah disetujui.",
+                'diajukan' => "Pembatalan peminjaman Anda ditolak dengan alasan " . $request->alasanTolakBatal,
+                default => "Status peminjaman Anda telah diubah menjadi " . $peminjaman->status
+            };
 
-        // Kirim response sukses
-        $response = ['success' => true, 'message' => 'Status peminjaman berhasil diperbarui'];
+            // Tulis ke database
+            Notifikasi::create([
+                'idPeminjaman' => $peminjaman->id,
+                'penerima' => $peminjaman->user->id,
+                'judul' => "Update Status Peminjaman",
+                'isi' => $userMessage,
+                'isRead' => false
+            ]);
 
-        // Kirim notifikasi Pusher secara terpisah
-        $this->notificationService->sendToUser(
-            $peminjaman->user->id,
-            "Update Status Peminjaman",
-            $userMessage,
-            $peminjaman->id
-        );
+            // Kirim response sukses
+            $response = ['success' => true, 'message' => 'Status peminjaman berhasil diperbarui'];
 
-        return response()->json($response);
-    
-            // Siapkan pesan notifikasi untuk user
-           
-            // Kirim notifikasi ke user
-            // $notificationSent = $this->notificationService->sendToUser(
-            //     $peminjaman->user->id,  // Langsung kirim userId
-            //     "Update Status Peminjaman",
-            //     $userMessage,
-            //     $peminjaman->id
-            // );
-      
-            // dispatch(function() use ($peminjaman, $userMessage) {
-            //     $this->notificationService->sendToUser(
-            //         $peminjaman->user->id,
-            //         "Update Status Peminjaman",
-            //         $userMessage,
-            //         $peminjaman->id
-            //     );
-            // })->afterResponse();
-    
-            // $response = [
-            //     'success' => true,
-            //     'message' => 'Status peminjaman berhasil diperbarui'
-            // ];
+            // Kirim notifikasi Pusher
+            $this->notificationService->sendToUser(
+                $peminjaman->user->id,
+                "Update Status Peminjaman",
+                $userMessage,
+                $peminjaman->id
+            );
 
-            // if (!$notificationSent) {
-            //     $response['notification_status'] = 'Notification might have failed to send';
-            // }
-    
-            // return response()->json($response);
-    
+            return response()->json($response);
+
         } catch (\Exception $e) {
             \Log::error('Update status error: ' . $e->getMessage());
             return response()->json([
@@ -245,8 +235,6 @@ public function PeminjamanDibatalkan(Request $request)
         }
     }
     
-
-
     public function overview()
     {
         // Get all sarana for the filter dropdown

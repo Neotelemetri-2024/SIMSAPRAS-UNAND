@@ -200,6 +200,32 @@ class PeminjamanController extends Controller
         return view('peminjaman.index', compact('peminjamans'));
     }
 
+    // public function cancel(Peminjaman $peminjaman, Request $request)
+    // {
+    //     // Validasi bahwa peminjaman milik user yang login
+    //     if ($peminjaman->idUser !== auth()->id()) {
+    //         return back()->with('error', 'Anda tidak memiliki akses untuk membatalkan peminjaman ini');
+    //     }
+
+    //     // Validasi status peminjaman
+    //     if (!in_array($peminjaman->status, ['diajukan', 'disetujui'])) {
+    //         return back()->with('error', 'Peminjaman tidak dapat dibatalkan');
+    //     }
+
+    //     $request->validate([
+    //         'alasan_pembatalan' => 'required|string|min:10',
+    //     ]);
+
+    //     $peminjaman->update([
+    //         'status' => 'dibatalkan',
+    //         'feedbackPembatalan' => $request->alasan_pembatalan,
+    //     ]);
+
+    //     return redirect()
+    //         ->route('peminjaman.index')
+    //         ->with('success', 'Peminjaman berhasil dibatalkan');
+    // }
+
     public function cancel(Peminjaman $peminjaman, Request $request)
     {
         // Validasi bahwa peminjaman milik user yang login
@@ -209,20 +235,54 @@ class PeminjamanController extends Controller
 
         // Validasi status peminjaman
         if (!in_array($peminjaman->status, ['diajukan', 'disetujui'])) {
-            return back()->with('error', 'Peminjaman tidak dapat dibatalkan');
+            return back()->with('error', 'Status peminjaman tidak dapat dibatalkan');
         }
 
+        // Cek apakah masih lebih dari 3 hari sebelum tanggal peminjaman
+        $earliestBookingDate = $peminjaman->tanggalPeminjaman->min('tanggal');
+        if ($earliestBookingDate <= now()->addDays(3)->format('Y-m-d')) {
+            return back()->with('error', 'Peminjaman hanya dapat dibatalkan maksimal 3 hari sebelum tanggal peminjaman');
+        }
+
+        // Validasi input alasan pembatalan
         $request->validate([
             'alasan_pembatalan' => 'required|string|min:10',
+        ], [
+            'alasan_pembatalan.required' => 'Alasan pembatalan wajib diisi',
+            'alasan_pembatalan.min' => 'Alasan pembatalan minimal 10 karakter'
         ]);
 
-        $peminjaman->update([
-            'status' => 'dibatalkan',
-            'feedbackPembatalan' => $request->alasan_pembatalan,
-        ]);
+        try {
+            $peminjaman->statusSebelumBatal = $peminjaman->status;
+            $peminjaman->update([
+                'status' => 'diajukanbatal',
+                'alasanPembatalan' => $request->alasan_pembatalan
+            ]);
 
-        return redirect()
-            ->route('peminjaman.index')
-            ->with('success', 'Peminjaman berhasil dibatalkan');
+            // Kirim notifikasi ke admin
+            $adminNotifications = User::whereIn('role', ['admin', 'superadmin', 'pimpinan'])
+                ->get()
+                ->map(function ($admin) use ($peminjaman) {
+                    return [
+                        'idPeminjaman' => $peminjaman->id,
+                        'penerima' => $admin->id,
+                        'judul' => 'Pengajuan Pembatalan',
+                        'isi' => "Pengajuan pembatalan " . ($peminjaman->ruangan ? $peminjaman->ruangan->nama : $peminjaman->sarana->nama) . " dari " . auth()->user()->name . " untuk kegiatan " . $peminjaman->kegiatan,
+                        'isRead' => false,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                })
+                ->toArray();
+
+            // Bulk insert notifikasi
+            Notifikasi::insert($adminNotifications);
+
+            return redirect()
+                ->route('riwayat.index')
+                ->with('success', 'Pengajuan Pembatalan berhasil dilakukan');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan saat membatalkan peminjaman');
+        }
     }
 }
