@@ -1,8 +1,8 @@
 @extends('layouts.user')
 
 @section('content')
-<div class="py-24">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="pt-24 pb-16 ">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-lg shadow-lg p-8">
             <div class="border-b pb-4 mb-6">
                 <h1 class="text-2xl font-bold text-gray-900">Form Pengajuan Peminjaman</h1>
