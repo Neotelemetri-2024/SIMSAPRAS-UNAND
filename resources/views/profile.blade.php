@@ -86,7 +86,12 @@
                             Peminjaman {{ $aktivitas->ruangan->nama ?? '' }} 
                             {{ $aktivitas->sarana ? '& ' . $aktivitas->sarana->nama : '' }}
                         </p>
-                        <p class="text-gray-500">Status: {{ ucfirst($aktivitas->status) }}</p>
+                        <p class="text-gray-500">Status: 
+                            @if($aktivitas->status == 'diajukanbatal')
+                            Pengajuan Pembatalan
+                            @else
+                            {{ ucfirst($aktivitas->status) }}</p>
+                            @endif
                         <p class="text-sm text-gray-400">{{ $aktivitas->created_at->diffForHumans() }}</p>
                     </div>
                 </div>
