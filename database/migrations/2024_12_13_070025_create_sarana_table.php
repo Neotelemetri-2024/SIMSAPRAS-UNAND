@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('gambar');
             $table->text('deskripsi');
             $table->string('nama');
+            $table->integer('kapasitas')->nullable();
             $table->string('fasilitas')->nullable();
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
