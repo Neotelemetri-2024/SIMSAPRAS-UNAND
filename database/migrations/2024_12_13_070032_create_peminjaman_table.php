@@ -14,10 +14,10 @@ return new class extends Migration
             $table->foreignId('idRuangan')->nullable()->constrained('ruangan');
             $table->foreignId('idSarana')->constrained('sarana');
             $table->string('kegiatan');
-            $table->string('suratPeminjaman');
-            $table->string('rundown');
+            $table->string('suratPeminjaman')->nullable();
+            $table->string('rundown')->nullable();
             $table->string('instansi');
-            $table->integer('estimasiPeserta');
+            $table->integer('estimasiPeserta')->nullable();
             $table->integer('tarif')->nullable();
             $table->text('feedbackPenolakan')->nullable();
             $table->string('evaluasi')->nullable();

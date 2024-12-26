@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::group(['middleware' => ['checkRole:superadmin,pimpinan', 'verified'], 'prefix' => 'admin'], function () {
     // Route yang lain...
+    Route::post('/peminjaman/store', [PeminjamanAdminController::class, 'store'])->name('peminjaman.admin.store');
     Route::put('/peminjaman/{id}/batal', [PeminjamanAdminController::class, 'batalkanPeminjaman'])->name('peminjaman.admin.batal');
 });
 // Admin Routes

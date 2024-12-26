@@ -6,6 +6,7 @@ use App\Models\Peminjaman;
 use App\Models\Notifikasi;
 use App\Models\Sarana;
 use App\Models\TanggalPeminjaman;
+use App\Models\Jadwal;
 use App\Models\Ruangan;
 use Illuminate\Http\Request;
 use App\Services\NotificationService;
@@ -237,66 +238,125 @@ class PeminjamanAdminController extends Controller
     
     public function overview()
     {
-        // Get all sarana for the filter dropdown
-        $saranas = Sarana::all();
-        
-        // Get peminjaman with all necessary relationships
-        $peminjamans = Peminjaman::with([
-            'user', 
-            'sarana',
-            'ruangan',
-            'tanggalPeminjaman'
-        ])->get();
+       // Load data with relationships
+       $saranas = Sarana::with(['ruangan', 'kategoriSarana'])->get();
+       $jadwals = Jadwal::all();
+       $peminjamans = Peminjaman::with([
+           'user', 
+           'sarana',
+           'ruangan',
+           'tanggalPeminjaman.jadwal'
+       ])->get();
     
-        $events = $peminjamans->map(function($peminjaman) {
-            // Get the first date for the event
-            $tanggal = $peminjaman->tanggalPeminjaman->first();
-            
-            return [
-                'saranaName' => $peminjaman->sarana->nama, // For initial view
-                'kegiatan' => $peminjaman->kegiatan, // For filtered view
-                'start' => optional($tanggal)->tanggal,
-                'status' => $peminjaman->status,
-                // Extended properties for modal
-                'peminjam' => $peminjaman->user->name ?? 'Anonim',
-                'instansi' => $peminjaman->instansi ?? '-',
-                'sarana' => $peminjaman->sarana->nama ?? '-',
-                'ruangan' => $peminjaman->ruangan->nama ?? '-',
-                'saranaId' => $peminjaman->sarana->id,
-                'estimasiPeserta' => $peminjaman->estimasiPeserta,
-                // Color coding based on status
-                'backgroundColor' => match($peminjaman->status) {
-                    'disetujui' => '#059669',
-                    'diproses' => '#f97316', 
-                    'ditolak' => '#dc2626',
-                    'diajukan' => '#3b82f6',
-                    default => '#6b7280'
-                },
-                'borderColor' => match($peminjaman->status) {
-                    'disetujui' => '#047857',
-                    'diproses' => '#ea580c',
-                    'ditolak' => '#b91c1c',
-                    'diajukan' => '#2563eb',
-                    default => '#4b5563'
-                },
-                // Additional info for tooltip and display
-                'extendedProps' => [
-                    'status' => $peminjaman->status,
-                    'peminjam' => $peminjaman->user->name ?? 'Anonim',
-                    'instansi' => $peminjaman->instansi ?? '-',
-                    'kegiatan' => $peminjaman->kegiatan ?? '-',
-                    'sarana' => $peminjaman->sarana->nama ?? '-',
-                    'ruangan' => $peminjaman->ruangan->nama ?? '-',
-                    'estimasiPeserta' => $peminjaman->estimasiPeserta
-                ]
-            ];
-        })->filter(function ($event) {
-            return !empty($event['start']);
-        })->values();
+       $events = $peminjamans->map(function($peminjaman) {
+           $tanggal = $peminjaman->tanggalPeminjaman->first();
+           
+           return [
+               'saranaName' => $peminjaman->sarana->nama,
+               'kegiatan' => $peminjaman->kegiatan,
+               'start' => optional($tanggal)->tanggal,
+               'jadwal' => optional($tanggal)->jadwal,
+               'status' => $peminjaman->status,
+               'peminjam' => $peminjaman->user->name ?? 'Anonim',
+               'instansi' => $peminjaman->instansi ?? '-',
+               'sarana' => $peminjaman->sarana->nama ?? '-', 
+               'ruangan' => $peminjaman->ruangan->nama ?? '-',
+               'saranaId' => $peminjaman->sarana->id,
+               'estimasiPeserta' => $peminjaman->estimasiPeserta,
+               'backgroundColor' => match($peminjaman->status) {
+                   'disetujui' => '#059669',
+                   'diproses' => '#f97316',
+                   'ditolak' => '#dc2626', 
+                   'diajukan' => '#3b82f6',
+                   default => '#6b7280'
+               },
+               'borderColor' => match($peminjaman->status) {
+                   'disetujui' => '#047857',
+                   'diproses' => '#ea580c',
+                   'ditolak' => '#b91c1c',
+                   'diajukan' => '#2563eb', 
+                   default => '#4b5563'
+               },
+               'extendedProps' => [
+                   'status' => $peminjaman->status,
+                   'peminjam' => $peminjaman->user->name ?? 'Anonim',
+                   'instansi' => $peminjaman->instansi ?? '-',
+                   'kegiatan' => $peminjaman->kegiatan ?? '-',
+                   'sarana' => $peminjaman->sarana->nama ?? '-',
+                   'ruangan' => $peminjaman->ruangan->nama ?? '-',
+                   'jadwal' => optional($tanggal->jadwal)->mulai . ' - ' . optional($tanggal->jadwal)->selesai,
+                   'estimasiPeserta' => $peminjaman->estimasiPeserta
+               ]
+           ];
+       })->filter(function ($event) {
+           return !empty($event['start']);
+       })->values();
     
-        return view('admin.overview', [
-            'events' => $events,
-            'saranas' => $saranas
-        ]);
+       return view('admin.overview', compact('events', 'saranas', 'jadwals'));
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            $request->validate([
+                'idSarana' => 'required|exists:sarana,id',
+                'idRuangan' => 'nullable|exists:ruangan,id',
+                'kegiatan' => 'required|string|max:255',
+                'jadwal_dates' => 'required|array',
+                'jadwal_dates.*.date' => 'required|date',
+                'jadwal_dates.*.jadwal_id' => 'required|exists:jadwal,id'
+            ]);
+    
+            // Check for scheduling conflicts
+            foreach ($request->jadwal_dates as $jadwalDate) {
+                $existingBooking = TanggalPeminjaman::where('tanggal', $jadwalDate['date'])
+                    ->where('idJadwal', $jadwalDate['jadwal_id'])
+                    ->whereHas('peminjaman', function($query) use ($request) {
+                        $query->where('idSarana', $request->idSarana)
+                            ->whereIn('status', ['diajukan', 'diproses', 'disetujui']);
+                        
+                        if ($request->idRuangan) {
+                            $query->where('idRuangan', $request->idRuangan);
+                        }
+                    })
+                    ->exists();
+    
+                if ($existingBooking) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Jadwal sudah dibooking untuk tanggal ' . $jadwalDate['date']
+                    ], 422);
+                }
+            }
+    
+            // Create peminjaman
+            $peminjaman = Peminjaman::create([
+                'idUser' => auth()->id(),
+                'idSarana' => $request->idSarana,
+                'idRuangan' => $request->idRuangan,
+                'kegiatan' => $request->kegiatan,
+                'status' => 'disetujui',
+                'instansi' => 'Internal'
+            ]);
+    
+            // Create tanggal peminjaman entries
+            foreach ($request->jadwal_dates as $jadwalDate) {
+                $peminjaman->tanggalPeminjaman()->create([
+                    'tanggal' => $jadwalDate['date'],
+                    'idJadwal' => $jadwalDate['jadwal_id']
+                ]);
+            }
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Peminjaman berhasil ditambahkan'
+            ]);
+    
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
