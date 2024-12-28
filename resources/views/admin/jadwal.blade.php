@@ -153,211 +153,249 @@
 
 <script>
    // Tambahkan ini di awal file JavaScript
-const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-   // Function to close modal
-   function closeModal(modalId) {
-       const modalElement = document.getElementById(modalId);
-       if (modalElement) {
-           modalElement.classList.add('hidden');
-       }
-   }
-   
-   // Initialize modal components
-   const modals = document.querySelectorAll('[data-modal-toggle]');
-   modals.forEach(modal => {
-       modal.addEventListener('click', function() {
-           const target = this.getAttribute('data-modal-target');
-           const modalElement = document.getElementById(target);
-           
-           if (modalElement) {
-               modalElement.classList.remove('hidden');
-           }
-       });
-   });
-   
-   // Initialize modal close buttons
-   const closeButtons = document.querySelectorAll('[data-modal-hide]');
-   closeButtons.forEach(button => {
-       button.addEventListener('click', function() {
-           const target = this.getAttribute('data-modal-hide');
-           closeModal(target);
-       });
-   });
-   
-   // Click outside modal to close
-   window.addEventListener('click', function(event) {
-       const modals = document.querySelectorAll('[id^="createModal"], [id^="editModal"], [id^="deleteModal"]');
-       modals.forEach(modal => {
-           if (event.target === modal) {
-               closeModal(modal.id);
-           }
-       });
-   });
-
-   ['jadwalForm', 'editJadwalForm'].forEach(formId => {
-    document.getElementById(formId).addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const shift = this.querySelector('input[name="shift"]').value.trim();
-        const mulai = this.querySelector('input[name="mulai"]').value.trim();
-        const selesai = this.querySelector('input[name="selesai"]').value.trim();
-        
-        // Validasi field
-        if (!shift || !mulai || !selesai) {
-            Swal.fire({
-                title: 'Peringatan',
-                text: 'Semua field harus diisi!',
-                icon: 'warning',
-                confirmButtonColor: '#059669'
-            });
-            return;
-        }
-
-        // Konfirmasi sebelum submit
-        Swal.fire({
-            title: 'Konfirmasi Data',
-            text: 'Apakah Anda yakin data yang diisi sudah benar?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#059669',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, Simpan!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                submitForm(this);
-            }
-        });
-    });
+   document.addEventListener('DOMContentLoaded', function() {
+    initializeModals();
+    initializeForms();
 });
 
-function submitForm(form) {
-    const submitBtn = form.querySelector('button[type="submit"]');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner">Menyimpan...</span>';
+// Modal Management
+function initializeModals() {
+    // Toggle modal buttons
+    document.querySelectorAll('[data-modal-toggle]').forEach(button => {
+        button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-modal-target');
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.remove('hidden');
+        });
+    });
 
-    const formData = new FormData(form);
-    if (form.method.toLowerCase() === 'post' && form.querySelector('input[name="_method"]')?.value === 'PUT') {
-        formData.append('_method', 'PUT');
+    // Close modal buttons
+    document.querySelectorAll('[data-modal-hide]').forEach(button => {
+        button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-modal-hide');
+            closeModal(modalId);
+        });
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target.matches('[id^="createModal"], [id^="editModal"]')) {
+            closeModal(event.target.id);
+        }
+    });
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.add('hidden');
+}
+
+// Form Handling
+function initializeForms() {
+    document.querySelectorAll('form').forEach(form => {
+        if (form.id === 'jadwalForm' || form.id.startsWith('editJadwalForm')) {
+            form.addEventListener('submit', handleFormSubmit);
+        }
+    });
+}
+
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    
+    // Validate form
+    const emptyFields = validateForm(this);
+    if (emptyFields.length > 0) {
+        await showValidationError(emptyFields);
+        return;
     }
 
-    fetch(form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': csrfToken
-        },
-        credentials: 'same-origin'
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+    // Validate time
+    if (!validateTime(this)) {
+        return;
+    }
+
+    // Confirm submission
+    const confirmed = await confirmSubmission();
+    if (!confirmed) return;
+
+    // Submit form
+    await submitForm(this);
+}
+
+function validateForm(form) {
+    const emptyFields = [];
+    const requiredFields = {
+        'shift': 'Shift',
+        'mulai': 'Jam Mulai',
+        'selesai': 'Jam Selesai'
+    };
+
+    Object.entries(requiredFields).forEach(([fieldName, label]) => {
+        const field = form.querySelector(`[name="${fieldName}"]`);
+        if (!field?.value?.trim()) {
+            emptyFields.push(label);
         }
-        return response.json();
-    })
-    .then(data => {
+    });
+
+    return emptyFields;
+}
+
+function validateTime(form) {
+    const mulai = form.querySelector('input[name="mulai"]').value;
+    const selesai = form.querySelector('input[name="selesai"]').value;
+
+    if (mulai >= selesai) {
+        Swal.fire({
+            title: 'Peringatan!',
+            text: 'Jam selesai harus lebih besar dari jam mulai',
+            icon: 'warning',
+            confirmButtonColor: '#059669'
+        });
+        return false;
+    }
+    return true;
+}
+
+async function showValidationError(emptyFields) {
+    await Swal.fire({
+        title: 'Peringatan!',
+        html: `Data berikut tidak boleh kosong:<br><strong>${emptyFields.join(', ')}</strong>`,
+        icon: 'warning',
+        confirmButtonColor: '#059669'
+    });
+}
+
+async function confirmSubmission() {
+    const result = await Swal.fire({
+        title: 'Konfirmasi Data',
+        text: 'Apakah Anda yakin data yang diisi sudah benar?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#059669',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Simpan!',
+        cancelButtonText: 'Batal'
+    });
+    return result.isConfirmed;
+}
+
+async function submitForm(form) {
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner">Menyimpan...</span>';
+    }
+
+    try {
+        const formData = new FormData(form);
+        const isEditForm = form.id.startsWith('editJadwalForm');
+        if (isEditForm) {
+            formData.append('_method', 'PUT');
+        }
+
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+            },
+            credentials: 'same-origin'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.message || 'Network response was not ok');
+
         if (data.success) {
-            Swal.fire({
+            await Swal.fire({
                 icon: 'success',
                 title: 'Berhasil!',
                 text: data.message,
                 timer: 1500,
                 showConfirmButton: false
-            }).then(() => {
-                if (data.redirect) {
-                    window.location.href = data.redirect;
-                } else {
-                    window.location.reload();
-                }
             });
+
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                window.location.reload();
+            }
         } else {
             throw new Error(data.message || 'Terjadi kesalahan');
         }
-    })
-    .catch(error => {
-        Swal.fire({
+    } catch (error) {
+        console.error('Error:', error);
+        await Swal.fire({
             icon: 'error',
             title: 'Gagal!',
             text: error.message || 'Terjadi kesalahan saat menyimpan data',
             timer: 2000,
             showConfirmButton: false
         });
-    })
-    .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = form.id === 'jadwalForm' ? 'Simpan' : 'Simpan Perubahan';
-    });
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = form.id === 'jadwalForm' ? 'Simpan' : 'Simpan Perubahan';
+        }
+    }
 }
 
-function confirmDelete(deleteUrl) {
-    Swal.fire({
+async function confirmDelete(deleteUrl) {
+    const result = await Swal.fire({
         title: 'Konfirmasi',
-        text: "Apakah Anda yakin ingin menghapus penjaga ini?",
+        text: "Apakah Anda yakin ingin menghapus jadwal ini?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
         confirmButtonText: 'Ya, Hapus!',
         cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = deleteUrl;
-            
-            const csrfToken = document.createElement('input');
-            csrfToken.type = 'hidden';
-            csrfToken.name = '_token';
-            csrfToken.value = '{{ csrf_token() }}';
-            
-            const methodInput = document.createElement('input');
-            methodInput.type = 'hidden';
-            methodInput.name = '_method';
-            methodInput.value = 'DELETE';
-            
-            form.appendChild(csrfToken);
-            form.appendChild(methodInput);
-            document.body.appendChild(form);
-            
-            // Tambahkan fetch untuk handling response
-            fetch(deleteUrl, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken.value,
-                    'Accept': 'application/json'
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: data.message,
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
-                        if (data.redirect) {
-                            window.location.href = data.redirect;
-                        }
-                    });
-                } else {
-                    throw new Error(data.message || 'Terjadi kesalahan');
-                }
-            })
-            .catch(error => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal!',
-                    text: error.message || 'Terjadi kesalahan saat menonaktifkan kategori',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            });
-        }
     });
+
+    if (!result.isConfirmed) return;
+
+    try {
+        const response = await fetch(deleteUrl, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.message || 'Network response was not ok');
+
+        if (data.success) {
+            await Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: data.message,
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                window.location.reload();
+            }
+        } else {
+            throw new Error(data.message || 'Terjadi kesalahan');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        await Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: error.message || 'Terjadi kesalahan saat menghapus data',
+            showConfirmButton: true
+        });
+    }
 }
 </script>
 @endsection

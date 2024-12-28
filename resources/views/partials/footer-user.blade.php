@@ -1,5 +1,5 @@
       <footer class="bg-gray-900 mt-32">
-         <div class="max-w-screen-xl p-4 py-6 mx-auto lg:py-16 md:p-8 lg:p-10">
+         <div class="max-w-screen-2xl p-4 py-6 mx-auto lg:py-16 md:p-8 lg:p-10">
             <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
                <div>
                   <h3 class="mb-6 text-sm font-semibold text-white uppercase">Tentang SIMSAPRAS</h3>
@@ -26,7 +26,7 @@
             </div>
             <hr class="my-6 border-gray-700 lg:my-8">
             <div class="text-center">
-               <span class="block text-sm text-center text-gray-400">© 2024 SIMSAPRAS™. Hak Cipta Dilindungi.</span>
+               <span class="block text-sm text-center text-gray-400">© 2024 SIMSAPRAS By Neo Telemetri</span>
                <span class="block text-sm text-center text-gray-400 mt-2">Universitas Andalas</span>
             </div>
          </div>

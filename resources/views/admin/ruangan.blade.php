@@ -421,98 +421,277 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    // Fungsi untuk modal dan preview gambar
-    function showImagePreview(imageSrc) {
-        const previewModal = document.getElementById('previewModal');
-        const previewImage = document.getElementById('previewImage');
+ // Initialize all necessary functionality when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeModals();
+    initializeImagePreviews();
+    initializeDeleteButtons();
+    initializeForms();
+});
 
+// Modal handling functions
+function initializeModals() {
+    // Toggle modal buttons
+    document.querySelectorAll('[data-modal-toggle]').forEach(button => {
+        button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-modal-target');
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.remove('hidden');
+        });
+    });
+
+    // Close modal buttons
+    document.querySelectorAll('[data-modal-hide]').forEach(button => {
+        button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-modal-hide');
+            closeModal(modalId);
+        });
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target.matches('[id^="createModal"], [id^="editModal"], [id^="deleteModal"]')) {
+            closeModal(event.target.id);
+        }
+    });
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.add('hidden');
+}
+
+// Image preview handling
+function initializeImagePreviews() {
+    // Image preview modal
+    const previewModal = document.getElementById('previewModal');
+    const previewImage = document.getElementById('previewImage');
+
+    // Close preview on modal background click
+    previewModal?.addEventListener('click', (e) => {
+        if (e.target === previewModal) closeImagePreview();
+    });
+
+    // Close preview on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !previewModal?.classList.contains('hidden')) {
+            closeImagePreview();
+        }
+    });
+}
+
+function showImagePreview(imageSrc) {
+    const previewModal = document.getElementById('previewModal');
+    const previewImage = document.getElementById('previewImage');
+    
+    if (previewModal && previewImage) {
         previewImage.src = imageSrc;
         previewModal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     }
+}
 
-    function closeImagePreview() {
-        const previewModal = document.getElementById('previewModal');
+function closeImagePreview() {
+    const previewModal = document.getElementById('previewModal');
+    if (previewModal) {
         previewModal.classList.add('hidden');
         document.body.style.overflow = 'auto';
     }
+}
 
-    // Event listeners untuk preview modal
-    document.getElementById('previewModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeImagePreview();
+// Form handling
+function initializeForms() {
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', handleFormSubmit);
+    });
+}
+
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+
+    // Validate required fields
+    const emptyFields = validateRequiredFields(form);
+    if (emptyFields.length > 0) {
+        showWarning(emptyFields);
+        return;
+    }
+
+    // Confirm submission
+    const confirmed = await confirmSubmission();
+    if (!confirmed) return;
+
+    // Submit form
+    await submitFormData(form);
+}
+
+function validateRequiredFields(form) {
+    const emptyFields = [];
+    form.querySelectorAll('[required]').forEach(field => {
+        const label = field.previousElementSibling?.textContent?.trim() || 'Field';
+        if (!field.value.trim()) {
+            emptyFields.push(label);
         }
     });
+    return emptyFields;
+}
 
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !document.getElementById('previewModal').classList.contains('hidden')) {
-            closeImagePreview();
-        }
+function showWarning(emptyFields) {
+    Swal.fire({
+        title: 'Peringatan!',
+        html: `Data berikut tidak boleh kosong:<br><strong>${emptyFields.join(', ')}</strong>`,
+        icon: 'warning',
+        confirmButtonColor: '#059669'
     });
+}
 
-    // Event listeners untuk delete buttons pada gambar tambahan
-    document.querySelectorAll('.deleteImageBtn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const checkbox = this.parentElement.querySelector('input[type="checkbox"]');
-            const imageContainer = this.closest('.relative');
-            const deleteIndicator = imageContainer.querySelector('.deleteIndicator');
+async function confirmSubmission() {
+    const result = await Swal.fire({
+        title: 'Konfirmasi Data',
+        text: 'Apakah Anda yakin data yang diisi sudah benar?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#059669',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Simpan!',
+        cancelButtonText: 'Batal'
+    });
+    return result.isConfirmed;
+}
 
-            if (checkbox.checked) {
-                checkbox.checked = false;
-                deleteIndicator.classList.add('hidden');
+async function submitFormData(form) {
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner">Menyimpan...</span>';
+    }
+
+    try {
+        const formData = new FormData(form);
+        const response = await fetch(form.action, {
+            method: form.method || 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+            },
+            credentials: 'same-origin'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.message || 'Network response was not ok');
+
+        if (data.success) {
+            await Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: data.message,
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            if (data.redirect) {
+                window.location.href = data.redirect;
             } else {
-                checkbox.checked = true;
-                deleteIndicator.classList.remove('hidden');
+                window.location.reload();
+            }
+        } else {
+            throw new Error(data.message || 'Terjadi kesalahan');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        await Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: error.message || 'Terjadi kesalahan saat menyimpan data',
+            timer: 2000,
+            showConfirmButton: false
+        });
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Simpan';
+        }
+    }
+}
+
+// Delete operation handling
+function initializeDeleteButtons() {
+    document.querySelectorAll('.deleteImageBtn').forEach(btn => {
+        btn.addEventListener('click', handleDeleteButtonClick);
+    });
+}
+
+function handleDeleteButtonClick(e) {
+    e.preventDefault();
+    const checkbox = this.parentElement.querySelector('input[type="checkbox"]');
+    const imageContainer = this.closest('.relative');
+    const deleteIndicator = imageContainer.querySelector('.deleteIndicator');
+
+    if (checkbox && deleteIndicator) {
+        checkbox.checked = !checkbox.checked;
+        deleteIndicator.classList.toggle('hidden', !checkbox.checked);
+    }
+}
+
+async function confirmDelete(url) {
+    const result = await Swal.fire({
+        title: 'Apakah Anda yakin?',
+        text: "Data akan dinonaktifkan dan tidak dapat dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, nonaktifkan!',
+        cancelButtonText: 'Batal'
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
             }
         });
-    });
 
-    // Fungsi untuk mengelola modal
-    function closeModal(modalId) {
-        const modalElement = document.getElementById(modalId);
-        if (modalElement) {
-            modalElement.classList.add('hidden');
+        const data = await response.json();
+
+        if (data.success) {
+            await Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: data.message,
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                window.location.reload();
+            }
+        } else {
+            throw new Error(data.message || 'Terjadi kesalahan');
         }
-    }
-
-    // Inisialisasi komponen modal
-    function initializeModals() {
-        // Toggle modal
-        const modals = document.querySelectorAll('[data-modal-toggle]');
-        modals.forEach(modal => {
-            modal.addEventListener('click', function() {
-                const target = this.getAttribute('data-modal-target');
-                const modalElement = document.getElementById(target);
-
-                if (modalElement) {
-                    modalElement.classList.remove('hidden');
-                }
-            });
-        });
-
-        // Hide modal
-        const closeButtons = document.querySelectorAll('[data-modal-hide]');
-        closeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const target = this.getAttribute('data-modal-hide');
-                closeModal(target);
-            });
-        });
-
-        // Click outside modal to close
-        window.addEventListener('click', function(event) {
-            const modals = document.querySelectorAll('[id^="createModal"], [id^="editModal"], [id^="deleteModal"]');
-            modals.forEach(modal => {
-                if (event.target === modal) {
-                    closeModal(modal.id);
-                }
-            });
+    } catch (error) {
+        console.error('Error:', error);
+        await Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: error.message || 'Terjadi kesalahan saat menghapus data',
+            showConfirmButton: true
         });
     }
+}
 
-    function deleteImage(idSarana, idGambar) {
-    Swal.fire({
+async function deleteImage(idSarana, idGambar) {
+    const result = await Swal.fire({
         title: 'Konfirmasi Hapus',
         text: 'Apakah Anda yakin ingin menghapus gambar ini?',
         icon: 'warning',
@@ -522,219 +701,62 @@
         confirmButtonText: 'Ya, Hapus!',
         cancelButtonText: 'Batal',
         reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Show loading state
-            Swal.fire({
-                title: 'Menghapus...',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
+    });
 
-            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            
-            fetch(`/admin/sarana/${idSarana}/ruangan/delete-image/${idGambar}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': token,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'same-origin'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    const imageContainer = document.querySelector(`[data-image-id="${idGambar}"]`);
-                    
-                    if (imageContainer) {
-                        imageContainer.style.transition = 'opacity 0.3s';
-                        imageContainer.style.opacity = '0';
-                        setTimeout(() => {
-                            imageContainer.remove();
-                        }, 300);
-                    }
+    if (!result.isConfirmed) return;
 
-                    // Hapus window.location.href dan ganti dengan notifikasi saja
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: data.message,
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-                } else {
-                    throw new Error(data.message || 'Gagal menghapus gambar');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal!',
-                    text: error.message || 'Terjadi kesalahan saat menghapus gambar',
-                    showConfirmButton: true
-                });
-            });
+    await Swal.fire({
+        title: 'Menghapus...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
         }
     });
-}
 
-    // Initialize modals when DOM is loaded
-    document.addEventListener('DOMContentLoaded', initializeModals);
+    try {
+        const response = await fetch(`/admin/sarana/${idSarana}/ruangan/delete-image/${idGambar}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'same-origin'
+        });
 
-['ruanganForm', 'editRuanganForm'].forEach(formId => {
-   document.getElementById(formId).addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-        // Get all required fields
-        const requiredFields = this.querySelectorAll('[required]');
-        const emptyFields = [];
-        requiredFields.forEach(field => {
-            const label = field.previousElementSibling?.textContent?.trim() || 'Field';
-            if (!field.value.trim()) { // Add trim() for whitespace validation
-                emptyFields.push(label);
-            }
-        }); 
+        const data = await response.json();
 
-      if (emptyFields.length > 0) {
-         Swal.fire({
-               title: 'Peringatan!',
-               html: `Data berikut tidak boleh kosong:<br><strong>${emptyFields.join(', ')}</strong>`,
-               icon: 'warning',
-               confirmButtonColor: '#059669'
-         });
-         return;
-      }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-      // Show confirmation if all required fields are filled
-      Swal.fire({
-         title: 'Konfirmasi Data',
-         text: 'Apakah Anda yakin data yang diisi sudah benar?',
-         icon: 'question',
-         showCancelButton: true,
-         confirmButtonColor: '#059669',
-         cancelButtonColor: '#d33',
-         confirmButtonText: 'Ya, Simpan!',
-         cancelButtonText: 'Batal'
-      }).then((result) => {
-         if (result.isConfirmed) {
-               submitForm(this);
-         }
-      });
-    });
-});
-
-function submitForm(form) {
-    const submitBtn = form.querySelector('button[type="submit"]');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner">Menyimpan...</span>';
-    
-    const formData = new FormData(form);
-    
-    fetch(form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest', // Tambahkan header ini
-            // Jangan tambahkan Content-Type karena menggunakan FormData
-            'Accept': 'application/json'
-        },
-        credentials: 'same-origin'
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
         if (data.success) {
-            Swal.fire({
+            const imageContainer = document.querySelector(`[data-image-id="${idGambar}"]`);
+            if (imageContainer) {
+                imageContainer.style.transition = 'opacity 0.3s';
+                imageContainer.style.opacity = '0';
+                setTimeout(() => {
+                    imageContainer.remove();
+                }, 300);
+            }
+
+            await Swal.fire({
                 icon: 'success',
                 title: 'Berhasil!',
                 text: data.message,
                 timer: 1500,
                 showConfirmButton: false
-            }).then(() => {
-                if (data.redirect) {
-                    window.location.href = data.redirect;
-                }
             });
         } else {
-            throw new Error(data.message || 'Terjadi kesalahan');
+            throw new Error(data.message || 'Gagal menghapus gambar');
         }
-    })
-    .catch(error => {
-        Swal.fire({
+    } catch (error) {
+        console.error('Error:', error);
+        await Swal.fire({
             icon: 'error',
             title: 'Gagal!',
-            text: error.message || 'Terjadi kesalahan saat menyimpan data',
-            timer: 2000,
-            showConfirmButton: false
+            text: error.message || 'Terjadi kesalahan saat menghapus gambar',
+            showConfirmButton: true
         });
-    })
-    .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = 'Simpan';
-    });
-}
-
-    function confirmDelete(url) {
-    Swal.fire({
-        title: 'Apakah Anda yakin?',
-        text: "Ruangan akan dinonaktifkan dan tidak dapat dikembalikan!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Ya, nonaktifkan!',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            fetch(url, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        title: 'Berhasil!',
-                        text: data.message,
-                        icon: 'success',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        window.location.href = data.redirect;
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Gagal!',
-                        text: data.message,
-                        icon: 'error',
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Terjadi kesalahan saat menghapus ruangan',
-                    icon: 'error',
-                });
-            });
-        }
-    });
+    }
 }
 </script>
 @endsection

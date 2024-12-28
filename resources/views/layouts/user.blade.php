@@ -11,7 +11,7 @@
       @vite(['resources/css/app.css','resources/js/app.js'])
       @stack('styles')
    </head>
-   <body>
+   <body class="bg-gray-50">
       <!-- Navigation Bar -->
        @include('partials.navbar-user')
 

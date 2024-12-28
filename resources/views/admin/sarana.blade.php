@@ -439,6 +439,7 @@
                </div>
             </div>
 <!-- Tambahkan di bagian script -->
+ @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
    // Fungsi untuk menutup modal
@@ -536,73 +537,80 @@ document.querySelectorAll('.deleteImageBtn').forEach(btn => {
     });
 });
 
-['saranaForm', 'editSaranaForm'].forEach(formId => {
-   document.getElementById(formId).addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      // Validate all required fields
-      const kategori = this.querySelector('select[name="IdKategori"]').value;
-      const nama = this.querySelector('input[name="nama"]').value.trim();
-      const deskripsi = this.querySelector('textarea[name="deskripsi"]').value.trim();
-      const kapasitas = this.querySelector('input[name="kapasitas"]').value.trim();
-      const fasilitas = this.querySelector('textarea[name="fasilitas"]').value.trim();
+// Form handling for create and edit forms
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle all forms with class 'sarana-form'
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate all required fields
+            const kategori = this.querySelector('select[name="IdKategori"]')?.value;
+            const nama = this.querySelector('input[name="nama"]')?.value?.trim();
+            const deskripsi = this.querySelector('textarea[name="deskripsi"]')?.value?.trim();
+            const kapasitas = this.querySelector('input[name="kapasitas"]')?.value?.trim();
+            const fasilitas = this.querySelector('textarea[name="fasilitas"]')?.value?.trim();
 
-      // Check for empty required fields
-      const emptyFields = [];
-      if (!kategori) emptyFields.push('Kategori');
-      if (!nama) emptyFields.push('Nama');
-      if (!deskripsi) emptyFields.push('Deskripsi');
-      if (!kapasitas) emptyFields.push('Kapasitas');
-      if (!fasilitas) emptyFields.push('Fasilitas');
+            // Check for empty required fields
+            const emptyFields = [];
+            if (!kategori) emptyFields.push('Kategori');
+            if (!nama) emptyFields.push('Nama');
+            if (!deskripsi) emptyFields.push('Deskripsi');
+            if (!kapasitas) emptyFields.push('Kapasitas');
+            if (!fasilitas) emptyFields.push('Fasilitas');
 
-      if (emptyFields.length > 0) {
-         Swal.fire({
-               title: 'Peringatan!',
-               html: `Data berikut tidak boleh kosong:<br><strong>${emptyFields.join(', ')}</strong>`,
-               icon: 'warning',
-               confirmButtonColor: '#059669'
-         });
-         return;
-      }
+            if (emptyFields.length > 0) {
+                Swal.fire({
+                    title: 'Peringatan!',
+                    html: `Data berikut tidak boleh kosong:<br><strong>${emptyFields.join(', ')}</strong>`,
+                    icon: 'warning',
+                    confirmButtonColor: '#059669'
+                });
+                return;
+            }
 
-      // Show confirmation if all required fields are filled
-      Swal.fire({
-         title: 'Konfirmasi Data',
-            text: 'Apakah Anda yakin data yang diisi sudah benar?',
-         icon: 'question',
-         showCancelButton: true,
-         confirmButtonColor: '#059669',
-         cancelButtonColor: '#d33',
-         confirmButtonText: 'Ya, Simpan!',
-         cancelButtonText: 'Batal'
-      }).then((result) => {
-         if (result.isConfirmed) {
-               submitForm(this);
-         }
-      });
+            // Show confirmation if all required fields are filled
+            Swal.fire({
+                title: 'Konfirmasi Data',
+                text: 'Apakah Anda yakin data yang diisi sudah benar?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#059669',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    submitFormData(this);
+                }
+            });
+        });
     });
 });
 
-function submitForm(form) {
+// Function to handle form submission
+function submitFormData(form) {
     const submitBtn = form.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span class="spinner">Menyimpan...</span>';
     
     const formData = new FormData(form);
     
+    // If it's an edit form, add the PUT method
+    if (form.method.toLowerCase() === 'post' && form.querySelector('input[name="_method"][value="PUT"]')) {
+        formData.append('_method', 'PUT');
+    }
+
     fetch(form.action, {
         method: 'POST',
         body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+        },
         credentials: 'same-origin'
     })
-    .then(response => {
-        // Tambahkan pengecekan tipe response
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            return response.json();
-        }
-        throw new Error('Response bukan JSON');
-    })
+    .then(response => response.json())
     .then(data => {
         if (data.success) {
             Swal.fire({
@@ -612,9 +620,8 @@ function submitForm(form) {
                 timer: 1500,
                 showConfirmButton: false
             }).then(() => {
-                if (data.redirect) {
-                    window.location.href = data.redirect;
-                }
+                // Refresh the page or redirect
+                window.location.reload();
             });
         } else {
             throw new Error(data.message || 'Terjadi kesalahan');
@@ -635,10 +642,11 @@ function submitForm(form) {
     });
 }
 
+// Updated delete confirmation function
 function confirmDelete(deleteUrl) {
     Swal.fire({
         title: 'Konfirmasi',
-        text: "Apakah Anda yakin ingin menonaktifkan kategori ini?",
+        text: "Apakah Anda yakin ingin menonaktifkan sarana ini?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
@@ -647,30 +655,12 @@ function confirmDelete(deleteUrl) {
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = deleteUrl;
-            
-            const csrfToken = document.createElement('input');
-            csrfToken.type = 'hidden';
-            csrfToken.name = '_token';
-            csrfToken.value = '{{ csrf_token() }}';
-            
-            const methodInput = document.createElement('input');
-            methodInput.type = 'hidden';
-            methodInput.name = '_method';
-            methodInput.value = 'DELETE';
-            
-            form.appendChild(csrfToken);
-            form.appendChild(methodInput);
-            document.body.appendChild(form);
-            
-            // Tambahkan fetch untuk handling response
             fetch(deleteUrl, {
                 method: 'DELETE',
                 headers: {
-                    'X-CSRF-TOKEN': csrfToken.value,
-                    'Accept': 'application/json'
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
                 },
             })
             .then(response => response.json())
@@ -683,9 +673,7 @@ function confirmDelete(deleteUrl) {
                         timer: 1500,
                         showConfirmButton: false
                     }).then(() => {
-                        if (data.redirect) {
-                            window.location.href = data.redirect;
-                        }
+                        window.location.reload();
                     });
                 } else {
                     throw new Error(data.message || 'Terjadi kesalahan');
@@ -695,7 +683,7 @@ function confirmDelete(deleteUrl) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Gagal!',
-                    text: error.message || 'Terjadi kesalahan saat menonaktifkan kategori',
+                    text: error.message || 'Terjadi kesalahan saat menonaktifkan sarana',
                     timer: 2000,
                     showConfirmButton: false
                 });
@@ -704,4 +692,5 @@ function confirmDelete(deleteUrl) {
     });
 }
 </script>
+@endpush
 @endsection
