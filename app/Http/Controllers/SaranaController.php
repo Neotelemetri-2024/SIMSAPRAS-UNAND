@@ -87,66 +87,83 @@ class SaranaController extends Controller
                 }
             }
 
-            return redirect()
-                ->route('sarana.index')
-                ->with('success', 'Data sarana berhasil ditambahkan');
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil disimpan',
+                'redirect' => route('sarana.index')
+            ]);
         } catch (\Exception $e) {
-            return redirect()
-                ->route('sarana.index')
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'redirect' => route('sarana.index')
+            ]);
         }
     }
 
 
     public function update(Request $request, Sarana $sarana)
     {
+        try{
 
-        $validated = $request->validate([
-            'IdKategori' => 'required|exists:kategori_sarana,id',
-            'nama' => 'required|string|max:255|unique:sarana,nama,'.$sarana->id,
-            'deskripsi' => 'required|string',
-            'fasilitas' => 'required|string',
-            'kapasitas' => 'required|integer|min:1', // Add this line
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
+            $validated = $request->validate([
+                'IdKategori' => 'required|exists:kategori_sarana,id',
+                'nama' => 'required|string|max:255|unique:sarana,nama,'.$sarana->id,
+                'deskripsi' => 'required|string',
+                'fasilitas' => 'required|string',
+                'kapasitas' => 'required|integer|min:1', // Add this line
+                'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            ]);
 
-        if ($request->has('delete_images')) {
-            $deleteImages = is_array($request->delete_images) ? $request->delete_images : [$request->delete_images];
-            
-            foreach ($deleteImages as $imageId) {
+            if ($request->has('delete_images')) {
+                $deleteImages = is_array($request->delete_images) ? $request->delete_images : [$request->delete_images];
                 
-                $gambar = DB::table('gambar_sarana')->where('id', $imageId)->first();
-                if ($gambar) {
-                    Storage::disk('public')->delete($gambar->gambar);
-                    DB::table('gambar_sarana')->where('id', $imageId)->delete();
+                foreach ($deleteImages as $imageId) {
+                    
+                    $gambar = DB::table('gambar_sarana')->where('id', $imageId)->first();
+                    if ($gambar) {
+                        Storage::disk('public')->delete($gambar->gambar);
+                        DB::table('gambar_sarana')->where('id', $imageId)->delete();
+                    }
                 }
             }
-        }
 
-        // Update data sarana
-        $sarana->update($validated);
+            // Update data sarana
+            $sarana->update($validated);
 
-        // Handle gambar utama jika ada
-        if ($request->hasFile('gambar')) {
-            if ($sarana->gambar) {
-                Storage::disk('public')->delete($sarana->gambar);
+            // Handle gambar utama jika ada
+            if ($request->hasFile('gambar')) {
+                if ($sarana->gambar) {
+                    Storage::disk('public')->delete($sarana->gambar);
+                }
+                $validated['gambar'] = $request->file('gambar')->store('sarana', 'public');
+                $sarana->update(['gambar' => $validated['gambar']]);
             }
-            $validated['gambar'] = $request->file('gambar')->store('sarana', 'public');
-            $sarana->update(['gambar' => $validated['gambar']]);
-        }
 
-        // Handle upload gambar tambahan baru
-        if ($request->hasFile('gambar_tambahan')) {
-            foreach($request->file('gambar_tambahan') as $image) {
-                $path = $image->store('sarana/tambahan', 'public');
-                $sarana->gambarSarana()->create([
-                    'gambar' => $path
-                ]);
+            // Handle upload gambar tambahan baru
+            if ($request->hasFile('gambar_tambahan')) {
+                foreach($request->file('gambar_tambahan') as $image) {
+                    $path = $image->store('sarana/tambahan', 'public');
+                    $sarana->gambarSarana()->create([
+                        'gambar' => $path
+                    ]);
+                }
             }
-        }
 
-        return redirect()->route('sarana.index')->with('success', 'Data berhasil diperbarui');
+            return response()->json([
+                'success' => true,
+                'message' => 'Data Sarana berhasil diperbarui',
+                'redirect' => route('sarana.index')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'redirect' => route('sarana.index')
+            ]);
+
+        }
     }
     
     public function daftarSarana(Request $request)
@@ -254,17 +271,21 @@ class SaranaController extends Controller
             // Commit transaksi jika semua operasi berhasil
             DB::commit();
 
-            return redirect()
-                ->route('sarana.index')
-                ->with('success', 'Sarana berhasil dinonaktifkan dan gambar-gambar terkait berhasil dihapus');
+            return response()->json([
+                'success' => true,
+                'message' => 'Sarana berhasil dinonaktifkan',
+                'redirect' => route('sarana.index')
+            ]);
                 
         } catch (\Exception $e) {
             // Rollback transaksi jika terjadi error
             DB::rollBack();
             
-            return redirect()
-                ->route('sarana.index')
-                ->with('error', 'Gagal menonaktifkan sarana: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'redirect' => route('sarana.index')
+            ]);
         }
     }
 }

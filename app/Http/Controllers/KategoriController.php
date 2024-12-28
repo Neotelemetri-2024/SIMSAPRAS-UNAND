@@ -54,7 +54,11 @@ class KategoriController extends Controller
         // Simpan data
         KategoriSarana::create($validated);
 
-        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil ditambahkan');
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil disimpan',
+            'redirect' => route('kategori.index')
+        ]);
     }
 
 
@@ -67,7 +71,11 @@ class KategoriController extends Controller
 
         $kategori->update($validated);
 
-        return redirect()->route('kategori.index')->with('success', 'Kategori berhasil diperbarui');
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil diperbarui',
+            'redirect' => route('kategori.index')
+        ]);
     }
 
     public function destroy(KategoriSarana $kategori)
@@ -111,16 +119,18 @@ class KategoriController extends Controller
             
             DB::commit();
             
-            return redirect()
-                ->route('kategori.index')
-                ->with('success', 'Kategori, sarana, ruangan dan semua gambar terkait berhasil dinonaktifkan dan dihapus');
-                
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori berhasil dinonaktifkan',
+                'redirect' => route('kategori.index')
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             
-            return redirect()
-                ->route('kategori.index')
-                ->with('error', 'Gagal menonaktifkan kategori: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ]);
         }
     }
 }

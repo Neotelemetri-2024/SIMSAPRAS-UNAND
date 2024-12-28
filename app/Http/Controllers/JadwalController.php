@@ -24,7 +24,11 @@ class JadwalController extends Controller
 
         Jadwal::create($validated);
 
-        return redirect()->route('jadwal.index')->with('success', 'Jadwal berhasil ditambahkan');
+        return response()->json([
+            'success' => true,
+            'message' => 'Data Jadwal berhasil ditambahkan',
+            'redirect' => route('jadwal.index')
+        ]);
     }
 
     public function update(Request $request, Jadwal $jadwal)
@@ -38,10 +42,17 @@ class JadwalController extends Controller
             $validated['mulai'] = date('H:i', strtotime($request->mulai));
             $validated['selesai'] = date('H:i', strtotime($request->selesai));
             $jadwal->update($validated);
-            return redirect()->route('jadwal.index')->with('success', 'Jadwal berhasil diperbarui');
+            return response()->json([
+                'success' => true,
+                'message' => 'Data Jadwal berhasil diperbarui',
+                'redirect' => route('jadwal.index')
+            ]);
         } catch (\Exception $e) {
-            return redirect()->route('jadwal.index')
-                ->with('error', 'Gagal memperbarui jadwal: ' . $e->getMessage());
+            return response()->json([
+                'success' => true,
+                'message' => 'Gagal memperbarui jadwal: ' . $e->getMessage(),
+                'redirect' => route('jadwal.index')
+            ]);
         }
     }
 
@@ -50,9 +61,17 @@ class JadwalController extends Controller
         try {
             $jadwal->delete();
 
-            return redirect()->route('jadwal.index')->with('success', 'Jadwal berhasil dihapus');
+            return response()->json([
+                'success' => true,
+                'message' => 'Data Jadwal berhasil dihapus',
+                'redirect' => route('jadwal.index')
+            ]);
         } catch (\Exception $e) {
-            return redirect()->route('jadwal.index')->with('error', 'Gagal menghapus jadwal: ' . $e->getMessage());
+            return response()->json([
+                'success' => true,
+                'message' => 'Gagal menghapus jadwal: ' . $e->getMessage(),
+                'redirect' => route('jadwal.index')
+            ]);
         }
     }
 }

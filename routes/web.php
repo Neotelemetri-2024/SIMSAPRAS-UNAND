@@ -77,6 +77,7 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
     // Sarana
     Route::resource('sarana', SaranaController::class);
     Route::post('/sarana', [SaranaController::class, 'store'])->name('sarana.store');
+    Route::get('/sarana', [SaranaController::class, 'index'])->name('sarana.index');
     Route::put('/sarana/{sarana}', [SaranaController::class, 'update'])->name('sarana.update');
     Route::delete('/sarana/{sarana}', [SaranaController::class, 'destroy'])->name('sarana.destroy');
     Route::get('/sarana/{idSarana}/ruangan', [RuanganController::class, 'index'])->name('ruangan.index');

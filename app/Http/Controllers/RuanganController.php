@@ -76,11 +76,18 @@ class RuanganController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('ruangan.index', $idSarana)
-                           ->with('success', 'Ruangan berhasil ditambahkan');
+            return response()->json([
+                'success' => true,
+                'message' => 'Ruangan berhasil ditambahkan',
+                'redirect' => route('ruangan.index', $idSarana)
+            ]);
         } catch (\Exception $e) {
             DB::rollback();
-            return back()->with('error', 'Terjadi kesalahan saat menambahkan ruangan');
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menambahkan ruangan',
+                'redirect' => route('ruangan.index', $idSarana)
+            ]);
         }
     }
 
@@ -143,11 +150,18 @@ class RuanganController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('ruangan.index', $idSarana)
-                           ->with('success', 'Ruangan berhasil diperbarui');
+            return response()->json([
+                'success' => true,
+                'message' => 'Ruangan berhasil diperbarui',
+                'redirect' => route('ruangan.index', $idSarana)
+            ]);
         } catch (\Exception $e) {
             DB::rollback();
-            return back()->with('error', 'Terjadi kesalahan saat memperbarui ruangan');
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'redirect' => route('ruangan.index', $idSarana)
+            ]);
         }
     }
 
@@ -173,16 +187,20 @@ class RuanganController extends Controller
             
             DB::commit();
             
-            return redirect()
-                ->route('ruangan.index', $idSarana)
-                ->with('success', 'Ruangan berhasil dinonaktifkan dan gambar terkait berhasil dihapus');
+            return response()->json([
+                'success' => true,
+                'message' => 'Ruangan berhasil dinonaktifkan',
+                'redirect' => route('ruangan.index', $idSarana)
+            ]);
                 
         } catch (\Exception $e) {
             DB::rollback();
             
-            return redirect()
-                ->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'redirect' => route('ruangan.index', $idSarana)
+            ]);
         }
     }
 
@@ -202,9 +220,18 @@ class RuanganController extends Controller
             // Delete record
             $gambar->delete();
             
-            return response()->json(['success' => true]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Gambar berhasil dihapus',
+                'redirect' => route('ruangan.index', $idSarana)
+            ]);
+            
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'redirect' => route('ruangan.index', $idSarana)
+            ]);
         }
     }
     

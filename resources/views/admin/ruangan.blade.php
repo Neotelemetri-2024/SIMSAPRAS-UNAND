@@ -13,7 +13,7 @@
                 <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Data Ruangan - {{ $sarana->nama }}</h5>
             </div>
             @if($sarana->status == "aktif")
-            <button data-modal-target="createModal" data-modal-toggle="createModal" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
+            <button data-modal-target="createModal" data-modal-toggle="createModal" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">
                 + Tambah Ruangan
             </button>
             @endif
@@ -31,37 +31,27 @@
                         </div>
                         <input type="text"
                                name="search"
-                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                placeholder="Cari ruangan..."
                                value="{{ request('search') }}">
                     </div>
                 </div>
                 <div class="w-48">
-                    <select name="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                    <select name="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
                        <option value="">Semua Ruangan</option>
                        <option value="aktif" {{ request('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
                        <option value="nonaktif" {{ request('status') == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
                     </select>
                  </div>
                 <button type="submit"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800">
                     Cari
                 </button>
             </form>
         </div>
 
         <div class="p-5">
-            @if(session('success'))
-            <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
-                {{ session('success') }}
-            </div>
-            @endif
-            @if(session('error'))
-            <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-                {{ session('error') }}
-            </div>
-            @endif
-
+        
             <!-- Table -->
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -135,8 +125,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                     </svg>
                                 </button>
-                                    <button data-modal-target="deleteModal{{ $item->id }}"
-                                            data-modal-toggle="deleteModal{{ $item->id }}"
+                                    <button onclick="confirmDelete('{{ route('ruangan.destroy', ['idSarana' => $sarana->id, 'ruangan' => $item->id]) }}')"
                                             class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -159,13 +148,13 @@
                                         Previous
                                     </span>
                                 @else
-                                    <a href="{{ $ruangan->previousPageUrl() }}" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700">
+                                    <a href="{{ $ruangan->previousPageUrl() }}" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-green-300 active:bg-gray-100 active:text-gray-700">
                                         Previous
                                     </a>
                                 @endif
 
                                 @if ($ruangan->hasMorePages())
-                                    <a href="{{ $ruangan->nextPageUrl() }}" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700">
+                                    <a href="{{ $ruangan->nextPageUrl() }}" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-green-300 active:bg-gray-100 active:text-gray-700">
                                         Next
                                     </a>
                                 @else
@@ -200,7 +189,7 @@
                                                 </span>
                                             </span>
                                         @else
-                                            <a href="{{ $ruangan->previousPageUrl() }}" rel="prev" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-lg leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
+                                            <a href="{{ $ruangan->previousPageUrl() }}" rel="prev" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-lg leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-green-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
                                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                                                 </svg>
@@ -211,10 +200,10 @@
                                         @foreach ($ruangan->getUrlRange(1, $ruangan->lastPage()) as $page => $url)
                                             @if ($page == $ruangan->currentPage())
                                                 <span aria-current="page">
-                                                    <span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-blue-600 bg-blue-50 border border-gray-300 cursor-default leading-5">{{ $page }}</span>
+                                                    <span class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-green-600 bg-green-50 border border-gray-300 cursor-default leading-5">{{ $page }}</span>
                                                 </span>
                                             @else
-                                                <a href="{{ $url }}" class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
+                                                <a href="{{ $url }}" class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-green-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
                                                     {{ $page }}
                                                 </a>
                                             @endif
@@ -222,7 +211,7 @@
 
                                         {{-- Next Page Link --}}
                                         @if ($ruangan->hasMorePages())
-                                            <a href="{{ $ruangan->nextPageUrl() }}" rel="next" class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-lg leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
+                                            <a href="{{ $ruangan->nextPageUrl() }}" rel="next" class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-lg leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-green-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
                                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                                                 </svg>
@@ -260,7 +249,7 @@
                     </svg>
                 </button>
             </div>
-            <form action="{{ route('ruangan.store', $sarana->id) }}" method="POST" enctype="multipart/form-data">
+            <form id="ruanganForm" action="{{ route('ruangan.store', $sarana->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="p-6">
                     <div class="grid grid-cols-2 gap-6">
@@ -268,15 +257,15 @@
                         <div class="space-y-6">
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Nama Ruangan</label>
-                                <input type="text" name="nama" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                <input type="text" name="nama" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Kapasitas</label>
-                                <input type="number" name="kapasitas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                <input type="number" name="kapasitas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Deskripsi</label>
-                                <textarea name="deskripsi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required></textarea>
+                                <textarea name="deskripsi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required></textarea>
                             </div>
                         </div>
 
@@ -284,7 +273,7 @@
                         <div class="space-y-6">
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
-                                <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required></textarea>
+                                <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required></textarea>
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Utama</label>
@@ -299,8 +288,8 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200">
-                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">Simpan</button>
-                    <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5" data-modal-hide="createModal">Batal</button>
+                    <button type="submit" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">Simpan</button>
+                    <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5" data-modal-hide="createModal">Batal</button>
                 </div>
             </form>
         </div>
@@ -320,24 +309,25 @@
                     </svg>
                 </button>
             </div>
-            <form action="{{ route('ruangan.update', ['idSarana' => $sarana->id, 'ruangan' => $item->id]) }}" method="POST" enctype="multipart/form-data">
+            <form id="editRuanganForm" action="{{ route('ruangan.update', ['idSarana' => $sarana->id, 'ruangan' => $item->id]) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
+                <input type="hidden" name="X-Requested-With" value="XMLHttpRequest">
                 <div class="p-6">
                     <div class="grid grid-cols-2 gap-6">
                         <!-- Kolom Kiri -->
                         <div class="space-y-6">
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Nama Ruangan</label>
-                                <input type="text" name="nama" value="{{ $item->nama }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                <input type="text" name="nama" value="{{ $item->nama }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Kapasitas</label>
-                                <input type="number" name="kapasitas" value="{{ $item->kapasitas }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                <input type="number" name="kapasitas" value="{{ $item->kapasitas }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Deskripsi</label>
-                                <textarea name="deskripsi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>{{ $item->deskripsi }}</textarea>
+                                <textarea name="deskripsi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->deskripsi }}</textarea>
                             </div>
                         </div>
 
@@ -345,7 +335,7 @@
                         <div class="space-y-6">
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
-                                <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>{{ $item->fasilitas }}</textarea>
+                                <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->fasilitas }}</textarea>
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Utama</label>
@@ -404,39 +394,10 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200">
-                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">Simpan Perubahan</button>
-                    <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5" data-modal-hide="editModal{{ $item->id }}">Batal</button>
+                    <button type="submit" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">Simpan Perubahan</button>
+                    <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5" data-modal-hide="editModal{{ $item->id }}">Batal</button>
                 </div>
             </form>
-        </div>
-    </div>
-</div>
-
-<!-- Delete Modal -->
-<div id="deleteModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative w-full max-w-md max-h-full">
-        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-            <button type="button" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center" data-modal-hide="deleteModal{{ $item->id }}">
-                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                </svg>
-            </button>
-            <div class="p-6 text-center">
-                <svg class="mx-auto mb-4 text-gray-400 w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                </svg>
-                <h3 class="mb-5 text-lg font-normal text-gray-500">Apakah Anda yakin ingin menonaktifkan ruangan ini?</h3>
-                <form action="{{ route('ruangan.destroy', ['idSarana' => $sarana->id, 'ruangan' => $item->id]) }}" method="POST" class="inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
-                        Ya, Nonaktifkan
-                    </button>
-                    <button type="button" data-modal-hide="deleteModal{{ $item->id }}" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900">
-                        Tidak, batal
-                    </button>
-                </form>
-            </div>
         </div>
     </div>
 </div>
@@ -456,6 +417,8 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     // Fungsi untuk modal dan preview gambar
@@ -548,9 +511,28 @@
         });
     }
 
-    // Function to delete additional image
     function deleteImage(idSarana, idGambar) {
-        if (confirm('Apakah Anda yakin ingin menghapus gambar ini?')) {
+    Swal.fire({
+        title: 'Konfirmasi Hapus',
+        text: 'Apakah Anda yakin ingin menghapus gambar ini?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Show loading state
+            Swal.fire({
+                title: 'Menghapus...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
             const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             
             fetch(`/admin/sarana/${idSarana}/ruangan/delete-image/${idGambar}`, {
@@ -562,25 +544,197 @@
                 },
                 credentials: 'same-origin'
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
-                    const imageElement = document.querySelector(`[data-image-id="${idGambar}"]`);
-                    if (imageElement) {
-                        imageElement.remove();
+                    const imageContainer = document.querySelector(`[data-image-id="${idGambar}"]`);
+                    
+                    if (imageContainer) {
+                        imageContainer.style.transition = 'opacity 0.3s';
+                        imageContainer.style.opacity = '0';
+                        setTimeout(() => {
+                            imageContainer.remove();
+                        }, 300);
                     }
+
+                    // Hapus window.location.href dan ganti dengan notifikasi saja
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: data.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
                 } else {
-                    alert('Gagal menghapus gambar: ' + (data.message || 'Unknown error'));
+                    throw new Error(data.message || 'Gagal menghapus gambar');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Terjadi kesalahan saat menghapus gambar');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: error.message || 'Terjadi kesalahan saat menghapus gambar',
+                    showConfirmButton: true
+                });
             });
         }
-    }
+    });
+}
 
     // Initialize modals when DOM is loaded
     document.addEventListener('DOMContentLoaded', initializeModals);
+
+['ruanganForm', 'editRuanganForm'].forEach(formId => {
+   document.getElementById(formId).addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+        // Get all required fields
+        const requiredFields = this.querySelectorAll('[required]');
+        const emptyFields = [];
+        requiredFields.forEach(field => {
+            const label = field.previousElementSibling?.textContent?.trim() || 'Field';
+            if (!field.value.trim()) { // Add trim() for whitespace validation
+                emptyFields.push(label);
+            }
+        }); 
+
+      if (emptyFields.length > 0) {
+         Swal.fire({
+               title: 'Peringatan!',
+               html: `Data berikut tidak boleh kosong:<br><strong>${emptyFields.join(', ')}</strong>`,
+               icon: 'warning',
+               confirmButtonColor: '#059669'
+         });
+         return;
+      }
+
+      // Show confirmation if all required fields are filled
+      Swal.fire({
+         title: 'Konfirmasi Data',
+         text: 'Apakah Anda yakin data yang diisi sudah benar?',
+         icon: 'question',
+         showCancelButton: true,
+         confirmButtonColor: '#059669',
+         cancelButtonColor: '#d33',
+         confirmButtonText: 'Ya, Simpan!',
+         cancelButtonText: 'Batal'
+      }).then((result) => {
+         if (result.isConfirmed) {
+               submitForm(this);
+         }
+      });
+    });
+});
+
+function submitForm(form) {
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner">Menyimpan...</span>';
+    
+    const formData = new FormData(form);
+    
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest', // Tambahkan header ini
+            // Jangan tambahkan Content-Type karena menggunakan FormData
+            'Accept': 'application/json'
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: data.message,
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => {
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
+            });
+        } else {
+            throw new Error(data.message || 'Terjadi kesalahan');
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: error.message || 'Terjadi kesalahan saat menyimpan data',
+            timer: 2000,
+            showConfirmButton: false
+        });
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Simpan';
+    });
+}
+
+    function confirmDelete(url) {
+    Swal.fire({
+        title: 'Apakah Anda yakin?',
+        text: "Ruangan akan dinonaktifkan dan tidak dapat dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, nonaktifkan!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: data.message,
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.href = data.redirect;
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Gagal!',
+                        text: data.message,
+                        icon: 'error',
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Terjadi kesalahan saat menghapus ruangan',
+                    icon: 'error',
+                });
+            });
+        }
+    });
+}
 </script>
 @endsection
