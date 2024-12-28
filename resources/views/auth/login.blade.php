@@ -1,15 +1,6 @@
 <x-guest-layout>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    {{-- <!-- Navbar -->
-    <a
-      href="{{ route('home') }}"
-      class="fixed top-4 left-4 flex items-center text-gray-600 hover:text-green-600 transition-colors"
-    >
-      <span class="font-medium">< Kembali ke Beranda</span>
-    </a> --}}
-
     <!-- Main Content -->
     <div class="max-w-screen-xl mx-auto px-4 py-8 pt-20">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -119,7 +110,7 @@
                     </h2>
 
                     <p class="text-lg text-gray-600">
-                        Kelola dan ajukan peminjaman fasilitas kampus dengan mudah dan efisien melalui SIMSAPRAS Universitas Andalas.
+                        Ajukan peminjaman fasilitas kampus dengan mudah dan efisien melalui SIMSAPRAS Universitas Andalas.
                     </p>
 
                     <div class="grid grid-cols-2 gap-6 mt-8">

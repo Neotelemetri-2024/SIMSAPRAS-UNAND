@@ -2,7 +2,7 @@
 
 @section('content')
 <section class="bg-gray-50 pt-32 min-h-screen">
-    <div class="max-w-screen-2xl px-4 mx-auto lg:px-6">
+    <div class="max-w-screen-xl px-4 mx-auto lg:px-6">
         <!-- Header Section -->
         <div class="mb-8 text-center">
             <h2 class="text-3xl font-bold text-gray-900">

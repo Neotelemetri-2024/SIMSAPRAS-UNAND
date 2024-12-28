@@ -7,7 +7,6 @@ use App\Models\Notifikasi;
 use App\Models\Sarana;
 use App\Models\TanggalPeminjaman;
 use App\Models\Jadwal;
-use App\Models\Ruangan;
 use Illuminate\Http\Request;
 use App\Services\NotificationService;
 use Illuminate\Validation\ValidationException;
@@ -61,7 +60,6 @@ class PeminjamanAdminController extends Controller
                 'message' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
-            \Log::error('Pembatalan error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
@@ -78,21 +76,26 @@ class PeminjamanAdminController extends Controller
     {
         $search = $request->input('search');
         $sort = $request->input('sort');
-    
+        $today = now(); 
+
         $query = Peminjaman::with([
             'user', 
             'sarana', 
-            'tanggalPeminjaman.jadwal' // Update relationship loading
+            'tanggalPeminjaman.jadwal'
         ])
-            ->where('status', $status);
-    
+        ->where('status', $status);
+
         if ($search) {
             $query->whereHas('user', function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
             });
         }
-    
-        if ($sort && in_array($sort, ['asc', 'desc'])) {
+
+        if ($sort === 'pass') {
+            $query->whereHas('tanggalPeminjaman', function($q) use ($today) {
+                $q->where('tanggal', '<', $today);
+            });
+        } elseif (in_array($sort, ['asc', 'desc'])) {
             $query->whereHas('tanggalPeminjaman', function($q) {
                 $q->select('idPeminjaman');
             })
@@ -105,17 +108,19 @@ class PeminjamanAdminController extends Controller
             }])
             ->orderBy('earliest_date', $sort);
         }
-    
+
         $peminjamanMasuk = $query->paginate(10);
+
         if ($search) {
             $peminjamanMasuk->appends('search', $search);
         }
         if ($sort) {
             $peminjamanMasuk->appends('sort', $sort);
         }
-    
+
         return view('admin.peminjaman', compact('peminjamanMasuk', 'search', 'title'));
     }
+
 
     public function PeminjamanMasuk(Request $request)
     {
@@ -228,7 +233,6 @@ class PeminjamanAdminController extends Controller
             return response()->json($response);
 
         } catch (\Exception $e) {
-            \Log::error('Update status error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
@@ -356,6 +360,30 @@ class PeminjamanAdminController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function evaluasi(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'evaluasi' => 'required|string|max:255'
+            ]);
+    
+            $peminjaman = Peminjaman::findOrFail($id);
+            $peminjaman->evaluasi = $request->evaluasi;
+            $peminjaman->save();
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Evaluasi berhasil ditambahkan',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                
             ], 500);
         }
     }

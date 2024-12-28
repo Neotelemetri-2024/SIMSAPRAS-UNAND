@@ -33,7 +33,6 @@
 
                     <!-- Form Filter/Sort -->
                     <form method="GET" action="{{ url()->current() }}" class="flex gap-3">
-                        <!-- Pertahankan parameter search jika ada -->
                         @if ($search)
                             <input type="hidden" name="search" value="{{ $search }}">
                         @endif
@@ -44,6 +43,7 @@
                                 <option value="" {{ !request('sort') ? 'selected' : '' }}>Urutkan Tanggal</option>
                                 <option value="asc" {{ request('sort') === 'asc' ? 'selected' : '' }}>Terlama</option>
                                 <option value="desc" {{ request('sort') === 'desc' ? 'selected' : '' }}>Terbaru</option>
+                                <option value="pass" {{ request('sort') === 'pass' ? 'selected' : '' }}>Selesai</option>
                             </select>
                         </div>
                         <button type="submit"
@@ -178,7 +178,29 @@
                                                 </svg>
                                             </button>
                                         @endif
-
+                                        @if ($item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal < now()->format('Y-m-d') && !$item->evaluasi)
+                                            <button 
+                                                data-modal-target="evaluasiModal{{ $item->id }}"
+                                                data-modal-toggle="evaluasiModal{{ $item->id }}"
+                                                class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200"
+                                                >
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                                Evaluasi
+                                        </button>
+                                        @elseif($item->status === 'disetujui' && $item->evaluasi)
+                                        <button data-modal-target="detailEvaluasiModal{{ $item->id }}"
+                                                data-modal-toggle="detailEvaluasiModal{{ $item->id }}"
+                                            class="p-2 text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all duration-200 border border-blue-200 hover:border-blue-300 focus:ring-2 focus:ring-blue-300">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                        </button>
+                                        @elseif($item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal > now()->format('Y-m-d'))
+                                        Belum Masuk Masa Evaluasi
+                                        @endif
                                         @if ((auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan') && $item->status === 'disetujui')
                                         <button type="button" onclick="showBatalkanModal({{ $item->id }})"
                                             class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:ring-4 focus:ring-red-200 ml-2">
@@ -396,7 +418,7 @@
                                 </h4>
                                 <div class="space-y-3">
                                     <a href="{{ asset('storage/' . $item->suratPeminjaman) }}"
-                                        class="flex items-center text-blue-600 hover:text-blue-700 transition-colors">
+                                        class="flex items-center text-blue-600 hover:text-blue-700 transition-colors" target="_blank">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -405,7 +427,7 @@
                                         Surat Peminjaman (PDF)
                                     </a>
                                     <a href="{{ asset('storage/' . $item->rundown) }}"
-                                        class="flex items-center text-blue-600 hover:text-blue-700 transition-colors">
+                                        class="flex items-center text-blue-600 hover:text-blue-700 transition-colors" target="_blank">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -444,7 +466,7 @@
                                 </h4>
                                 <div class="space-y-4">
                                     <select id="statusSelect{{ $item->id }}" name="status"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                                         required onchange="toggleFeedbackForm({{ $item->id }})">
                                         <option value="dibatalkan" @if ($item->status == 'dibatalkan') selected @endif>
                                                 Setujui Pembatalan</option>
@@ -455,7 +477,7 @@
                                     <div id="feedbackForm{{ $item->id }}" class="hidden">
                                         <label class="block mb-2 text-sm font-medium text-gray-900">Alasan Penolakan</label>
                                         <textarea name="alasanTolakBatal" rows="4"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                                             placeholder="Masukkan alasan penolakan..."></textarea>
                                     </div>
                                 </div>
@@ -475,7 +497,7 @@
                                 </h4>
                                 <div class="space-y-4">
                                     <select id="statusSelect{{ $item->id }}" name="status"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                                         required onchange="toggleFeedbackForm({{ $item->id }})">
                                         @if ($item->tarif == 0)
                                             <option value="disetujui" @if ($item->status == 'disetujui') selected @endif>
@@ -493,7 +515,7 @@
                                         <label class="block mb-2 text-sm font-medium text-gray-900">Feedback
                                             Penolakan</label>
                                         <textarea name="feedbackPenolakan" rows="4"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                                             placeholder="Masukkan alasan penolakan..."></textarea>
                                     </div>
                                 </div>
@@ -508,7 +530,7 @@
                             <!-- Ubah button type dari "submit" menjadi "button" -->
                             <button type="button" 
                                 onclick="confirmUpdate({{ $item->id }})"
-                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center">
+                                class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7" />
@@ -516,7 +538,7 @@
                                 Simpan Perubahan
                             </button>
                             <button type="button"
-                                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 flex items-center"
+                                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 flex items-center"
                                 data-modal-hide="editModal{{ $item->id }}">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -595,6 +617,184 @@
     </div>
 </div>
 @endforeach
+@foreach ($peminjamanMasuk as $item)
+{{-- Modal Evaluasi --}}
+<div id="evaluasiModal{{ $item->id }}" tabindex="-1" aria-hidden="true" 
+    class="fixed inset-0 z-50 hidden overflow-hidden bg-black bg-opacity-50 transition-opacity">
+    
+    <!-- Modal Container -->
+    <div class="fixed inset-0 flex items-center justify-center p-4">
+        <div class="relative w-full max-w-md">
+            <!-- Modal Content -->
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                        Evaluasi Peminjaman
+                    </h3>
+                    <button type="button" 
+                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                        data-modal-hide="evaluasiModal{{ $item->id }}"
+                        onclick="closeModal('evaluasiModal{{ $item->id }}')">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                </div>
+
+                <div class="p-6">
+                    <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                        Silakan berikan evaluasi untuk peminjaman ini:
+                    </p>
+                    <div class="mt-4">
+                        <textarea id="evaluasiText{{ $item->id }}" 
+                            rows="4" 
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                            placeholder="Masukkan evaluasi peminjaman..."></textarea>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 dark:border-gray-600">
+                    <button type="button" 
+                        onclick="submitEvaluasi({{ $item->id }})"
+                        class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Simpan Evaluasi
+                    </button>
+                    <button type="button"
+                        data-modal-hide="evaluasiModal{{ $item->id }}"
+                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 inline-flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                        Batal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
+
+@foreach ($peminjamanMasuk as $item)
+<div id="detailEvaluasiModal{{ $item->id }}" tabindex="-1" aria-hidden="true"
+    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative w-full max-w-2xl max-h-full">
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <!-- Modal Header -->
+            <div class="flex items-start justify-between p-5 border-b rounded-t dark:border-gray-600 bg-gray-50">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    Detail Peminjaman
+                </h3>
+                <button type="button"
+                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
+                    data-modal-hide="detailEvaluasiModal{{ $item->id }}">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-6">
+                <!-- Detail Data Section -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Detail Peminjaman
+                    </h4>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div class="space-y-2">
+                            <p class="flex items-center">
+                                <span class="font-medium w-32">Nama</span>
+                                <span class="text-gray-600">: {{ $item->user->name }}</span>
+                            </p>
+                            <p class="flex items-center">
+                                <span class="font-medium w-32">Kontak</span>
+                                <span class="text-gray-600">: {{ $item->user->kontak }}</span>
+                            </p>
+                            <p class="flex items-center">
+                                <span class="font-medium w-32">Instansi</span>
+                                <span class="text-gray-600">: {{ $item->instansi }}</span>
+                            </p>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="flex items-center">
+                                <span class="font-medium w-32">Gedung</span>
+                                <span class="text-gray-600">: {{ $item->sarana->nama }}</span>
+                            </p>
+                            <p class="flex items-center">
+                                <span class="font-medium w-32">Tarif</span>
+                                <span class="text-gray-600">: Rp{{ number_format($item->tarif, 0, ',', '.') }}</span>
+                            </p>
+                            <p class="flex items-center">
+                                <span class="font-medium w-32">Estimasi Peserta</span>
+                                <span class="text-gray-600">: {{ $item->estimasiPeserta }} orang</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kegiatan Section -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        Detail Kegiatan
+                    </h4>
+                    <div class="space-y-2 text-sm">
+                        <p class="flex items-center">
+                            <span class="font-medium w-32">Nama Kegiatan</span>
+                            <span class="text-gray-600">: {{ $item->kegiatan }}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Evaluasi Section -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Evaluasi Kegiatan
+                    </h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="space-y-1">
+                            <p class="font-medium">Catatan Evaluasi:</p>
+                            <p class="text-gray-600 bg-gray-50 p-3 rounded-lg">{{ $item->evaluasi }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex items-center justify-end p-6 border-t border-gray-200 rounded-b dark:border-gray-600">
+                <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10" data-modal-hide="detailEvaluasiModal{{ $item->id }}">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
@@ -603,36 +803,121 @@
             const modalElement = document.getElementById(modalId);
             if (modalElement) {
                 modalElement.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden'); // Menghilangkan class yang mencegah scrolling
             }
         }
 
+        // Function to open modal
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            }
+        }
 
+        function submitEvaluasi(id) {
+            const evaluasiText = document.getElementById(`evaluasiText${id}`).value;
+            
+            if (!evaluasiText.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Mohon isi evaluasi terlebih dahulu',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
 
-        // Inisialisasi komponen modal
-        const modals = document.querySelectorAll('[data-modal-toggle]');
-        modals.forEach(modal => {
-            modal.addEventListener('click', function() {
-                const target = this.getAttribute('data-modal-target');
-                const modalElement = document.getElementById(target);
-
-                if (modalElement) {
-                    modalElement.classList.remove('hidden');
+            // Show loading state
+            Swal.fire({
+                title: 'Memproses...',
+                text: 'Mohon tunggu sebentar',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
                 }
             });
+
+            // Send AJAX request
+            fetch(`/admin/peminjaman/${id}/evaluasi`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    evaluasi: evaluasiText
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close the modal first
+                    closeModal(`evaluasiModal${id}`);
+                    
+                    // Show success message and reload
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Evaluasi berhasil disimpan',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    throw new Error(data.message || 'Terjadi kesalahan saat menyimpan evaluasi');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: error.message || 'Terjadi kesalahan saat menyimpan evaluasi',
+                    confirmButtonColor: '#3085d6'
+                });
+            });
+        }
+
+        // Event listener for ESC key to close modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modals = document.querySelectorAll('[id^="evaluasiModal"]');
+                modals.forEach(modal => {
+                    if (!modal.classList.contains('hidden')) {
+                        closeModal(modal.id);
+                    }
+                });
+            }
         });
 
-        // Inisialisasi tombol close modal
-        const closeButtons = document.querySelectorAll('[data-modal-hide]');
-        closeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const target = this.getAttribute('data-modal-hide');
-                closeModal(target);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inisialisasi tombol yang membuka modal
+            const modalToggles = document.querySelectorAll('[data-modal-toggle]');
+            modalToggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const target = this.getAttribute('data-modal-target');
+                    openModal(target);
+                });
+            });
+
+            // Inisialisasi tombol yang menutup modal
+            const closeButtons = document.querySelectorAll('[data-modal-hide]');
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const target = this.getAttribute('data-modal-hide');
+                    closeModal(target);
+                });
             });
         });
 
         // Click outside modal to close
         window.addEventListener('click', function(event) {
-            const modals = document.querySelectorAll('[id^="createModal"], [id^="editModal"], [id^="deleteModal"]');
+            const modals = document.querySelectorAll('[id^="createModal"], [id^="editModal"], [id^="deleteModal"], [id^="evaluasiModal"], [id^="detailEvaluasiModal"]');
             modals.forEach(modal => {
                 if (event.target === modal) {
                     closeModal(modal.id);
@@ -651,246 +936,246 @@
         }
 
         function confirmUpdate(id) {
-    event.preventDefault();
-    
-    const status = document.getElementById(`statusSelect${id}`).value;
-    let title, text;
-    
-    // Sesuaikan pesan berdasarkan status
-    switch(status) {
-        case 'disetujui':
-            title = 'Konfirmasi Persetujuan';
-            text = 'Apakah Anda yakin ingin menyetujui peminjaman ini?';
-            break;
-        case 'ditolak':
-            title = 'Konfirmasi Penolakan';
-            text = 'Apakah Anda yakin ingin menolak peminjaman ini?';
-            break;
-        case 'diproses':
-            title = 'Konfirmasi Pemrosesan';
-            text = 'Apakah Anda yakin ingin memproses peminjaman ini?';
-            break;
-        case 'dibatalkan':
-            title = 'Konfirmasi Pembatalan';
-            text = 'Apakah Anda yakin ingin menyetujui pembatalan peminjaman ini?';
-            break;
-        case 'diajukan':
-            title = 'Konfirmasi Penolakan Pembatalan';
-            text = 'Apakah Anda yakin ingin menolak pembatalan peminjaman ini?';
-            break;
-        default:
-            title = 'Konfirmasi Perubahan';
-            text = 'Apakah Anda yakin ingin mengubah status peminjaman ini?';
-    }
-    
-    Swal.fire({
-        title: title,
-        text: text,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya, Lanjutkan!',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            submitForm(id);
+            event.preventDefault();
+            
+            const status = document.getElementById(`statusSelect${id}`).value;
+            let title, text;
+            
+            // Sesuaikan pesan berdasarkan status
+            switch(status) {
+                case 'disetujui':
+                    title = 'Konfirmasi Persetujuan';
+                    text = 'Apakah Anda yakin ingin menyetujui peminjaman ini?';
+                    break;
+                case 'ditolak':
+                    title = 'Konfirmasi Penolakan';
+                    text = 'Apakah Anda yakin ingin menolak peminjaman ini?';
+                    break;
+                case 'diproses':
+                    title = 'Konfirmasi Pemrosesan';
+                    text = 'Apakah Anda yakin ingin memproses peminjaman ini?';
+                    break;
+                case 'dibatalkan':
+                    title = 'Konfirmasi Pembatalan';
+                    text = 'Apakah Anda yakin ingin menyetujui pembatalan peminjaman ini?';
+                    break;
+                case 'diajukan':
+                    title = 'Konfirmasi Penolakan Pembatalan';
+                    text = 'Apakah Anda yakin ingin menolak pembatalan peminjaman ini?';
+                    break;
+                default:
+                    title = 'Konfirmasi Perubahan';
+                    text = 'Apakah Anda yakin ingin mengubah status peminjaman ini?';
         }
-    });
-}
-
-function submitForm(id) {
-    const form = document.getElementById(`updateForm${id}`);
-    const formData = new FormData(form);
-    const status = document.getElementById(`statusSelect${id}`).value;
     
-    // Tambahkan CSRF token
-    formData.append('_token', '{{ csrf_token() }}');
-    formData.append('_method', 'PUT');
-
-    // Tampilkan alert sukses terlebih dahulu
-    let successMessage;
-    switch(status) {
-        case 'disetujui':
-            successMessage = 'Peminjaman berhasil disetujui';
-            break;
-        case 'ditolak':
-            successMessage = 'Peminjaman berhasil ditolak';
-            break;
-        case 'diproses':
-            successMessage = 'Peminjaman berhasil diproses';
-            break;
-        case 'dibatalkan':
-            successMessage = 'Pembatalan peminjaman berhasil disetujui';
-            break;
-        case 'diajukan':
-            successMessage = 'Pembatalan peminjaman berhasil ditolak';
-            break;
-        default:
-            successMessage = 'Status peminjaman berhasil diperbarui';
-    }
-
-    // Kirim request ke server di background
-    fetch(form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    });
-
-    // Tampilkan alert sukses langsung
-    Swal.fire({
-        icon: 'success',
-        title: 'Berhasil!',
-        text: successMessage,
-        timer: 1500, // Auto close setelah 1.5 detik
-        showConfirmButton: false
-    }).then(() => {
-        window.location.reload();
-    });
-}
-// Inisialisasi feedback form saat modal dibuka
-document.addEventListener('DOMContentLoaded', function() {
-    const modals = document.querySelectorAll('[id^="editModal"]');
-    modals.forEach(modal => {
-        const id = modal.id.replace('editModal', '');
-        const select = document.getElementById(`statusSelect${id}`);
-        if (select) {
-            toggleFeedbackForm(id);
-        }
-    });
-});
-
-
-// Function to show modal with backdrop
-function showBatalkanModal(id) {
-    const modalElement = document.getElementById(`batalModal${id}`);
-    if (modalElement) {
-        modalElement.classList.remove('hidden');
-        document.body.classList.add('overflow-hidden'); // Prevent background scrolling
-    }
-}
-
-// Function to close modal and remove backdrop
-function closeModal(modalId) {
-    const modalElement = document.getElementById(modalId);
-    if (modalElement) {
-        modalElement.classList.add('hidden');
-        document.body.classList.remove('overflow-hidden'); // Re-enable scrolling
-        
-        // Reset the feedback textarea
-        const feedbackTextarea = modalElement.querySelector('textarea');
-        if (feedbackTextarea) {
-            feedbackTextarea.value = '';
-        }
-    }
-}
-
-// Function to handle cancellation confirmation
-function konfirmasiBatalkan(id) {
-    const feedbackPembatalan = document.getElementById(`feedbackPembatalan${id}`).value;
-    
-    if (!feedbackPembatalan.trim()) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: 'Harap isi alasan pembatalan!',
-            confirmButtonColor: '#3085d6'
-        });
-        return;
-    }
-
-    Swal.fire({
-        title: 'Konfirmasi Pembatalan',
-        text: "Apakah Anda yakin ingin membatalkan peminjaman ini?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Ya, Batalkan!',
-        cancelButtonText: 'Tidak',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Show loading state
             Swal.fire({
-                title: 'Memproses...',
-                text: 'Mohon tunggu sebentar',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
+                title: title,
+                text: text,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Lanjutkan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    submitForm(id);
+                }
+            });
+        }
+
+        function submitForm(id) {
+            const form = document.getElementById(`updateForm${id}`);
+            const formData = new FormData(form);
+            const status = document.getElementById(`statusSelect${id}`).value;
+            
+            // Tambahkan CSRF token
+            formData.append('_token', '{{ csrf_token() }}');
+            formData.append('_method', 'PUT');
+
+            // Tampilkan alert sukses terlebih dahulu
+            let successMessage;
+            switch(status) {
+                case 'disetujui':
+                    successMessage = 'Peminjaman berhasil disetujui';
+                    break;
+                case 'ditolak':
+                    successMessage = 'Peminjaman berhasil ditolak';
+                    break;
+                case 'diproses':
+                    successMessage = 'Peminjaman berhasil diproses';
+                    break;
+                case 'dibatalkan':
+                    successMessage = 'Pembatalan peminjaman berhasil disetujui';
+                    break;
+                case 'diajukan':
+                    successMessage = 'Pembatalan peminjaman berhasil ditolak';
+                    break;
+                default:
+                    successMessage = 'Status peminjaman berhasil diperbarui';
+            }
+
+            // Kirim request ke server di background
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
             });
 
-            // Send cancellation request
-            fetch(`/admin/peminjaman/${id}/batal`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    feedbackPembatalan: feedbackPembatalan
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Close the modal first
-                    closeModal(`batalModal${id}`);
-                    
-                    // Show success message and reload
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: 'Peminjaman berhasil dibatalkan',
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                } else {
-                    throw new Error(data.message || 'Terjadi kesalahan saat membatalkan peminjaman');
+            // Tampilkan alert sukses langsung
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: successMessage,
+                timer: 1500, // Auto close setelah 1.5 detik
+                showConfirmButton: false
+            }).then(() => {
+                window.location.reload();
+            });
+        }
+        // Inisialisasi feedback form saat modal dibuka
+        document.addEventListener('DOMContentLoaded', function() {
+            const modals = document.querySelectorAll('[id^="editModal"]');
+            modals.forEach(modal => {
+                const id = modal.id.replace('editModal', '');
+                const select = document.getElementById(`statusSelect${id}`);
+                if (select) {
+                    toggleFeedbackForm(id);
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
+            });
+        });
+
+
+        // Function to show modal with backdrop
+        function showBatalkanModal(id) {
+            const modalElement = document.getElementById(`batalModal${id}`);
+            if (modalElement) {
+                modalElement.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden'); // Prevent background scrolling
+            }
+        }
+
+        // Function to close modal and remove backdrop
+        function closeModal(modalId) {
+            const modalElement = document.getElementById(modalId);
+            if (modalElement) {
+                modalElement.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden'); // Re-enable scrolling
+                
+                // Reset the feedback textarea
+                const feedbackTextarea = modalElement.querySelector('textarea');
+                if (feedbackTextarea) {
+                    feedbackTextarea.value = '';
+                }
+            }
+        }
+
+        // Function to handle cancellation confirmation
+        function konfirmasiBatalkan(id) {
+            const feedbackPembatalan = document.getElementById(`feedbackPembatalan${id}`).value;
+            
+            if (!feedbackPembatalan.trim()) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error!',
-                    text: error.message || 'Terjadi kesalahan saat memproses pembatalan',
+                    text: 'Harap isi alasan pembatalan!',
                     confirmButtonColor: '#3085d6'
                 });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Konfirmasi Pembatalan',
+                text: "Apakah Anda yakin ingin membatalkan peminjaman ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Batalkan!',
+                cancelButtonText: 'Tidak',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading state
+                    Swal.fire({
+                        title: 'Memproses...',
+                        text: 'Mohon tunggu sebentar',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Send cancellation request
+                    fetch(`/admin/peminjaman/${id}/batal`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            feedbackPembatalan: feedbackPembatalan
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Close the modal first
+                            closeModal(`batalModal${id}`);
+                            
+                            // Show success message and reload
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: 'Peminjaman berhasil dibatalkan',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            throw new Error(data.message || 'Terjadi kesalahan saat membatalkan peminjaman');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: error.message || 'Terjadi kesalahan saat memproses pembatalan',
+                            confirmButtonColor: '#3085d6'
+                        });
+                    });
+                }
             });
         }
-    });
-}
 
-// Initialize event listeners when document is ready
-document.addEventListener('DOMContentLoaded', function() {
-    // Close modal when clicking outside
-    document.addEventListener('click', function(event) {
-        const modals = document.querySelectorAll('[id^="batalModal"]');
-        modals.forEach(modal => {
-            if (event.target === modal) {
-                closeModal(modal.id);
-            }
+        // Initialize event listeners when document is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close modal when clicking outside
+            document.addEventListener('click', function(event) {
+                const modals = document.querySelectorAll('[id^="batalModal"]');
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        closeModal(modal.id);
+                    }
+                });
+            });
+
+            // Handle escape key press
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    const visibleModal = document.querySelector('[id^="batalModal"]:not(.hidden)');
+                    if (visibleModal) {
+                        closeModal(visibleModal.id);
+                    }
+                }
+            });
         });
-    });
-
-    // Handle escape key press
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            const visibleModal = document.querySelector('[id^="batalModal"]:not(.hidden)');
-            if (visibleModal) {
-                closeModal(visibleModal.id);
-            }
-        }
-    });
-});
     </script>
 @endsection
