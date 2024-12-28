@@ -114,19 +114,19 @@
                                         Disetujui
                                     </span>
                                     @elseif($pinjam->status == 'diajukanbatal')
-    <span class="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1.5 rounded-full border border-purple-400 flex items-center w-fit gap-1">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-        Pengajuan Pembatalan
-    </span>
-    @elseif($pinjam->status == 'dibatalkan')
-    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-400 flex items-center w-fit gap-1">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/>
-        </svg>
-        Dibatalkan
-    </span>
+                                    <span class="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1.5 rounded-full border border-purple-400 flex items-center w-fit gap-1">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                    </svg>
+                                        Pengajuan Pembatalan
+                                    </span>
+                                    @elseif($pinjam->status == 'dibatalkan')
+                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-400 flex items-center w-fit gap-1">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Dibatalkan
+                                    </span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">

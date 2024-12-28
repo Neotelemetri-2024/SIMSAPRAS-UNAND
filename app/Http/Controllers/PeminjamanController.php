@@ -200,32 +200,6 @@ class PeminjamanController extends Controller
         return view('peminjaman.index', compact('peminjamans'));
     }
 
-    // public function cancel(Peminjaman $peminjaman, Request $request)
-    // {
-    //     // Validasi bahwa peminjaman milik user yang login
-    //     if ($peminjaman->idUser !== auth()->id()) {
-    //         return back()->with('error', 'Anda tidak memiliki akses untuk membatalkan peminjaman ini');
-    //     }
-
-    //     // Validasi status peminjaman
-    //     if (!in_array($peminjaman->status, ['diajukan', 'disetujui'])) {
-    //         return back()->with('error', 'Peminjaman tidak dapat dibatalkan');
-    //     }
-
-    //     $request->validate([
-    //         'alasan_pembatalan' => 'required|string|min:10',
-    //     ]);
-
-    //     $peminjaman->update([
-    //         'status' => 'dibatalkan',
-    //         'feedbackPembatalan' => $request->alasan_pembatalan,
-    //     ]);
-
-    //     return redirect()
-    //         ->route('peminjaman.index')
-    //         ->with('success', 'Peminjaman berhasil dibatalkan');
-    // }
-
     public function cancel(Peminjaman $peminjaman, Request $request)
     {
         // Validasi bahwa peminjaman milik user yang login

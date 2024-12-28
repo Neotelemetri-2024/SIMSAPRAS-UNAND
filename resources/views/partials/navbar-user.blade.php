@@ -1,5 +1,5 @@
 <nav class="bg-white dark:bg-gray-900 fixed w-full z-50 border-b border-gray-200 h-20">
-   <div class="max-w-screen-2xl h-full flex flex-wrap items-center justify-between mx-auto px-4">
+   <div class="max-w-screen-xl h-full flex flex-wrap items-center justify-between mx-auto px-4">
       <!-- Logo Section -->
       <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
          <div class="h-12 w-12">

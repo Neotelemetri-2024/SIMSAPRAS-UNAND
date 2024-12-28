@@ -174,45 +174,43 @@ class SaranaController extends Controller
 
     // Query untuk sarana
     $sarana = Sarana::withCount('peminjaman')
-    ->with('kategoriSarana')
-    ->when($search, function ($query, $search) {
-        $query->where('nama', 'like', "%{$search}%")
-            ->orWhere('deskripsi', 'like', "%{$search}%")
-            ->orWhere('fasilitas', 'like', "%{$search}%");
-    })
-    ->when($filterKategori, function ($query, $filterKategori) {
-        $query->where('IdKategori', $filterKategori);
-    })
-    ->orderBy('peminjaman_count', 'desc')
-    ->where('status', 'aktif')
-    ->paginate(6);
+        ->with('kategoriSarana')
+        ->when($search, function ($query, $search) {
+            $query->where('nama', 'like', "%{$search}%")
+                ->orWhere('deskripsi', 'like', "%{$search}%")
+                ->orWhere('fasilitas', 'like', "%{$search}%");
+        })
+        ->when($filterKategori, function ($query, $filterKategori) {
+            $query->where('IdKategori', $filterKategori);
+        })
+        ->orderBy('peminjaman_count', 'desc')
+        ->where('status', 'aktif')
+        ->paginate(6);
 
     // Data untuk trend chart (6 bulan terakhir)
-  // Data untuk trend chart (6 bulan terakhir)
-$trendData = Peminjaman::selectRaw('DATE_FORMAT(created_at, "%b %Y") as month, YEAR(created_at) as year, MONTH(created_at) as month_num, COUNT(*) as total')
-->whereRaw('created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)')
-->groupBy('year', 'month_num', 'month')
-->orderBy('year')
-->orderBy('month_num')
-->get();
-    // Data untuk most borrowed
- // Data untuk most borrowed
-$topBorrowed = Sarana::withCount('peminjaman')
-->where('status', 'aktif')  // Tambahkan ini jika perlu
-->orderBy('peminjaman_count', 'desc')
-->limit(5)
-->get();
+    $trendData = Peminjaman::selectRaw('DATE_FORMAT(created_at, "%b %Y") as month, YEAR(created_at) as year, MONTH(created_at) as month_num, COUNT(*) as total')
+        ->whereRaw('created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)')
+        ->groupBy('year', 'month_num', 'month')
+        ->orderBy('year')
+        ->orderBy('month_num')
+        ->get();
 
-$pengumuman = Pengumuman::latest()->limit(3)->get();
+    $topBorrowed = Sarana::withCount('peminjaman')
+        ->where('status', 'aktif')  // Tambahkan ini jika perlu
+        ->orderBy('peminjaman_count', 'desc')
+        ->limit(5)
+        ->get();
+
+    $pengumuman = Pengumuman::latest()->limit(3)->get();
 
     // Get categories for filter
-    $kategori = KategoriSarana::all();
+    $kategori = KategoriSarana::where('status', 'aktif')->get();
 
     return view('sarana', compact(
         'sarana',
         'search',
         'filterKategori',
-        'kategori',
+        'kategori', 
         'trendData',
         'topBorrowed',
         'pengumuman'

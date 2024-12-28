@@ -2,7 +2,7 @@
 
 @section('content')
 <section class="bg-gray-50 pt-32 min-h-screen">
-    <div class="max-w-screen-2xl px-4 mx-auto lg:px-6">
+    <div class="max-w-screen-xl px-4 mx-auto lg:px-6">
         <!-- Header Section -->
    <!-- Header Section -->
 <div class="mb-8 text-center ">
@@ -141,31 +141,37 @@
 <!-- Detail Pengumuman Modal (sama seperti sebelumnya) -->
 @foreach($pengumuman->take(3) as $item)
 <div id="pengumumanModal{{ $item->id }}" tabindex="-1" aria-hidden="true"
-    class="fixed  top-0 left-0 right-0 z-50 hidden w-full h-full bg-black bg-opacity-50 flex items-center justify-center overflow-x-hidden overflow-y-auto">
-    <div class="relative w-full max-w-2xl max-h-full mx-4">
-        <div class="relative bg-white rounded-lg shadow">
-            <!-- Modal header -->
-            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-                <h3 class="text-xl font-semibold text-gray-900">
-                    {{ $item->judul }}
-                </h3>
-                <button type="button" onclick="closePengumumanModal('{{ $item->id }}')"
-                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
-                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                    </svg>
-                </button>
-            </div>
+    class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden">
+    <!-- Backdrop with higher z-index -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+    
+    <!-- Modal content -->
+    <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="relative w-full max-w-2xl">
+            <div class="relative bg-white rounded-lg shadow">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                    <h3 class="text-xl font-semibold text-gray-900">
+                        {{ $item->judul }}
+                    </h3>
+                    <button type="button" onclick="closePengumumanModal('{{ $item->id }}')"
+                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                    </button>
+                </div>
 
-            <!-- Modal body -->
-            <div class="p-4 md:p-5 space-y-4">
-                <div class="text-sm text-gray-600">
-                    <p class="mb-2 text-xs text-gray-500">
-                        Dipublikasikan pada: {{ $item->created_at->translatedFormat('d F Y H:i') }}
-                    </p>
-                    {!! $item->isi !!}
+                <!-- Modal body -->
+                <div class="p-4 md:p-5 space-y-4">
+                    <div class="text-sm text-gray-600">
+                        <p class="mb-2 text-xs text-gray-500">
+                            Dipublikasikan pada: {{ $item->created_at->translatedFormat('d F Y H:i') }}
+                        </p>
+                        {!! $item->isi !!}
+                    </div>
                 </div>
             </div>
         </div>
