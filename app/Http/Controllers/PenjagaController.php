@@ -25,7 +25,7 @@ class PenjagaController extends Controller
             })
             ->paginate(5);
         
-        $sarana = Sarana::all();
+        $sarana = Sarana::where('status', 'aktif')->get();
         
         return view('admin.penjaga', compact('penjaga', 'sarana', 'search', 'selectedSarana'));
     }
@@ -40,7 +40,11 @@ class PenjagaController extends Controller
 
         Penjaga::create($validated);
 
-        return redirect()->route('penjaga.index')->with('success', 'Data penjaga berhasil ditambahkan');
+        return response()->json([
+            'success' => true,
+            'message' => 'Data Penjaga berhasil ditambahkan',
+            'redirect' => route('penjaga.index')
+        ]);
     }
 
     public function update(Request $request, Penjaga $penjaga)
@@ -53,14 +57,22 @@ class PenjagaController extends Controller
 
         $penjaga->update($validated);
 
-        return redirect()->route('penjaga.index')->with('success', 'Data penjaga berhasil diperbarui');
+        return response()->json([
+            'success' => true,
+            'message' => 'Data Penjaga berhasil diperbarui',
+            'redirect' => route('penjaga.index')
+        ]);
     }
 
     public function destroy(Penjaga $penjaga)
     {
         $penjaga->delete();
 
-        return redirect()->route('penjaga.index')->with('success', 'Data penjaga berhasil dihapus');
+        return response()->json([
+            'success' => true,
+            'message' => 'Data Penjaga berhasil dihapus',
+            'redirect' => route('penjaga.index')
+        ]);
     }
 
     public function show(Penjaga $penjaga)
