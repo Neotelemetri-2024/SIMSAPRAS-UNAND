@@ -42,6 +42,6 @@ class Sarana extends Model
 
     public function peminjaman()
     {
-        return $this->hasMany(Peminjaman::class);
+        return $this->hasMany(Peminjaman::class, 'idSarana'); // Tambahkan foreign key
     }
 }

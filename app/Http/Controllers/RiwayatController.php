@@ -11,23 +11,31 @@ class RiwayatController extends Controller
     public function index(Request $request) {
         $user = auth()->user();
         $sort = $request->input('sort', 'newest'); // Default to newest
+        $status = $request->input('status'); // Get status filter
     
         $peminjaman = Peminjaman::with([
             'user', 
             'sarana', 
-            'tanggalPeminjaman.jadwal' // Load jadwal through tanggalPeminjaman
+            'tanggalPeminjaman.jadwal'
         ])
             ->where('idUser', $user->id)
+            // Add status filter
+            ->when($status, function($query) use ($status) {
+                return $query->where('status', $status);
+            })
+            // Sorting
             ->when($sort == 'newest', function ($query) {
-                return $query->orderBy('updated_at', 'desc');
+                return $query->orderBy('created_at', 'desc');
             })
             ->when($sort == 'oldest', function ($query) {
-                return $query->orderBy('updated_at', 'asc');
+                return $query->orderBy('created_at', 'asc');
             })
             ->paginate(5);
     
-        return view('riwayat', compact('peminjaman', 'sort'));
+        // Pass status to view for maintaining filter state
+        return view('riwayat', compact('peminjaman', 'sort', 'status'));
     }
+
 
     public function uploadBuktiPembayaran(Request $request, $id)
     {

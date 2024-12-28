@@ -28,7 +28,9 @@
                 <!-- Profile dropdown -->
                 <div class="relative">
                     <button type="button" class="flex items-center space-x-3 focus:outline-none" id="user-menu-button" data-dropdown-toggle="user-dropdown">
-                        <img class="w-8 h-8 rounded-full ring-2 ring-gray-200" src="https://flowbite.com/application-ui/demo/images/users/neil-sims.png" alt="user photo">
+                    <img class="w-8 h-8 rounded-full" 
+                          src="{{ auth()->user()->photo_profile ? Storage::url(auth()->user()->photo_profile) : '/assets/images/profile.png' }}" 
+                          alt="user photo">
                         <div class="hidden md:block text-left">
                             <span class="block text-sm font-medium text-gray-900">{{ auth()->user()->name }}</span>
                         </div>

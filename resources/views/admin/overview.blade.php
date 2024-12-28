@@ -93,6 +93,14 @@
                   <div class="legend-color bg-red-600"></div>
                   <span class="text-sm font-medium">Ditolak</span>
                </div>
+               <div class="legend-item">
+    <div class="legend-color bg-gray-600"></div>
+    <span class="text-sm font-medium">Dibatalkan</span>
+</div>
+<div class="legend-item">
+    <div class="legend-color bg-purple-600"></div>
+    <span class="text-sm font-medium">Diajukan Batal</span>
+</div>
             </div>
             <!-- Filter Dropdowns -->
             <div class="filter-container flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
@@ -103,12 +111,14 @@
                   @endforeach
                </select>
                <select id="statusFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full sm:w-48">
-                  <option value="">Semua Status</option>
-                  <option value="disetujui">Disetujui</option>
-                  <option value="diproses">Diproses</option>
-                  <option value="ditolak">Ditolak</option>
-                  <option value="diajukan">Diajukan</option>
-               </select>
+    <option value="">Semua Status</option>
+    <option value="disetujui">Disetujui</option>
+    <option value="diproses">Diproses</option>
+    <option value="ditolak">Ditolak</option>
+    <option value="diajukan">Diajukan</option>
+    <option value="dibatalkan">Dibatalkan</option>
+    <option value="diajukanbatal">Diajukan Batal</option>
+</select>
             </div>
          </div>
       </div>
@@ -319,11 +329,13 @@
                // Set status with appropriate styling
                const statusEl = document.getElementById('modalStatus');
                const statusMap = {
-                   'disetujui': ['bg-green-100 text-green-800'],
-                   'diproses': ['bg-yellow-100 text-yellow-800'],
-                   'ditolak': ['bg-red-100 text-red-800'],
-                   'diajukan': ['bg-blue-100 text-blue-800']
-               };
+    'disetujui': ['bg-green-100 text-green-800'],
+    'diproses': ['bg-yellow-100 text-yellow-800'],
+    'ditolak': ['bg-red-100 text-red-800'],
+    'diajukan': ['bg-blue-100 text-blue-800'],
+    'dibatalkan': ['bg-gray-100 text-gray-800'],
+    'diajukanbatal': ['bg-purple-100 text-purple-800']
+};
                const [statusClass] = statusMap[info.event.extendedProps.status] || ['bg-gray-100 text-gray-800', ''];
                
                statusEl.innerHTML = `
@@ -422,6 +434,15 @@
        // Add custom CSS for event colors
        const styleSheet = document.createElement('style');
        styleSheet.textContent = `
+
+       .status-dibatalkan { 
+        background-color: #6b7280 !important;
+        border-color: #4b5563 !important;
+    }
+    .status-diajukanbatal { 
+        background-color: #8b5cf6 !important;
+        border-color: #7c3aed !important;
+    }
            .status-disetujui { 
                background-color: #059669 !important;
                border-color: #047857 !important;

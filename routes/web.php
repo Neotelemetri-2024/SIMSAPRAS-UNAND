@@ -10,6 +10,7 @@ use App\Http\Controllers\PeminjamanAdminController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PenjagaController;
 use App\Http\Controllers\PeminjamanController;
+use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RiwayatController;
@@ -69,7 +70,7 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
     Route::get('/pengajuan-batal', [PeminjamanAdminController::class, 'PeminjamanDiajukanBatal'])->name('peminjaman.admin.diajukanbatal');
     Route::put('/peminjaman/{id}/update-status', [PeminjamanAdminController::class, 'updateStatus'])->name('peminjaman.updateStatus');
 
-
+    Route::resource('pengumuman', PengumumanController::class);
     // Kategori
     Route::resource('kategori', KategoriController::class);
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
@@ -126,7 +127,7 @@ Route::group(['middleware' => ['checkRole:superadmin,pimpinan', 'verified']], fu
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
 });
 
-
+Route::get('/pengumuman', [PengumumanController::class, 'indexUser'])->name('pengumuman.user');
 
 
 
