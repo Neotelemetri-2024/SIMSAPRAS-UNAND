@@ -13,7 +13,7 @@ class DetailProfileController extends Controller
         
         // Get total active loans
         $totalPeminjaman = $pengguna->peminjaman()
-            ->whereIn('status', ['diajukan', 'diproses', 'disetujui'])
+            ->whereIn('status', ['diajukan', 'diproses', 'disetujui', 'diajukanbatal'])
             ->count();
             
         // Get recent activities

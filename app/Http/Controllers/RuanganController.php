@@ -251,7 +251,7 @@ class RuanganController extends Controller
         // Get peminjaman data with tanggalPeminjaman and its jadwal
         $peminjaman = Peminjaman::with(['tanggalPeminjaman.jadwal'])
             ->where('idRuangan', $ruangan->id)
-            ->whereIn('status', ['diajukan', 'disetujui'])
+            ->whereIn('status', ['diajukan', 'disetujui', 'diajukanbatal', 'diproses'])
             ->get();
             
         // Format events for calendar

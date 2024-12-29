@@ -31,17 +31,13 @@ use App\Http\Controllers\KeuanganController;
 |
 */
 Route::get('/beams/auth', [BeamsAuthController::class, 'auth'])->middleware('auth');
-// Authentication Routes
-// Home Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home', fn() => view('home'));
 
-// Sarana Prasarana Routes
 Route::get('/sarana-prasarana', [SaranaController::class, 'daftarSarana'])->name('user.sarana');
 Route::get('/sarana-prasarana/{sarana}', [SaranaController::class, 'userShow'])->name('user.sarana.show');
 Route::get('/sarana-prasarana/ruangan/{ruangan}', [RuanganController::class, 'show'])->name('ruangan.show');
 
-// Profile Routes (Authenticated Users)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [DetailProfileController::class, 'index'])->name('profile.index');
     Route::get('/change-password', [PasswordChangeController::class, 'edit'])->name('password.change');
@@ -52,13 +48,10 @@ Route::group(['middleware' => ['checkRole:superadmin,pimpinan', 'verified'], 'pr
     Route::post('/peminjaman/store', [PeminjamanAdminController::class, 'store'])->name('peminjaman.admin.store');
     Route::put('/peminjaman/{id}/batal', [PeminjamanAdminController::class, 'batalkanPeminjaman'])->name('peminjaman.admin.batal');
 });
-// Admin Routes
 Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'], 'prefix' => 'admin'], function () {
-    // Dashboard
     Route::resource('dashboard', DashboardController::class);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
-    // Peminjaman
     Route::resource('peminjaman', PeminjamanAdminController::class);
     Route::get('/overview', [PeminjamanAdminController::class, 'overview'])->name('admin.overview');
     Route::get('/peminjaman-masuk', [PeminjamanAdminController::class, 'PeminjamanMasuk'])->name('peminjaman.admin.masuk');
@@ -71,11 +64,9 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
     Route::post('/peminjaman/{id}/evaluasi', [PeminjamanAdminController::class, 'evaluasi'])->name('peminjaman.evaluasi');
 
     Route::resource('pengumuman', PengumumanController::class);
-    // Kategori
     Route::resource('kategori', KategoriController::class);
     Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
 
-    // Sarana
     Route::resource('sarana', SaranaController::class);
     Route::post('/sarana', [SaranaController::class, 'store'])->name('sarana.store');
     Route::get('/sarana', [SaranaController::class, 'index'])->name('sarana.index');
@@ -87,30 +78,23 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
     Route::delete('/sarana/{idSarana}/ruangan/{ruangan}', [RuanganController::class, 'destroy'])->name('ruangan.destroy');
     Route::delete('/sarana/{idSarana}/ruangan/delete-image/{id}', [RuanganController::class, 'deleteImage'])->name('ruangan.delete-image');
 
-    // Jadwal
     Route::resource('jadwal', JadwalController::class);
     Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal.index');
 
-    // Penjaga
     Route::resource('penjaga', PenjagaController::class);
     Route::get('/penjaga', [PenjagaController::class, 'index'])->name('penjaga.index');
 
-    // Profile
     Route::get('/profile', fn() => view('admin.profile'))->name('admin.profile');
     
-
-    // Notifikasi
     Route::get('/notifikasi', [NotifikasiAdminController::class, 'index'])->name('notifikasi.admin.index');
     Route::post('/notifikasi/{notifikasi}/mark-as-read', [NotifikasiAdminController::class, 'markAsRead'])->name('notifikasi.admin.mark-as-read');
 });
 
-// User Routes
 Route::group(['middleware' => ['checkRole:user', 'verified']], function () {
     Route::get('/peminjaman/create', [PeminjamanController::class, 'create'])->name('peminjaman.create');
     Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::get('/peminjaman/{peminjaman}', [PeminjamanController::class, 'show'])->name('peminjaman.show');
-    // Route::post('/peminjaman/{peminjaman}/cancel', [PeminjamanController::class, 'cancel'])->name('peminjaman.cancel');
 
     Route::resource('riwayat', RiwayatController::class);
     Route::post('/riwayat/{id}/upload-bukti', [RiwayatController::class, 'uploadBuktiPembayaran'])->name('riwayat.upload-bukti');
@@ -121,7 +105,6 @@ Route::group(['middleware' => ['checkRole:user', 'verified']], function () {
     Route::post('/peminjaman/{peminjaman}/cancel', [PeminjamanController::class, 'cancel'])->name('peminjaman.cancel');
 });
 
-// Pengguna Management (Superadmin & Pimpinan)
 Route::group(['middleware' => ['checkRole:superadmin,pimpinan', 'verified']], function () {
     Route::resource('pengguna', PenggunaController::class);
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
@@ -133,8 +116,5 @@ Route::group(['middleware' => ['checkRole:pimpinan', 'verified']], function () {
 });
 
 Route::get('/pengumuman', [PengumumanController::class, 'indexUser'])->name('pengumuman.user');
-
-
-
 
 require __DIR__.'/auth.php';

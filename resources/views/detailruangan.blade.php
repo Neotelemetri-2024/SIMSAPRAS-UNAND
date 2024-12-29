@@ -109,10 +109,10 @@
    .selected-date {
    background-color: rgba(34, 197, 94, 0.2) !important;
    }
-   .fc-day.fc-disabled-date {
+   /* .fc-day.fc-disabled-date {
    background-color: rgba(239, 68, 68, 0.1) !important;
    cursor: not-allowed !important;
-   }
+   } */
    .fc-has-event {
    background-color: rgba(203, 213, 225, 0.3) !important;
    cursor: not-allowed !important;
@@ -145,23 +145,36 @@
    font-weight: 500 !important;
    cursor: pointer !important;
    }
-   /* Event status colors - adjusted to match legend */
+   /* Event status colors */
    .status-disetujui { 
-   background-color: #059669 !important;
-   border-color: #047857 !important;
-   }
-   .status-diproses { 
-   background-color: #f97316 !important;
-   border-color: #ea580c !important;
-   }
-   .status-ditolak { 
-   background-color: #dc2626 !important;
-   border-color: #b91c1c !important;
-   }
-   .status-diajukan { 
-   background-color: #f97316 !important; /* Changed to match legend (orange) */
-   border-color: #ea580c !important;
-   }
+        background-color: #059669 !important;
+        border-color: #047857 !important;
+    }
+
+    .status-diproses { 
+        background-color: #f97316 !important;
+        border-color: #ea580c !important;
+    }
+
+    .status-diajukan { 
+        background-color: #f97316 !important;
+        border-color: #ea580c !important;
+    }
+
+    .status-diajukanbatal { 
+        background-color: #f97316 !important;
+        border-color: #ea580c !important;
+    }
+
+    /* Update the legend colors to match */
+    .legend-approved {
+        background-color: #059669;
+    }
+
+    .legend-pending {
+        background-color: #f97316;
+    }
+
    @media (max-width: 640px) {
    .fc .fc-toolbar {
    flex-direction: column;
@@ -337,7 +350,7 @@
                         </div>
                         <div class="flex items-center gap-2">
                             <div class="w-4 h-4 rounded bg-[#F97316]"></div>
-                            <span class="text-sm text-gray-600">Diajukan</span>
+                            <span class="text-sm text-gray-600">Diajukan/Diproses/Pengajuan Batal</span>
                         </div>
                     </div>
                 </div>
@@ -567,6 +580,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
+        firstDay: 1,
         locale: 'id',
         headerToolbar: {
             left: 'prev,next today',
@@ -574,14 +588,30 @@ document.addEventListener('DOMContentLoaded', function() {
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
         events: @json($events).map(event => {
-            const start = new Date(event.start);
-            const end = new Date(event.end);
-            return {
-                ...event,
-                title: `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}-${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`,
-                className: `status-${event.status}`
-            };
-        }),
+                const start = new Date(event.start);
+                const end = new Date(event.end);
+                
+                // Set the appropriate class based on status
+                let statusClass;
+                switch(event.status) {
+                    case 'disetujui':
+                        statusClass = 'status-disetujui';
+                        break;
+                    case 'diproses':
+                    case 'diajukan':
+                    case 'diajukanbatal':
+                        statusClass = 'status-' + event.status;
+                        break;
+                    default:
+                        statusClass = '';
+                }
+                
+                return {
+                    ...event,
+                    title: `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}-${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`,
+                    className: statusClass
+                };
+            }),
         displayEventTime: false,
         selectable: true,
         selectConstraint: {

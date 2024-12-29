@@ -76,7 +76,7 @@
         <div class="space-y-6">
             <h2 class="text-2xl font-bold text-gray-900">Aktivitas Terbaru</h2>
             @forelse($aktivitasTerbaru as $aktivitas)
-            <div class="bg-white rounded-2xl p-6 shadow-sm">
+            <div class="bg-white rounded-2xl p-6 shadow-lg">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
                         <i class="fas fa-book text-green-600 text-xl"></i>
@@ -125,7 +125,7 @@
                     ['title' => 'Ubah Password', 'desc' => 'Perbarui password akun', 'icon' => 'key', 'route' => 'password.change']
                 ] as $action)
                 <a href="{{ route($action['route']) }}" 
-                   class="group bg-white rounded-2xl p-6 shadow-sm hover:bg-green-600 hover:shadow-md transition-all">
+                   class="group bg-white rounded-2xl p-6 shadow-lg hover:bg-green-600 hover:shadow-md transition-all">
                     <i class="fas fa-{{ $action['icon'] }} text-2xl text-green-600 group-hover:text-white mb-4 block"></i>
                     <h3 class="font-semibold text-gray-900 group-hover:text-white mb-1">{{ $action['title'] }}</h3>
                     <p class="text-sm text-gray-500 group-hover:text-white/90">{{ $action['desc'] }}</p>

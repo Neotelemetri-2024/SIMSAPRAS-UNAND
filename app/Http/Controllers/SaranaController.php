@@ -299,7 +299,7 @@ class SaranaController extends Controller
             // Get peminjaman data for non-Gedung Beruangan
             $peminjaman = Peminjaman::with(['tanggalPeminjaman.jadwal']) // Changed this line
                 ->where('idSarana', $sarana->id)
-                ->whereIn('status', ['diajukan', 'disetujui'])
+                ->whereIn('status', ['diajukan', 'disetujui', 'diproses', 'diajukanbatal'])
                 ->get();
                 
             // Create events array

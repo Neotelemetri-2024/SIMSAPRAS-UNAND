@@ -26,7 +26,7 @@
             </div>
             <hr class="my-6 border-gray-700 lg:my-8">
             <div class="text-center">
-               <span class="block text-sm text-center text-gray-400">© 2024 SIMSAPRAS By Neo Telemetri</span>
+               <span class="block text-sm text-center text-gray-400">© 2024 SIMSAPRAS by Neo Telemetri</span>
                <span class="block text-sm text-center text-gray-400 mt-2">Universitas Andalas</span>
             </div>
          </div>
