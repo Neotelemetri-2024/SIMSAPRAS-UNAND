@@ -50,17 +50,43 @@ class SaranaController extends Controller
     public function store(Request $request)
     {
         try {
+            // Check main image size first
+            if ($request->hasFile('gambar')) {
+                $mainImage = $request->file('gambar');
+                if ($mainImage->getSize() > 2048 * 1024) { // 2MB in bytes
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Gambar utama tidak boleh lebih dari 2MB'
+                    ]);
+                }
+            }
+
+            // Check additional images size
+            if ($request->hasFile('gambar_tambahan')) {
+                foreach ($request->file('gambar_tambahan') as $index => $image) {
+                    if ($image->getSize() > 2048 * 1024) { // 2MB in bytes
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Gambar tambahan ke-' . ($index + 1) . ' tidak boleh lebih dari 2MB'
+                        ]);
+                    }
+                }
+            }
+
             // Validasi input
             $validated = $request->validate([
                 'IdKategori' => 'required|exists:kategori_sarana,id',
                 'nama' => 'required|string|max:255',
                 'deskripsi' => 'required|string',
                 'fasilitas' => 'required|string',
-                'kapasitas' => 'nullable|integer|min:0', // Add this line
+                'kapasitas' => 'nullable|integer|min:0',
                 'tarifunand' => 'nullable|integer|min:0',
                 'tarifumum' => 'nullable|integer|min:0',
                 'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
                 'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            ], [
+                'gambar.max' => 'Gambar utama tidak boleh lebih dari 2MB',
+                'gambar_tambahan.*.max' => 'Gambar tambahan tidak boleh lebih dari 2MB'
             ]);
 
             // Cek sarana dengan nama yang sama dan status aktif
@@ -69,7 +95,10 @@ class SaranaController extends Controller
                 ->exists();
 
             if ($existingSarana) {
-                return redirect()->route('sarana.index')->with('error', 'Sarana dengan nama tersebut sudah ada dan masih aktif');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Sarana dengan nama tersebut sudah ada dan masih aktif'
+                ]);
             }
 
             // Handle upload gambar utama
@@ -95,11 +124,11 @@ class SaranaController extends Controller
                 'message' => 'Data berhasil disimpan',
                 'redirect' => route('sarana.index')
             ]);
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
-                'redirect' => route('sarana.index')
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ]);
         }
     }
@@ -107,25 +136,51 @@ class SaranaController extends Controller
 
     public function update(Request $request, Sarana $sarana)
     {
-        try{
+        try {
+            // Check main image size first
+            if ($request->hasFile('gambar')) {
+                $mainImage = $request->file('gambar');
+                if ($mainImage->getSize() > 2048 * 1024) { // 2MB in bytes
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Gambar utama tidak boleh lebih dari 2MB'
+                    ]);
+                }
+            }
 
+            // Check additional images size
+            if ($request->hasFile('gambar_tambahan')) {
+                foreach ($request->file('gambar_tambahan') as $index => $image) {
+                    if ($image->getSize() > 2048 * 1024) { // 2MB in bytes
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Gambar tambahan ke-' . ($index + 1) . ' tidak boleh lebih dari 2MB'
+                        ]);
+                    }
+                }
+            }
+
+            // Validasi input
             $validated = $request->validate([
                 'IdKategori' => 'required|exists:kategori_sarana,id',
                 'nama' => 'required|string|max:255|unique:sarana,nama,'.$sarana->id,
                 'deskripsi' => 'required|string',
                 'fasilitas' => 'required|string',
-                'kapasitas' => 'nullable|integer|min:0', 
+                'kapasitas' => 'nullable|integer|min:0',
                 'tarifunand' => 'nullable|integer|min:0',
                 'tarifumum' => 'nullable|integer|min:0',
                 'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            ], [
+                'gambar.max' => 'Gambar utama tidak boleh lebih dari 2MB',
+                'gambar_tambahan.*.max' => 'Gambar tambahan tidak boleh lebih dari 2MB'
             ]);
 
+            // Handle deletion of existing additional images
             if ($request->has('delete_images')) {
                 $deleteImages = is_array($request->delete_images) ? $request->delete_images : [$request->delete_images];
                 
                 foreach ($deleteImages as $imageId) {
-                    
                     $gambar = DB::table('gambar_sarana')->where('id', $imageId)->first();
                     if ($gambar) {
                         Storage::disk('public')->delete($gambar->gambar);
@@ -148,7 +203,7 @@ class SaranaController extends Controller
 
             // Handle upload gambar tambahan baru
             if ($request->hasFile('gambar_tambahan')) {
-                foreach($request->file('gambar_tambahan') as $image) {
+                foreach ($request->file('gambar_tambahan') as $image) {
                     $path = $image->store('sarana/tambahan', 'public');
                     $sarana->gambarSarana()->create([
                         'gambar' => $path
@@ -158,16 +213,14 @@ class SaranaController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data Sarana berhasil diperbarui',
-                'redirect' => route('sarana.index')
+                'message' => 'Data Sarana berhasil diperbarui'
             ]);
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
-                'redirect' => route('sarana.index')
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ]);
-
         }
     }
     

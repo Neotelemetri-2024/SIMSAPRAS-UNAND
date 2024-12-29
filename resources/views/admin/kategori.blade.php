@@ -78,8 +78,7 @@
                      </td>
                      <td class="px-6 py-4">
                         <div class="flex space-x-2">                    
-                            <!-- Tombol Sampah (Hanya jika status Nonaktif) -->
-                            @if($item->status == "aktif")
+                            @if($item->status == "aktif" && $item->jenis != "Gedung Beruangan")
                             <!-- Tombol Edit -->
                             <button data-modal-target="editModal{{ $item->id }}"
                               data-modal-toggle="editModal{{ $item->id }}"
