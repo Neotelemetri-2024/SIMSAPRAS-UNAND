@@ -124,12 +124,16 @@
                                         Disetujui
                                     </span>
                                 @elseif($pinjam->status == 'diajukanbatal')
-                                    <span class="bg-purple-50 text-purple-700 text-xs font-medium px-3 py-1.5 rounded-full border border-purple-200 flex items-center w-fit gap-1">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Pengajuan Pembatalan
-                                    </span>
+                                <span class="bg-purple-50 text-purple-700 text-xs font-medium px-3 py-1.5 rounded-full border border-purple-200 flex items-center w-fit gap-1">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none">
+                                        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M8.5 8.5L15.5 15.5M15.5 8.5L8.5 15.5" 
+                                              stroke="currentColor" 
+                                              stroke-width="2" 
+                                              stroke-linecap="round"/>
+                                    </svg>
+                                    Pengajuan Pembatalan
+                                </span>
                                 @elseif($pinjam->status == 'dibatalkan')
                                     <span class="bg-gray-50 text-gray-700 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-200 flex items-center w-fit gap-1">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -173,30 +177,32 @@
     </div>
     <!-- Modal Section -->
     @foreach ($peminjaman as $pinjam)
-        <div id="detailModal{{ $pinjam->id }}" tabindex="-1" aria-hidden="true"
-            class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden flex items-center justify-center" data-modal-backdrop="static">
-            <!-- Backdrop with higher z-index -->
-            <div class="fixed inset-0 bg-black bg-opacity-70 transition-opacity" data-modal-hide="detailModal{{ $pinjam->id }}"></div>
-            <div class="relative z-[70] modal-content">
-            <div class="relative w-full max-w-2xl max-h-full mx-4">
-                <div class="relative bg-white rounded-lg shadow">
-                    <!-- Modal header -->
-                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-                        <h3 class="text-xl font-semibold text-gray-900">
-                            Detail Peminjaman
-                        </h3>
-                        <button type="button" onclick="closeDetailModal('{{ $pinjam->id }}')"
-                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 14 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <!-- Modal body -->
-                    <div class="p-4 md:p-5 space-y-4">
+    <div id="detailModal{{ $pinjam->id }}" tabindex="-1" aria-hidden="true"
+        class="fixed inset-0 z-[60] hidden overflow-hidden flex items-center justify-center">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-black bg-opacity-70 transition-opacity" data-modal-hide="detailModal{{ $pinjam->id }}"></div>
+        
+        <!-- Modal Container - centered and fixed size -->
+        <div class="relative z-[70] w-full max-w-2xl mx-auto px-4">
+            <!-- Modal Content -->
+            <div class="relative bg-white rounded-lg shadow max-h-[90vh] flex flex-col">
+                <!-- Fixed Header -->
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t sticky top-0 bg-white z-10">
+                    <h3 class="text-xl font-semibold text-gray-900">
+                        Detail Peminjaman
+                    </h3>
+                    <button type="button" onclick="closeDetailModal('{{ $pinjam->id }}')"
+                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                    </button>
+                </div>
+    
+                <!-- Scrollable Content -->
+                <div class="flex-1 overflow-y-auto p-4 md:p-5 space-y-4">
                         <!-- Detail Data Section -->
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                             <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -425,7 +431,7 @@
                                 <div class="space-y-3">
                                     <p class="text-sm text-gray-600">Anda dapat membatalkan peminjaman ini karena:</p>
                                     <ul class="list-disc list-inside text-sm text-gray-600 ml-2">
-                                        <li>Status peminjaman masih dalam tahap {{$pinjam->status}}</li>
+                                        <li>Status peminjaman masih dalam tahap diajukan/diproses/disetujui</li>
                                         <li>Masih lebih dari 3 hari sebelum tanggal peminjaman</li>
                                     </ul>
                                     <button onclick="showCancellationForm('{{ $pinjam->id }}')"

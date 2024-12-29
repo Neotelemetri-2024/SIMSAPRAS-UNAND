@@ -64,7 +64,7 @@ class Peminjaman extends Model
     public function canBeCancelled()
     {
         // 1. Cek status peminjaman
-        $validStatus = in_array($this->status, ['diajukan', 'disetujui']);
+        $validStatus = in_array($this->status, ['diajukan', 'disetujui', 'diproses']);
 
         if (!$validStatus) {
             return false;

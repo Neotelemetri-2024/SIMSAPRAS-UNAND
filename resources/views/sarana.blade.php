@@ -109,7 +109,7 @@
                 @if($pengumuman->count() > 0)
                 <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
                     <div class="flex items-center justify-between mb-6">
-                        <h3 class="font-bold text-xl text-gray-900">Pengumuman Terkini</h3>
+                        <h3 class="font-bold text-xl text-gray-900">Pengumuman</h3>
                         <a href="{{ route('pengumuman.user') }}" class="text-sm text-green-500 hover:text-green-600 transition-colors duration-200">
                             Lihat Semua 
                             <svg class="w-4 h-4 inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
