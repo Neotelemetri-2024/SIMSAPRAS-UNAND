@@ -108,7 +108,7 @@ npm run dev
 
 Untuk informasi lebih lanjut, silakan hubungi:
 - Email: neotelemetri@gmail.com
-- Website: neotelemetri.com
+- Website: www.neotelemetri.com
 
 ## 🙏 Terima Kasih
 
@@ -119,4 +119,3 @@ Terima kasih kepada seluruh pihak yang telah berkontribusi dalam pengembangan SI
 
 ---
 <p align="center">© 2024 Neo Telemetri. All rights reserved.</p>
-```
