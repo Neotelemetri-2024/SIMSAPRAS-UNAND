@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('nama');
             $table->integer('kapasitas')->nullable();
             $table->string('fasilitas')->nullable();
+            $table->integer('tarifunand')->nullable();
+            $table->integer('tarifumum')->nullable();
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
         });

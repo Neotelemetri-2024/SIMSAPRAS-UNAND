@@ -1,5 +1,5 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
-import forms from '@tailwindcss/forms';
+import defaultTheme from "tailwindcss/defaultTheme";
+import forms from "@tailwindcss/forms";
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -18,10 +18,14 @@ export default {
             fontFamily: {
                 sans: ["Poppins", "Figtree", ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                "modal-backdrop": "rgba(0, 0, 0, 0.5)", // Tambahkan ini
+            },
+            backgroundColor: {
+                "modal-backdrop": "rgba(0, 0, 0, 0.5)",
+            },
         },
     },
 
-    plugins: [
-        forms,
-        require("flowbite/plugin")],
+    plugins: [forms, require("flowbite/plugin")],
 };

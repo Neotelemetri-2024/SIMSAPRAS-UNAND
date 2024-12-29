@@ -16,6 +16,9 @@ class Ruangan extends Model
         'deskripsi',
         'kapasitas',
         'fasilitas',
+        'tarifunand',
+        'tarifumum',
+        'kelas',
         'status',
     ];
     protected $table = 'ruangan';
