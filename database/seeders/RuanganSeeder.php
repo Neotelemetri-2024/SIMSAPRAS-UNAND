@@ -12,29 +12,38 @@ class RuanganSeeder extends Seeder
         $ruangan = [
             [
                 'idSarana' => 1,
-                'nama' => 'Ruang 101',
+                'nama' => 'Ruang A1.2',
                 'gambar' => 'ruang-101.jpg',
                 'deskripsi' => 'Ruang kuliah lantai 1',
                 'kapasitas' => 40,
                 'fasilitas' => 'AC, Proyektor, 40 kursi',
+                'tarifunand' => 100000,
+                'tarifumum' => 200000,
+                'kelas' => 1,
                 'status' => 'aktif'
             ],
             [
-                'idSarana' => 2,
-                'nama' => 'Ruang 102',
+                'idSarana' => 1,
+                'nama' => 'Ruang A1.1',
                 'gambar' => 'ruang-102.jpg',
                 'deskripsi' => 'Ruang kuliah lantai 1',
                 'kapasitas' => 40,
                 'fasilitas' => 'AC, Proyektor, 40 kursi',
+                'tarifunand' => 100000,
+                'tarifumum' => 200000,
+                'kelas' => 1,
                 'status' => 'nonaktif'
             ],
             [
-                'idSarana' => 3,
+                'idSarana' => 1,
                 'nama' => 'Ruang VIP',
                 'gambar' => 'vip.jpg',
-                'deskripsi' => 'Ruang VIP Auditorium',
+                'deskripsi' => 'Ruang kelas besar gedung A',
                 'kapasitas' => 20,
-                'fasilitas' => 'AC, Sofa, TV',
+                'fasilitas' => 'Proyektor, 70 kursi, Papan Tulis',
+                'tarifunand' => 500000,
+                'tarifumum' => 1000000,
+                'kelas' => 1,
                 'status' => 'aktif'
             ]
         ];

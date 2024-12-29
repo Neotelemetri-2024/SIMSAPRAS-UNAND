@@ -17,7 +17,10 @@ return new class extends Migration
             $table->string('gambar');
             $table->text('deskripsi');
             $table->integer('kapasitas');
-            $table->string('fasilitas')->nullable();
+            $table->string('fasilitas');
+            $table->integer('tarifunand')->nullable();
+            $table->integer('tarifumum')->nullable();
+            $table->boolean('kelas');
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
         });

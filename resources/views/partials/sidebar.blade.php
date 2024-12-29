@@ -46,25 +46,25 @@
                 <li>
                    <a href="{{ route('peminjaman.admin.masuk') }}"
                       class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.masuk') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
-                      Peminjaman Masuk
+                      Masuk
                    </a>
                 </li>
                 <li>
                    <a href="{{ route('peminjaman.admin.diproses') }}"
                       class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.diproses') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
-                      Peminjaman Diproses
+                      Diproses
                    </a>
                 </li>
                 <li>
                    <a href="{{ route('peminjaman.admin.disetujui') }}"
                       class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.disetujui') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
-                      Peminjaman Disetujui
+                      Disetujui
                    </a>
                 </li>
                 <li>
                    <a href="{{ route('peminjaman.admin.ditolak') }}"
                       class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.ditolak') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
-                      Peminjaman Ditolak 
+                      Ditolak 
                    </a>
                 </li>
                 <li>
@@ -76,7 +76,7 @@
                 <li>
                    <a href="{{ route('peminjaman.admin.dibatalkan') }}"
                       class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.dibatalkan') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
-                      Peminjaman Dibatalkan
+                      Dibatalkan
                    </a>
                 </li>
              </ul>

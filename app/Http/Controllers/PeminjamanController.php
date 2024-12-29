@@ -28,26 +28,24 @@ class PeminjamanController extends Controller
                 ->back()
                 ->with('error', 'Data tidak lengkap');
         }
-
+    
         $selectedDates = $request->selected_dates;
-        
-        // Get all base jadwal
         $jadwals = Jadwal::all();
-        
-        // Get booked schedules for the selected dates
         $bookedJadwals = $this->getBookedJadwals($request->selected_dates, $request->ruangan_id ?? null, $request->sarana_id ?? null);
-
-        // If booking ruangan
+    
         if ($request->has('ruangan_id')) {
             $ruangan = Ruangan::with('sarana')->findOrFail($request->ruangan_id);
             $sarana = $ruangan->sarana;
-
+    
+            // Add warning message for classroom
+            if ($ruangan->kelas) {
+                session()->flash('warning', 'Ruangan ini merupakan ruangan kelas yang hanya dapat dipinjam pada hari Sabtu dan Minggu.');
+            }
+    
             return view('peminjaman', compact('sarana', 'ruangan', 'selectedDates', 'jadwals', 'bookedJadwals'));
         }
-
-        // If booking sarana directly
+    
         $sarana = Sarana::findOrFail($request->sarana_id);
-
         return view('peminjaman', compact('sarana', 'selectedDates', 'jadwals', 'bookedJadwals'));
     }
 
@@ -78,7 +76,6 @@ class PeminjamanController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validasi dasar
             $validationRules = [
                 'idSarana' => 'required|exists:sarana,id',
                 'jadwal_dates' => 'required|array',
@@ -89,18 +86,34 @@ class PeminjamanController extends Controller
                 'rundown' => 'required|file|mimes:pdf,doc,docx|max:2048',
                 'instansi' => 'required|string|max:255',
                 'estimasiPeserta' => 'required|integer|min:1',
-                'isUnand' => 'required|boolean', // Add validation for isUnand
+                'isUnand' => 'required|boolean',
             ];
     
             if ($request->has('idRuangan')) {
                 $validationRules['idRuangan'] = 'required|exists:ruangan,id';
                 $ruangan = Ruangan::find($request->idRuangan);
                 
+                // Validate room capacity
                 if ($request->estimasiPeserta > $ruangan->kapasitas) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Jumlah peserta melebihi kapasitas ruangan'
                     ], 422);
+                }
+    
+                // Validate classroom booking dates
+                if ($ruangan->kelas) {
+                    $nonWeekendDates = collect($request->jadwal_dates)->filter(function ($booking) {
+                        $date = new \Carbon\Carbon($booking['date']);
+                        return !$date->isWeekend();
+                    });
+    
+                    if ($nonWeekendDates->isNotEmpty()) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Ruangan kelas hanya dapat dipinjam pada hari Sabtu dan Minggu'
+                        ], 422);
+                    }
                 }
             }
     
