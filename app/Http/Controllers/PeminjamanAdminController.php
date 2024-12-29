@@ -159,14 +159,13 @@ class PeminjamanAdminController extends Controller
                 'estimasiPeserta' => 'nullable|integer|min:0',
                 'tarif' => 'nullable|integer|min:0',
             ]);
-
+    
             $peminjaman = Peminjaman::with('user')->findOrFail($id);
             $oldStatus = $peminjaman->status;
-
+    
             // Handle pembatalan
             if ($request->status === 'diajukan') {
-                // $peminjaman->status = $oldStatus; // Kembalikan ke status sebelumnya
-                $peminjaman->status = $peminjaman->statusSebelumBatal; // kembalikan ke status sebelumnya
+                $peminjaman->status = $peminjaman->statusSebelumBatal;
                 $peminjaman->alasanTolakBatal = $request->alasanTolakBatal;
                 $peminjaman->statusSebelumBatal = null;
             } elseif ($request->status === 'dibatalkan') {
@@ -185,31 +184,31 @@ class PeminjamanAdminController extends Controller
                 if ($request->has('tarif')) {
                     $peminjaman->tarif = $request->tarif;
                 }
-
-                // Update status
-                $peminjaman->status = $request->status;
+    
+                // Jika status disetujui dan ada tarif, ubah status menjadi diproses
+                if ($request->status === 'disetujui' && $peminjaman->totalTarif > 0) {
+                    $peminjaman->status = 'diproses';
+                } else {
+                    $peminjaman->status = $request->status;
+                }
+    
                 if ($request->status === 'ditolak') {
                     $peminjaman->feedbackPenolakan = $request->feedbackPenolakan;
                 }
-
-                // Auto-update status jika ada tarif
-                if ($request->status === 'disetujui' && $peminjaman->tarif > 0) {
-                    $peminjaman->status = 'diproses';
-                }
             }
-
+    
             $peminjaman->save();
-
-            // Siapkan pesan notifikasi dan kirim
+    
+            // Siapkan pesan notifikasi
             $userMessage = match($peminjaman->status) {
                 'ditolak' => "Peminjaman Anda ditolak dengan alasan " . $request->feedbackPenolakan,
-                'diproses' => "Peminjaman Anda sedang diproses. Silakan melakukan pembayaran sebesar Rp " . number_format($peminjaman->tarif, 0, ',', '.'),
+                'diproses' => "Peminjaman Anda sedang diproses. Silakan melakukan pembayaran sebesar Rp " . number_format($peminjaman->totalTarif, 0, ',', '.'),
                 'disetujui' => "Selamat! Peminjaman Anda telah disetujui.",
                 'dibatalkan' => "Pembatalan peminjaman Anda telah disetujui.",
                 'diajukan' => "Pembatalan peminjaman Anda ditolak dengan alasan " . $request->alasanTolakBatal,
                 default => "Status peminjaman Anda telah diubah menjadi " . $peminjaman->status
             };
-
+    
             // Tulis ke database
             Notifikasi::create([
                 'idPeminjaman' => $peminjaman->id,
@@ -218,10 +217,10 @@ class PeminjamanAdminController extends Controller
                 'isi' => $userMessage,
                 'isRead' => false
             ]);
-
+    
             // Kirim response sukses
             $response = ['success' => true, 'message' => 'Status peminjaman berhasil diperbarui'];
-
+    
             // Kirim notifikasi Pusher
             $this->notificationService->sendToUser(
                 $peminjaman->user->id,
@@ -229,9 +228,9 @@ class PeminjamanAdminController extends Controller
                 $userMessage,
                 $peminjaman->id
             );
-
+    
             return response()->json($response);
-
+    
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
