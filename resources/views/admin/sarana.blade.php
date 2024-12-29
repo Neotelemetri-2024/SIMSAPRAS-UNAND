@@ -278,15 +278,23 @@
                                  </div>
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Kapasitas</label>
-                                    <input type="number" name="kapasitas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                                    <input type="number" min="0" name="kapasitas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
+                                 </div>
+                                 <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
+                                    <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->fasilitas }}</textarea>
                                  </div>
                               </div>
 
                               <!-- Kolom Kanan -->
                               <div class="space-y-6">
                                  <div>
-                                    <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
-                                    <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required></textarea>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Mahasiswa UNAND</label>
+                                    <input type="number" name="tarifunand" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
+                                 </div>
+                                 <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Non-Mahasiswa UNAND</label>
+                                    <input type="number" name="tarifumum" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
                                  </div>
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Utama</label>
@@ -349,15 +357,23 @@
                                  </div>
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Kapasitas</label>
-                                    <input type="number" name="kapasitas" value="{{ $item->kapasitas }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                                    <input type="number" name="kapasitas" value="{{ $item->kapasitas }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
+                                 </div>
+                                 <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
+                                    <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->fasilitas }}</textarea>
                                  </div>
                               </div>
 
                               <!-- Kolom Kanan -->
                               <div class="space-y-6">
                                  <div>
-                                    <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
-                                    <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->fasilitas }}</textarea>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Mahasiswa UNAND</label>
+                                    <input type="number" name="tarifunand" min="0" value="{{ $item->tarifunand }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
+                                 </div>
+                                 <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Non-Mahasiswa UNAND</label>
+                                    <input type="number" name="tarifumum" min="0" value="{{ $item->tarifumum }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
                                  </div>
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Utama</label>
@@ -548,7 +564,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const kategori = this.querySelector('select[name="IdKategori"]')?.value;
             const nama = this.querySelector('input[name="nama"]')?.value?.trim();
             const deskripsi = this.querySelector('textarea[name="deskripsi"]')?.value?.trim();
-            const kapasitas = this.querySelector('input[name="kapasitas"]')?.value?.trim();
             const fasilitas = this.querySelector('textarea[name="fasilitas"]')?.value?.trim();
 
             // Check for empty required fields
@@ -556,7 +571,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!kategori) emptyFields.push('Kategori');
             if (!nama) emptyFields.push('Nama');
             if (!deskripsi) emptyFields.push('Deskripsi');
-            if (!kapasitas) emptyFields.push('Kapasitas');
             if (!fasilitas) emptyFields.push('Fasilitas');
 
             if (emptyFields.length > 0) {

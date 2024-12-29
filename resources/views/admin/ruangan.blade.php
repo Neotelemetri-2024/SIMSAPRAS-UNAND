@@ -261,19 +261,34 @@
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Kapasitas</label>
-                                <input type="number" name="kapasitas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                                <input type="number" name="kapasitas" min="1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Deskripsi</label>
                                 <textarea name="deskripsi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required></textarea>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
+                                <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required></textarea>
                             </div>
                         </div>
 
                         <!-- Kolom Kanan -->
                         <div class="space-y-6">
                             <div>
-                                <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
-                                <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required></textarea>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Mahasiswa UNAND</label>
+                                <input type="number" name="tarifunand" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Non-Mahasiswa UNAND</label>
+                                <input type="number" name="tarifumum" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Apakah ini ruang kelas?</label>
+                                <select name="kelas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                                    <option value="1">Ya</option>
+                                    <option value="0">Tidak</option>
+                                </select>
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Utama</label>
@@ -329,14 +344,30 @@
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Deskripsi</label>
                                 <textarea name="deskripsi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->deskripsi }}</textarea>
                             </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
+                                <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->fasilitas }}</textarea>
+                            </div>
                         </div>
 
                         <!-- Kolom Kanan -->
                         <div class="space-y-6">
                             <div>
-                                <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
-                                <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->fasilitas }}</textarea>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Mahasiswa UNAND</label>
+                                <input type="number" name="tarifunand" min="0" value="{{ $item->tarifunand }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                             </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Non-Mahasiswa UNAND</label>
+                                <input type="number" name="tarifumum" min="0" value="{{ $item->tarifumum }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Apakah ini ruang kelas?</label>
+                                <select name="kelas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                                    <option value="1" {{ $item->kelas == 1 ? 'selected' : '' }}>Ya</option>
+                                    <option value="0" {{ $item->kelas == 0 ? 'selected' : '' }}>Tidak</option>
+                                </select>
+                            </div>
+                            
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Utama</label>
                                 @if($item->gambar)

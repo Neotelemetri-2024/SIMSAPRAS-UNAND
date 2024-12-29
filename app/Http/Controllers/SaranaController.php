@@ -56,7 +56,9 @@ class SaranaController extends Controller
                 'nama' => 'required|string|max:255',
                 'deskripsi' => 'required|string',
                 'fasilitas' => 'required|string',
-                'kapasitas' => 'required|integer|min:1', // Add this line
+                'kapasitas' => 'nullable|integer|min:0', // Add this line
+                'tarifunand' => 'nullable|integer|min:0',
+                'tarifumum' => 'nullable|integer|min:0',
                 'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
                 'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
@@ -112,7 +114,9 @@ class SaranaController extends Controller
                 'nama' => 'required|string|max:255|unique:sarana,nama,'.$sarana->id,
                 'deskripsi' => 'required|string',
                 'fasilitas' => 'required|string',
-                'kapasitas' => 'required|integer|min:1', // Add this line
+                'kapasitas' => 'nullable|integer|min:0', 
+                'tarifunand' => 'nullable|integer|min:0',
+                'tarifumum' => 'nullable|integer|min:0',
                 'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
@@ -168,54 +172,54 @@ class SaranaController extends Controller
     }
     
     public function daftarSarana(Request $request)
-{
-    $search = $request->input("search");
-    $filterKategori = $request->input("kategori");
+    {
+        $search = $request->input("search");
+        $filterKategori = $request->input("kategori");
 
-    // Query untuk sarana
-    $sarana = Sarana::withCount('peminjaman')
-        ->with('kategoriSarana')
-        ->when($search, function ($query, $search) {
-            $query->where('nama', 'like', "%{$search}%")
-                ->orWhere('deskripsi', 'like', "%{$search}%")
-                ->orWhere('fasilitas', 'like', "%{$search}%");
-        })
-        ->when($filterKategori, function ($query, $filterKategori) {
-            $query->where('IdKategori', $filterKategori);
-        })
-        ->orderBy('peminjaman_count', 'desc')
-        ->where('status', 'aktif')
-        ->paginate(6);
+        // Query untuk sarana
+        $sarana = Sarana::withCount('peminjaman')
+            ->with('kategoriSarana')
+            ->when($search, function ($query, $search) {
+                $query->where('nama', 'like', "%{$search}%")
+                    ->orWhere('deskripsi', 'like', "%{$search}%")
+                    ->orWhere('fasilitas', 'like', "%{$search}%");
+            })
+            ->when($filterKategori, function ($query, $filterKategori) {
+                $query->where('IdKategori', $filterKategori);
+            })
+            ->orderBy('peminjaman_count', 'desc')
+            ->where('status', 'aktif')
+            ->paginate(6);
 
-    // Data untuk trend chart (6 bulan terakhir)
-    $trendData = Peminjaman::selectRaw('DATE_FORMAT(created_at, "%b %Y") as month, YEAR(created_at) as year, MONTH(created_at) as month_num, COUNT(*) as total')
-        ->whereRaw('created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)')
-        ->groupBy('year', 'month_num', 'month')
-        ->orderBy('year')
-        ->orderBy('month_num')
-        ->get();
+        // Data untuk trend chart (6 bulan terakhir)
+        $trendData = Peminjaman::selectRaw('DATE_FORMAT(created_at, "%b %Y") as month, YEAR(created_at) as year, MONTH(created_at) as month_num, COUNT(*) as total')
+            ->whereRaw('created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)')
+            ->groupBy('year', 'month_num', 'month')
+            ->orderBy('year')
+            ->orderBy('month_num')
+            ->get();
 
-    $topBorrowed = Sarana::withCount('peminjaman')
-        ->where('status', 'aktif')  // Tambahkan ini jika perlu
-        ->orderBy('peminjaman_count', 'desc')
-        ->limit(5)
-        ->get();
+        $topBorrowed = Sarana::withCount('peminjaman')
+            ->where('status', 'aktif')  // Tambahkan ini jika perlu
+            ->orderBy('peminjaman_count', 'desc')
+            ->limit(5)
+            ->get();
 
-    $pengumuman = Pengumuman::latest()->limit(3)->get();
+        $pengumuman = Pengumuman::latest()->limit(3)->get();
 
-    // Get categories for filter
-    $kategori = KategoriSarana::where('status', 'aktif')->get();
+        // Get categories for filter
+        $kategori = KategoriSarana::where('status', 'aktif')->get();
 
-    return view('sarana', compact(
-        'sarana',
-        'search',
-        'filterKategori',
-        'kategori', 
-        'trendData',
-        'topBorrowed',
-        'pengumuman'
-    ));
-}
+        return view('sarana', compact(
+            'sarana',
+            'search',
+            'filterKategori',
+            'kategori', 
+            'trendData',
+            'topBorrowed',
+            'pengumuman'
+        ));
+    }
 
     public function userShow(Sarana $sarana, Request $request)
     {
@@ -261,6 +265,7 @@ class SaranaController extends Controller
         
         return view('detailsarana', compact('sarana', 'ruangan', 'search', 'events'));
     }
+    
     public function destroy(Sarana $sarana)
     {
         try {

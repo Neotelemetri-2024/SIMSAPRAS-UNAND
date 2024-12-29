@@ -44,6 +44,9 @@ class RuanganController extends Controller
             'deskripsi' => 'required|string',
             'kapasitas' => 'required|integer',
             'fasilitas' => 'required|string',
+            'tarifunand' => 'required|integer',
+            'tarifumum' => 'required|integer',
+            'kelas' => 'required|boolean',
             'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'additional_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
@@ -61,6 +64,9 @@ class RuanganController extends Controller
                 'deskripsi' => $request->deskripsi,
                 'kapasitas' => $request->kapasitas,
                 'fasilitas' => $request->fasilitas,
+                'tarifunand' => $request->tarifunand,
+                'tarifumum' => $request->tarifumum,
+                'kelas' => $request->kelas,
                 'gambar' => $mainImagePath
             ]);
 
@@ -85,7 +91,7 @@ class RuanganController extends Controller
             DB::rollback();
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menambahkan ruangan',
+                'message' => 'Terjadi kesalahan saat menambahkan ruangan: ' . $e->getMessage(),
                 'redirect' => route('ruangan.index', $idSarana)
             ]);
         }
@@ -100,6 +106,8 @@ class RuanganController extends Controller
             'deskripsi' => 'required|string',
             'kapasitas' => 'required|integer',
             'fasilitas' => 'required|string',
+            'tarifunand' => 'required|integer',
+            'tarifumum' => 'required|integer',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'additional_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'delete_images.*' => 'nullable|exists:gambar_ruangan,id'
