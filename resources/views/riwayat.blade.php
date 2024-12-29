@@ -84,7 +84,7 @@
                             </td>
                             <td class="px-6 py-4 text-gray-600">{{ $pinjam->kegiatan }}</td>
                             <td class="px-6 py-4 text-gray-600">{{ $pinjam->instansi }}</td>
-                            <td class="px-6 py-4 text-gray-600">Rp{{ number_format($pinjam->tarif, 0, ',', '.') }}</td>
+                            <td class="px-6 py-4 text-gray-600">Rp{{ number_format($pinjam->totalTarif, 0, ',', '.') }}</td>
                             <td class="px-6 py-4">
                                 @if ($pinjam->status == 'diproses')
                                     @if ($pinjam->buktiPembayaran)
@@ -227,7 +227,7 @@
                                     <p class="flex items-center text-sm">
                                         <span class="font-medium w-32">Tarif</span>
                                         <span class="text-gray-600">:
-                                            Rp{{ number_format($pinjam->tarif, 0, ',', '.') }}</span>
+                                            Rp{{ number_format($pinjam->totalTarif, 0, ',', '.') }}</span>
                                     </p>
                                     <p class="flex items-center text-sm">
                                         <span class="font-medium w-32">Estimasi Peserta</span>
@@ -291,6 +291,55 @@
                                 </a>
                             </div>
                         </div>
+                        @if ($pinjam->status == 'diproses')
+    <!-- Pembayaran Section -->
+    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+        <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-yellow-500" xmlns="http://www.w3.org/2000/svg"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Detail Pembayaran
+        </h4>
+
+        <!-- Total yang harus dibayar -->
+        <div class="mb-6 p-4 bg-white rounded-lg border border-yellow-200">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-sm text-gray-600">Total Pembayaran:</span>
+                <span class="text-2xl font-bold text-gray-900">Rp{{ number_format($pinjam->totalTarif, 0, ',', '.') }}</span>
+            </div>
+            
+            <div class="space-y-2 text-sm text-gray-600">
+                <div class="flex justify-between">
+                    <span>Tarif per jadwal:</span>
+                    <span>{{ $pinjam->isUnand ? 'Rp'.number_format($pinjam->sarana->tarifunand, 0, ',', '.') : 'Rp'.number_format($pinjam->sarana->tarifumum, 0, ',', '.') }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Jumlah jadwal terpakai:</span>
+                    <span>{{ count($pinjam->tanggalPeminjaman) }} jadwal</span>
+                </div>
+                <div class="flex justify-between text-xs italic">
+                    <span>Status pengguna:</span>
+                    <span>{{ $pinjam->isUnand ? 'Civitas Unand' : 'Umum' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tombol Bayar -->
+        <form action="" method="POST">
+            @csrf
+            <button type="submit"
+                class="w-full px-6 py-3 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Bayar Sekarang - Rp{{ number_format($pinjam->totalTarif, 0, ',', '.') }}
+            </button>
+        </form>
+    </div>
+    @endif
 
                         <!-- Status Section -->
                         @if($pinjam->status == 'ditolak')
@@ -308,98 +357,7 @@
                                 </div>
                             </div>
                         @endif
-                        @if ($pinjam->status == 'diproses' && empty($pinjam->buktiPembayaran))
-                            <!-- Pembayaran Section -->
-                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                    <svg class="w-5 h-5 mr-2 text-yellow-500" xmlns="http://www.w3.org/2000/svg"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                    Pembayaran
-                                </h4>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <!-- Form Upload Bukti -->
-                                    <div class="space-y-3">
-                                        <p class="text-sm font-medium text-gray-700">Upload Bukti Pembayaran</p>
-                                        <form action="{{ route('riwayat.upload-bukti', $pinjam->id) }}" method="POST"
-                                            enctype="multipart/form-data" class="space-y-4">
-                                            @csrf
-                                            <div class="flex flex-col space-y-2">
-                                                <div class="flex justify-center items-center w-full">
-                                                    <label
-                                                        class="flex flex-col w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-50 relative">
-                                                        <div class="flex flex-col justify-center items-center pt-5 pb-6"
-                                                            id="placeholder-{{ $pinjam->id }}">
-                                                            <svg class="w-8 h-8 mb-3 text-gray-400"
-                                                                xmlns="http://www.w3.org/2000/svg" fill="none"
-                                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="2"
-                                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                                            </svg>
-                                                            <p class="mb-2 text-sm text-gray-500">
-                                                                <span class="font-semibold">Klik untuk upload</span>
-                                                            </p>
-                                                            <p class="text-xs text-gray-500">PNG, JPG atau JPEG (Max. 2MB)
-                                                            </p>
-                                                        </div>
-                                                        <div id="preview-{{ $pinjam->id }}"
-                                                            class="absolute inset-0 flex items-center justify-center hidden">
-                                                            <img id="preview-image-{{ $pinjam->id }}"
-                                                                class="max-h-full rounded-lg object-contain" />
-                                                        </div>
-                                                        <input type="file" name="buktiPembayaran" class="hidden"
-                                                            accept="image/*" required
-                                                            onchange="previewImage(this, {{ $pinjam->id }})" />
-                                                    </label>
-                                                </div>
-                                                <button type="submit"
-                                                    class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                                    Upload Bukti Pembayaran
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-
-                                    <!-- Informasi Rekening -->
-                                    <div class="bg-white p-4 rounded-lg border border-gray-200">
-                                        <div class="space-y-3">
-                                            <h5 class="text-sm font-medium text-gray-900">Informasi Rekening</h5>
-                                            <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                                                <div class="flex items-center space-x-3 mb-3">
-                                                    <svg class="w-5 h-5 text-yellow-700"
-                                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                                        fill="currentColor">
-                                                        <path fill-rule="evenodd"
-                                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                                                            clip-rule="evenodd" />
-                                                    </svg>
-                                                    <p class="text-sm text-yellow-700 font-medium">Pembayaran dapat
-                                                        dilakukan melalui:</p>
-                                                </div>
-                                                <div class="space-y-2">
-                                                    <div
-                                                        class="flex items-center justify-between bg-white p-3 rounded-lg border border-yellow-200">
-                                                        <div>
-                                                            <p class="text-sm font-medium text-gray-900">Bank BRI</p>
-                                                            <p class="text-sm text-gray-600">a.n. UPT Graha Universitas</p>
-                                                        </div>
-                                                        <p class="text-sm font-mono font-medium text-gray-900">
-                                                            1234-5678-9012-3456</p>
-                                                    </div>
-                                                    <div class="text-xs text-gray-500 mt-2">
-                                                        <p>* Mohon transfer sesuai dengan nominal yang tertera</p>
-                                                        <p>* Simpan bukti pembayaran dan upload pada form di samping</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
+                       
                         @if (($pinjam->status == "diajukan" && $pinjam->alasanTolakBatal ) || ($pinjam->status == "disetujui" && $pinjam->alasanTolakBatal))
                             <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                                 <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -451,6 +409,7 @@
                                 </div>
                             </div>
                         @endif
+                        
 
                         @if($pinjam->canBeCancelled())
                             <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
@@ -511,6 +470,9 @@
             </div>
         </div>
     @endforeach
+ 
+
+
 
     <!-- Script untuk modal -->
     <script>
