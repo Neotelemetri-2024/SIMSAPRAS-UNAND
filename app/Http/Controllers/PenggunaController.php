@@ -29,32 +29,35 @@ class PenggunaController extends Controller
             $validated['password'] = Hash::make($request->password);
             User::create($validated);
 
-            return redirect()->route('pengguna.index')->with('success', 'Pengguna berhasil ditambahkan');
+            return response()->json([
+                'success' => true,
+                'message' => 'Data Pengguna berhasil ditambahkan',
+                'redirect' => route('pengguna.index')
+            ]);
         } catch (\Exception $e) {
-            return redirect()->route('pengguna.index')->with('error', 'Gagal menambahkan pengguna: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menambahkan pengguna: ' . $e->getMessage(),
+                'redirect' => route('pengguna.index')
+            ]);
         }
-    }
-
-    public function update(Request $request, User $pengguna)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'kontak' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $pengguna->id,
-            'role' => 'required|in:user,admin,superadmin,pimpinan',
-        ]);
-
-        $pengguna->update($validated);
-        return redirect()->route('pengguna.index')->with('success', 'Pengguna berhasil diperbarui');
     }
 
     public function destroy(User $pengguna)
     {
         try {
             $pengguna->delete();
-            return redirect()->route('pengguna.index')->with('success', 'Pengguna berhasil dihapus');
+            return response()->json([
+                'success' => true,
+                'message' => 'Data Pengguna berhasil dihapus',
+                'redirect' => route('pengguna.index')
+            ]);
         } catch (\Exception $e) {
-            return redirect()->route('pengguna.index')->with('error', 'Gagal menghapus pengguna: ' . $e->getMessage());
+            return response()->json([
+                'success' => true,
+                'message' => 'Data Pengguna berhasil ditambahkan',
+                'redirect' => route('pengguna.index')
+            ]);
         }
     }
 }

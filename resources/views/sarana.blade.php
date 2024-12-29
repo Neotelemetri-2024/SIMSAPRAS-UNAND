@@ -137,17 +137,14 @@
                     </div>
                 </div>
                 @endif
-
-                <!-- Trend Chart -->
-                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                    <h3 class="font-bold text-xl text-gray-900 mb-6">Tren Peminjaman</h3>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="font-semibold text-gray-900 mb-4">Tren Peminjaman</h3>
                     <canvas id="trendChart" height="200"></canvas>
                 </div>
 
-                <!-- Most Borrowed -->
-                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                    <h3 class="font-bold text-xl text-gray-900 mb-6">Paling Sering Dipinjam</h3>
-                    <div class="space-y-6">
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="font-semibold text-gray-900 mb-4">Paling Sering Dipinjam</h3>
+                    <div class="space-y-4">
                         @foreach($topBorrowed as $item)
                         <div class="flex items-center gap-4">
                             <div class="h-20 w-20 rounded-xl overflow-hidden flex-shrink-0 shadow-sm">
@@ -179,7 +176,7 @@
     <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
     <div class="flex min-h-screen items-center justify-center p-4">
         <div class="relative w-full max-w-2xl">
-            <div class="relative bg-white rounded-2xl shadow-lg">
+            <div class="relative bg-white rounded-2xl shadow-lg" data-modal-content>
                 <div class="flex items-center justify-between p-6 border-b">
                     <h3 class="text-xl font-semibold text-gray-900">
                         {{ $item->judul }}
@@ -250,34 +247,48 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-</script>
-<script>
-    function openPengumumanModal(id) {
-        const modal = document.getElementById('pengumumanModal' + id);
-        if (modal) {
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-    }
 
-    function closePengumumanModal(id) {
-        const modal = document.getElementById('pengumumanModal' + id);
-        if (modal) {
+    function openPengumumanModal(id) {
+    const modal = document.getElementById('pengumumanModal' + id);
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closePengumumanModal(id) {
+    const modal = document.getElementById('pengumumanModal' + id);
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Close modal when pressing Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const visibleModals = document.querySelectorAll('[id^="pengumumanModal"]:not(.hidden)');
+        visibleModals.forEach(modal => {
             modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
-        }
-    }
-
-    // Close modal when clicking outside
-    document.addEventListener('click', function(event) {
-        const modals = document.querySelectorAll('[id^="pengumumanModal"]');
-        modals.forEach(modal => {
-            if (event.target === modal) {
-                modal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
-            }
         });
+    }
+});
+
+// Close modal when clicking outside
+document.addEventListener('mousedown', function(event) {
+    const modals = document.querySelectorAll('[id^="pengumumanModal"]:not(.hidden)');
+    modals.forEach(modal => {
+        // Get the modal content element using data attribute
+        const modalContent = modal.querySelector('[data-modal-content]');
+        
+        if (modalContent && !modalContent.contains(event.target)) {
+            const id = modal.id.replace('pengumumanModal', '');
+            closePengumumanModal(id);
+        }
     });
+});
+
 </script>
 @endpush
 @endsection

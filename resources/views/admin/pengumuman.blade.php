@@ -78,7 +78,9 @@
 </div>
 
 <!-- Create Modal -->
-<div id="createModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+<div id="createModal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+    <!-- Backdrop with higher z-index -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="createModal"></div>
     <div class="relative w-full max-w-2xl max-h-full">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
@@ -112,7 +114,9 @@
 
 <!-- Edit Modals -->
 @foreach($pengumuman as $item)
-<div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+<div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+    <!-- Backdrop with higher z-index -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModal{{ $item->id }}"></div>
     <div class="relative w-full max-w-2xl max-h-full">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
@@ -126,20 +130,20 @@
             <form id="editPengumumanForm{{ $item->id }}" action="{{ route('pengumuman.update', $item->id) }}" method="POST">
                 @csrf
                 @method('PUT')
-    <div class="p-6 space-y-6">
-    <div>
-        <label class="block mb-2 text-sm font-medium text-gray-900">Judul</label>
-        <input type="text" name="judul" value="{{ $item->judul }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
-    </div>
-    <div>
-        <label class="block mb-2 text-sm font-medium text-gray-900">Isi Pengumuman</label>
-        <textarea name="isi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->isi }}</textarea>
-    </div>
-</div>
-<div class="flex items-center p-6 space-x-2 border-t border-gray-200">
-    <button type="submit" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">Simpan Perubahan</button>
-    <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5" data-modal-hide="editModal{{ $item->id }}">Batal</button>
-</div>
+                <div class="p-6 space-y-6">
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-900">Judul</label>
+                        <input type="text" name="judul" value="{{ $item->judul }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-900">Isi Pengumuman</label>
+                        <textarea name="isi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->isi }}</textarea>
+                    </div>
+                </div>
+                <div class="flex items-center p-6 space-x-2 border-t border-gray-200">
+                    <button type="submit" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">Simpan Perubahan</button>
+                    <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5" data-modal-hide="editModal{{ $item->id }}">Batal</button>
+                </div>
             </form>
         </div>
     </div>

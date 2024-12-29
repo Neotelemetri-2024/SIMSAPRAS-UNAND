@@ -238,7 +238,9 @@
 
 
 <!-- Create Modal -->
-<div id="createModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+<div id="createModal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+    <!-- Backdrop with higher z-index -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="createModal"></div>
     <div class="relative w-full max-w-4xl max-h-full">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
@@ -313,7 +315,9 @@
 
 <!-- Edit Modal -->
 @foreach($ruangan as $item)
-<div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+<div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+    <!-- Backdrop with higher z-index -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModal{{ $item->id }}"></div>
     <div class="relative w-full max-w-4xl max-h-full">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
@@ -481,7 +485,7 @@ function initializeModals() {
 
     // Close modal when clicking outside
     window.addEventListener('click', (event) => {
-        if (event.target.matches('[id^="createModal"], [id^="editModal"], [id^="deleteModal"]')) {
+        if (event.target.matches('[id^="createModal"], [id^="editModal"]')) {
             closeModal(event.target.id);
         }
     });

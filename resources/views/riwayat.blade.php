@@ -174,7 +174,10 @@
     <!-- Modal Section -->
     @foreach ($peminjaman as $pinjam)
         <div id="detailModal{{ $pinjam->id }}" tabindex="-1" aria-hidden="true"
-            class="fixed top-0 left-0 right-0 z-50 hidden w-full h-full bg-black bg-opacity-50 flex items-center justify-center overflow-x-hidden overflow-y-auto">
+            class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden flex items-center justify-center" data-modal-backdrop="static">
+            <!-- Backdrop with higher z-index -->
+            <div class="fixed inset-0 bg-black bg-opacity-70 transition-opacity" data-modal-hide="detailModal{{ $pinjam->id }}"></div>
+            <div class="relative z-[70] modal-content">
             <div class="relative w-full max-w-2xl max-h-full mx-4">
                 <div class="relative bg-white rounded-lg shadow">
                     <!-- Modal header -->
@@ -509,70 +512,106 @@
                     </div>
                 </div>
             </div>
+            </div>  
         </div>
     @endforeach
 
     <!-- Script untuk modal -->
     <script>
         function showDetailModal(id) {
-            console.log('Showing modal for ID:', id);
-            const modal = document.getElementById('detailModal' + id);
-            console.log('Modal element:', modal);
+    console.log('Showing modal for ID:', id);
+    const modal = document.getElementById('detailModal' + id);
+    console.log('Modal element:', modal);
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    } else {
+        console.error('Modal not found for ID:', id);
+    }
+}
 
-            if (modal) {
-                modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            } else {
-                console.error('Modal not found for ID:', id);
-            }
-        }
+function closeDetailModal(id) {
+    const modal = document.getElementById('detailModal' + id);
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+}
 
-        function closeDetailModal(id) {
-            const modal = document.getElementById('detailModal' + id);
-            if (modal) {
+// Handle ESC key press
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const visibleModals = document.querySelectorAll('[id^="detailModal"]:not(.hidden)');
+        visibleModals.forEach(modal => {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        });
+    }
+});
+
+// Handle clicking outside the modal
+document.addEventListener('click', function(event) {
+    const modals = document.querySelectorAll('[id^="detailModal"]');
+    modals.forEach(modal => {
+        // Check if click is on backdrop (modal itself) and not on modal content
+        if (event.target === modal) {
+            const modalContent = modal.querySelector('.modal-content');
+            if (!modalContent || !modalContent.contains(event.target)) {
                 modal.classList.add('hidden');
                 document.body.style.overflow = 'auto';
             }
         }
+    });
+});
 
-        // Close modal when clicking outside
-        document.addEventListener('click', function(event) {
-            const modals = document.querySelectorAll('[id^="detailModal"]');
-            modals.forEach(modal => {
-                if (event.target === modal) {
-                    modal.classList.add('hidden');
-                    document.body.style.overflow = 'auto';
-                }
-            });
+// Rest of your existing functions remain the same
+function previewImage(input, id) {
+    const placeholder = document.getElementById(`placeholder-${id}`);
+    const preview = document.getElementById(`preview-${id}`);
+    const previewImg = document.getElementById(`preview-image-${id}`);
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            placeholder.classList.add('hidden');
+            preview.classList.remove('hidden');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function showCancellationForm(id) {
+    document.getElementById('cancellationModal' + id).classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function hideCancellationForm(id) {
+    document.getElementById('cancellationModal' + id).classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Initialize modals when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeModals();
+});
+
+function initializeModals() {
+    // Toggle modal buttons
+    document.querySelectorAll('[data-modal-toggle]').forEach(button => {
+        button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-modal-target');
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.remove('hidden');
         });
+    });
 
-        function previewImage(input, id) {
-            const placeholder = document.getElementById(`placeholder-${id}`);
-            const preview = document.getElementById(`preview-${id}`);
-            const previewImg = document.getElementById(`preview-image-${id}`);
-
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-
-                reader.onload = function(e) {
-                    previewImg.src = e.target.result;
-                    placeholder.classList.add('hidden');
-                    preview.classList.remove('hidden');
-                }
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-        function showCancellationForm(id) {
-            document.getElementById('cancellationModal' + id).classList.remove('hidden');
-            // Prevent main modal from scrolling
-            document.body.style.overflow = 'hidden';
-        }
-
-        function hideCancellationForm(id) {
-            document.getElementById('cancellationModal' + id).classList.add('hidden');
-            // Restore scrolling
-            document.body.style.overflow = 'auto';
-        }
+    // Close modal buttons
+    document.querySelectorAll('[data-modal-hide]').forEach(button => {
+        button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-modal-hide');
+            closeDetailModal(modalId.replace('detailModal', ''));
+        });
+    });
+}
     </script>
 @endsection

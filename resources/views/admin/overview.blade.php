@@ -125,7 +125,8 @@
    </div>
    @if (auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan') 
    <div class="flex justify-end mb-4">
-      <button onclick="showBookingModal()" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+      <button data-modal-toggle="bookingModal" data-modal-target="bookingModal" 
+      type="button" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
          </svg>
@@ -137,61 +138,73 @@
    <div class="calendar-wrapper">
       <div id="calendar-container"></div>
    </div>
-   <!-- Booking Modal -->
-   <!-- Booking Modal -->
-   <div id="bookingModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-    <div class="flex items-center justify-center min-h-screen px-4">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-        
-        <div class="relative bg-white rounded-lg shadow-xl max-w-2xl w-full">
-            <div class="px-6 py-4 border-b">
-                <h3 class="text-lg font-semibold">Tambah Peminjaman Baru</h3>
+   <div id="bookingModal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden flex items-center justify-center" data-modal-backdrop="static">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="bookingModal"></div>
+    <div class="relative w-full max-w-lg max-h-full mt-0">
+        <div class="relative bg-white rounded-lg shadow-lg">
+            <div class="flex items-center justify-between p-4 border-b">
+                <h3 class="text-lg font-medium text-gray-900">
+                    Tambah Peminjaman Baru
+                </h3>
+                <button type="button" class="text-gray-400 hover:text-gray-500" data-modal-hide="bookingModal">
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
             
-            <form id="adminBookingForm" class="px-6 py-4 space-y-4">
-                @csrf
-               <!-- Form fields -->
-               <div>
-                <label class="block text-sm font-medium text-gray-700">Sarana</label>
-                <select id="bookingSarana" name="idSarana" onchange="checkSaranaType()" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    <option value="">Pilih Sarana</option>
-                    @foreach($saranas as $sarana)
-                    <option value="{{ $sarana->id }}" 
-                        data-kategori="{{ $sarana->kategoriSarana->jenis }}"
-                        data-ruangan='@json($sarana->ruangan)'>
-                        {{ $sarana->nama }}
-                    </option>
-                    @endforeach
-                </select>
-            </div>
-            
-            <div id="ruanganSection" class="hidden">
-                <label class="block text-sm font-medium text-gray-700">Ruangan</label>
-                <select id="ruanganSelect" name="idRuangan" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    <option value="">Pilih Ruangan</option>
-                </select>
-            </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Kegiatan</label>
-                    <input type="text" name="kegiatan" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Tanggal dan Jadwal</label>
-                    <div id="dateContainer" class="space-y-4">
-                        <!-- Date entries will be added here dynamically -->
+            <!-- Modal body -->
+            <div class="p-4">
+                <form id="adminBookingForm" class="space-y-4">
+                    @csrf
+                    <!-- Sarana -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Sarana</label>
+                        <select id="bookingSarana" name="idSarana" onchange="checkSaranaType()" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <option value="">Pilih Sarana</option>
+                            @foreach($saranas as $sarana)
+                            <option value="{{ $sarana->id }}"
+                                data-kategori="{{ $sarana->kategoriSarana->jenis }}"
+                                data-ruangan='@json($sarana->ruangan)'>
+                                {{ $sarana->nama }}
+                            </option>
+                            @endforeach
+                        </select>
                     </div>
-                    <button type="button" onclick="addDateEntry()" class="mt-2 px-4 py-2 text-sm font-medium text-green-600 hover:text-green-700">
-                        + Tambah Tanggal
-                    </button>
-                </div>
-            </form>
 
-            <div class="px-6 py-4 border-t flex justify-end space-x-3">
-                <button onclick="closeBookingModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    <!-- Ruangan -->
+                    <div id="ruanganSection" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700">Ruangan</label>
+                        <select id="ruanganSelect" name="idRuangan" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <option value="">Pilih Ruangan</option>
+                        </select>
+                    </div>
+
+                    <!-- Kegiatan -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Kegiatan</label>
+                        <input type="text" name="kegiatan" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+
+                    <!-- Tanggal dan Jadwal -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Tanggal dan Jadwal</label>
+                        <div id="dateContainer" class="space-y-4">
+                            <!-- Date entries will be added here dynamically -->
+                        </div>
+                        <button type="button" onclick="addDateEntry()" class="mt-2 px-4 py-2 text-sm font-medium text-green-600 hover:text-green-700">
+                            + Tambah Tanggal
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="flex justify-end px-4 py-3 bg-gray-50 rounded-b-lg">
+                <button type="button" data-modal-hide="bookingModal" class="mr-3 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50">
                     Batal
                 </button>
-                <button onclick="submitBooking()" class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700">
+                <button onclick="submitBooking()" class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded hover:bg-green-700">
                     Simpan
                 </button>
             </div>
@@ -200,7 +213,9 @@
 </div>
 
    <!-- Modal -->
-   <div id="eventModal" tabindex="-1" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full flex items-center justify-center min-h-screen bg-black bg-opacity-30 transition-opacity duration-200">
+   <div id="eventModal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden flex items-center justify-center" data-modal-backdrop="static">
+    <!-- Backdrop with higher z-index -->
+    <div class="fixed inset-0 bg-black bg-opacity-70 transition-opacity" data-modal-hide="eventModal"></div>
       <div class="relative w-full max-w-lg max-h-full mt-0">
          <!-- Modal content -->
          <div class="modal-content relative bg-white rounded-lg shadow-lg">
@@ -274,6 +289,8 @@
 @section('scripts')
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales/id.global.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
    document.addEventListener('DOMContentLoaded', function() {
        const calendarEl = document.getElementById('calendar-container');
@@ -584,51 +601,108 @@ function removeDateEntry(dateId) {
     }
 }
 
-// Function untuk menampilkan modal booking
-function showBookingModal() {
-    document.getElementById('bookingModal').classList.remove('hidden');
-    document.getElementById('dateContainer').innerHTML = '';
-    document.getElementById('adminBookingForm').reset();
-    addDateEntry();
-}
-
-// Function untuk menutup modal booking
-function closeBookingModal() {
-    document.getElementById('bookingModal').classList.add('hidden');
-    document.getElementById('dateContainer').innerHTML = '';
-    document.getElementById('adminBookingForm').reset();
-    document.getElementById('ruanganSection').classList.add('hidden');
-}
-
 // Function untuk submit booking
 async function submitBooking() {
     try {
-        const form = document.getElementById('adminBookingForm');
-        const formData = new FormData(form);
-        
-        const response = await fetch('/admin/peminjaman', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            },
-            body: formData
+        // Show confirmation dialog first
+        const confirmResult = await Swal.fire({
+            title: 'Konfirmasi Peminjaman',
+            text: 'Apakah anda yakin ingin menambah peminjaman ini?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Tambahkan',
+            cancelButtonText: 'Batal',
+            confirmButtonColor: '#059669',
+            cancelButtonColor: '#d33',
         });
 
-        const result = await response.json();
-        
-        if (result.success) {
-            alert('Peminjaman berhasil ditambahkan');
-            closeBookingModal();
-            window.location.reload();
-        } else {
-            alert(result.message || 'Terjadi kesalahan');
+        // If user confirms
+        if (confirmResult.isConfirmed) {
+            // Show loading state
+            Swal.fire({
+                title: 'Memproses...',
+                text: 'Mohon tunggu sebentar',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            const form = document.getElementById('adminBookingForm');
+            const formData = new FormData(form);
+            
+            const response = await fetch('/admin/peminjaman', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                await Swal.fire({
+                    title: 'Berhasil!',
+                    text: 'Peminjaman berhasil ditambahkan',
+                    icon: 'success',
+                    confirmButtonColor: '#22c55e'
+                });
+                closeModal('bookingModal');
+                window.location.reload();
+            } else {
+                await Swal.fire({
+                    title: 'Gagal!',
+                    text: result.message || 'Terjadi kesalahan',
+                    icon: 'error',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
         }
     } catch (error) {
         console.error('Error submitting booking:', error);
-        alert('Terjadi kesalahan sistem');
+        await Swal.fire({
+            title: 'Error!',
+            text: 'Terjadi kesalahan sistem',
+            icon: 'error',
+            confirmButtonColor: '#ef4444'
+        });
     }
 }
-   
-   
+
+// Modal Management
+function initializeModals() {
+    // Toggle modal buttons
+    document.querySelectorAll('[data-modal-toggle]').forEach(button => {
+        button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-modal-target');
+            showModal(modalId);
+        });
+    });
+
+    // Close modal buttons
+    document.querySelectorAll('[data-modal-hide]').forEach(button => {
+        button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-modal-hide');
+            closeModal(modalId);
+        });
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target.matches('[data-modal-backdrop="static"]')) {
+            const modalId = event.target.closest('[id]').id;
+            closeModal(modalId);
+        }
+    });
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeModals();
+});
 </script>
 @endsection
