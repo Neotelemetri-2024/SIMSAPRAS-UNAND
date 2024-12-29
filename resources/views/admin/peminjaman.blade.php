@@ -333,7 +333,9 @@
 
     @foreach ($peminjamanMasuk as $item)
         <div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true"
-            class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+               <!-- Backdrop with higher z-index -->
+               <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModal{{ $item->id }}"></div>
             <div class="relative w-full max-w-2xl max-h-full">
                 <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                     <!-- Modal Header -->
@@ -555,7 +557,9 @@
     @foreach ($peminjamanMasuk as $item)
 <!-- Modal Pembatalan -->
 <div id="batalModal{{ $item->id }}" tabindex="-1" aria-hidden="true" 
-    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto h-full min-h-screen bg-black bg-opacity-50 transition-opacity">
+    class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+    <!-- Backdrop with higher z-index -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="batalModal{{ $item->id }}"></div>
     
     <!-- Modal Container -->
     <div class="flex items-center justify-center min-h-screen p-4">
@@ -620,7 +624,9 @@
 @foreach ($peminjamanMasuk as $item)
 {{-- Modal Evaluasi --}}
 <div id="evaluasiModal{{ $item->id }}" tabindex="-1" aria-hidden="true" 
-    class="fixed inset-0 z-50 hidden overflow-hidden bg-black bg-opacity-50 transition-opacity">
+    class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+    <!-- Backdrop with higher z-index -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="evaluasiModal{{ $item->id }}"></div>
     
     <!-- Modal Container -->
     <div class="fixed inset-0 flex items-center justify-center p-4">
@@ -684,7 +690,9 @@
 
 @foreach ($peminjamanMasuk as $item)
 <div id="detailEvaluasiModal{{ $item->id }}" tabindex="-1" aria-hidden="true"
-    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+    <!-- Backdrop with higher z-index -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="detailEvaluasiModal{{ $item->id }}"></div>
     <div class="relative w-full max-w-2xl max-h-full">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <!-- Modal Header -->

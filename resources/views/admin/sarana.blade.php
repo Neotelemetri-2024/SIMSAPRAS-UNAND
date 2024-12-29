@@ -242,7 +242,9 @@
    </div>
 </div>
 <!-- Create Modal -->
-<div id="createModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+<div id="createModal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+   <!-- Backdrop with higher z-index -->
+   <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="createModal"></div>
    <div class="relative w-full max-w-4xl max-h-full"> <!-- Ubah max-w-2xl menjadi max-w-4xl -->
       <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
          <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
@@ -319,7 +321,9 @@
 
 <!-- Edit Modal -->
             @foreach($sarana as $item)
-            <div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+               <!-- Backdrop with higher z-index -->
+               <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModal{{ $item->id }}"></div>
                <div class="relative w-full max-w-4xl max-h-full">
                   <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                      <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
@@ -458,39 +462,40 @@
  @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-   // Fungsi untuk menutup modal
-   function closeModal(modalId) {
-       const modalElement = document.getElementById(modalId);
-       if (modalElement) {
-           modalElement.classList.add('hidden');
-       }
-   }
 
-   // Inisialisasi komponen modal
-   const modals = document.querySelectorAll('[data-modal-toggle]');
-   modals.forEach(modal => {
-       modal.addEventListener('click', function() {
-           const target = this.getAttribute('data-modal-target');
-           const modalElement = document.getElementById(target);
+document.addEventListener('DOMContentLoaded', function() {
+    initializeModals();
+});
 
-           if (modalElement) {
-               modalElement.classList.remove('hidden');
-           }
-       });
-   });
+function initializeModals() {
+    // Toggle modal buttons
+    document.querySelectorAll('[data-modal-toggle]').forEach(button => {
+        button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-modal-target');
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.remove('hidden');
+        });
+    });
 
-   // Inisialisasi tombol close modal
-   const closeButtons = document.querySelectorAll('[data-modal-hide]');
-   closeButtons.forEach(button => {
-       button.addEventListener('click', function() {
-           const target = this.getAttribute('data-modal-hide');
-           closeModal(target);
-       });
-   });
+    // Close modal buttons
+    document.querySelectorAll('[data-modal-hide]').forEach(button => {
+        button.addEventListener('click', () => {
+            const modalId = button.getAttribute('data-modal-hide');
+            closeModal(modalId);
+        });
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target.matches('[id^="createModal"], [id^="editModal"]')) {
+            closeModal(event.target.id);
+        }
+    });
+}
 
    // Click outside modal to close
    window.addEventListener('click', function(event) {
-       const modals = document.querySelectorAll('[id^="createModal"], [id^="editModal"], [id^="deleteModal"]');
+       const modals = document.querySelectorAll('[id^="createModal"], [id^="editModal"]');
        modals.forEach(modal => {
            if (event.target === modal) {
                closeModal(modal.id);

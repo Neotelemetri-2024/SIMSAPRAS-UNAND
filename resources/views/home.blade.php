@@ -104,9 +104,11 @@
                <p class="mb-6 font-light text-green-100">
                   Pinjam sarana dan prasarana dengan lebih efisien
                </p>
+               @can('not-user')
                <a href="#" class="text-green-600 bg-white hover:bg-green-50 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none">
                Daftar Sekarang
                </a>
+               @endcan
             </div>
          </div>
       </section>
