@@ -28,26 +28,24 @@ class PeminjamanController extends Controller
                 ->back()
                 ->with('error', 'Data tidak lengkap');
         }
-
+    
         $selectedDates = $request->selected_dates;
-        
-        // Get all base jadwal
         $jadwals = Jadwal::all();
-        
-        // Get booked schedules for the selected dates
         $bookedJadwals = $this->getBookedJadwals($request->selected_dates, $request->ruangan_id ?? null, $request->sarana_id ?? null);
-
-        // If booking ruangan
+    
         if ($request->has('ruangan_id')) {
             $ruangan = Ruangan::with('sarana')->findOrFail($request->ruangan_id);
             $sarana = $ruangan->sarana;
-
+    
+            // Add warning message for classroom
+            if ($ruangan->kelas) {
+                session()->flash('warning', 'Ruangan ini merupakan ruangan kelas yang hanya dapat dipinjam pada hari Sabtu dan Minggu.');
+            }
+    
             return view('peminjaman', compact('sarana', 'ruangan', 'selectedDates', 'jadwals', 'bookedJadwals'));
         }
-
-        // If booking sarana directly
+    
         $sarana = Sarana::findOrFail($request->sarana_id);
-
         return view('peminjaman', compact('sarana', 'selectedDates', 'jadwals', 'bookedJadwals'));
     }
 
@@ -78,43 +76,64 @@ class PeminjamanController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validasi dasar
             $validationRules = [
                 'idSarana' => 'required|exists:sarana,id',
-                'jadwal_dates' => 'required|array', // Changed from idJadwal
-                'jadwal_dates.*.date' => 'required|date', // Validate each date
-                'jadwal_dates.*.jadwal_id' => 'required|exists:jadwal,id', // Validate each jadwal_id
+                'jadwal_dates' => 'required|array',
+                'jadwal_dates.*.date' => 'required|date',
+                'jadwal_dates.*.jadwal_id' => 'required|exists:jadwal,id',
                 'kegiatan' => 'required|string|max:255',
                 'suratPeminjaman' => 'required|file|mimes:pdf,doc,docx|max:2048',
                 'rundown' => 'required|file|mimes:pdf,doc,docx|max:2048',
                 'instansi' => 'required|string|max:255',
                 'estimasiPeserta' => 'required|integer|min:1',
+                'isUnand' => 'required|boolean',
             ];
-
-            // Tambahkan validasi ruangan jika ada
+    
             if ($request->has('idRuangan')) {
                 $validationRules['idRuangan'] = 'required|exists:ruangan,id';
-
-                // Validasi kapasitas ruangan
                 $ruangan = Ruangan::find($request->idRuangan);
+                
+                // Validate room capacity
                 if ($request->estimasiPeserta > $ruangan->kapasitas) {
-                    return response()->json(
-                        [
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Jumlah peserta melebihi kapasitas ruangan'
+                    ], 422);
+                }
+    
+                // Validate classroom booking dates
+                if ($ruangan->kelas) {
+                    $nonWeekendDates = collect($request->jadwal_dates)->filter(function ($booking) {
+                        $date = new \Carbon\Carbon($booking['date']);
+                        return !$date->isWeekend();
+                    });
+    
+                    if ($nonWeekendDates->isNotEmpty()) {
+                        return response()->json([
                             'success' => false,
-                            'message' => 'Jumlah peserta melebihi kapasitas ruangan',
-                        ],
-                        422
-                    );
+                            'message' => 'Ruangan kelas hanya dapat dipinjam pada hari Sabtu dan Minggu'
+                        ], 422);
+                    }
                 }
             }
-
+    
             $validated = $request->validate($validationRules);
-
+    
             // Upload files
             $suratPath = $request->file('suratPeminjaman')->store('peminjaman/surat', 'public');
             $rundownPath = $request->file('rundown')->store('peminjaman/rundown', 'public');
-
-            // Buat array data peminjaman
+    
+            // Calculate tariff
+            $sarana = Sarana::find($validated['idSarana']);
+            $ruangan = isset($validated['idRuangan']) ? Ruangan::find($validated['idRuangan']) : null;
+            $totalTarif = Peminjaman::calculateTarif(
+                $validated['jadwal_dates'],
+                $validated['isUnand'],
+                $sarana,
+                $ruangan
+            );
+    
+            // Create peminjaman data array
             $peminjamanData = [
                 'idUser' => auth()->id(),
                 'idSarana' => $validated['idSarana'],
@@ -124,23 +143,25 @@ class PeminjamanController extends Controller
                 'instansi' => $validated['instansi'],
                 'estimasiPeserta' => $validated['estimasiPeserta'],
                 'status' => 'diajukan',
+                'isUnand' => $validated['isUnand'],
+                'totalTarif' => $totalTarif
             ];
-
+    
             if ($request->has('idRuangan')) {
                 $peminjamanData['idRuangan'] = $validated['idRuangan'];
             }
-
+    
             // Create peminjaman
             $peminjaman = Peminjaman::create($peminjamanData);
-
-            // Create tanggal peminjaman with respective jadwal
+    
+            // Create tanggal peminjaman records
             foreach ($validated['jadwal_dates'] as $jadwalDate) {
                 $peminjaman->tanggalPeminjaman()->create([
                     'tanggal' => $jadwalDate['date'],
                     'idJadwal' => $jadwalDate['jadwal_id'],
                 ]);
             }
-
+    
             // Single insert untuk notifikasi admin
             $adminNotifications = User::whereIn('role', ['admin', 'superadmin', 'pimpinan'])
                 ->get()

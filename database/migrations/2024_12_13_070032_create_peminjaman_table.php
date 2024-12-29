@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('rundown')->nullable();
             $table->string('instansi');
             $table->integer('estimasiPeserta')->nullable();
-            $table->integer('tarif')->nullable();
+            $table->boolean('isUnand')->default(true);
+            $table->integer('totalTarif')->default(0)->nullable();
             $table->text('feedbackPenolakan')->nullable();
             $table->string('evaluasi')->nullable();
             $table->enum('status', ['diajukan', 'ditolak', 'diproses', 'disetujui', 'dibatalkan', 'diajukanbatal']);

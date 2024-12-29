@@ -394,9 +394,9 @@
                                             <span class="text-gray-600">: {{ $item->sarana->nama }}</span>
                                         </p>
                                         <p class="flex items-center">
-                                            <span class="font-medium w-32">Tarif</span>
+                                            <span class="font-medium w-32">Total Tarif</span>
                                             <span class="text-gray-600">:
-                                                Rp{{ number_format($item->tarif, 0, ',', '.') }}</span>
+                                                Rp{{ number_format($item->totalTarif, 0, ',', '.') }}</span>
                                         </p>
                                         <p class="flex items-center">
                                             <span class="font-medium w-32">Estimasi Peserta</span>
@@ -499,13 +499,13 @@
                                     <select id="statusSelect{{ $item->id }}" name="status"
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                                         required onchange="toggleFeedbackForm({{ $item->id }})">
-                                        @if ($item->tarif == 0)
+                                        @if ($item->totalTarif == 0)
                                             <option value="disetujui" @if ($item->status == 'disetujui') selected @endif>
                                                 Disetujui</option>
                                         @endif
                                         <option value="ditolak" @if ($item->status == 'ditolak') selected @endif>Ditolak
                                         </option>
-                                        @if ($item->tarif != 0)
+                                        @if ($item->totalTarif != 0)
                                             <option value="diproses" @if ($item->status == 'diproses') selected @endif>
                                                 Diproses</option>
                                         @endif
@@ -738,8 +738,8 @@
                                 <span class="text-gray-600">: {{ $item->sarana->nama }}</span>
                             </p>
                             <p class="flex items-center">
-                                <span class="font-medium w-32">Tarif</span>
-                                <span class="text-gray-600">: Rp{{ number_format($item->tarif, 0, ',', '.') }}</span>
+                                <span class="font-medium w-32">totalTarif</span>
+                                <span class="text-gray-600">: Rp{{ number_format($item->totalTarif, 0, ',', '.') }}</span>
                             </p>
                             <p class="flex items-center">
                                 <span class="font-medium w-32">Estimasi Peserta</span>

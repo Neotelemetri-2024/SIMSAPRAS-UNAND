@@ -19,7 +19,7 @@ class PeminjamanSeeder extends Seeder
                 'rundown' => 'rundown-1.pdf',
                 'instansi' => 'Fakultas Teknik',
                 'estimasiPeserta' => 30,
-                'tarif' => 0,
+                'totalTarif' => 0,
                 'status' => 'disetujui'
             ],
             [
@@ -31,7 +31,7 @@ class PeminjamanSeeder extends Seeder
                 'rundown' => 'rundown-2.pdf',
                 'instansi' => 'Himpunan Mahasiswa',
                 'estimasiPeserta' => 25,
-                'tarif' => 0,
+                'totalTarif' => 0,
                 'status' => 'diajukan'
             ]
         ];

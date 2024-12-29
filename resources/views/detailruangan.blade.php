@@ -520,81 +520,123 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 <script>
-   document.addEventListener('DOMContentLoaded', function() {
-       var calendarEl = document.getElementById('calendar');
-       var selectedDates = new Set();
-       var selectedDatesDisplay = document.getElementById('selectedDatesDisplay');
-       var submitBtn = document.getElementById('submitBtn');
-       var selectedDatesInput = document.getElementById('selectedDates');
-       
-       // Get date 1 week from now
-       var minDate = new Date();
-       minDate.setDate(minDate.getDate() + 7);
-       
-       var calendar = new FullCalendar.Calendar(calendarEl, {
-           initialView: 'dayGridMonth',
-           locale: 'id',
-           headerToolbar: {
-               left: 'prev,next today',
-               center: 'title',
-               right: 'dayGridMonth,timeGridWeek,timeGridDay'
-           },
-           events: @json($events).map(event => {
-               const start = new Date(event.start);
-               const end = new Date(event.end);
-               return {
-                   ...event,
-                   title: `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}-${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`,
-                   className: `status-${event.status}`
-               };
-           }),
-           displayEventTime: false,
-           selectable: true,
-           selectConstraint: {
-               start: minDate.toISOString().split('T')[0],
-           },
-           selectAllow: function(selectInfo) {
-               return selectInfo.start >= minDate;
-           },
-           dateClick: function(info) {
-               const clickedDate = new Date(info.dateStr);
-               
-               // Check if date is before minimum date
-               if (clickedDate < minDate) {
-                   showWarning('Peminjaman harus dilakukan minimal 7 hari sebelum jadwal yang diinginkan');
-                   return;
-               }
-   
-               // Handle date selection
-               if (selectedDates.has(info.dateStr)) {
-                   selectedDates.delete(info.dateStr);
-                   info.dayEl.classList.remove('selected-date');
-               } else {
-                   selectedDates.add(info.dateStr);
-                   info.dayEl.classList.add('selected-date');
-               }
-               updateSelectedDatesDisplay();
-           },
-           height: 'auto',
-           buttonText: {
-               today: 'Hari Ini',
-               month: 'Bulan',
-               week: 'Minggu',
-               day: 'Hari'
-           }
-       });
-   
-       function showWarning(message) {
-           const warningMessage = document.createElement('div');
-           warningMessage.className = 'warning-popup';
-           warningMessage.innerHTML = `
-               <div class="warning-content">
-                   <p>${message}</p>
-                   <button class="warning-close-btn" onclick="this.closest('.warning-popup').remove()">Tutup</button>
-               </div>
-           `;
-           document.body.appendChild(warningMessage);
-       }
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var selectedDates = new Set();
+    var selectedDatesDisplay = document.getElementById('selectedDatesDisplay');
+    var submitBtn = document.getElementById('submitBtn');
+    var selectedDatesInput = document.getElementById('selectedDates');
+    
+    // Get date 1 week from now
+    var minDate = new Date();
+    minDate.setDate(minDate.getDate() + 7);
+    
+    // Check if room is a classroom
+    const isClassroom = {{ $ruangan->kelas ? 'true' : 'false' }};
+    
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'id',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: @json($events).map(event => {
+            const start = new Date(event.start);
+            const end = new Date(event.end);
+            return {
+                ...event,
+                title: `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}-${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`,
+                className: `status-${event.status}`
+            };
+        }),
+        displayEventTime: false,
+        selectable: true,
+        selectConstraint: {
+            start: minDate.toISOString().split('T')[0],
+        },
+        selectAllow: function(selectInfo) {
+            return selectInfo.start >= minDate;
+        },
+        dateClick: function(info) {
+            const clickedDate = new Date(info.dateStr);
+            
+            // Check if date is before minimum date
+            if (clickedDate < minDate) {
+                showWarning('Peminjaman harus dilakukan minimal 7 hari sebelum jadwal yang diinginkan');
+                return;
+            }
+            
+            // Check if it's a classroom and not weekend
+            if (isClassroom) {
+                const day = clickedDate.getDay();
+                if (day !== 0 && day !== 6) { // 0 = Sunday, 6 = Saturday
+                    showWarning('Ruangan kelas hanya dapat dipinjam pada hari Sabtu dan Minggu');
+                    return;
+                }
+            }
+
+            // Handle date selection
+            if (selectedDates.has(info.dateStr)) {
+                selectedDates.delete(info.dateStr);
+                info.dayEl.classList.remove('selected-date');
+            } else {
+                selectedDates.add(info.dateStr);
+                info.dayEl.classList.add('selected-date');
+            }
+            updateSelectedDatesDisplay();
+        },
+        dayCellDidMount: function(arg) {
+            // Disable weekday selection for classrooms
+            if (isClassroom) {
+                const day = arg.date.getDay();
+                if (day !== 0 && day !== 6) {
+                    arg.el.classList.add('fc-disabled-date');
+                }
+            }
+        },
+        height: 'auto',
+        buttonText: {
+            today: 'Hari Ini',
+            month: 'Bulan',
+            week: 'Minggu',
+            day: 'Hari'
+        }
+    });
+
+    function showWarning(message) {
+        const warningMessage = document.createElement('div');
+        warningMessage.className = 'warning-popup';
+        warningMessage.innerHTML = `
+            <div class="warning-content">
+                <p>${message}</p>
+                <button class="warning-close-btn" onclick="this.closest('.warning-popup').remove()">Tutup</button>
+            </div>
+        `;
+        document.body.appendChild(warningMessage);
+    }
+
+    // Add classroom warning if applicable
+    if (isClassroom) {
+        const warningDiv = document.createElement('div');
+        warningDiv.className = 'bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4';
+        warningDiv.innerHTML = `
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-yellow-700">
+                        Ruangan ini merupakan ruangan kelas yang hanya dapat dipinjam pada hari Sabtu dan Minggu.
+                    </p>
+                </div>
+            </div>
+        `;
+        calendar.el.parentNode.insertBefore(warningDiv, calendar.el);
+    }
        
        function updateSelectedDatesDisplay() {
            if (selectedDates.size === 0) {

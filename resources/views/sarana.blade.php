@@ -1,31 +1,30 @@
 @extends('layouts.user')
 
 @section('content')
-<section class="bg-gray-50 pt-32 min-h-screen">
-    <div class="max-w-screen-xl px-4 mx-auto lg:px-6">
+<section class="bg-white pt-24 min-h-screen">
+    <div class="max-w-screen-xl px-4 mx-auto lg:px-8">
         <!-- Header Section -->
-   <!-- Header Section -->
-<div class="mb-8 text-center ">
-    <h2 class="text-3xl font-bold text-gray-900">
-        Daftar Sarana & Prasarana
-    </h2>
-    <p class="mt-2 text-gray-600">
-        Temukan dan pinjam berbagai fasilitas yang tersedia di Universitas Andalas
-    </p>
-</div>
+        <div class="mb-12 text-center">
+            <h2 class="text-4xl font-bold text-gray-900 mb-3">
+                Daftar Sarana & Prasarana
+            </h2>
+            <p class="text-gray-600 text-lg">
+                Temukan dan pinjam berbagai fasilitas yang tersedia di Universitas Andalas
+            </p>
+        </div>
 
         <!-- Search & Filter -->
-        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
-            <form action="{{ route('user.sarana') }}" method="GET" class="flex flex-col sm:flex-row gap-4">
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-12 border border-gray-100">
+            <form action="{{ route('user.sarana') }}" method="GET" class="flex flex-col sm:flex-row gap-6">
                 <div class="flex-1">
-                    <label class="text-sm font-medium text-gray-700 mb-1 block">Pencarian</label>
+                    <label class="text-sm font-medium text-gray-700 mb-2 block">Pencarian</label>
                     <div class="relative">
                         <input type="text" 
                                name="search" 
                                value="{{ $search ?? '' }}" 
                                placeholder="Cari berdasarkan nama atau deskripsi..."
-                               class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                               class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
@@ -33,8 +32,8 @@
                     </div>
                 </div>
                 <div class="sm:w-48">
-                    <label class="text-sm font-medium text-gray-700 mb-1 block">Kategori</label>
-                    <select name="kategori" class="w-full py-2.5 px-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    <label class="text-sm font-medium text-gray-700 mb-2 block">Kategori</label>
+                    <select name="kategori" class="w-full py-3 px-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200">
                         <option value="">Semua Kategori</option>
                         @foreach($kategori as $kat)
                             <option value="{{ $kat->id }}" {{ $filterKategori == $kat->id ? 'selected' : '' }}>
@@ -44,7 +43,7 @@
                     </select>
                 </div>
                 <div class="sm:w-32 self-end">
-                    <button type="submit" class="w-full h-[42px] text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-4 transition-colors duration-200">
+                    <button type="submit" class="w-full h-12 text-white bg-green-500 hover:bg-green-600 font-medium rounded-xl text-sm px-6 transition-all duration-200 shadow-sm hover:shadow-md">
                         Terapkan
                     </button>
                 </div>
@@ -52,34 +51,34 @@
         </div>
 
         <!-- Content Grid with Sidebar -->
-        <div class="flex flex-col lg:flex-row gap-8">
+        <div class="flex flex-col lg:flex-row gap-12">
             <!-- Main Content -->
             <div class="lg:w-2/3">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     @forelse($sarana as $item)
-                    <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100">
                         <div class="aspect-video relative">
                             <img src="{{ asset('storage/' . $item->gambar) }}" 
                                  alt="{{ $item->nama }}" 
                                  class="w-full h-full object-cover">
-                            <div class="absolute top-3 right-3">
-                                <span class="px-3 py-1 text-xs font-semibold text-white bg-green-600 rounded-full">
+                            <div class="absolute top-4 right-4">
+                                <span class="px-4 py-1.5 text-xs font-semibold text-white bg-green-500 rounded-full shadow-sm">
                                     {{ $item->kategoriSarana->jenis }}
                                 </span>
                             </div>
                         </div>
-                        <div class="p-5">
-                            <h3 class="font-semibold text-lg text-gray-900 mb-2">{{ $item->nama }}</h3>
-                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ $item->deskripsi }}</p>
+                        <div class="p-6">
+                            <h3 class="font-bold text-xl text-gray-900 mb-3">{{ $item->nama }}</h3>
+                            <p class="text-gray-600 text-sm mb-6 line-clamp-2">{{ $item->deskripsi }}</p>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center text-sm text-gray-500">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                     </svg>
-                                    Kapasitas: {{ $item->kapasitas ?? 'Tidak tersedia' }}
+                                    Kapasitas: {{ $item->kapasitas ?? 'Tidak tersedia' }} orang
                                 </div>
                                 <a href="{{ route('user.sarana.show', $item) }}" 
-                                   class="inline-flex items-center text-sm font-medium text-green-600 hover:text-green-700">
+                                   class="inline-flex items-center text-sm font-medium text-green-500 hover:text-green-600 transition-colors duration-200">
                                     Lihat Detail
                                     <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -89,117 +88,77 @@
                         </div>
                     </div>
                     @empty
-                    <div class="col-span-2 py-12 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="col-span-2 py-16 text-center">
+                        <svg class="mx-auto h-16 w-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                         </svg>
-                        <p class="mt-2 text-gray-500">Tidak ada sarana yang ditemukan</p>
+                        <p class="mt-4 text-gray-500 text-lg">Tidak ada sarana yang ditemukan</p>
                     </div>
                     @endforelse
                 </div>
 
                 <!-- Pagination -->
-                <div class="mt-8">
+                <div class="mt-12">
                     {{ $sarana->links() }}
                 </div>
             </div>
 
             <!-- Sidebar -->
-            <div class="lg:w-1/3 space-y-6">
-            @if($pengumuman->count() > 0)
-<div class="bg-white rounded-xl shadow-sm p-6 mb-8">
-    <div class="flex items-center justify-between mb-4">
-        <h3 class="font-semibold text-gray-900 mb-4">Pengumuman Terkini</h3>
-        <a href="{{ route('pengumuman.user') }}" class="text-sm text-green-600 hover:text-green-700">
-            Lihat Semua 
-            <svg class="w-4 h-4 inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-        </a>
-    </div>
-    <div class="space-y-4">
-        @foreach($pengumuman->take(3) as $item)
-        <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition duration-200 cursor-pointer" onclick="openPengumumanModal('{{ $item->id }}')">
-            <div class="flex items-center justify-between">
-                <div class="flex-1 min-w-0 pr-4">
-                    <p class="text-sm font-medium text-gray-900 truncate">
-                        {{ $item->judul }}
-                    </p>
-                    <p class="text-xs text-gray-500 mt-1">
-                        {{ Str::limit(strip_tags($item->isi), 100) }}
-                    </p>
-                </div>
-                <div>
-                    <span class="text-xs text-gray-400">{{ $item->created_at->diffForHumans() }}</span>
-                </div>
-            </div>
-        </div>
-        @endforeach
-    </div>
-</div>
-
-<!-- Detail Pengumuman Modal (sama seperti sebelumnya) -->
-@foreach($pengumuman->take(3) as $item)
-<div id="pengumumanModal{{ $item->id }}" tabindex="-1" aria-hidden="true"
-    class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden">
-    <!-- Backdrop with higher z-index -->
-    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
-    
-    <!-- Modal content -->
-    <div class="flex min-h-screen items-center justify-center p-4">
-        <div class="relative w-full max-w-2xl">
-            <div class="relative bg-white rounded-lg shadow">
-                <!-- Modal header -->
-                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-                    <h3 class="text-xl font-semibold text-gray-900">
-                        {{ $item->judul }}
-                    </h3>
-                    <button type="button" onclick="closePengumumanModal('{{ $item->id }}')"
-                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Modal body -->
-                <div class="p-4 md:p-5 space-y-4">
-                    <div class="text-sm text-gray-600">
-                        <p class="mb-2 text-xs text-gray-500">
-                            Dipublikasikan pada: {{ $item->created_at->translatedFormat('d F Y H:i') }}
-                        </p>
-                        {!! $item->isi !!}
+            <div class="lg:w-1/3 space-y-8">
+                <!-- Pengumuman Section -->
+                @if($pengumuman->count() > 0)
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-bold text-xl text-gray-900">Pengumuman Terkini</h3>
+                        <a href="{{ route('pengumuman.user') }}" class="text-sm text-green-500 hover:text-green-600 transition-colors duration-200">
+                            Lihat Semua 
+                            <svg class="w-4 h-4 inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="space-y-4">
+                        @foreach($pengumuman->take(3) as $item)
+                        <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-all duration-200 cursor-pointer border border-gray-100" 
+                             onclick="openPengumumanModal('{{ $item->id }}')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0 pr-4">
+                                    <p class="text-sm font-semibold text-gray-900 truncate">
+                                        {{ $item->judul }}
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-2">
+                                        {{ Str::limit(strip_tags($item->isi), 100) }}
+                                    </p>
+                                </div>
+                                <span class="text-xs text-gray-400">{{ $item->created_at->diffForHumans() }}</span>
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endforeach
-@endif
+                @endif
+
                 <!-- Trend Chart -->
-                <div class="bg-white rounded-xl shadow-sm p-6">
-                    <h3 class="font-semibold text-gray-900 mb-4">Tren Peminjaman</h3>
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <h3 class="font-bold text-xl text-gray-900 mb-6">Tren Peminjaman</h3>
                     <canvas id="trendChart" height="200"></canvas>
                 </div>
 
                 <!-- Most Borrowed -->
-                <div class="bg-white rounded-xl shadow-sm p-6">
-                    <h3 class="font-semibold text-gray-900 mb-4">Paling Sering Dipinjam</h3>
-                    <div class="space-y-4">
+                <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                    <h3 class="font-bold text-xl text-gray-900 mb-6">Paling Sering Dipinjam</h3>
+                    <div class="space-y-6">
                         @foreach($topBorrowed as $item)
                         <div class="flex items-center gap-4">
-                            <div class="h-16 w-16 rounded-lg overflow-hidden flex-shrink-0">
+                            <div class="h-20 w-20 rounded-xl overflow-hidden flex-shrink-0 shadow-sm">
                                 <img src="{{ asset('storage/' . $item->gambar) }}" 
                                      alt="{{ $item->nama }}"
                                      class="h-full w-full object-cover">
                             </div>
                             <div class="flex-1 min-w-0">
-                                <h4 class="font-medium text-gray-900 truncate">{{ $item->nama }}</h4>
-                                <div class="flex items-center mt-1">
-                                    <svg class="w-4 h-4 text-green-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <h4 class="font-semibold text-lg text-gray-900 truncate">{{ $item->nama }}</h4>
+                                <div class="flex items-center mt-2">
+                                    <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"/>
                                     </svg>
                                     <span class="text-sm text-gray-500">{{ $item->peminjaman_count }} kali dipinjam</span>
@@ -213,6 +172,38 @@
         </div>
     </div>
 </section>
+
+
+@foreach($pengumuman->take(3) as $item)
+<div id="pengumumanModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+    <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="relative w-full max-w-2xl">
+            <div class="relative bg-white rounded-2xl shadow-lg">
+                <div class="flex items-center justify-between p-6 border-b">
+                    <h3 class="text-xl font-semibold text-gray-900">
+                        {{ $item->judul }}
+                    </h3>
+                    <button type="button" onclick="closePengumumanModal('{{ $item->id }}')"
+                        class="text-gray-400 hover:bg-gray-100 hover:text-gray-900 rounded-lg p-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <p class="mb-4 text-sm text-gray-500">
+                        Dipublikasikan pada: {{ $item->created_at->translatedFormat('d F Y H:i') }}
+                    </p>
+                    <div class="prose max-w-none">
+                        {!! $item->isi !!}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

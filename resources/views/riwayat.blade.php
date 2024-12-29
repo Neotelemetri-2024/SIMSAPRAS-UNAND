@@ -1,91 +1,101 @@
 @extends('layouts.user')
 
 @section('content')
-<section class="bg-gray-50 pt-32 min-h-screen">
-    <div class="max-w-screen-2xl px-4 mx-auto lg:px-6">
+<section class="bg-white pt-24 min-h-screen">
+    <div class="max-w-screen-xl px-4 mx-auto lg:px-8">
         <!-- Header Section -->
-        <div class="mb-8 text-center">
-            <h2 class="text-3xl font-bold text-gray-900">
+        <div class="mb-12 text-center">
+            <h2 class="text-4xl font-bold text-gray-900 mb-3">
                 Riwayat Peminjaman
             </h2>
-            <p class="mt-2 text-gray-600">
+            <p class="text-gray-600 text-lg">
                 Kelola dan pantau status peminjaman fasilitas Anda di Universitas Andalas
             </p>
         </div>
 
-        <!-- Filter & Sort Section -->
-        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
-            <form method="GET" action="{{ url()->current() }}" class="flex flex-col sm:flex-row gap-4">
-                <div class="flex-1">
-                    <label class="text-sm font-medium text-gray-700 mb-1 block">Status</label>
-                    <select name="status" class="w-full py-2.5 px-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500">
-    <option value="">Semua Status</option>
-    <option value="diajukan" {{ $status == 'diajukan' ? 'selected' : '' }}>Diajukan</option>
-    <option value="diproses" {{ $status == 'diproses' ? 'selected' : '' }}>Diproses</option>
-    <option value="disetujui" {{ $status == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
-    <option value="ditolak" {{ $status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
-    <option value="dibatalkan" {{ $status == 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
-    <option value="diajukanbatal" {{ $status == 'diajukanbatal' ? 'selected' : '' }}>Diajukan Batal</option>
-</select>
-                </div>
-                <div class="sm:w-48">
-                    <label class="text-sm font-medium text-gray-700 mb-1 block">Urutkan</label>
-                    <select name="sort" class="w-full py-2.5 px-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                        <option value="newest" {{ $sort == 'newest' ? 'selected' : '' }}>Terbaru</option>
-                        <option value="oldest" {{ $sort == 'oldest' ? 'selected' : '' }}>Terlama</option>
-                    </select>
-                </div>
-                <div class="sm:w-32 self-end">
-                    <button type="submit" class="w-full h-[42px] text-white bg-green-600 hover:bg-green-700 font-medium rounded-lg text-sm px-4 transition-colors duration-200">
-                        Terapkan
-                    </button>
-                </div>
-            </form>
-        </div>
-
         <!-- Main Content -->
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+            <!-- Integrated Filter & Table Header -->
+            <div class="border-b border-gray-200">
+                <form method="GET" action="{{ url()->current() }}" class="p-6">
+                    <div class="flex flex-col sm:flex-row gap-4 items-end">
+                        <div class="flex-1">
+                            <label class="text-sm font-medium text-gray-700 mb-2 block">Status Peminjaman</label>
+                            <select name="status" 
+                                    class="w-full py-2.5 px-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white">
+                                <option value="">Semua Status</option>
+                                <option value="diajukan" {{ $status == 'diajukan' ? 'selected' : '' }}>Diajukan</option>
+                                <option value="diproses" {{ $status == 'diproses' ? 'selected' : '' }}>Diproses</option>
+                                <option value="disetujui" {{ $status == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
+                                <option value="ditolak" {{ $status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                                <option value="dibatalkan" {{ $status == 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+                                <option value="diajukanbatal" {{ $status == 'diajukanbatal' ? 'selected' : '' }}>Diajukan Batal</option>
+                            </select>
+                        </div>
+                        <div class="sm:w-48">
+                            <label class="text-sm font-medium text-gray-700 mb-2 block">Urutkan</label>
+                            <select name="sort" 
+                                    class="w-full py-2.5 px-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white">
+                                <option value="newest" {{ $sort == 'newest' ? 'selected' : '' }}>Terbaru</option>
+                                <option value="oldest" {{ $sort == 'oldest' ? 'selected' : '' }}>Terlama</option>
+                            </select>
+                        </div>
+                        <div class="sm:w-32">
+                            <button type="submit" 
+                                    class="w-full h-11 text-white bg-green-500 hover:bg-green-600 font-medium rounded-xl text-sm px-4 transition-all duration-200 shadow-sm hover:shadow-md">
+                                Terapkan
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Table Content -->
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-gray-500">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs uppercase bg-gray-50 border-b border-gray-200">
                         <tr>
-                            <th scope="col" class="px-6 py-3">Sarana</th>
-                            <th scope="col" class="px-6 py-3">Jadwal</th>
-                            <th scope="col" class="px-6 py-3">Kegiatan</th>
-                            <th scope="col" class="px-6 py-3">Instansi</th>
-                            <th scope="col" class="px-6 py-3">Tarif</th>
-                            <th scope="col" class="px-6 py-3">Status</th>
-                            <th scope="col" class="px-6 py-3">Aksi</th>
+                            <th scope="col" class="px-6 py-4 text-gray-600">Sarana</th>
+                            <th scope="col" class="px-6 py-4 text-gray-600">Jadwal</th>
+                            <th scope="col" class="px-6 py-4 text-gray-600">Kegiatan</th>
+                            <th scope="col" class="px-6 py-4 text-gray-600">Instansi</th>
+                            <th scope="col" class="px-6 py-4 text-gray-600">Tarif</th>
+                            <th scope="col" class="px-6 py-4 text-gray-600">Status</th>
+                            <th scope="col" class="px-6 py-4 text-gray-600">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="divide-y divide-gray-100">
                         @forelse($peminjaman as $pinjam)
-                        <tr class="bg-white border-b hover:bg-gray-50 transition duration-150">
-                            <td class="px-6 py-4 font-medium text-gray-900">
-                                {{ $pinjam->sarana->nama }}
+                        <tr class="bg-white hover:bg-gray-50 transition-colors duration-200">
+                            <td class="px-6 py-4">
+                                <span class="font-medium text-gray-900">{{ $pinjam->sarana->nama }}</span>
                             </td>
-                            <td class="px-6 py-4 text-green-600">
-                                @foreach ($pinjam->tanggalPeminjaman as $tanggal)
-                                    {{ $tanggal->tanggal }}<br>
-                                    <span class="text-xs text-gray-500">
-                                        {{ $tanggal->jadwal->mulai }} - {{ $tanggal->jadwal->selesai }}
-                                    </span><br>
-                                @endforeach
+                            <td class="px-6 py-4">
+                                <div class="space-y-1">
+                                    @foreach ($pinjam->tanggalPeminjaman as $tanggal)
+                                        <div class="text-green-600">
+                                            {{ $tanggal->tanggal }}
+                                            <div class="text-xs text-gray-500">
+                                                {{ $tanggal->jadwal->mulai }} - {{ $tanggal->jadwal->selesai }}
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
                             </td>
-                            <td class="px-6 py-4">{{ $pinjam->kegiatan }}</td>
-                            <td class="px-6 py-4">{{ $pinjam->instansi }}</td>
-                            <td class="px-6 py-4">Rp{{ number_format($pinjam->tarif, 0, ',', '.') }}</td>
+                            <td class="px-6 py-4 text-gray-600">{{ $pinjam->kegiatan }}</td>
+                            <td class="px-6 py-4 text-gray-600">{{ $pinjam->instansi }}</td>
+                            <td class="px-6 py-4 text-gray-600">Rp{{ number_format($pinjam->tarif, 0, ',', '.') }}</td>
                             <td class="px-6 py-4">
                                 @if ($pinjam->status == 'diproses')
                                     @if ($pinjam->buktiPembayaran)
-                                        <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-3 py-1.5 rounded-full border border-indigo-400 flex items-center w-fit gap-1">
+                                        <span class="bg-indigo-50 text-indigo-700 text-xs font-medium px-3 py-1.5 rounded-full border border-indigo-200 flex items-center w-fit gap-1">
                                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/>
                                             </svg>
                                             Menunggu Verifikasi
                                         </span>
                                     @else
-                                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-3 py-1.5 rounded-full border border-yellow-400 flex items-center w-fit gap-1">
+                                        <span class="bg-yellow-50 text-yellow-700 text-xs font-medium px-3 py-1.5 rounded-full border border-yellow-200 flex items-center w-fit gap-1">
                                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd"/>
                                             </svg>
@@ -93,35 +103,35 @@
                                         </span>
                                     @endif
                                 @elseif($pinjam->status == 'diajukan')
-                                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1.5 rounded-full border border-blue-400 flex items-center w-fit gap-1">
+                                    <span class="bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full border border-blue-200 flex items-center w-fit gap-1">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"/>
                                         </svg>
                                         Diajukan
                                     </span>
                                 @elseif($pinjam->status == 'ditolak')
-                                    <span class="bg-red-100 text-red-800 text-xs font-medium px-3 py-1.5 rounded-full border border-red-400 flex items-center w-fit gap-1">
+                                    <span class="bg-red-50 text-red-700 text-xs font-medium px-3 py-1.5 rounded-full border border-red-200 flex items-center w-fit gap-1">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/>
                                         </svg>
                                         Ditolak
                                     </span>
                                 @elseif($pinjam->status == 'disetujui')
-                                    <span class="bg-emerald-100 text-emerald-800 text-xs font-medium px-3 py-1.5 rounded-full border border-emerald-400 flex items-center w-fit gap-1">
+                                    <span class="bg-emerald-50 text-emerald-700 text-xs font-medium px-3 py-1.5 rounded-full border border-emerald-200 flex items-center w-fit gap-1">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd"/>
                                         </svg>
                                         Disetujui
                                     </span>
-                                    @elseif($pinjam->status == 'diajukanbatal')
-                                    <span class="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1.5 rounded-full border border-purple-400 flex items-center w-fit gap-1">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                                    </svg>
+                                @elseif($pinjam->status == 'diajukanbatal')
+                                    <span class="bg-purple-50 text-purple-700 text-xs font-medium px-3 py-1.5 rounded-full border border-purple-200 flex items-center w-fit gap-1">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
                                         Pengajuan Pembatalan
                                     </span>
-                                    @elseif($pinjam->status == 'dibatalkan')
-                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-400 flex items-center w-fit gap-1">
+                                @elseif($pinjam->status == 'dibatalkan')
+                                    <span class="bg-gray-50 text-gray-700 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-200 flex items-center w-fit gap-1">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/>
                                         </svg>
@@ -131,7 +141,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <button type="button" onclick="showDetailModal('{{ $pinjam->id }}')"
-                                    class="p-2 text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all duration-200 border border-blue-200 hover:border-blue-300 focus:ring-2 focus:ring-blue-300">
+                                    class="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-200 border border-blue-200">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
@@ -140,13 +150,13 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center">
+                            <td colspan="7" class="px-6 py-12">
                                 <div class="flex flex-col items-center">
-                                    <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                    <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                                     </svg>
-                                    <p class="text-gray-500 text-lg">Tidak ada riwayat peminjaman</p>
-                                    <p class="text-gray-400 text-sm mt-1">Anda belum memiliki riwayat peminjaman sarana</p>
+                                    <p class="text-gray-500 text-lg font-medium">Tidak ada riwayat peminjaman</p>
+                                    <p class="text-gray-400 mt-1">Anda belum memiliki riwayat peminjaman sarana</p>
                                 </div>
                             </td>
                         </tr>
@@ -156,10 +166,9 @@
             </div>
 
             <!-- Pagination -->
-        <!-- Pagination -->
-<div class="p-4 border-t">
-    {{ $peminjaman->appends(['sort' => $sort, 'status' => $status])->links() }}
-</div>
+            <div class="p-6 border-t border-gray-200">
+                {{ $peminjaman->appends(['sort' => $sort, 'status' => $status])->links() }}
+            </div>
         </div>
     </div>
     <!-- Modal Section -->

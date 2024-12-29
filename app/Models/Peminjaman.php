@@ -17,7 +17,8 @@ class Peminjaman extends Model
         'rundown',
         'instansi',
         'estimasiPeserta',
-        'tarif',
+        'totalTarif',
+        'isUnand',
         'feedbackPenolakan',
         'evaluasi',
         'status',
@@ -86,5 +87,36 @@ class Peminjaman extends Model
 
         // 5. Pembatalan hanya bisa dilakukan jika masih ada waktu >= 3 hari sebelum tanggal booking
         return $daysDifference >= 3 && $bookingDate->greaterThan($today);
+    }
+    public static function calculateTarif($jadwal_dates, $isUnand, $sarana = null, $ruangan = null)
+    {
+        $totalTarif = 0;
+        
+        foreach ($jadwal_dates as $booking) {
+            $date = $booking['date'];
+            $jadwalId = $booking['jadwal_id'];
+            
+            $jadwal = Jadwal::find($jadwalId);
+            $jamSelesai = (int)explode(':', $jadwal->selesai)[0];
+            
+            // Check if weekend
+            $isWeekend = in_array(date('N', strtotime($date)), [6, 7]);
+            
+            // Check if extends beyond 4 PM (16:00)
+            $isAfterHours = $jamSelesai >= 16;
+            
+            if ($isWeekend || $isAfterHours) {
+                // Get appropriate tariff based on facility type and user type
+                if ($ruangan) {
+                    $tarif = $isUnand ? $ruangan->tarifunand : $ruangan->tarifumum;
+                } else {
+                    $tarif = $isUnand ? $sarana->tarifunand : $sarana->tarifumum;
+                }
+                
+                $totalTarif += $tarif;
+            }
+        }
+        
+        return $totalTarif;
     }
 }
