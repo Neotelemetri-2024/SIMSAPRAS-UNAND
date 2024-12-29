@@ -81,40 +81,46 @@ class PeminjamanController extends Controller
             // Validasi dasar
             $validationRules = [
                 'idSarana' => 'required|exists:sarana,id',
-                'jadwal_dates' => 'required|array', // Changed from idJadwal
-                'jadwal_dates.*.date' => 'required|date', // Validate each date
-                'jadwal_dates.*.jadwal_id' => 'required|exists:jadwal,id', // Validate each jadwal_id
+                'jadwal_dates' => 'required|array',
+                'jadwal_dates.*.date' => 'required|date',
+                'jadwal_dates.*.jadwal_id' => 'required|exists:jadwal,id',
                 'kegiatan' => 'required|string|max:255',
                 'suratPeminjaman' => 'required|file|mimes:pdf,doc,docx|max:2048',
                 'rundown' => 'required|file|mimes:pdf,doc,docx|max:2048',
                 'instansi' => 'required|string|max:255',
                 'estimasiPeserta' => 'required|integer|min:1',
+                'isUnand' => 'required|boolean', // Add validation for isUnand
             ];
-
-            // Tambahkan validasi ruangan jika ada
+    
             if ($request->has('idRuangan')) {
                 $validationRules['idRuangan'] = 'required|exists:ruangan,id';
-
-                // Validasi kapasitas ruangan
                 $ruangan = Ruangan::find($request->idRuangan);
+                
                 if ($request->estimasiPeserta > $ruangan->kapasitas) {
-                    return response()->json(
-                        [
-                            'success' => false,
-                            'message' => 'Jumlah peserta melebihi kapasitas ruangan',
-                        ],
-                        422
-                    );
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Jumlah peserta melebihi kapasitas ruangan'
+                    ], 422);
                 }
             }
-
+    
             $validated = $request->validate($validationRules);
-
+    
             // Upload files
             $suratPath = $request->file('suratPeminjaman')->store('peminjaman/surat', 'public');
             $rundownPath = $request->file('rundown')->store('peminjaman/rundown', 'public');
-
-            // Buat array data peminjaman
+    
+            // Calculate tariff
+            $sarana = Sarana::find($validated['idSarana']);
+            $ruangan = isset($validated['idRuangan']) ? Ruangan::find($validated['idRuangan']) : null;
+            $totalTarif = Peminjaman::calculateTarif(
+                $validated['jadwal_dates'],
+                $validated['isUnand'],
+                $sarana,
+                $ruangan
+            );
+    
+            // Create peminjaman data array
             $peminjamanData = [
                 'idUser' => auth()->id(),
                 'idSarana' => $validated['idSarana'],
@@ -124,23 +130,25 @@ class PeminjamanController extends Controller
                 'instansi' => $validated['instansi'],
                 'estimasiPeserta' => $validated['estimasiPeserta'],
                 'status' => 'diajukan',
+                'isUnand' => $validated['isUnand'],
+                'totalTarif' => $totalTarif
             ];
-
+    
             if ($request->has('idRuangan')) {
                 $peminjamanData['idRuangan'] = $validated['idRuangan'];
             }
-
+    
             // Create peminjaman
             $peminjaman = Peminjaman::create($peminjamanData);
-
-            // Create tanggal peminjaman with respective jadwal
+    
+            // Create tanggal peminjaman records
             foreach ($validated['jadwal_dates'] as $jadwalDate) {
                 $peminjaman->tanggalPeminjaman()->create([
                     'tanggal' => $jadwalDate['date'],
                     'idJadwal' => $jadwalDate['jadwal_id'],
                 ]);
             }
-
+    
             // Single insert untuk notifikasi admin
             $adminNotifications = User::whereIn('role', ['admin', 'superadmin', 'pimpinan'])
                 ->get()

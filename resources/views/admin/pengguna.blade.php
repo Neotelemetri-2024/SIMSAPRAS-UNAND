@@ -24,7 +24,7 @@
             <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
                 <ul class="flex flex-wrap -mb-px">
                     <li class="mr-2">
-                        <button class="tab-button inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500" data-role="user">
+                        <button class="tab-button inline-block p-4 text-green-600 border-b-2 border-green-600 rounded-t-lg active dark:text-green-500 dark:border-green-500" data-role="user">
                             User
                         </button>
                     </li>
@@ -233,12 +233,12 @@
 
          // Update tampilan tab aktif
          document.querySelectorAll('.tab-button').forEach(tab => {
-               tab.classList.remove('text-blue-600', 'border-blue-600', 'active', 'dark:text-blue-500', 'dark:border-blue-500');
+               tab.classList.remove('text-green-600', 'border-green-600', 'active', 'dark:text-green-500', 'dark:border-green-500');
                tab.classList.add('border-transparent');
          });
 
          const activeTab = document.querySelector(`.tab-button[data-role="${role}"]`);
-         activeTab.classList.add('text-blue-600', 'border-blue-600', 'active', 'dark:text-blue-500', 'dark:border-blue-500');
+         activeTab.classList.add('text-green-600', 'border-green-600', 'active', 'dark:text-green-500', 'dark:border-green-500');
          activeTab.classList.remove('border-transparent');
       }
 
