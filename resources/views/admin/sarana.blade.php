@@ -264,7 +264,7 @@
                      <div>
                         <label class="block mb-2 text-sm font-medium text-gray-900">Kategori</label>
                         <select name="IdKategori" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
-                           <option value="">Pilih Kategori</option>
+                           <option value="" disabled selected hidden>Pilih Kategori</option>
                            @foreach($kategori as $kat)
                            <option value="{{ $kat->id }}">{{ $kat->jenis }}</option>
                            @endforeach
@@ -284,7 +284,7 @@
                                  </div>
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
-                                    <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->fasilitas }}</textarea>
+                                    <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required></textarea>
                                  </div>
                               </div>
 
@@ -561,7 +561,7 @@ document.querySelectorAll('.deleteImageBtn').forEach(btn => {
 // Form handling for create and edit forms
 document.addEventListener('DOMContentLoaded', function() {
     // Handle all forms with class 'sarana-form'
-    document.querySelectorAll('form').forEach(form => {
+    document.querySelectorAll('form:not([action*="logout"])').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             

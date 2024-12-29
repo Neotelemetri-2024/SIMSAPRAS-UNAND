@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\NotifikasiAdminController;
 use App\Http\Controllers\PasswordChangeController;
+use App\Http\Controllers\KeuanganController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +49,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::group(['middleware' => ['checkRole:superadmin,pimpinan', 'verified'], 'prefix' => 'admin'], function () {
-    // Route yang lain...
     Route::post('/peminjaman/store', [PeminjamanAdminController::class, 'store'])->name('peminjaman.admin.store');
     Route::put('/peminjaman/{id}/batal', [PeminjamanAdminController::class, 'batalkanPeminjaman'])->name('peminjaman.admin.batal');
 });
@@ -125,6 +125,11 @@ Route::group(['middleware' => ['checkRole:user', 'verified']], function () {
 Route::group(['middleware' => ['checkRole:superadmin,pimpinan', 'verified']], function () {
     Route::resource('pengguna', PenggunaController::class);
     Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
+});
+
+Route::group(['middleware' => ['checkRole:pimpinan', 'verified']], function () {
+    Route::resource('keuangan', PenggunaController::class);
+    Route::get('/keuangan', [KeuanganController::class, 'index'])->name('keuangan.index');
 });
 
 Route::get('/pengumuman', [PengumumanController::class, 'indexUser'])->name('pengumuman.user');

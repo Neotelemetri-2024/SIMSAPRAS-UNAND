@@ -173,8 +173,6 @@
    }
 </style>
 @endpush
-
-
 @section('content')
 <section class="bg-white pt-32 pb-12">
     <div class="max-w-screen-2xl mx-auto px-4 lg:px-8">

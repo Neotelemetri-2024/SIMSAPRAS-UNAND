@@ -274,7 +274,7 @@
             <select name="isUnand" id="isUnand" 
                     class="w-full rounded-xl border-gray-200 focus:border-green-500 focus:ring-green-500"
                     required>
-                <option value="">Pilih Status</option>
+                <option value="" disabled selected hidden>Pilih Status</option>
                 <option value="1">Mahasiswa/Civitas UNAND</option>
                 <option value="0">Umum</option>
             </select>

@@ -83,8 +83,12 @@
                     </div>
                     <div>
                         <p class="font-semibold text-gray-900">
-                            Peminjaman {{ $aktivitas->ruangan->nama ?? '' }} 
-                            {{ $aktivitas->sarana ? '& ' . $aktivitas->sarana->nama : '' }}
+                            Peminjaman 
+                            @if(!empty($aktivitas->ruangan) && !empty($aktivitas->ruangan->nama))
+                                {{ $aktivitas->ruangan->nama }}
+                            @else
+                                {{ !empty($aktivitas->sarana) && !empty($aktivitas->sarana->nama) ? $aktivitas->sarana->nama : '' }}
+                            @endif
                         </p>
                         <p class="text-gray-500">Status: 
                             @if($aktivitas->status == 'diajukanbatal')
