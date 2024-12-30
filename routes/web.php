@@ -19,6 +19,7 @@ use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\NotifikasiAdminController;
 use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\KeuanganController;
+use App\Http\Controllers\PanduanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,7 @@ use App\Http\Controllers\KeuanganController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 Route::get('/beams/auth', [BeamsAuthController::class, 'auth'])->middleware('auth');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home', fn() => view('home'));
@@ -37,6 +39,10 @@ Route::get('/home', fn() => view('home'));
 Route::get('/sarana-prasarana', [SaranaController::class, 'daftarSarana'])->name('user.sarana');
 Route::get('/sarana-prasarana/{sarana}', [SaranaController::class, 'userShow'])->name('user.sarana.show');
 Route::get('/sarana-prasarana/ruangan/{ruangan}', [RuanganController::class, 'show'])->name('ruangan.show');
+Route::get('/panduan', [PanduanController::class, 'index'])->name('panduan.index');
+Route::get('/panduan/status', [PanduanController::class, 'status'])->name('panduan.status');
+Route::get('/panduan/syarat', [PanduanController::class, 'syarat'])->name('panduan.syarat');
+Route::get('/panduan/cara', [PanduanController::class, 'cara'])->name('panduan.cara');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [DetailProfileController::class, 'index'])->name('profile.index');
@@ -85,7 +91,7 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
     Route::get('/penjaga', [PenjagaController::class, 'index'])->name('penjaga.index');
 
     Route::get('/profile', fn() => view('admin.profile'))->name('admin.profile');
-    
+
     Route::get('/notifikasi', [NotifikasiAdminController::class, 'index'])->name('notifikasi.admin.index');
     Route::post('/notifikasi/{notifikasi}/mark-as-read', [NotifikasiAdminController::class, 'markAsRead'])->name('notifikasi.admin.mark-as-read');
 });
@@ -117,4 +123,4 @@ Route::group(['middleware' => ['checkRole:pimpinan', 'verified']], function () {
 
 Route::get('/pengumuman', [PengumumanController::class, 'indexUser'])->name('pengumuman.user');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

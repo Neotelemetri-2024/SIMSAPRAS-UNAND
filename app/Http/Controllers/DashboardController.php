@@ -21,13 +21,10 @@ class DashboardController extends Controller
             SUM(CASE WHEN status = 'diajukan' THEN 1 ELSE 0 END) as totalMasuk,
             SUM(CASE WHEN status = 'disetujui' THEN 1 ELSE 0 END) as totalDisetujui,
             SUM(CASE WHEN status = 'diproses' THEN 1 ELSE 0 END) as totalDiproses,
-            SUM(CASE WHEN status = 'ditolak' THEN 1 ELSE 0 END) as totalDitolak
+            SUM(CASE WHEN status = 'ditolak' THEN 1 ELSE 0 END) as totalDitolak,
+            SUM(CASE WHEN status = 'dibatalkan' THEN 1 ELSE 0 END) as totalDibatalkan,
+            SUM(CASE WHEN status = 'diajukanbatal' THEN 1 ELSE 0 END) as totalDiajukanBatal
         ")->first();
-        // $totalPeminjaman = Peminjaman::all();
-        // $totalPeminjamanMasuk = Peminjaman::where('status', 'diajukan')->count();
-        // $totalPeminjamanDisetujui = Peminjaman::where('status', 'disetujui')->count();
-        // $totalPeminjamanDiproses = Peminjaman::where('status', 'diproses')->count();
-        // $totalPeminjamanDitolak = Peminjaman::where('status', 'ditolak')->count();
         $instansi = DB::table('peminjaman')
             ->select('instansi', DB::raw('COUNT(*) as jumlah'))
             ->groupBy('instansi')
@@ -41,6 +38,51 @@ class DashboardController extends Controller
             ->orderByDesc('jumlah')
             ->limit(5)
             ->get();
+        $weeklyPerformance = DB::table('peminjaman')
+            ->select(
+                DB::raw('DATE(created_at) as date'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->whereBetween('created_at', [now()->subDays(7), now()])
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        $monthlyStatusTrend = DB::table('peminjaman')
+            ->select(
+                DB::raw('MONTH(created_at) as bulan'),
+                DB::raw('YEAR(created_at) as tahun'),
+                DB::raw("SUM(CASE WHEN status = 'diajukan' THEN 1 ELSE 0 END) as diajukan"),
+                DB::raw("SUM(CASE WHEN status = 'diproses' THEN 1 ELSE 0 END) as diproses"),
+                DB::raw("SUM(CASE WHEN status = 'disetujui' THEN 1 ELSE 0 END) as disetujui"),
+                DB::raw("SUM(CASE WHEN status = 'ditolak' THEN 1 ELSE 0 END) as ditolak"),
+                DB::raw("SUM(CASE WHEN status = 'dibatalkan' THEN 1 ELSE 0 END) as dibatalkan"),
+                DB::raw("SUM(CASE WHEN status = 'diajukanbatal' THEN 1 ELSE 0 END) as diajukanbatal")
+            )
+            ->whereYear('created_at', date('Y'))
+            ->groupBy('tahun', 'bulan')
+            ->orderBy('tahun')
+            ->orderBy('bulan')
+            ->get();
+        $statusDistribution = DB::table('peminjaman')
+            ->select('status', DB::raw('COUNT(*) as total'))
+            ->groupBy('status')
+            ->get();
+        $trendSarana = DB::table('peminjaman as p')
+            ->join('sarana as s', 'p.idSarana', '=', 's.id')
+            ->select(
+                's.nama as nama_sarana',
+                DB::raw('MONTH(p.created_at) as bulan'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->whereYear('p.created_at', date('Y'))
+            ->groupBy('s.nama', 'bulan')
+            ->orderBy('bulan')
+            ->get();
+
+        $trendSaranaData = $trendSarana->groupBy('nama_sarana');
+
+
 
             return view('admin.dashboard', [
                 'kategori' => $kategori,
@@ -52,8 +94,16 @@ class DashboardController extends Controller
                 'totalPeminjamanDisetujui' => $totalPeminjamanData->totalDisetujui,
                 'totalPeminjamanDiproses' => $totalPeminjamanData->totalDiproses,
                 'totalPeminjamanDitolak' => $totalPeminjamanData->totalDitolak,
+                'totalPeminjamanDibatalkan' => $totalPeminjamanData->totalDibatalkan,
+                'totalPeminjamanDiajukanBatal' => $totalPeminjamanData->totalDiajukanBatal,
                 'instansi' => $instansi,
                 'grafikSarana' => $grafikSarana,
+                'weeklyPerformance' => $weeklyPerformance,
+                'monthlyStatusTrend' => $monthlyStatusTrend,
+                'statusDistribution' => $statusDistribution,
+                'statusDistribution' => $statusDistribution,
+                'trendSarana' => $trendSarana,
+                'trendSaranaData' => $trendSaranaData,
             ]);
     }
 }
