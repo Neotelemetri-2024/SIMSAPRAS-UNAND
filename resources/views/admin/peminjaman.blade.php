@@ -73,6 +73,7 @@
                                 <th scope="col" class="px-6 py-3">Sarana yang Dipinjam</th>
                                 <th scope="col" class="px-6 py-3">Kegiatan</th>
                                 <th scope="col" class="px-6 py-3">Status</th>
+                                <th scope="col" class="px-6 py-3">Riwayat</th>
                                 <th scope="col" class="px-6 py-3">Aksi</th>
                             </tr>
                         </thead>
@@ -167,6 +168,74 @@
                                                 </span>
                                         @endswitch
                                     </td>
+                                      <!-- Kolom Riwayat -->
+                <td class="px-6 py-4">
+                    <div class="text-sm space-y-1">
+                        @if($item->disetujui_oleh)
+                            <div class="flex items-center text-green-600">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>
+                                    Disetujui: {{ optional($item->disetujuiOleh)->name }}
+                                    <br>
+                                    <span class="text-gray-500 text-xs">
+                                        {{ $item->disetujui_at ? \Carbon\Carbon::parse($item->disetujui_at)->format('d/m/Y H:i') : '' }}
+                                    </span>
+                                </span>
+                            </div>
+                        @endif
+
+                        @if($item->diproses_oleh)
+                            <div class="flex items-center text-yellow-600">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span>
+                                    Diproses: {{ optional($item->diprosesOleh)->name }}
+                                    <br>
+                                    <span class="text-gray-500 text-xs">
+                                        {{ $item->diproses_at ? \Carbon\Carbon::parse($item->diproses_at)->format('d/m/Y H:i') : '' }}
+                                    </span>
+                                </span>
+                            </div>
+                        @endif
+
+                        @if($item->ditolak_oleh)
+                            <div class="flex items-center text-red-600">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                                <span>
+                                    Ditolak: {{ optional($item->ditolakOleh)->name }}
+                                    <br>
+                                    <span class="text-gray-500 text-xs">
+                                        {{ $item->ditolak_at ? \Carbon\Carbon::parse($item->ditolak_at)->format('d/m/Y H:i') : '' }}
+                                    </span>
+                                </span>
+                            </div>
+                        @endif
+
+                        @if($item->dibatalkan_oleh)
+                            <div class="flex items-center text-red-600">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                                <span>
+                                    Dibatalkan: {{ optional($item->dibatalkanOleh)->name }}
+                                    <br>
+                                    <span class="text-gray-500 text-xs">
+                                        {{ $item->dibatalkan_at ? \Carbon\Carbon::parse($item->dibatalkan_at)->format('d/m/Y H:i') : '' }}
+                                    </span>
+                                </span>
+                            </div>
+                        @endif
+
+                        @if(!$item->disetujui_oleh && !$item->diproses_oleh && !$item->ditolak_oleh && !$item->dibatalkan_oleh)
+                            <span class="text-gray-500">Belum ada riwayat</span>
+                        @endif
+                    </div>
+                </td>
                                     <td class="px-6 py-4">
                                         @if ($item->status === 'diajukan' || $item->status === 'diproses' || $item->status === 'diajukanbatal' || auth()->user()->role === 'pimpinan')
                                             <button data-modal-target="editModal{{ $item->id }}"
@@ -524,6 +593,7 @@
                             </div>
                             @endif
                         </div>
+                        
 
 
                         <!-- Modal Footer -->

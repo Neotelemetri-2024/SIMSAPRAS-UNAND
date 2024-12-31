@@ -22,6 +22,10 @@ return new class extends Migration
             $table->integer('totalTarif')->default(0)->nullable();
             $table->text('feedbackPenolakan')->nullable();
             $table->string('evaluasi')->nullable();
+            $table->foreignId('disetujui_oleh')->nullable()->constrained('users');
+            $table->foreignId( 'ditolak_oleh')->nullable()->constrained('users');
+            $table->foreignId('dibatalkan_oleh')->nullable()->constrained('users');
+            $table->foreignId('diproses_oleh')->nullable()->constrained('users');
             $table->enum('status', ['diajukan', 'ditolak', 'diproses', 'disetujui', 'dibatalkan', 'diajukanbatal']);
             $table->enum('statusPembayaran', ['lunas', 'tidak'])->nullable();
             $table->enum('statusPengembalian', ['sudah', 'belum'])->nullable();
@@ -30,6 +34,10 @@ return new class extends Migration
             $table->text('alasanPembatalan')->nullable();
             $table->text('alasanTolakBatal')->nullable();
             $table->string('statusSebelumBatal')->nullable();
+             $table->timestamp('disetujui_at')->nullable();
+        $table->timestamp('diproses_at')->nullable();
+        $table->timestamp('ditolak_at')->nullable();
+        $table->timestamp('dibatalkan_at')->nullable();
             $table->timestamps();
         });
     }
