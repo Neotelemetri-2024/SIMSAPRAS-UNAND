@@ -22,13 +22,27 @@ class Peminjaman extends Model
         'feedbackPenolakan',
         'evaluasi',
         'status',
+        'disetujui_oleh',
+        'diproses_oleh',
+        'ditolak_oleh',
+        'dibatalkan_oleh',
         'statusPembayaran',
         'statusPengembalian',
         'feedbackPembatalan',
         'alasanPembatalan',
         'alasanTolakBatal',
         'buktiPembayaran',
-        'statusSebelumBatal'
+        'statusSebelumBatal',
+         'disetujui_at',
+        'diproses_at',
+        'ditolak_at',
+        'dibatalkan_at'
+    ];
+     protected $dates = [
+        'disetujui_at',
+        'diproses_at',
+        'ditolak_at',
+        'dibatalkan_at'
     ];
 
     protected $enums = [
@@ -59,6 +73,26 @@ class Peminjaman extends Model
     public function notifikasi()
     {
         return $this->hasMany(Notifikasi::class, 'idPeminjaman');
+    }
+
+    // Tambahkan relasi untuk user yang melakukan aksi
+    public function disetujuiOleh()
+    {
+        return $this->belongsTo(User::class, 'disetujui_oleh');
+    }
+    
+    public function ditolakOleh()
+    {
+        return $this->belongsTo(User::class, 'ditolak_oleh');
+    }
+    
+    public function dibatalkanOleh()
+    {
+        return $this->belongsTo(User::class, 'dibatalkan_oleh');
+    }
+       public function diprosesOleh()
+    {
+        return $this->belongsTo(User::class, 'diproses_oleh');
     }
 
     public function canBeCancelled()

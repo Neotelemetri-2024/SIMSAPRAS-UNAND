@@ -40,6 +40,28 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Peminjaman::class, 'idUser');
     }
 
+      // Relasi untuk peminjaman yang disetujui oleh user ini
+    public function peminjamanDisetujui()
+    {
+        return $this->hasMany(Peminjaman::class, 'disetujui_oleh');
+    }
+
+    // Relasi untuk peminjaman yang ditolak oleh user ini
+    public function peminjamanDitolak()
+    {
+        return $this->hasMany(Peminjaman::class, 'ditolak_oleh');
+    }
+
+    // Relasi untuk peminjaman yang dibatalkan oleh user ini
+    public function peminjamanDibatalkan()
+    {
+        return $this->hasMany(Peminjaman::class, 'dibatalkan_oleh');
+    }
+     public function peminjamanDiproses()
+    {
+        return $this->hasMany(Peminjaman::class, 'diproses_oleh');
+    }
+
     public function notifikasi()
     {
         return $this->hasMany(Notifikasi::class, 'penerima');

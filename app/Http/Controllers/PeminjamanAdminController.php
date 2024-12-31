@@ -167,6 +167,22 @@ class PeminjamanAdminController extends Controller
     
             $peminjaman = Peminjaman::with('user')->findOrFail($id);
             $oldStatus = $peminjaman->status;
+
+
+        
+      if ($request->status === 'disetujui') {
+            $peminjaman->disetujui_oleh = auth()->id();
+            $peminjaman->disetujui_at = now();
+        } elseif ($request->status === 'ditolak') {
+            $peminjaman->ditolak_oleh = auth()->id();
+            $peminjaman->ditolak_at = now();
+        } elseif ($request->status === 'diproses') {
+            $peminjaman->diproses_oleh = auth()->id();
+            $peminjaman->diproses_at = now();
+        } elseif ($request->status === 'dibatalkan') {
+            $peminjaman->dibatalkan_oleh = auth()->id();
+            $peminjaman->dibatalkan_at = now();
+        }
     
             // Handle pembatalan
             if ($request->status === 'diajukan') {
