@@ -24,7 +24,7 @@
           @php
              $peminjamanRoutes = [
                  'admin.overview',
-                 'peminjaman.admin.masuk',
+                 'peminjaman.admin.diajukan',
                  'peminjaman.admin.diproses',
                  'peminjaman.admin.disetujui',
                  'peminjaman.admin.ditolak',
@@ -54,8 +54,8 @@
                    </a>
                 </li>
                 <li>
-                   <a href="{{ route('peminjaman.admin.masuk') }}"
-                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.masuk') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                   <a href="{{ route('peminjaman.admin.diajukan') }}"
+                      class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.diajukan') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
                       Diajukan
                    </a>
                 </li>

@@ -19,7 +19,15 @@ use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\NotifikasiAdminController;
 use App\Http\Controllers\PasswordChangeController;
 use App\Http\Controllers\KeuanganController;
+use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\PanduanController;
+use App\Http\Controllers\PeminjamanDiajukanController;
+use App\Http\Controllers\PeminjamanDiprosesController;
+use App\Http\Controllers\PeminjamanDisetujuiController;
+use App\Http\Controllers\PeminjamanDitolakController;
+use App\Http\Controllers\PeminjamanDiajukanbatalController;
+use App\Http\Controllers\PeminjamanDibatalkanController;
+use App\Http\Controllers\PeminjamanSelesaiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,24 +59,36 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::group(['middleware' => ['checkRole:superadmin,pimpinan', 'verified'], 'prefix' => 'admin'], function () {
-    Route::post('/peminjaman/store', [PeminjamanAdminController::class, 'store'])->name('peminjaman.admin.store');
-    Route::put('/peminjaman/{id}/batal', [PeminjamanAdminController::class, 'batalkanPeminjaman'])->name('peminjaman.admin.batal');
+    // Route::post('/peminjaman/store', [PeminjamanAdminController::class, 'store'])->name('peminjaman.admin.store');
+    // Route::put('/peminjaman/{id}/batal', [PeminjamanAdminController::class, 'batalkanPeminjaman'])->name('peminjaman.admin.batal');
 });
 Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'], 'prefix' => 'admin'], function () {
     Route::resource('dashboard', DashboardController::class);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    
+    Route::get('/overview', [OverviewController::class, 'overview'])->name('admin.overview');
+    Route::get('/peminjaman-diajukan', [PeminjamanDiajukanController::class, 'index'])->name('peminjaman.admin.diajukan');
+    Route::put('/peminjaman/{id}/update-status-diajukan', [PeminjamanDiajukanController::class, 'updateStatusDiajukan'])->name('peminjaman.updateStatusDiajukan');
+    Route::get('/peminjaman-diproses', [PeminjamanDiprosesController::class, 'index'])->name('peminjaman.admin.diproses');
+    Route::put('/peminjaman/{id}/update-status-diproses', [PeminjamanDiprosesController::class, 'updateStatusDiproses'])->name('peminjaman.updateStatusDiproses');
+    Route::get('/peminjaman-disetujui', [PeminjamanDisetujuiController::class, 'index'])->name('peminjaman.admin.disetujui');
+    Route::put('/peminjaman/{id}/update-status-disetujui', [PeminjamanDisetujuiController::class, 'updateStatusDisetujui'])->name('peminjaman.updateStatusDisetujui');
+    Route::get('/peminjaman-ditolak', [PeminjamanDitolakController::class, 'index'])->name('peminjaman.admin.ditolak');
+    Route::put('/peminjaman/{id}/update-status-ditolak', [PeminjamanDitolakController::class, 'updateStatusDitolak'])->name('peminjaman.updateStatusDitolak');
+    Route::get('/peminjaman-diajukanbatal', [PeminjamanDiajukanbatalController::class, 'index'])->name('peminjaman.admin.diajukanbatal');
+    Route::put('/peminjaman/{id}/update-status-diajukanbatal', [PeminjamanDiajukanbatalController::class, 'updateStatusDiajukanbatal'])->name('peminjaman.updateStatusDiajukanbatal');
+    Route::get('/peminjaman-batal', [PeminjamanDibatalkanController::class, 'index'])->name('peminjaman.admin.dibatalkan');
+    Route::get('/peminjaman-selesai', [PeminjamanSelesaiController::class, 'index'])->name('peminjaman.admin.selesai');
 
-    Route::resource('peminjaman', PeminjamanAdminController::class);
-    Route::get('/overview', [PeminjamanAdminController::class, 'overview'])->name('admin.overview');
-    Route::get('/peminjaman-masuk', [PeminjamanAdminController::class, 'PeminjamanMasuk'])->name('peminjaman.admin.masuk');
-    Route::get('/peminjaman-proses', [PeminjamanAdminController::class, 'PeminjamanDiproses'])->name('peminjaman.admin.diproses');
-    Route::get('/peminjaman-setuju', [PeminjamanAdminController::class, 'PeminjamanDisetujui'])->name('peminjaman.admin.disetujui');
-    Route::get('/peminjaman-tolak', [PeminjamanAdminController::class, 'PeminjamanDitolak'])->name('peminjaman.admin.ditolak');
-    Route::get('/peminjaman-batal', [PeminjamanAdminController::class, 'PeminjamanDibatalkan'])->name('peminjaman.admin.dibatalkan');
-    Route::get('/pengajuan-batal', [PeminjamanAdminController::class, 'PeminjamanDiajukanBatal'])->name('peminjaman.admin.diajukanbatal');
-    Route::get('/peminjaman-selesai', [PeminjamanAdminController::class, 'PeminjamanSelesai'])->name('peminjaman.admin.selesai');
-    Route::put('/peminjaman/{id}/update-status', [PeminjamanAdminController::class, 'updateStatus'])->name('peminjaman.updateStatus');
-    Route::post('/peminjaman/{id}/evaluasi', [PeminjamanAdminController::class, 'evaluasi'])->name('peminjaman.evaluasi');
+    // Route::resource('peminjaman', PeminjamanAdminController::class);
+    // Route::get('/peminjaman-masuk', [PeminjamanAdminController::class, 'PeminjamanMasuk'])->name('peminjaman.admin.masuk');
+    // Route::get('/peminjaman-proses', [PeminjamanAdminController::class, 'PeminjamanDiproses'])->name('peminjaman.admin.diproses');
+    // Route::get('/peminjaman-setuju', [PeminjamanAdminController::class, 'PeminjamanDisetujui'])->name('peminjaman.admin.disetujui');
+    // Route::get('/peminjaman-tolak', [PeminjamanAdminController::class, 'PeminjamanDitolak'])->name('peminjaman.admin.ditolak');
+    // Route::get('/peminjaman-batal', [PeminjamanAdminController::class, 'PeminjamanDibatalkan'])->name('peminjaman.admin.dibatalkan');
+    // Route::get('/pengajuan-batal', [PeminjamanAdminController::class, 'PeminjamanDiajukanBatal'])->name('peminjaman.admin.diajukanbatal');
+    // Route::get('/peminjaman-selesai', [PeminjamanAdminController::class, 'PeminjamanSelesai'])->name('peminjaman.admin.selesai');
+    // Route::post('/peminjaman/{id}/evaluasi', [PeminjamanAdminController::class, 'evaluasi'])->name('peminjaman.evaluasi');
 
     Route::resource('pengumuman', PengumumanController::class);
     Route::resource('kategori', KategoriController::class)->except(['show']);
