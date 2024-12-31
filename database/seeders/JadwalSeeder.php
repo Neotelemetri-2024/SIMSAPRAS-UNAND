@@ -12,17 +12,20 @@ class JadwalSeeder extends Seeder
             [
                 'shift' => 'Pagi',
                 'mulai' => '08:00:00',
-                'selesai' => '12:00:00'
+                'selesai' => '12:00:00',
+                'status' => 'aktif'
             ],
             [
                 'shift' => 'Siang',
                 'mulai' => '13:00:00',
-                'selesai' => '17:00:00'
+                'selesai' => '17:00:00',
+                'status' => 'aktif'
             ],
             [
                 'shift' => 'Malam',
                 'mulai' => '18:00:00',
-                'selesai' => '22:00:00'
+                'selesai' => '22:00:00',
+                'status' => 'aktif'
             ]
         ];
 

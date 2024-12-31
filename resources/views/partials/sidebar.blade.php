@@ -21,8 +21,6 @@
         </li>
          @endcan
          
-
-          <!-- Peminjaman -->
           @php
              $peminjamanRoutes = [
                  'admin.overview',
@@ -32,6 +30,7 @@
                  'peminjaman.admin.ditolak',
                  'peminjaman.admin.dibatalkan',
                  'peminjaman.admin.diajukanbatal',
+                 'peminjaman.admin.selesai'
              ];
           @endphp
           <li class="relative">
@@ -48,7 +47,7 @@
                 </svg>
              </button>
              <ul id="dropdown-example" class="{{ request()->routeIs($peminjamanRoutes) ? 'block' : 'hidden' }} py-2 space-y-1">
-             <li>
+               <li>
                    <a href="{{ route('admin.overview') }}"
                       class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('admin.overview') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
                       Overview
@@ -57,7 +56,7 @@
                 <li>
                    <a href="{{ route('peminjaman.admin.masuk') }}"
                       class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.masuk') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
-                      Masuk
+                      Diajukan
                    </a>
                 </li>
                 <li>
@@ -90,6 +89,12 @@
                       Dibatalkan
                    </a>
                 </li>
+                <li>
+                  <a href="{{ route('peminjaman.admin.selesai') }}"
+                     class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('peminjaman.admin.selesai') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                     Selesai
+                  </a>
+               </li>
              </ul>
           </li>
 

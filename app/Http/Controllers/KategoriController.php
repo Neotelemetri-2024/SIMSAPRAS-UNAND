@@ -4,17 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\KategoriSarana;
 use App\Models\Sarana;
-use App\Models\GambarSarana;
 use App\Models\Ruangan;
-use App\Models\GambarRuangan;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Request;
 
 class KategoriController extends Controller
 {
-    // Menampilkan semua kategori sarana
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -33,16 +29,13 @@ class KategoriController extends Controller
         return view('admin.kategori', compact('kategori'));
     }
 
-    // Menyimpan kategori sarana baru
     public function store(Request $request)
     {
-        // Validasi dasar
         $validated = $request->validate([
             'jenis' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
         ]);
 
-        // Validasi tambahan: Cek apakah nama jenis sudah ada dengan status aktif
         $existingActiveCategory = KategoriSarana::where('jenis', $validated['jenis'])
             ->where('status', 'aktif')
             ->exists();
@@ -51,7 +44,6 @@ class KategoriController extends Controller
             return redirect()->route('kategori.index')->with('error', 'Kategori sudah ada dan masih aktif');
         }
 
-        // Simpan data
         KategoriSarana::create($validated);
 
         return response()->json([
@@ -89,39 +81,47 @@ class KategoriController extends Controller
             
             foreach ($saranas as $sarana) {
                 $sarana->update(['status' => 'nonaktif']);
-                
-                if ($sarana->gambar) {
-                    Storage::disk('public')->delete($sarana->gambar);
-                }
-                
-                $gambarSaranas = GambarSarana::where('idSarana', $sarana->id)->get();
-                foreach ($gambarSaranas as $gambar) {
-                    Storage::disk('public')->delete($gambar->gambar);
-                    $gambar->delete();
-                }
-                
                 $ruangans = Ruangan::where('IdSarana', $sarana->id)->get();
-                
                 foreach ($ruangans as $ruangan) {
                     $ruangan->update(['status' => 'nonaktif']);
-                    
-                    if ($ruangan->gambar) {
-                        Storage::disk()->delete($ruangan->gambar);
-                    }
-                    
-                    $gambarRuangans = GambarRuangan::where('idRuangan', $ruangan->id)->get();
-                    foreach ($gambarRuangans as $gambar) {
-                        Storage::disk('public')->delete($gambar->gambar);
-                        $gambar->delete();
-                    }
                 }
             }
-            
             DB::commit();
-            
             return response()->json([
                 'success' => true,
                 'message' => 'Kategori berhasil dinonaktifkan',
+                'redirect' => route('kategori.index')
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function activate(KategoriSarana $kategori)
+    {
+        try {
+            DB::beginTransaction();
+            
+            $kategori->update(['status' => 'aktif']);
+            
+            $saranas = Sarana::where('IdKategori', $kategori->id)->get();
+            
+            foreach ($saranas as $sarana) {
+                $sarana->update(['status' => 'aktif']);
+                $ruangans = Ruangan::where('IdSarana', $sarana->id)->get();
+                foreach ($ruangans as $ruangan) {
+                    $ruangan->update(['status' => 'aktif']);
+                }
+            }
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori berhasil diaktifkan',
                 'redirect' => route('kategori.index')
             ]);
         } catch (\Exception $e) {

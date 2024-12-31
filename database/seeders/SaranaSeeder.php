@@ -16,6 +16,8 @@ class SaranaSeeder extends Seeder
                 'gambar' => 'gedung-a.jpg',
                 'deskripsi' => 'Gedung perkuliahan 4 lantai',
                 'fasilitas' => 'AC, Proyektor, Wifi',
+                'tarifunand' => 1000000,
+                'tarifumum' => 2000000,
                 'status' => 'aktif'
             ],
             [

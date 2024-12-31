@@ -66,26 +66,28 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
     Route::get('/peminjaman-tolak', [PeminjamanAdminController::class, 'PeminjamanDitolak'])->name('peminjaman.admin.ditolak');
     Route::get('/peminjaman-batal', [PeminjamanAdminController::class, 'PeminjamanDibatalkan'])->name('peminjaman.admin.dibatalkan');
     Route::get('/pengajuan-batal', [PeminjamanAdminController::class, 'PeminjamanDiajukanBatal'])->name('peminjaman.admin.diajukanbatal');
+    Route::get('/peminjaman-selesai', [PeminjamanAdminController::class, 'PeminjamanSelesai'])->name('peminjaman.admin.selesai');
     Route::put('/peminjaman/{id}/update-status', [PeminjamanAdminController::class, 'updateStatus'])->name('peminjaman.updateStatus');
     Route::post('/peminjaman/{id}/evaluasi', [PeminjamanAdminController::class, 'evaluasi'])->name('peminjaman.evaluasi');
 
     Route::resource('pengumuman', PengumumanController::class);
-    Route::resource('kategori', KategoriController::class);
-    Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori.index');
+    Route::resource('kategori', KategoriController::class)->except(['show']);
+    Route::patch('/kategori/{kategori}/activate', [KategoriController::class, 'activate'])->name('kategori.activate');
 
     Route::resource('sarana', SaranaController::class);
     Route::post('/sarana', [SaranaController::class, 'store'])->name('sarana.store');
     Route::get('/sarana', [SaranaController::class, 'index'])->name('sarana.index');
     Route::put('/sarana/{sarana}', [SaranaController::class, 'update'])->name('sarana.update');
     Route::delete('/sarana/{sarana}', [SaranaController::class, 'destroy'])->name('sarana.destroy');
+    Route::patch('/sarana/{sarana}/activate', [SaranaController::class, 'activate'])->name('sarana.activate');
     Route::get('/sarana/{idSarana}/ruangan', [RuanganController::class, 'index'])->name('ruangan.index');
     Route::post('/sarana/{idSarana}/ruangan', [RuanganController::class, 'store'])->name('ruangan.store');
     Route::put('/sarana/{idSarana}/ruangan/{ruangan}', [RuanganController::class, 'update'])->name('ruangan.update');
     Route::delete('/sarana/{idSarana}/ruangan/{ruangan}', [RuanganController::class, 'destroy'])->name('ruangan.destroy');
     Route::delete('/sarana/{idSarana}/ruangan/delete-image/{id}', [RuanganController::class, 'deleteImage'])->name('ruangan.delete-image');
 
-    Route::resource('jadwal', JadwalController::class);
-    Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal.index');
+    Route::resource('jadwal', JadwalController::class)->except(['show']); 
+    Route::patch('/jadwal/{jadwal}/activate', [JadwalController::class, 'activate'])->name('jadwal.activate');
 
     Route::resource('penjaga', PenjagaController::class);
     Route::get('/penjaga', [PenjagaController::class, 'index'])->name('penjaga.index');

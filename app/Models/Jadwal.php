@@ -10,7 +10,8 @@ class Jadwal extends Model
     protected $fillable = [
         'shift',
         'mulai',
-        'selesai'
+        'selesai',
+        'status',
     ];
     protected $table = 'jadwal';
 

@@ -82,7 +82,7 @@
                   <span class="text-sm font-medium">Diajukan</span>
                </div>
                <div class="legend-item">
-                  <div class="legend-color bg-orange-500"></div>
+                  <div class="legend-color bg-yellow-300"></div>
                   <span class="text-sm font-medium">Diproses</span>
                </div>
                <div class="legend-item">
@@ -94,31 +94,36 @@
                   <span class="text-sm font-medium">Ditolak</span>
                </div>
                <div class="legend-item">
-    <div class="legend-color bg-gray-600"></div>
-    <span class="text-sm font-medium">Dibatalkan</span>
-</div>
-<div class="legend-item">
-    <div class="legend-color bg-purple-600"></div>
-    <span class="text-sm font-medium">Diajukan Batal</span>
-</div>
+                    <div class="legend-color bg-gray-600"></div>
+                    <span class="text-sm font-medium">Dibatalkan</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color bg-purple-600"></div>
+                    <span class="text-sm font-medium">Diajukan Batal</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color bg-[#D4A373]"></div>
+                    <span class="text-sm font-medium">Selesai</span>
+                </div>
             </div>
             <!-- Filter Dropdowns -->
             <div class="filter-container flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-               <select id="saranaFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full sm:w-48">
+               <select id="saranaFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5 w-full sm:w-48">
                   <option value="">Semua Sarana</option>
                   @foreach($saranas as $sarana)
                   <option value="{{ $sarana->id }}">{{ $sarana->nama }}</option>
                   @endforeach
                </select>
-               <select id="statusFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 w-full sm:w-48">
-    <option value="">Semua Status</option>
-    <option value="disetujui">Disetujui</option>
-    <option value="diproses">Diproses</option>
-    <option value="ditolak">Ditolak</option>
-    <option value="diajukan">Diajukan</option>
-    <option value="dibatalkan">Dibatalkan</option>
-    <option value="diajukanbatal">Diajukan Batal</option>
-</select>
+               <select id="statusFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5 w-full sm:w-48">
+                    <option value="">Semua Status</option>
+                    <option value="disetujui">Disetujui</option>
+                    <option value="diproses">Diproses</option>
+                    <option value="ditolak">Ditolak</option>
+                    <option value="diajukan">Diajukan</option>
+                    <option value="dibatalkan">Dibatalkan</option>
+                    <option value="diajukanbatal">Diajukan Batal</option>
+                    <option value="selesai">Selesai</option>
+                </select>
             </div>
          </div>
       </div>

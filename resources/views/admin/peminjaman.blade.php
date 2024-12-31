@@ -55,12 +55,6 @@
             </div>
             <!-- Card Body -->
             <div class="p-5">
-                @if (session('success'))
-                    <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
-                        role="alert">
-                        {{ session('success') }}
-                    </div>
-                @endif
                 <!-- Table -->
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -198,10 +192,10 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                             </svg>
                                         </button>
-                                        @elseif($item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal > now()->format('Y-m-d'))
+                                        @elseif(!(auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan') && $item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal > now()->format('Y-m-d'))
                                         Belum Masuk Masa Evaluasi
                                         @endif
-                                        @if ((auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan') && $item->status === 'disetujui')
+                                        @if ((auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan') && $item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal > now()->format('Y-m-d'))
                                         <button type="button" onclick="showBatalkanModal({{ $item->id }})"
                                             class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:ring-4 focus:ring-red-200 ml-2">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,6 +204,7 @@
                                         </button>
                                     @endif
                                     </td>
+
                                 </tr>
                             @endforeach
                         </tbody>
@@ -815,7 +810,6 @@
             }
         }
 
-        // Function to open modal
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
