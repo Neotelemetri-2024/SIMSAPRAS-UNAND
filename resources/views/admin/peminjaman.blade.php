@@ -160,48 +160,45 @@
                                                     Pembatalan Diajukan
                                                 </span>
                                         @endswitch
-                                    </td>
-                                      <!-- Kolom Riwayat -->
-               
+                                    </td>             
                                    <td class="px-6 py-4">
-    <!-- Detail/Edit Button untuk semua status -->
-    <button data-modal-target="editModal{{ $item->id }}"
-        data-modal-toggle="editModal{{ $item->id }}"
-        class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-        </svg>
-    </button>
+                                      <!-- Detail/Edit Button untuk semua status -->
+                                      <button data-modal-target="editModal{{ $item->id }}"
+                                          data-modal-toggle="editModal{{ $item->id }}"
+                                          class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200">
+                                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                          </svg>
+                                      </button>
 
-    <!-- Tombol Evaluasi jika diperlukan -->
-    @if ($item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal < now()->format('Y-m-d') && !$item->evaluasi)
-        <button 
-            data-modal-target="evaluasiModal{{ $item->id }}"
-            data-modal-toggle="evaluasiModal{{ $item->id }}"
-            class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200 ml-2"
-            >
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-            </svg>
-            Evaluasi
-        </button>
-    @elseif($item->status === 'disetujui' && $item->evaluasi)
-        <button data-modal-target="detailEvaluasiModal{{ $item->id }}"
-            data-modal-toggle="detailEvaluasiModal{{ $item->id }}"
-            class="p-2 text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all duration-200 border border-blue-200 hover:border-blue-300 focus:ring-2 focus:ring-blue-300 ml-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-        </button>
-    @elseif(!(auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan') && $item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal > now()->format('Y-m-d'))
-        <span class="text-sm text-gray-500 ml-2">Belum Masa Evaluasi</span>
-    @endif
-</td>
-
+                                      <!-- Tombol Evaluasi jika diperlukan -->
+                                      @if ($item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal < now()->format('Y-m-d') && !$item->evaluasi)
+                                          <button 
+                                              data-modal-target="evaluasiModal{{ $item->id }}"
+                                              data-modal-toggle="evaluasiModal{{ $item->id }}"
+                                              class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200 ml-2"
+                                              >
+                                              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                              </svg>
+                                              Evaluasi
+                                          </button>
+                                      @elseif($item->status === 'disetujui' && $item->evaluasi)
+                                          <button data-modal-target="detailEvaluasiModal{{ $item->id }}"
+                                              data-modal-toggle="detailEvaluasiModal{{ $item->id }}"
+                                              class="p-2 text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all duration-200 border border-blue-200 hover:border-blue-300 focus:ring-2 focus:ring-blue-300 ml-2">
+                                              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                              </svg>
+                                          </button>
+                                      @elseif(!(auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan') && $item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal > now()->format('Y-m-d'))
+                                          <span class="text-sm text-gray-500 ml-2">Belum Masa Evaluasi</span>
+                                      @endif
+                                  </td>
                                 </tr>
                             @endforeach
                         </tbody>
