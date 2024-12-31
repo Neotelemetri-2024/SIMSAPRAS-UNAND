@@ -55,12 +55,6 @@
             </div>
             <!-- Card Body -->
             <div class="p-5">
-                @if (session('success'))
-                    <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
-                        role="alert">
-                        {{ session('success') }}
-                    </div>
-                @endif
                 <!-- Table -->
                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -73,7 +67,6 @@
                                 <th scope="col" class="px-6 py-3">Sarana yang Dipinjam</th>
                                 <th scope="col" class="px-6 py-3">Kegiatan</th>
                                 <th scope="col" class="px-6 py-3">Status</th>
-                                <th scope="col" class="px-6 py-3">Riwayat</th>
                                 <th scope="col" class="px-6 py-3">Aksi</th>
                             </tr>
                         </thead>
@@ -169,116 +162,46 @@
                                         @endswitch
                                     </td>
                                       <!-- Kolom Riwayat -->
-                <td class="px-6 py-4">
-                    <div class="text-sm space-y-1">
-                        @if($item->disetujui_oleh)
-                            <div class="flex items-center text-green-600">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                </svg>
-                                <span>
-                                    Disetujui: {{ optional($item->disetujuiOleh)->name }}
-                                    <br>
-                                    <span class="text-gray-500 text-xs">
-                                        {{ $item->disetujui_at ? \Carbon\Carbon::parse($item->disetujui_at)->format('d/m/Y H:i') : '' }}
-                                    </span>
-                                </span>
-                            </div>
-                        @endif
+               
+                                   <td class="px-6 py-4">
+    <!-- Detail/Edit Button untuk semua status -->
+    <button data-modal-target="editModal{{ $item->id }}"
+        data-modal-toggle="editModal{{ $item->id }}"
+        class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+    </button>
 
-                        @if($item->diproses_oleh)
-                            <div class="flex items-center text-yellow-600">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <span>
-                                    Diproses: {{ optional($item->diprosesOleh)->name }}
-                                    <br>
-                                    <span class="text-gray-500 text-xs">
-                                        {{ $item->diproses_at ? \Carbon\Carbon::parse($item->diproses_at)->format('d/m/Y H:i') : '' }}
-                                    </span>
-                                </span>
-                            </div>
-                        @endif
+    <!-- Tombol Evaluasi jika diperlukan -->
+    @if ($item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal < now()->format('Y-m-d') && !$item->evaluasi)
+        <button 
+            data-modal-target="evaluasiModal{{ $item->id }}"
+            data-modal-toggle="evaluasiModal{{ $item->id }}"
+            class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200 ml-2"
+            >
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            Evaluasi
+        </button>
+    @elseif($item->status === 'disetujui' && $item->evaluasi)
+        <button data-modal-target="detailEvaluasiModal{{ $item->id }}"
+            data-modal-toggle="detailEvaluasiModal{{ $item->id }}"
+            class="p-2 text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all duration-200 border border-blue-200 hover:border-blue-300 focus:ring-2 focus:ring-blue-300 ml-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+        </button>
+    @elseif(!(auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan') && $item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal > now()->format('Y-m-d'))
+        <span class="text-sm text-gray-500 ml-2">Belum Masa Evaluasi</span>
+    @endif
+</td>
 
-                        @if($item->ditolak_oleh)
-                            <div class="flex items-center text-red-600">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                </svg>
-                                <span>
-                                    Ditolak: {{ optional($item->ditolakOleh)->name }}
-                                    <br>
-                                    <span class="text-gray-500 text-xs">
-                                        {{ $item->ditolak_at ? \Carbon\Carbon::parse($item->ditolak_at)->format('d/m/Y H:i') : '' }}
-                                    </span>
-                                </span>
-                            </div>
-                        @endif
-
-                        @if($item->dibatalkan_oleh)
-                            <div class="flex items-center text-red-600">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                </svg>
-                                <span>
-                                    Dibatalkan: {{ optional($item->dibatalkanOleh)->name }}
-                                    <br>
-                                    <span class="text-gray-500 text-xs">
-                                        {{ $item->dibatalkan_at ? \Carbon\Carbon::parse($item->dibatalkan_at)->format('d/m/Y H:i') : '' }}
-                                    </span>
-                                </span>
-                            </div>
-                        @endif
-
-                        @if(!$item->disetujui_oleh && !$item->diproses_oleh && !$item->ditolak_oleh && !$item->dibatalkan_oleh)
-                            <span class="text-gray-500">Belum ada riwayat</span>
-                        @endif
-                    </div>
-                </td>
-                                    <td class="px-6 py-4">
-                                        @if ($item->status === 'diajukan' || $item->status === 'diproses' || $item->status === 'diajukanbatal' || auth()->user()->role === 'pimpinan')
-                                            <button data-modal-target="editModal{{ $item->id }}"
-                                                data-modal-toggle="editModal{{ $item->id }}"
-                                                class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                </svg>
-                                            </button>
-                                        @endif
-                                        @if ($item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal < now()->format('Y-m-d') && !$item->evaluasi)
-                                            <button 
-                                                data-modal-target="evaluasiModal{{ $item->id }}"
-                                                data-modal-toggle="evaluasiModal{{ $item->id }}"
-                                                class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200"
-                                                >
-                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                                </svg>
-                                                Evaluasi
-                                        </button>
-                                        @elseif($item->status === 'disetujui' && $item->evaluasi)
-                                        <button data-modal-target="detailEvaluasiModal{{ $item->id }}"
-                                                data-modal-toggle="detailEvaluasiModal{{ $item->id }}"
-                                            class="p-2 text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all duration-200 border border-blue-200 hover:border-blue-300 focus:ring-2 focus:ring-blue-300">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                        </button>
-                                        @elseif($item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal > now()->format('Y-m-d'))
-                                        Belum Masuk Masa Evaluasi
-                                        @endif
-                                        @if ((auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan') && $item->status === 'disetujui')
-                                        <button type="button" onclick="showBatalkanModal({{ $item->id }})"
-                                            class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 focus:ring-4 focus:ring-red-200 ml-2">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
-                                        </button>
-                                    @endif
-                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -401,228 +324,453 @@
     </div>
 
     @foreach ($peminjamanMasuk as $item)
-        <div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true"
-            class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
-               <!-- Backdrop with higher z-index -->
-               <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModal{{ $item->id }}"></div>
-            <div class="relative w-full max-w-2xl max-h-full">
-                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                    <!-- Modal Header -->
-                    <div class="flex items-start justify-between p-5 border-b rounded-t dark:border-gray-600 bg-gray-50">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+<!-- Detail Modal Template -->
+<div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true"
+    class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModal{{ $item->id }}"></div>
+    
+    <!-- Modal Container -->
+    <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="relative w-full max-w-4xl">
+            <!-- Modal Content -->
+            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <!-- Modal Header -->
+                <div class="flex items-start justify-between p-5 border-b rounded-t dark:border-gray-600 bg-gray-50">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        Detail Peminjaman
+                    </h3>
+                    <button type="button"
+                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
+                        data-modal-hide="editModal{{ $item->id }}">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6 space-y-6">
+                    <!-- Informasi Peminjam -->
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
-                            Detail & Edit Peminjaman
-                        </h3>
-                        <button type="button"
-                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
-                            data-modal-hide="editModal{{ $item->id }}">
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 14 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                            </svg>
-                        </button>
+                            Informasi Peminjam
+                        </h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="space-y-2">
+                                <p class="flex items-center">
+                                    <span class="font-medium w-32">Nama</span>
+                                    <span class="text-gray-600">: {{ $item->user->name }}</span>
+                                </p>
+                                <p class="flex items-center">
+                                    <span class="font-medium w-32">Kontak</span>
+                                    <span class="text-gray-600">: {{ $item->user->kontak }}</span>
+                                </p>
+                                <p class="flex items-center">
+                                    <span class="font-medium w-32">Instansi</span>
+                                    <span class="text-gray-600">: {{ $item->instansi }}</span>
+                                </p>
+                            </div>
+                            <div class="space-y-2">
+                                <p class="flex items-center">
+                                    <span class="font-medium w-32">Status</span>
+                                    <span class="text-gray-600">
+                                        @switch($item->status)
+                                            @case('diajukan')
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                    Diajukan
+                                                </span>
+                                            @break
+                                            @case('diproses')
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                    Diproses
+                                                </span>
+                                            @break
+                                            @case('disetujui')
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    Disetujui
+                                                </span>
+                                            @break
+                                            @case('ditolak')
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                    Ditolak
+                                                </span>
+                                            @break
+                                            @case('dibatalkan')
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                    Dibatalkan
+                                                </span>
+                                            @break
+                                            @default
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                    {{ ucfirst($item->status) }}
+                                                </span>
+                                        @endswitch
+                                    </span>
+                                </p>
+                                <p class="flex items-center">
+                                    <span class="font-medium w-32">Tanggal Pengajuan</span>
+                                    <span class="text-gray-600">: {{ $item->created_at->format('d/m/Y H:i') }}</span>
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
-                    <form id="updateForm{{ $item->id }}" action="{{ route('peminjaman.updateStatus', $item->id) }}" method="POST"
-                        enctype="multipart/form-data">
+                    <!-- Detail Peminjaman -->
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                            Detail Peminjaman
+                        </h4>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div class="space-y-2">
+                                    <p class="flex items-center">
+                                        <span class="font-medium w-32">Gedung/Sarana</span>
+                                        <span class="text-gray-600">: {{ $item->sarana->nama }}</span>
+                                    </p>
+                                    <p class="flex items-center">
+                                        <span class="font-medium w-32">Kegiatan</span>
+                                        <span class="text-gray-600">: {{ $item->kegiatan }}</span>
+                                    </p>
+                                </div>
+                                <div class="space-y-2">
+                                    <p class="flex items-center">
+                                        <span class="font-medium w-32">Total Tarif</span>
+                                        <span class="text-gray-600">: Rp{{ number_format($item->totalTarif, 0, ',', '.') }}</span>
+                                    </p>
+                                    <p class="flex items-center">
+                                        <span class="font-medium w-32">Estimasi Peserta</span>
+                                        <span class="text-gray-600">: {{ $item->estimasiPeserta }} orang</span>
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- Jadwal Peminjaman -->
+                            <div class="mt-4">
+                                <h5 class="font-medium mb-2">Jadwal Peminjaman:</h5>
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    @foreach ($item->tanggalPeminjaman as $tanggal)
+                                        <div class="mb-2 last:mb-0">
+                                            <div class="font-medium text-gray-700">{{ \Carbon\Carbon::parse($tanggal->tanggal)->format('d/m/Y') }}</div>
+                                            <div class="text-sm text-gray-600">{{ $tanggal->jadwal->mulai }} - {{ $tanggal->jadwal->selesai }}</div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Riwayat Status -->
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Riwayat Status
+                        </h4>
+                        <div class="space-y-3">
+                            @php
+                                $hasHistory = false;
+                            @endphp
+
+                            @if($item->diajukan_at)
+                                @php $hasHistory = true; @endphp
+                                <div class="flex items-center text-blue-600">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <div>
+                                        <span class="font-medium">Diajukan</span>
+                                        <div class="text-sm text-gray-500">
+                                            {{ \Carbon\Carbon::parse($item->diajukan_at)->format('d/m/Y H:i') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if($item->diproses_oleh)
+                                @php $hasHistory = true; @endphp
+                                <div class="flex items-center text-yellow-600">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <div>
+                                        <span class="font-medium">Diproses oleh {{ optional($item->diprosesOleh)->name }}</span>
+                                        <div class="text-sm text-gray-500">
+                                            {{ \Carbon\Carbon::parse($item->diproses_at)->format('d/m/Y H:i') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if($item->disetujui_oleh)
+                                @php $hasHistory = true; @endphp
+                                <div class="flex items-center text-green-600">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    <div>
+                                        <span class="font-medium">Disetujui oleh {{ optional($item->disetujuiOleh)->name }}</span>
+                                        <div class="text-sm text-gray-500">
+                                            {{ \Carbon\Carbon::parse($item->disetujui_at)->format('d/m/Y H:i') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if($item->ditolak_oleh)
+                                @php $hasHistory = true; @endphp
+                                <div class="flex items-center text-red-600">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                    <div>
+                                        <span class="font-medium">Ditolak oleh {{ optional($item->ditolakOleh)->name }}</span>
+                                        <div class="text-sm text-gray-500">
+                                            {{ \Carbon\Carbon::parse($item->ditolak_at)->format('d/m/Y H:i') }}
+                                        </div>
+                                        @if($item->feedbackPenolakan)
+                                            <div class="mt-1 text-sm text-red-500">
+                                                Alasan: {{ $item->feedbackPenolakan }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if($item->dibatalkan_oleh)
+                                @php $hasHistory = true; @endphp
+                                <div class="flex items-center text-red-600">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                    <div>
+                                        <span class="font-medium">Dibatalkan oleh {{ optional($item->dibatalkanOleh)->name }}</span>
+                                        <div class="text-sm text-gray-500">
+                                            {{ \Carbon\Carbon::parse($item->dibatalkan_at)->format('d/m/Y H:i') }}
+                                        </div>
+                                        @if($item->feedbackPembatalan)
+                                            <div class="mt-1 text-sm text-red-500">
+                                                Alasan: {{ $item->feedbackPembatalan }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if(!$hasHistory)
+                                <div class="text-gray-500 text-center py-3">
+                                    Belum ada riwayat status
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Lampiran Section -->
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                            </svg>
+                            Lampiran
+                        </h4>
+                        <div class="space-y-3">
+                            @if($item->suratPeminjaman)
+                                <a href="{{ asset('storage/' . $item->suratPeminjaman) }}"
+                                    class="flex items-center text-blue-600 hover:text-blue-700 transition-colors" target="_blank">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Surat Peminjaman
+                                </a>
+                            @endif
+
+                            @if($item->rundown)
+                                <a href="{{ asset('storage/' . $item->rundown) }}"
+                                    class="flex items-center text-blue-600 hover:text-blue-700 transition-colors" target="_blank">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Rundown Kegiatan
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Evaluasi Section -->
+@if($item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal < now()->format('Y-m-d'))
+    @if(!$item->evaluasi)
+        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Evaluasi Peminjaman
+            </h4>
+            <div class="space-y-4">
+                <textarea id="evaluasiText{{ $item->id }}" rows="3"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    placeholder="Masukkan evaluasi peminjaman..."></textarea>
+                <button type="button" onclick="submitEvaluasi({{ $item->id }})"
+                    class="text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    Simpan Evaluasi
+                </button>
+            </div>
+        </div>
+    @else
+        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Hasil Evaluasi
+            </h4>
+            <div class="bg-gray-50 p-3 rounded-lg text-gray-700">
+                {{ $item->evaluasi }}
+            </div>
+        </div>
+    @endif
+@endif
+
+<!-- Actions Section - Conditionally Shown -->
+                    @if($item->status === 'diajukan' || $item->status === 'diproses' || $item->status === 'diajukanbatal')
+                    <form id="updateForm{{ $item->id }}" action="{{ route('peminjaman.updateStatus', $item->id) }}" method="POST">
                         @csrf
                         @method('PUT')
-                        <div class="p-6 space-y-6">
-                            <!-- Detail Data Section -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                    <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    Detail Peminjaman
-                                </h4>
-                                <div class="grid grid-cols-2 gap-4 text-sm">
-                                    <div class="space-y-2">
-                                        <p class="flex items-center">
-                                            <span class="font-medium w-32">Nama</span>
-                                            <span class="text-gray-600">: {{ $item->user->name }}</span>
-                                        </p>
-                                        <p class="flex items-center">
-                                            <span class="font-medium w-32">Kontak</span>
-                                            <span class="text-gray-600">: {{ $item->user->kontak }}</span>
-                                        </p>
-                                        <p class="flex items-center">
-                                            <span class="font-medium w-32">Instansi</span>
-                                            <span class="text-gray-600">: {{ $item->instansi }}</span>
-                                        </p>
-
-                                    </div>
-                                    <div class="space-y-2">
-                                        <p class="flex items-center">
-                                            <span class="font-medium w-32">Gedung</span>
-                                            <span class="text-gray-600">: {{ $item->sarana->nama }}</span>
-                                        </p>
-                                        <p class="flex items-center">
-                                            <span class="font-medium w-32">Total Tarif</span>
-                                            <span class="text-gray-600">:
-                                                Rp{{ number_format($item->totalTarif, 0, ',', '.') }}</span>
-                                        </p>
-                                        <p class="flex items-center">
-                                            <span class="font-medium w-32">Estimasi Peserta</span>
-                                            <span class="text-gray-600">: {{ $item->estimasiPeserta }} orang</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Lampiran Section -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                    <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                                    </svg>
-                                    Lampiran
-                                </h4>
-                                <div class="space-y-3">
-                                    <a href="{{ asset('storage/' . $item->suratPeminjaman) }}"
-                                        class="flex items-center text-blue-600 hover:text-blue-700 transition-colors" target="_blank">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                        Surat Peminjaman (PDF)
-                                    </a>
-                                    <a href="{{ asset('storage/' . $item->rundown) }}"
-                                        class="flex items-center text-blue-600 hover:text-blue-700 transition-colors" target="_blank">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                        Rundown (PDF)
-                                    </a>
-                                </div>
-                            </div>
-
-                            @if ($item->status == "diajukanbatal")
-                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                    <svg class="w-5 h-5 mr-2 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                    Alasan Pembatalan
-                                </h4>
-                                <div class="space-y-3">
-                                    <div class="p-3 bg-white rounded-lg border border-gray-200">
-                                        <p class="text-sm font-medium text-gray-600">{{ $item->alasanPembatalan }}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                    <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                    </svg>
-                                    Aksi
-                                </h4>
-                                <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                Aksi
+                            </h4>
+                            <div class="space-y-4">
+                                <!-- Status Selection -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Update Status</label>
                                     <select id="statusSelect{{ $item->id }}" name="status"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                         required onchange="toggleFeedbackForm({{ $item->id }})">
-                                        <option value="dibatalkan" @if ($item->status == 'dibatalkan') selected @endif>
-                                                Setujui Pembatalan</option>
-                                        <option value="diajukan" @if ($item->status == 'diajukan') selected @endif>Tolak Pembatalan
-                                        </option>   
-                                    </select>
-
-                                    <div id="feedbackForm{{ $item->id }}" class="hidden">
-                                        <label class="block mb-2 text-sm font-medium text-gray-900">Alasan Penolakan</label>
-                                        <textarea name="alasanTolakBatal" rows="4"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-                                            placeholder="Masukkan alasan penolakan..."></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            @endif
-                            
-                            <!-- Status Section -->
-                            @if ($item->status != "diajukanbatal")
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                    <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                    </svg>
-                                    Status Peminjaman
-                                </h4>
-                                <div class="space-y-4">
-                                    <select id="statusSelect{{ $item->id }}" name="status"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-                                        required onchange="toggleFeedbackForm({{ $item->id }})">
-                                        @if ($item->totalTarif == 0)
-                                            <option value="disetujui" @if ($item->status == 'disetujui') selected @endif>
-                                                Disetujui</option>
-                                        @endif
-                                        <option value="ditolak" @if ($item->status == 'ditolak') selected @endif>Ditolak
-                                        </option>
-                                        @if ($item->totalTarif != 0)
-                                            <option value="diproses" @if ($item->status == 'diproses') selected @endif>
-                                                Diproses</option>
+                                        @if($item->status === 'diajukanbatal')
+                                            <option value="dibatalkan">Setujui Pembatalan</option>
+                                            <option value="diajukan">Tolak Pembatalan</option>
+                                        @else
+                                            @if($item->totalTarif == 0)
+                                                <option value="disetujui">Setujui</option>
+                                            @endif
+                                            <option value="ditolak">Tolak</option>
+                                            @if($item->totalTarif > 0)
+                                                <option value="diproses">Proses</option>
+                                            @endif
                                         @endif
                                     </select>
+                                </div>
 
-                                    <div id="feedbackForm{{ $item->id }}" class="hidden">
-                                        <label class="block mb-2 text-sm font-medium text-gray-900">Feedback
-                                            Penolakan</label>
-                                        <textarea name="feedbackPenolakan" rows="4"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-                                            placeholder="Masukkan alasan penolakan..."></textarea>
-                                    </div>
+                                <!-- Feedback Form (Hidden by default) -->
+                                <div id="feedbackForm{{ $item->id }}" class="hidden">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Alasan Penolakan
+                                    </label>
+                                    <textarea name="feedbackPenolakan" rows="3"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        placeholder="Masukkan alasan penolakan..."></textarea>
                                 </div>
                             </div>
-                            @endif
-                        </div>
-                        
-
-
-                        <!-- Modal Footer -->
-                        <div
-                            class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 bg-gray-50 rounded-b">
-                            <!-- Ubah button type dari "submit" menjadi "button" -->
-                            <button type="button" 
-                                onclick="confirmUpdate({{ $item->id }})"
-                                class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7" />
-                                </svg>
-                                Simpan Perubahan
-                            </button>
-                            <button type="button"
-                                class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 flex items-center"
-                                data-modal-hide="editModal{{ $item->id }}">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                                Batal
-                            </button>
                         </div>
                     </form>
+                    @endif
+
+                    <!-- Evaluasi Section - Only shown for completed bookings without evaluation -->
+                    @if($item->status === 'disetujui' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal < now()->format('Y-m-d') && !$item->evaluasi)
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Evaluasi Peminjaman
+                            </h4>
+                            <div class="space-y-4">
+                                <textarea id="evaluasiText{{ $item->id }}" rows="3"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                    placeholder="Masukkan evaluasi peminjaman..."></textarea>
+                                <button type="button" onclick="submitEvaluasi({{ $item->id }})"
+                                    class="text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                    Simpan Evaluasi
+                                </button>
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Show Evaluation if exists -->
+                    @if($item->evaluasi)
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Hasil Evaluasi
+                            </h4>
+                            <div class="bg-gray-50 p-3 rounded-lg text-gray-700">
+                                {{ $item->evaluasi }}
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 bg-gray-50 rounded-b">
+                    @if($item->status === 'diajukan' || $item->status === 'diproses' || $item->status === 'diajukanbatal')
+                        <button type="button" onclick="confirmUpdate({{ $item->id }})"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                            Simpan Perubahan
+                        </button>
+                    @endif
+                    
+                    @if($item->status === 'disetujui' && auth()->user()->role === 'superadmin')
+                        <button type="button" onclick="showBatalkanModal({{ $item->id }})"
+                            class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                            Batalkan Peminjaman
+                        </button>
+                    @endif
+
+                    <button type="button"
+                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900"
+                        data-modal-hide="editModal{{ $item->id }}">
+                        Tutup
+                    </button>
                 </div>
             </div>
         </div>
+    </div>
+</div>
     @endforeach
     @foreach ($peminjamanMasuk as $item)
 <!-- Modal Pembatalan -->
@@ -885,7 +1033,6 @@
             }
         }
 
-        // Function to open modal
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {

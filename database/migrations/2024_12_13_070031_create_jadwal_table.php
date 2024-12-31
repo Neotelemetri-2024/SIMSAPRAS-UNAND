@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('shift');
             $table->time('mulai');
             $table->time('selesai');
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
         });
     }

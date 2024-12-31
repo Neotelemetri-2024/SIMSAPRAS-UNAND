@@ -147,6 +147,11 @@ class PeminjamanAdminController extends Controller
         return $this->getPeminjaman($request, 'diajukanbatal', 'Pengajuan Pembatalan');
     }
 
+    public function PeminjamanSelesai(Request $request)
+    {
+        return $this->getPeminjaman($request, 'selesai', 'Peminjaman Selesai');
+    }
+
     public function updateStatus(Request $request, $id)
     {
         try {
@@ -266,7 +271,7 @@ class PeminjamanAdminController extends Controller
            'ruangan',
            'tanggalPeminjaman.jadwal'
        ])->get();
-    
+       
        $events = $peminjamans->map(function($peminjaman) {
            $tanggal = $peminjaman->tanggalPeminjaman->first();
            
@@ -287,6 +292,7 @@ class PeminjamanAdminController extends Controller
                    'diproses' => '#f97316',
                    'ditolak' => '#dc2626', 
                    'diajukan' => '#3b82f6',
+                   'selesai' => '#D4A373',
                    default => '#6b7280'
                },
                'borderColor' => match($peminjaman->status) {
@@ -294,6 +300,7 @@ class PeminjamanAdminController extends Controller
                    'diproses' => '#ea580c',
                    'ditolak' => '#b91c1c',
                    'diajukan' => '#2563eb', 
+                   'selesai' => '#A47551',
                    default => '#4b5563'
                },
                'extendedProps' => [

@@ -179,22 +179,8 @@ class RuanganController extends Controller
         
         DB::beginTransaction();
         try {
-            // Nonaktifkan ruangan
             $ruangan->update(['status' => 'nonaktif']);
-            
-            // Hapus gambar utama dari storage
-            if ($ruangan->gambar) {
-                Storage::disk()->delete($ruangan->gambar);
-            }
-            
-            // Hapus gambar tambahan dari storage dan database
-            foreach ($ruangan->gambarRuangan as $gambar) {
-                Storage::disk()->delete($gambar->gambar);
-                $gambar->delete();
-            }
-            
             DB::commit();
-            
             return response()->json([
                 'success' => true,
                 'message' => 'Ruangan berhasil dinonaktifkan',
@@ -203,7 +189,6 @@ class RuanganController extends Controller
                 
         } catch (\Exception $e) {
             DB::rollback();
-            
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
@@ -217,15 +202,11 @@ class RuanganController extends Controller
         try {
             $gambar = GambarRuangan::findOrFail($id);
             
-            // Verify that this image belongs to a room in the correct sarana
             if ($gambar->ruangan->idSarana != $idSarana) {
                 return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
             }
             
-            // Delete file
             Storage::delete($gambar->gambar);
-            
-            // Delete record
             $gambar->delete();
             
             return response()->json([
@@ -245,16 +226,11 @@ class RuanganController extends Controller
     
     public function show(Ruangan $ruangan)
     {
-        // Load relationships
         $ruangan->load(['sarana', 'gambarRuangan']);
-        
-        // Get peminjaman data with tanggalPeminjaman and its jadwal
         $peminjaman = Peminjaman::with(['tanggalPeminjaman.jadwal'])
             ->where('idRuangan', $ruangan->id)
             ->whereIn('status', ['diajukan', 'disetujui', 'diajukanbatal', 'diproses'])
             ->get();
-            
-        // Format events for calendar
         $events = [];
         foreach($peminjaman as $item) {
             foreach($item->tanggalPeminjaman as $tanggal) {

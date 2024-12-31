@@ -79,7 +79,6 @@
                      <td class="px-6 py-4">
                         <div class="flex space-x-2">                    
                             @if($item->status == "aktif" && $item->jenis != "Gedung Beruangan")
-                            <!-- Tombol Edit -->
                             <button data-modal-target="editModal{{ $item->id }}"
                               data-modal-toggle="editModal{{ $item->id }}"
                               class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">
@@ -91,6 +90,14 @@
                               class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200">
                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                              </svg>
+                           </button>
+                           @elseif($item->status == "nonaktif" && $item->jenis != "Gedung Beruangan")
+                           <button onclick="activateKategori('{{ route('kategori.activate', $item->id) }}')"
+                              class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
                            </button>
                             @endif
@@ -501,6 +508,62 @@ async function confirmDelete(deleteUrl) {
             icon: 'error',
             title: 'Gagal!',
             text: error.message || 'Terjadi kesalahan saat menonaktifkan kategori',
+            showConfirmButton: true
+        });
+    }
+}
+
+async function activateKategori(activateUrl) {
+    const result = await Swal.fire({
+        title: 'Konfirmasi',
+        text: "Apakah Anda yakin ingin mengaktifkan kategori ini?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#059669',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Aktifkan!',
+        cancelButtonText: 'Batal'
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+        const response = await fetch(activateUrl, {
+            method: 'PATCH',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.message || 'Network response was not ok');
+
+        if (data.success) {
+            await Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: data.message,
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                window.location.reload();
+            }
+        } else {
+            throw new Error(data.message || 'Terjadi kesalahan');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        await Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: error.message || 'Terjadi kesalahan saat mengaktifkan kategori',
             showConfirmButton: true
         });
     }

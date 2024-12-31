@@ -26,7 +26,7 @@ return new class extends Migration
             $table->foreignId( 'ditolak_oleh')->nullable()->constrained('users');
             $table->foreignId('dibatalkan_oleh')->nullable()->constrained('users');
             $table->foreignId('diproses_oleh')->nullable()->constrained('users');
-            $table->enum('status', ['diajukan', 'ditolak', 'diproses', 'disetujui', 'dibatalkan', 'diajukanbatal']);
+            $table->enum('status', ['diajukan', 'ditolak', 'diproses', 'disetujui', 'dibatalkan', 'diajukanbatal', 'selesai']);
             $table->enum('statusPembayaran', ['lunas', 'tidak'])->nullable();
             $table->enum('statusPengembalian', ['sudah', 'belum'])->nullable();
             $table->string('buktiPembayaran')->nullable();
