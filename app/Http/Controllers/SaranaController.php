@@ -7,6 +7,7 @@ use App\Models\KategoriSarana;
 use Illuminate\Http\Request;
 use App\Models\Peminjaman;
 use App\Models\Pengumuman;
+use App\Models\Ruangan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
@@ -322,41 +323,12 @@ class SaranaController extends Controller
     public function destroy(Sarana $sarana)
     {
         try {
-            // Mulai transaksi database
             DB::beginTransaction();
 
-            // Nonaktifkan sarana
             $sarana->update(['status' => 'nonaktif']);
-            
-            // Hapus gambar utama sarana
-            if ($sarana->gambar) {
-                Storage::disk('public')->delete($sarana->gambar);
-            }
-            
-            // Hapus gambar tambahan sarana
-            foreach ($sarana->gambarSarana as $gambar) {
-                Storage::disk('public')->delete($gambar->gambar);
-                $gambar->delete();
-            }
-            
-            // Nonaktifkan ruangan terkait dan hapus gambarnya
             foreach ($sarana->ruangan as $ruangan) {
-                // Nonaktifkan ruangan
                 $ruangan->update(['status' => 'nonaktif']);
-                
-                // Hapus gambar utama ruangan
-                if ($ruangan->gambar) {
-                    Storage::disk()->delete($ruangan->gambar);
-                }
-                
-                // Hapus gambar tambahan ruangan
-                foreach ($ruangan->gambarRuangan as $gambar) {
-                    Storage::disk()->delete($gambar->gambar);
-                    $gambar->delete();
-                }
             }
-
-            // Commit transaksi jika semua operasi berhasil
             DB::commit();
 
             return response()->json([
@@ -366,7 +338,35 @@ class SaranaController extends Controller
             ]);
                 
         } catch (\Exception $e) {
-            // Rollback transaksi jika terjadi error
+            DB::rollBack();
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'redirect' => route('sarana.index')
+            ]);
+        }
+    }
+
+    public function activate(Sarana $sarana)
+    {
+        try {
+            DB::beginTransaction();
+            
+            $sarana->update(['status' => 'aktif']);
+            
+            $ruangans = Ruangan::where('IdSarana', $sarana->id)->get();
+            
+            foreach ($ruangans as $ruangan) {
+                $ruangan->update(['status' => 'aktif']);
+            }
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Sarana berhasil diaktifkan',
+                'redirect' => route('sarana.index')
+            ]);
+        } catch (\Exception $e) {
             DB::rollBack();
             
             return response()->json([

@@ -621,7 +621,7 @@ document.addEventListener('DOMContentLoaded', function() {
        
        // Get date 1 week from now
        var minDate = new Date();
-       minDate.setDate(minDate.getDate() + 7);
+       minDate.setDate(minDate.getDate() + 6);
        
        var calendar = new FullCalendar.Calendar(calendarEl, {
            initialView: 'dayGridMonth',
@@ -635,7 +635,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const start = new Date(event.start);
                 const end = new Date(event.end);
                 
-                // Set the appropriate class based on status
                 let statusClass;
                 switch(event.status) {
                     case 'disetujui':

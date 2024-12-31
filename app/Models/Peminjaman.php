@@ -32,7 +32,7 @@ class Peminjaman extends Model
     ];
 
     protected $enums = [
-        'status' => ['diajukan', 'ditolak', 'diproses', 'disetujui', 'dibatalkan', 'diajukanbatal'],
+        'status' => ['diajukan', 'ditolak', 'diproses', 'disetujui', 'dibatalkan', 'diajukanbatal', 'selesai'],
         'statusPembayaran' => ['lunas', 'tidak'],
         'statusPengembalian' => ['sudah', 'belum']
     ];

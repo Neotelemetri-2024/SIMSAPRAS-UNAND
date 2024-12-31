@@ -88,11 +88,4 @@
             </div>
         </div>
     </div>
-    <footer class="fixed bottom-0 w-full bg-white border-t border-gray-200 p-1 mt-auto">
-        <div class="flex justify-center items-center">
-            <span class="text-sm text-gray-500">
-                © 2024 SIMSAPRAS by Neo Telemetri
-            </span>
-        </div>
-    </footer>
 </nav>

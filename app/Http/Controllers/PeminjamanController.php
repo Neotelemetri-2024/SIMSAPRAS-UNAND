@@ -30,7 +30,7 @@ class PeminjamanController extends Controller
         }
     
         $selectedDates = $request->selected_dates;
-        $jadwals = Jadwal::all();
+        $jadwals = Jadwal::where('status', 'aktif')->get();
         $bookedJadwals = $this->getBookedJadwals($request->selected_dates, $request->ruangan_id ?? null, $request->sarana_id ?? null);
     
         if ($request->has('ruangan_id')) {
@@ -57,7 +57,7 @@ class PeminjamanController extends Controller
         foreach ($dates as $date) {
             $query = TanggalPeminjaman::whereDate('tanggal', $date)
                 ->whereHas('peminjaman', function ($q) use ($ruanganId, $saranaId) {
-                    $q->whereIn('status', ['diajukan', 'diproses', 'disetujui']);
+                    $q->whereIn('status', ['diajukan', 'diproses', 'disetujui', 'diajukanbatal']);
                     
                     if ($ruanganId) {
                         $q->where('idRuangan', $ruanganId);

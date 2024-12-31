@@ -137,12 +137,12 @@
                     </div>
                 </div>
                 @endif
-                <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="bg-white rounded-xl shadow-lg p-6">
                     <h3 class="font-semibold text-gray-900 mb-4">Tren Peminjaman</h3>
                     <canvas id="trendChart" height="200"></canvas>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="bg-white rounded-xl shadow-lg p-6">
                     <h3 class="font-semibold text-gray-900 mb-4">Paling Sering Dipinjam</h3>
                     <div class="space-y-4">
                         @foreach($topBorrowed as $item)

@@ -41,6 +41,7 @@
                      <td class="px-6 py-4">{{ $item->mulai }}</td>
                      <td class="px-6 py-4">{{ $item->selesai }}</td>
                      <td class="px-6 py-4">
+                        @if($item->status === "aktif")
                         <div class="flex space-x-2">
                            <button data-modal-target="editModal{{ $item->id }}" 
                                    data-modal-toggle="editModal{{ $item->id }}" 
@@ -56,6 +57,15 @@
                               </svg>
                            </button>
                         </div>
+                        @else
+                        <button onclick="activateJadwal('{{ route('jadwal.activate', $item->id) }}')"
+                            class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </button>
+                        @endif
                      </td>
                   </tr>
                   @endforeach
@@ -66,10 +76,7 @@
    </div>
 </div>
 
-<!-- Create Modal -->
-<div id="createModal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
-    <!-- Backdrop with higher z-index -->
-    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="createModal"></div>
+<div id="createModal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="createModal"></div>
    <div class="relative w-full max-w-2xl max-h-full">
       <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
          <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
@@ -349,12 +356,12 @@ async function submitForm(form) {
 async function confirmDelete(deleteUrl) {
     const result = await Swal.fire({
         title: 'Konfirmasi',
-        text: "Apakah Anda yakin ingin menghapus jadwal ini?",
+        text: "Apakah Anda yakin ingin menonaktifkan jadwal ini?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Ya, Hapus!',
+        confirmButtonText: 'Ya, Nonaktifkan!',
         cancelButtonText: 'Batal'
     });
 
@@ -397,6 +404,61 @@ async function confirmDelete(deleteUrl) {
             icon: 'error',
             title: 'Gagal!',
             text: error.message || 'Terjadi kesalahan saat menghapus data',
+            showConfirmButton: true
+        });
+    }
+}
+
+async function activateJadwal(url) {
+    const result = await Swal.fire({
+        title: 'Konfirmasi',
+        text: "Apakah Anda yakin ingin mengaktifkan jadwal ini?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, Aktifkan!',
+        cancelButtonText: 'Batal'
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+        const response = await fetch(url, {
+            method: 'PATCH',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Network response was not ok');
+
+        if (data.success) {
+            await Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: data.message,
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                window.location.reload();
+            }
+        } else {
+            throw new Error(data.message || 'Terjadi kesalahan');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        await Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: error.message || 'Terjadi kesalahan saat mengaktifkan jadwal',
             showConfirmButton: true
         });
     }

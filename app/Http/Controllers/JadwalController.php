@@ -59,17 +59,36 @@ class JadwalController extends Controller
     public function destroy(Jadwal $jadwal)
     {
         try {
-            $jadwal->delete();
+            $jadwal->update(['status' => 'nonaktif']);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data Jadwal berhasil dihapus',
+                'message' => 'Data Jadwal berhasil dinonaktifkan',
                 'redirect' => route('jadwal.index')
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => true,
-                'message' => 'Gagal menghapus jadwal: ' . $e->getMessage(),
+                'message' => 'Gagal menonaktifkan jadwal: ' . $e->getMessage(),
+                'redirect' => route('jadwal.index')
+            ]);
+        }
+    }
+
+    public function activate(Jadwal $jadwal)
+    {
+        try {
+            $jadwal->update(['status' => 'aktif']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data Jadwal berhasil diaktifkan',
+                'redirect' => route('jadwal.index')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Gagal mengaktifkan jadwal: ' . $e->getMessage(),
                 'redirect' => route('jadwal.index')
             ]);
         }
