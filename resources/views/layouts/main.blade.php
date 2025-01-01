@@ -38,8 +38,9 @@
         </div>
         <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
         
+        <div class="pt-20">
         @include('partials.footer')
-        
+        </div>
         
         <script src="/js/notifadmin.js"></script>
         <script>
