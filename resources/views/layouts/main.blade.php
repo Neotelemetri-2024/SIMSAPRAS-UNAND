@@ -38,6 +38,7 @@
         </div>
         <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
         
+        @include('partials.footer')
         
         
         <script src="/js/notifadmin.js"></script>
@@ -48,6 +49,7 @@
             const toggleSidebar = document.getElementById('toggleSidebar');
             const pageContent = document.querySelector('.p-4.sm\\:ml-64');
             const dropdownButtons = document.querySelectorAll('[data-collapse-toggle]');
+            const footer = document.querySelector('footer'); // Tambahkan ini
             
             function closeAllDropdowns() {
                 document.querySelectorAll('[data-collapse-toggle]').forEach(button => {
@@ -92,6 +94,11 @@
                     // Expand sidebar
                     sidebar.classList.remove('w-16');
                     sidebar.classList.add('w-64');
+                    if (footer) {
+            footer.classList.remove('sm:ml-16');
+            footer.classList.add('sm:ml-64');
+            footer.style.width = 'calc(100% - 16rem)';
+        }
 
                     // Show text with fade effect
                     document.querySelectorAll('#sidebar span').forEach(el => {
@@ -120,6 +127,11 @@
 
                     // Close all dropdowns
                     closeAllDropdowns();
+                    if (footer) {
+            footer.classList.remove('sm:ml-64');
+            footer.classList.add('sm:ml-16');
+            footer.style.width = 'calc(100% - 4rem)';
+        }
 
                     // Adjust main content
                     pageContent.classList.remove('sm:ml-64');
