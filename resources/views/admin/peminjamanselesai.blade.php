@@ -96,12 +96,17 @@
                                     <td class="px-6 py-4">{{ $item->sarana->nama }}</td>
                                     <td class="px-6 py-4">{{ $item->kegiatan }}</td>
                                     <td class="px-6 py-4">
-                                        
+                                        <span class="inline-flex items-center bg-orange-100 text-[#D4A373] text-sm font-medium px-3 py-1.5 rounded-full dark:bg-orange-900 dark:text-orange-300">
+                                            <svg class="w-3 h-3 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                                            </svg>
+                                            Selesai
+                                         </span>
                                     </td>             
                                    <td class="px-6 py-4">
                                     <button data-modal-target="editModalSelesai{{ $item->id }}"
                                         data-modal-toggle="editModalSelesai{{ $item->id }}"
-                                        class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200">
+                                        class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -128,14 +133,14 @@
                                 </span>
                             @else
                                 <a href="{{ $peminjamanSelesai->previousPageUrl() }}"
-                                    class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700">
+                                    class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-green-300 active:bg-gray-100 active:text-gray-700">
                                     Previous
                                 </a>
                             @endif
 
                             @if ($peminjamanSelesai->hasMorePages())
                                 <a href="{{ $peminjamanSelesai->nextPageUrl() }}"
-                                    class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700">
+                                    class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-green-300 active:bg-gray-100 active:text-gray-700">
                                     Next
                                 </a>
                             @else
@@ -175,7 +180,7 @@
                                         </span>
                                     @else
                                         <a href="{{ $peminjamanSelesai->previousPageUrl() }}" rel="prev"
-                                            class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-lg leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
+                                            class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-lg leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-green-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
                                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd"
                                                     d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
@@ -188,11 +193,11 @@
                                         @if ($page == $peminjamanSelesai->currentPage())
                                             <span aria-current="page">
                                                 <span
-                                                    class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-blue-600 bg-blue-50 border border-gray-300 cursor-default leading-5">{{ $page }}</span>
+                                                    class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-green-600 bg-green-50 border border-gray-300 cursor-default leading-5">{{ $page }}</span>
                                             </span>
                                         @else
                                             <a href="{{ $url }}"
-                                                class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
+                                                class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-green-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
                                                 {{ $page }}
                                             </a>
                                         @endif
@@ -201,7 +206,7 @@
                                     {{-- Next Page Link --}}
                                     @if ($peminjamanSelesai->hasMorePages())
                                         <a href="{{ $peminjamanSelesai->nextPageUrl() }}" rel="next"
-                                            class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-lg leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
+                                            class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-lg leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-green-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
                                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd"
                                                     d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
@@ -231,37 +236,32 @@
 
     @foreach ($peminjamanSelesai as $item)
     <div id="editModalSelesai{{ $item->id }}" tabindex="-1" aria-hidden="true"
-        class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+        class="fixed inset-0 z-[60] hidden overflow-hidden" data-modal-backdrop="static">
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModalSelesai{{ $item->id }}"></div>
         
-        <!-- Modal Container -->
-        <div class="flex min-h-screen items-center justify-center p-4">
-        <div class="relative w-full max-w-4xl">
-            <!-- Modal Content -->
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <!-- Modal Header -->
-                <div class="flex items-start justify-between p-5 border-b rounded-t dark:border-gray-600 bg-gray-50">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                        Detail Peminjaman
-                    </h3>
-                    <button type="button"
-                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
-                        data-modal-hide="editModalSelesai{{ $item->id }}">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Modal Body -->
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div class="relative w-full max-w-2xl">
+                    <div class="relative flex flex-col max-h-[90vh] bg-white rounded-lg shadow">
+                        <div class="sticky top-0 z-10 flex items-start justify-between p-5 border-b rounded-t bg-gray-50">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+                                <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                Detail Peminjaman
+                            </h3>
+                        <button type="button"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
+                            data-modal-hide="editModalSelesai{{ $item->id }}">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto">
                 <div class="p-6 space-y-6">
-                    <!-- Informasi Peminjam -->
                     <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                         <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                             <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -290,9 +290,9 @@
                                     <span class="font-medium w-32">Status</span>
                                     <span class="text-gray-600">
                                         
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            Ditolak
-                                        </span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-[#D4A373]">
+                                            Selesai
+                                         </span>
                                     </span>
                                 </p>
                                 <p class="flex items-center">
@@ -302,8 +302,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Detail Peminjaman -->
                     <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                         <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                             <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -335,8 +333,6 @@
                                     </p>
                                 </div>
                             </div>
-                            
-                            <!-- Jadwal Peminjaman -->
                             <div class="mt-4">
                                 <h5 class="font-medium mb-2">Jadwal Peminjaman:</h5>
                                 <div class="bg-gray-50 p-3 rounded-lg">
@@ -351,7 +347,6 @@
                         </div>
                     </div>
 
-                    <!-- Riwayat Status -->
                     <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                         <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                             <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -361,24 +356,71 @@
                             Riwayat Status
                         </h4>
                         <div class="space-y-3">
-                            @php
-                                $hasHistory = false;
-                            @endphp
-
-                            @if($item->disetujui_at)
-                                @php $hasHistory = true; @endphp
-                                <div class="flex items-center text-blue-600">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <div>
-                                        <span class="font-medium">Disetujui</span>
-                                        <div class="text-sm text-gray-500">
-                                            {{ \Carbon\Carbon::parse($item->diajukan_at)->format('d/m/Y H:i') }}
-                                        </div>
+                            @if($item->diproses_at)
+                            <div class="flex items-center text-yellow-600">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <span class="font-medium">Diproses oleh {{ optional($item->diprosesOleh)->name }}</span>
+                                    <div class="text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($item->diproses_at)->format('d/m/Y H:i') }}
                                     </div>
                                 </div>
+                            </div>
+                            @endif
+                            @if($item->disetujui_at)
+                            <div class="flex items-center text-green-600">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <span class="font-medium">Disetujui oleh {{ optional($item->disetujuiOleh)->name }}</span>
+                                    <div class="text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($item->disetujui_at)->format('d/m/Y H:i') }}
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                            @if($item->ditolak_at)
+                            <div class="flex items-center text-red-600">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <span class="font-medium">Ditolak oleh {{ optional($item->ditolakOleh)->name }}</span>
+                                    <div class="text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($item->ditolak_at)->format('d/m/Y H:i') }}
+                                    </div>
+                                    @if($item->feedbackPenolakan)
+                                    <div class="text-sm text-red-500 mt-1">
+                                        Alasan: {{ $item->feedbackPenolakan }}
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                            @endif
+                            @if($item->dibatalkan_at)
+                            <div class="flex items-center text-gray-600">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <span class="font-medium">Dibatalkan oleh {{ optional($item->dibatalkanOleh)->name }}</span>
+                                    <div class="text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($item->dibatalkan_at)->format('d/m/Y H:i') }}
+                                    </div>
+                                    @if($item->feedbackPembatalan)
+                                    <div class="text-sm text-gray-500 mt-1">
+                                        Alasan: {{ $item->feedbackPembatalan }}
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
                             @endif
                         </div>
                     </div>
@@ -414,10 +456,62 @@
                             @endif
                         </div>
                     </div>
+                    @if(!$item->evaluasi)
+                    <form id="evaluasiForm{{ $item->id }}" action="{{ route('peminjaman.isiEvaluasi', $item->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                Evaluasi Peminjaman
+                            </h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Evaluasi
+                                        <span class="text-red-500">*</span>
+                                    </label>
+                                    <textarea name="evaluasi" rows="3"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                        placeholder="Masukkan evaluasi..." required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    @else
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                        <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            Evaluasi Peminjaman
+                        </h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Evaluasi
+                                </label>
+                                <p class="text-gray-600">{{ $item->evaluasi }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                 </div>
+            </div>
+
                 <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 bg-gray-50 rounded-b">
+                    @if(!$item->evaluasi)
+                    <button type="submit" form="evaluasiForm{{ $item->id }}"
+                        class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                        Kirim Evaluasi
+                    </button>
+                    @endif
                     <button type="button"
-                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900"
+                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900"
                         data-modal-hide="editModalSelesai{{ $item->id }}">
                         Tutup
                     </button>
@@ -469,7 +563,7 @@
                         <button type="submit" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">
                             Export Excel
                         </button>
-                        <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900" data-modal-hide="exportModal">
+                        <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900" data-modal-hide="exportModal">
                             Batal
                         </button>
                     </div>
@@ -538,5 +632,100 @@
                 }
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('[id^="evaluasiForm"]').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formId = this.getAttribute('id');
+                    const peminjamanId = formId.replace('evaluasiForm', '');
+                    submitEvaluasi(peminjamanId);
+                });
+            });
+        });
+
+        function submitEvaluasi(id) {
+            const form = document.getElementById(`evaluasiForm${id}`);
+            const evaluasiText = form.querySelector('textarea[name="evaluasi"]').value;
+
+            if (!evaluasiText.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Harap isi evaluasi terlebih dahulu!',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Kirim Evaluasi',
+                text: "Apakah Anda yakin ingin mengirim evaluasi ini?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Kirim!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Tampilkan loading
+                    Swal.fire({
+                        title: 'Memproses...',
+                        text: 'Mohon tunggu sebentar',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    const formData = new FormData(form);
+                    formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+                    formData.append('_method', 'PUT');
+
+                    fetch(`/admin/peminjaman/${id}/isi-evaluasi`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const modal = document.getElementById(`editModalSelesai${id}`);
+                            if (modal) {
+                                modal.classList.add('hidden');
+                                document.body.classList.remove('overflow-hidden');
+                            }
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: 'Evaluasi berhasil dikirim',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            throw new Error(data.message || 'Terjadi kesalahan saat mengirim evaluasi');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: error.message || 'Terjadi kesalahan saat memproses evaluasi',
+                            confirmButtonColor: '#3085d6'
+                        });
+                    });
+                }
+            });
+        }
     </script>
 @endsection

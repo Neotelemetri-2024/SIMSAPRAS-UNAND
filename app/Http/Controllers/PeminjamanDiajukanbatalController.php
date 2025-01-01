@@ -61,7 +61,6 @@ class PeminjamanDiajukanbatalController extends Controller
         try {
             $request->validate([
                 'status' => 'required|in:disetujui,diproses,ditolak,dibatalkan,diajukan',
-                'feedbackPenolakan' => 'nullable|required_if:status,ditolak|string|max:500',
                 'alasanTolakBatal' => 'nullable|required_if:status,diajukan|string|max:500',
                 ]);
     

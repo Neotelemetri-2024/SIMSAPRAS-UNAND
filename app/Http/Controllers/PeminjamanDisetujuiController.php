@@ -72,6 +72,7 @@ class PeminjamanDisetujuiController extends Controller
                 'status' => 'required|in:disetujui,diproses,ditolak,dibatalkan,diajukan',
                 'feedbackPenolakan' => 'nullable|required_if:status,ditolak|string|max:500',
                 'alasanTolakBatal' => 'nullable|required_if:status,diajukan|string|max:500',
+                'feedbackPembatalan' => 'nullable|required_if:status,dibatalkan|string|max:500',
                 ]);
     
             $peminjaman = Peminjaman::with('user')->findOrFail($id);
@@ -91,6 +92,7 @@ class PeminjamanDisetujuiController extends Controller
         } elseif ($request->status === 'dibatalkan') {
             $peminjaman->dibatalkan_oleh = auth()->id();
             $peminjaman->dibatalkan_at = now();
+            $peminjaman->feedbackPembatalan = $request->feedbackPembatalan;
         }
     
             // Handle pembatalan

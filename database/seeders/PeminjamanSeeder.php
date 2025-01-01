@@ -13,7 +13,7 @@ class PeminjamanSeeder extends Seeder
             [
                 'idUser' => 4,
                 'idRuangan' => null,
-                'idSarana' => 3, // Gedung A
+                'idSarana' => 3, 
                 'kegiatan' => 'Workshop Microsoft',
                 'suratPeminjaman' => 'surat-1.pdf',
                 'rundown' => 'rundown-1.pdf',
@@ -25,11 +25,10 @@ class PeminjamanSeeder extends Seeder
                 'statusPembayaran' => 'tidak',
                 'statusPengembalian' => 'belum'
             ],
-            // Status: diajukan (Ruangan)
             [
                 'idUser' => 4,
                 'idRuangan' => 1,
-                'idSarana' => 1, // Gedung A
+                'idSarana' => 1, 
                 'kegiatan' => 'Seminar Tugas Akhir',
                 'suratPeminjaman' => 'surat-1.pdf',
                 'rundown' => 'rundown-1.pdf',
@@ -62,7 +61,7 @@ class PeminjamanSeeder extends Seeder
             [
                 'idUser' => 4,
                 'idRuangan' => 3,
-                'idSarana' => 1, // Gedung A
+                'idSarana' => 1, 
                 'kegiatan' => 'Workshop Robotika',
                 'suratPeminjaman' => 'surat-3.pdf',
                 'rundown' => 'rundown-3.pdf',
@@ -99,7 +98,7 @@ class PeminjamanSeeder extends Seeder
             [
                 'idUser' => 4,
                 'idRuangan' => 1,
-                'idSarana' => 1, // Gedung A
+                'idSarana' => 1, 
                 'kegiatan' => 'Rapat Kerja Fakultas',
                 'suratPeminjaman' => 'surat-5.pdf',
                 'rundown' => 'rundown-5.pdf',
@@ -142,7 +141,7 @@ class PeminjamanSeeder extends Seeder
             [
                 'idUser' => 4,
                 'idRuangan' => 2,
-                'idSarana' => 1, // Gedung A
+                'idSarana' => 1, 
                 'kegiatan' => 'Seminar Nasional',
                 'suratPeminjaman' => 'surat-7.pdf',
                 'rundown' => 'rundown-7.pdf',
@@ -181,7 +180,7 @@ class PeminjamanSeeder extends Seeder
             [
                 'idUser' => 4,
                 'idRuangan' => 1,
-                'idSarana' => 1, // Gedung A
+                'idSarana' => 1, 
                 'kegiatan' => 'Workshop Programming',
                 'suratPeminjaman' => 'surat-9.pdf',
                 'rundown' => 'rundown-9.pdf',
@@ -224,7 +223,7 @@ class PeminjamanSeeder extends Seeder
             [
                 'idUser' => 4,
                 'idRuangan' => 3,
-                'idSarana' => 1, // Gedung A
+                'idSarana' => 1, 
                 'kegiatan' => 'Pelatihan Komputer',
                 'suratPeminjaman' => 'surat-11.pdf',
                 'rundown' => 'rundown-11.pdf',
@@ -261,7 +260,7 @@ class PeminjamanSeeder extends Seeder
             [
                 'idUser' => 4,
                 'idRuangan' => 1,
-                'idSarana' => 1, // Gedung A
+                'idSarana' => 1, 
                 'kegiatan' => 'Ujian Akhir Semester',
                 'suratPeminjaman' => 'surat-13.pdf',
                 'rundown' => 'rundown-13.pdf',
@@ -283,7 +282,7 @@ class PeminjamanSeeder extends Seeder
             [
                'idUser' => 4,
                 'idRuangan' => 1,
-                'idSarana' => 1, // Gedung A
+                'idSarana' => 1, 
                 'kegiatan' => 'Wisuda Periode I',
                 'suratPeminjaman' => 'surat-14.pdf',
                 'rundown' => 'rundown-14.pdf',

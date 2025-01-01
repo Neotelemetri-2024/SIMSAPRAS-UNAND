@@ -100,7 +100,7 @@
                                    <td class="px-6 py-4">
                                     <button data-modal-target="editModalDisetujui{{ $item->id }}"
                                         data-modal-toggle="editModalDisetujui{{ $item->id }}"
-                                        class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200">
+                                        class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -230,35 +230,31 @@
 
     @foreach ($peminjamanDisetujui as $item)
     <div id="editModalDisetujui{{ $item->id }}" tabindex="-1" aria-hidden="true"
-        class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+        class="fixed inset-0 z-[60] hidden overflow-hidden" data-modal-backdrop="static">
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModalDisetujui{{ $item->id }}"></div>
         
-        <!-- Modal Container -->
-        <div class="flex min-h-screen items-center justify-center p-4">
-        <div class="relative w-full max-w-4xl">
-            <!-- Modal Content -->
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <!-- Modal Header -->
-                <div class="flex items-start justify-between p-5 border-b rounded-t dark:border-gray-600 bg-gray-50">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                        Detail Peminjaman
-                    </h3>
-                    <button type="button"
-                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
-                        data-modal-hide="editModalDisetujui{{ $item->id }}">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Modal Body -->
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div class="relative w-full max-w-2xl">
+                    <div class="relative flex flex-col max-h-[90vh] bg-white rounded-lg shadow">
+                        <div class="sticky top-0 z-10 flex items-start justify-between p-5 border-b rounded-t bg-gray-50">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+                                <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                Detail Peminjaman
+                            </h3>
+                        <button type="button"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
+                            data-modal-hide="editModalDisetujui{{ $item->id }}">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto">
                 <div class="p-6 space-y-6">
                     <!-- Informasi Peminjam -->
                     <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
@@ -364,7 +360,7 @@
                                 $hasHistory = false;
                             @endphp
 
-                            @if($item->disetujui_at)
+                            @if($item->disetujui_at && $item->disetujui_oleh)
                                 @php $hasHistory = true; @endphp
                                 <div class="flex items-center text-blue-600">
                                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -372,7 +368,7 @@
                                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                     <div>
-                                        <span class="font-medium">Disetujui</span>
+                                        <span class="font-medium">Disetujui oleh {{ optional($item->disetujuiOleh)->name }}</span>
                                         <div class="text-sm text-gray-500">
                                             {{ \Carbon\Carbon::parse($item->diajukan_at)->format('d/m/Y H:i') }}
                                         </div>
@@ -413,53 +409,10 @@
                             @endif
                         </div>
                     </div>
-                    <form id="updateForm{{ $item->id }}" action="{{ route('peminjaman.updateStatusDisetujui', $item->id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                </svg>
-                                Aksi
-                            </h4>
-                            <div class="space-y-4">
-                                <!-- Status Selection -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Update Status</label>
-                                    <select id="statusSelect{{ $item->id }}" name="status"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                        required onchange="toggleFeedbackForm({{ $item->id }})">
-                                            @if($item->totalTarif == 0)
-                                                <option value="disetujui">Setujui</option>
-                                            @endif
-                                            <option value="ditolak">Tolak</option>
-                                            @if($item->totalTarif > 0)
-                                                <option value="diproses">Proses</option>
-                                            @endif
-                                    </select>
-                                </div>
-
-                                <!-- Feedback Form (Hidden by default) -->
-                                <div id="feedbackForm{{ $item->id }}" class="hidden">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                                        Alasan Penolakan
-                                    </label>
-                                    <textarea name="feedbackPenolakan" rows="3"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                        placeholder="Masukkan alasan penolakan..."></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
+                </div>
+            </div>
                 <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 bg-gray-50 rounded-b">
-                        <button type="button" onclick="confirmUpdate({{ $item->id }})"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                            Simpan Perubahan
-                        </button>
-                    
-                    @if(auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan')
+                    @if(auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan' && $item->tanggalPeminjaman->isNotEmpty() && $item->tanggalPeminjaman->first()->tanggal > now()->format('Y-m-d'))
                         <button data-modal-toggle="batalModalDisetujui{{ $item->id }}"
                             data-modal-target="batalModalDisetujui{{ $item->id }}"
                             class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
@@ -468,7 +421,7 @@
                     @endif
 
                     <button type="button"
-                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900"
+                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900"
                         data-modal-hide="editModalDisetujui{{ $item->id }}">
                         Tutup
                     </button>
@@ -476,6 +429,8 @@
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>
 
     @endforeach
@@ -518,7 +473,7 @@
                     <div class="mt-4">
                         <textarea id="feedbackPembatalan{{ $item->id }}" 
                             rows="4" 
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" 
                             placeholder="Masukkan alasan pembatalan..."></textarea>
                     </div>
                 </div>
@@ -532,9 +487,8 @@
                         </svg>
                         Batalkan Peminjaman
                     </button>
-                    <button type="button"
-                        onclick="closeModal('batalModalDisetujui{{ $item->id }}')"
-                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 inline-flex items-center">
+                    <button data-modal-hide="batalModalDisetujui{{ $item->id }}"
+                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 inline-flex items-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
@@ -582,12 +536,6 @@
             if (modal) {
                 modal.classList.add('hidden');
                 document.body.classList.remove('overflow-hidden');
-
-                // Hapus backdrop
-                const backdrop = modal.querySelector('.bg-black');
-                if (backdrop) {
-                    backdrop.style.display = 'none';
-                }
             }
         });
     });
@@ -727,7 +675,6 @@
             });
         });
 
-        // Function to handle cancellation confirmation
         function konfirmasiBatalkan(id) {
             const feedbackPembatalan = document.getElementById(`feedbackPembatalan${id}`).value;
             
@@ -750,10 +697,8 @@
                 cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Ya, Batalkan!',
                 cancelButtonText: 'Tidak',
-                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Show loading state
                     Swal.fire({
                         title: 'Memproses...',
                         text: 'Mohon tunggu sebentar',
@@ -765,24 +710,33 @@
                         }
                     });
 
-                    // Send cancellation request
-                    fetch(`/admin/peminjaman/${id}/batal`, {
-                        method: 'PUT',
+                    // Siapkan data untuk dikirim
+                    const formData = new FormData();
+                    formData.append('status', 'dibatalkan');
+                    formData.append('feedbackPembatalan', feedbackPembatalan);
+                    formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+                    formData.append('_method', 'PUT');
+
+                    // Kirim request dengan FormData
+                    fetch(`/admin/peminjaman/${id}/update-status-disetujui`, {
+                        method: 'POST',
+                        body: formData,
                         headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            feedbackPembatalan: feedbackPembatalan
-                        })
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        }
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // Close the modal first
-                            closeModal(`batalModalDisetujui${id}`);
-                            
-                            // Show success message and reload
+                            // Tutup modal pembatalan
+                            const modal = document.getElementById(`batalModalDisetujui${id}`);
+                            if (modal) {
+                                modal.classList.add('hidden');
+                                document.body.classList.remove('overflow-hidden');
+                            }
+
+                            // Tampilkan pesan sukses
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Berhasil!',

@@ -100,7 +100,7 @@
                                    <td class="px-6 py-4">
                                     <button data-modal-target="editModalDitolak{{ $item->id }}"
                                         data-modal-toggle="editModalDitolak{{ $item->id }}"
-                                        class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200">
+                                        class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -230,35 +230,31 @@
 
     @foreach ($peminjamanDitolak as $item)
     <div id="editModalDitolak{{ $item->id }}" tabindex="-1" aria-hidden="true"
-        class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+        class="fixed inset-0 z-[60] hidden overflow-hidden" data-modal-backdrop="static">
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModalDitolak{{ $item->id }}"></div>
         
-        <!-- Modal Container -->
-        <div class="flex min-h-screen items-center justify-center p-4">
-        <div class="relative w-full max-w-4xl">
-            <!-- Modal Content -->
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <!-- Modal Header -->
-                <div class="flex items-start justify-between p-5 border-b rounded-t dark:border-gray-600 bg-gray-50">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                        Detail Peminjaman
-                    </h3>
-                    <button type="button"
-                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
-                        data-modal-hide="editModalDitolak{{ $item->id }}">
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 14 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Modal Body -->
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div class="relative w-full max-w-2xl">
+                    <div class="relative flex flex-col max-h-[90vh] bg-white rounded-lg shadow">
+                        <div class="sticky top-0 z-10 flex items-start justify-between p-5 border-b rounded-t bg-gray-50">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+                                <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                Detail Peminjaman
+                            </h3>
+                        <button type="button"
+                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
+                            data-modal-hide="editModalDitolak{{ $item->id }}">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto">
                 <div class="p-6 space-y-6">
                     <!-- Informasi Peminjam -->
                     <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
@@ -360,24 +356,71 @@
                             Riwayat Status
                         </h4>
                         <div class="space-y-3">
-                            @php
-                                $hasHistory = false;
-                            @endphp
-
-                            @if($item->disetujui_at)
-                                @php $hasHistory = true; @endphp
-                                <div class="flex items-center text-blue-600">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <div>
-                                        <span class="font-medium">Disetujui</span>
-                                        <div class="text-sm text-gray-500">
-                                            {{ \Carbon\Carbon::parse($item->diajukan_at)->format('d/m/Y H:i') }}
-                                        </div>
+                            @if($item->diproses_at)
+                            <div class="flex items-center text-yellow-600">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <span class="font-medium">Diproses oleh {{ optional($item->diprosesOleh)->name }}</span>
+                                    <div class="text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($item->diproses_at)->format('d/m/Y H:i') }}
                                     </div>
                                 </div>
+                            </div>
+                            @endif
+                            @if($item->disetujui_at)
+                            <div class="flex items-center text-green-600">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <span class="font-medium">Disetujui oleh {{ optional($item->disetujuiOleh)->name }}</span>
+                                    <div class="text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($item->disetujui_at)->format('d/m/Y H:i') }}
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                            @if($item->ditolak_at)
+                            <div class="flex items-center text-red-600">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <span class="font-medium">Ditolak oleh {{ optional($item->ditolakOleh)->name }}</span>
+                                    <div class="text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($item->ditolak_at)->format('d/m/Y H:i') }}
+                                    </div>
+                                    @if($item->feedbackPenolakan)
+                                    <div class="text-sm text-red-500 mt-1">
+                                        Alasan: {{ $item->feedbackPenolakan }}
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                            @endif
+                            @if($item->dibatalkan_at)
+                            <div class="flex items-center text-gray-600">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <span class="font-medium">Dibatalkan oleh {{ optional($item->dibatalkanOleh)->name }}</span>
+                                    <div class="text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($item->dibatalkan_at)->format('d/m/Y H:i') }}
+                                    </div>
+                                    @if($item->feedbackPembatalan)
+                                    <div class="text-sm text-gray-500 mt-1">
+                                        Alasan: {{ $item->feedbackPembatalan }}
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
                             @endif
                         </div>
                     </div>
@@ -414,9 +457,11 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
                 <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 bg-gray-50 rounded-b">
                     <button type="button"
-                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900"
+                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900"
                         data-modal-hide="editModalDitolak{{ $item->id }}">
                         Tutup
                     </button>
