@@ -7,6 +7,10 @@ use App\Models\Peminjaman;
 use App\Models\Notifikasi;
 use Illuminate\Http\Request;
 use App\Services\NotificationService;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PeminjamanExport;
+use Illuminate\Support\Facades\Log; // Tambahkan ini
+
 
 class PeminjamanSelesaiController extends Controller
 {
@@ -19,6 +23,13 @@ class PeminjamanSelesaiController extends Controller
 
     public function index(Request $request)
     {
+        Peminjaman::where('status', 'disetujui')
+        ->whereHas('tanggalPeminjaman', function($query) {
+            $query->where('tanggal', '<', now());
+        })
+        ->update([
+            'status' => 'selesai'
+        ]);
         $search = $request->input('search');
         $sort = $request->input('sort');
         $today = now();
@@ -157,6 +168,36 @@ class PeminjamanSelesaiController extends Controller
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
+        }
+    }
+    public function export(Request $request)
+    {
+        try {
+            $request->validate([
+                'start_date' => 'required|date',
+                'end_date' => 'required|date|after_or_equal:start_date',
+                'filter_type' => 'required|in:created,booking'
+            ]);
+    
+            $filename = 'peminjaman_selesai_' . date('Y-m-d') . '.xlsx';
+            
+            Log::info('Starting export with params:', $request->all());
+    
+            return Excel::download(
+                new PeminjamanExport(
+                    $request->start_date, 
+                    $request->end_date,
+                    $request->filter_type
+                ), 
+                $filename
+            );
+        } catch (\Exception $e) {
+            Log::error('Export error:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return back()->with('error', 'Terjadi kesalahan saat mengexport data: ' . $e->getMessage());
         }
     }
 
