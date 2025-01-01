@@ -10,6 +10,21 @@ class PeminjamanSeeder extends Seeder
     public function run()
     {
         $peminjaman = [
+            [
+                'idUser' => 4,
+                'idRuangan' => null,
+                'idSarana' => 3, // Gedung A
+                'kegiatan' => 'Workshop Microsoft',
+                'suratPeminjaman' => 'surat-1.pdf',
+                'rundown' => 'rundown-1.pdf',
+                'instansi' => 'Fakultas Teknologi Informasi',
+                'estimasiPeserta' => 30,
+                'totalTarif' => 0,
+                'isUnand' => true,
+                'status' => 'diajukan',
+                'statusPembayaran' => 'tidak',
+                'statusPengembalian' => 'belum'
+            ],
             // Status: diajukan (Ruangan)
             [
                 'idUser' => 4,
