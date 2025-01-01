@@ -63,15 +63,11 @@
 </style>
 @endsection
 @section('content')
-<div class="p-6 sm:p-8 space-y-8">
+<div class="p-4 sm:p-6">
+    <!-- Page Title -->
+    <h5 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Kalender Peminjaman</h5>
    <!-- Header Section -->
    <div class="space-y-6">
-      <div class="flex justify-between items-center">
-         <h2 class="text-3xl font-bold text-gray-900">Kalender Peminjaman</h2>
-         <div class="text-sm text-gray-500">
-            {{ now()->format('l, d F Y') }}
-         </div>
-      </div>
       <!-- Header Controls: Legend and Filters -->
       <div class="bg-white rounded-xl shadow-md overflow-hidden">
          <div class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">

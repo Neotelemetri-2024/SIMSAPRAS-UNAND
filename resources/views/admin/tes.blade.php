@@ -1,27 +1,27 @@
 @extends('layouts.main')
 
 @section('content')
-<div class="p-4 sm:p-6">
-    <!-- Page Title -->
-    <h5 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Dashboard Overview</h5>
-    <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
-        <!-- Total Sarana Card -->
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
-            <div class="p-3 mr-4 text-blue-500 bg-blue-100 rounded-full">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                </svg>
-            </div>
-            <div>
-                <p class="mb-2 text-sm font-medium text-gray-600">
-                    Total Sarana
-                </p>
-                <p class="text-lg font-semibold text-gray-700">
-                    {{ $sarana->count() }}
-                </p>
-            </div>
+
+<div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
+    <!-- Total Sarana Card -->
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
+        <div class="p-3 mr-4 text-blue-500 bg-blue-100 rounded-full">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
         </div>
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
+        <div>
+            <p class="mb-2 text-sm font-medium text-gray-600">
+                Total Sarana
+            </p>
+            <p class="text-lg font-semibold text-gray-700">
+                {{ $sarana->count() }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Total Users Card -->
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
         <div class="p-3 mr-4 text-green-500 bg-green-100 rounded-full">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -35,8 +35,10 @@
                 {{ $totalUser }}
             </p>
         </div>
-        </div>
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
+    </div>
+
+    <!-- Total Instansi Card -->
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
         <div class="p-3 mr-4 text-purple-500 bg-purple-100 rounded-full">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
@@ -50,8 +52,10 @@
                 {{ $totalInstansi }}
             </p>
         </div>
-        </div>
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
+    </div>
+
+    <!-- Total Peminjaman Card -->
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
         <div class="p-3 mr-4 text-red-500 bg-red-100 rounded-full">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
@@ -65,8 +69,10 @@
                 {{ $totalPeminjaman }}
             </p>
         </div>
-        </div>
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
+    </div>
+
+    <!-- Peminjaman Masuk Card -->
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
         <div class="p-3 mr-4 text-blue-500 bg-blue-100 rounded-full">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -80,8 +86,10 @@
                 {{ $totalPeminjamanMasuk }}
             </p>
         </div>
-        </div>
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
+    </div>
+
+    <!-- Peminjaman Diproses Card -->
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
         <div class="p-3 mr-4 text-yellow-500 bg-yellow-100 rounded-full">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -95,8 +103,10 @@
                 {{ $totalPeminjamanDiproses }}
             </p>
         </div>
-        </div>
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
+    </div>
+
+    <!-- Peminjaman Disetujui Card -->
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
         <div class="p-3 mr-4 text-green-500 bg-green-100 rounded-full">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -110,8 +120,10 @@
                 {{ $totalPeminjamanDisetujui }}
             </p>
         </div>
-        </div>
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
+    </div>
+
+    <!-- Peminjaman Ditolak Card -->
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
         <div class="p-3 mr-4 text-red-500 bg-red-100 rounded-full">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -125,8 +137,9 @@
                 {{ $totalPeminjamanDitolak }}
             </p>
         </div>
-        </div>
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
+    </div>
+
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100 xl:col-start-2">
         <div class="p-3 mr-4 text-gray-500 bg-gray-100 rounded-full">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -141,8 +154,11 @@
                 {{ $totalPeminjamanDibatalkan }}
             </p>
         </div>
-        </div>
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
+    </div>
+
+    {{-- Peminjaman Diajukan Batal --}}
+
+    <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100 xl:col-start-3">
         <div class="p-3 mr-4 text-purple-500 bg-purple-100 rounded-full">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -157,70 +173,65 @@
                 {{ $totalPeminjamanDiajukanBatal }}
             </p>
         </div>
-        </div>
-    
+    </div>
+</div>
 
-        <!-- Keep all other stat cards with same structure -->
-        <!-- ... other cards ... -->
+<div class="grid gap-6">
+    <!-- Monthly Revenue Chart Card -->
+    <div class="bg-white rounded-lg shadow-xs p-4">
+        <h2 class="text-lg font-semibold text-gray-700 mb-4">Monthly Revenue Trend</h2>
+        <div class="h-64">
+            <canvas id="revenueChart"></canvas>
+        </div>
     </div>
 
-    <!-- Charts Grid -->
-    <div class="grid gap-6">
-        <!-- Monthly Revenue Chart -->
+    <!-- Three Charts Row -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Quarterly Sales Chart -->
         <div class="bg-white rounded-lg shadow-xs p-4">
-            <h2 class="text-lg font-semibold text-gray-700 mb-4">Monthly Revenue Trend</h2>
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Quarterly Sales</h2>
+            <div class="h-48">
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Traffic Sources Chart -->
+        <div class="bg-white rounded-lg shadow-xs p-4">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Sebaran Instansi Tertinggi</h2>
+            <div class="h-48">
+                <canvas id="doughnutChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Weekly Performance Chart -->
+        <div class="bg-white rounded-lg shadow-xs p-4">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Weekly Performance</h2>
+            <div class="h-48">
+                <canvas id="lineChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Two Charts Row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Product Distribution Chart -->
+        <div class="bg-white rounded-lg shadow-xs p-4">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Sebaran Sarana Tertinggi</h2>
             <div class="h-64">
-                <canvas id="revenueChart"></canvas>
+                <canvas id="pieChart"></canvas>
             </div>
         </div>
 
-        <!-- Three Charts Row -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Quarterly Sales Chart -->
-            <div class="bg-white rounded-lg shadow-xs p-4">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4">Quarterly Sales</h2>
-                <div class="h-48">
-                    <canvas id="barChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Traffic Sources Chart -->
-            <div class="bg-white rounded-lg shadow-xs p-4">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4">Sebaran Instansi Tertinggi</h2>
-                <div class="h-48">
-                    <canvas id="doughnutChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Weekly Performance Chart -->
-            <div class="bg-white rounded-lg shadow-xs p-4">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4">Weekly Performance</h2>
-                <div class="h-48">
-                    <canvas id="lineChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Two Charts Row -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Product Distribution Chart -->
-            <div class="bg-white rounded-lg shadow-xs p-4">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4">Sebaran Sarana Tertinggi</h2>
-                <div class="h-64">
-                    <canvas id="pieChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Income vs Expenses Chart -->
-            <div class="bg-white rounded-lg shadow-xs p-4">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4">Income vs Expenses</h2>
-                <div class="h-64">
-                    <canvas id="stackedBarChart"></canvas>
-                </div>
+        <!-- Income vs Expenses Chart -->
+        <div class="bg-white rounded-lg shadow-xs p-4">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Income vs Expenses</h2>
+            <div class="h-64">
+                <canvas id="stackedBarChart"></canvas>
             </div>
         </div>
     </div>
 </div>
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
