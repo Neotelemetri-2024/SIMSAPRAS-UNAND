@@ -346,7 +346,6 @@
                         </div>
                     </div>
 
-                    <!-- Riwayat Status -->
                     <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                         <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                             <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -356,24 +355,71 @@
                             Riwayat Status
                         </h4>
                         <div class="space-y-3">
-                            @php
-                                $hasHistory = false;
-                            @endphp
-
-                            @if($item->disetujui_at && $item->disetujui_oleh)
-                                @php $hasHistory = true; @endphp
-                                <div class="flex items-center text-blue-600">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <div>
-                                        <span class="font-medium">Disetujui oleh {{ optional($item->disetujuiOleh)->name }}</span>
-                                        <div class="text-sm text-gray-500">
-                                            {{ \Carbon\Carbon::parse($item->diajukan_at)->format('d/m/Y H:i') }}
-                                        </div>
+                            @if($item->diproses_at)
+                            <div class="flex items-center text-yellow-600">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <span class="font-medium">Diproses oleh {{ optional($item->diprosesOleh)->name }}</span>
+                                    <div class="text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($item->diproses_at)->format('d/m/Y H:i') }}
                                     </div>
                                 </div>
+                            </div>
+                            @endif
+                            @if($item->disetujui_at)
+                            <div class="flex items-center text-green-600">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <span class="font-medium">Disetujui oleh {{ optional($item->disetujuiOleh)->name }}</span>
+                                    <div class="text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($item->disetujui_at)->format('d/m/Y H:i') }}
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                            @if($item->ditolak_at)
+                            <div class="flex items-center text-red-600">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <span class="font-medium">Ditolak oleh {{ optional($item->ditolakOleh)->name }}</span>
+                                    <div class="text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($item->ditolak_at)->format('d/m/Y H:i') }}
+                                    </div>
+                                    @if($item->feedbackPenolakan)
+                                    <div class="text-sm text-red-500 mt-1">
+                                        Alasan: {{ $item->feedbackPenolakan }}
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                            @endif
+                            @if($item->dibatalkan_at)
+                            <div class="flex items-center text-gray-600">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <span class="font-medium">Dibatalkan oleh {{ optional($item->dibatalkanOleh)->name }}</span>
+                                    <div class="text-sm text-gray-500">
+                                        {{ \Carbon\Carbon::parse($item->dibatalkan_at)->format('d/m/Y H:i') }}
+                                    </div>
+                                    @if($item->feedbackPembatalan)
+                                    <div class="text-sm text-gray-500 mt-1">
+                                        Alasan: {{ $item->feedbackPembatalan }}
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
                             @endif
                         </div>
                     </div>
