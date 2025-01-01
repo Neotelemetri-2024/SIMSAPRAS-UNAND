@@ -98,7 +98,7 @@
                                    <td class="px-6 py-4">
                                     <button data-modal-target="editModalDiajukan{{ $item->id }}"
                                         data-modal-toggle="editModalDiajukan{{ $item->id }}"
-                                        class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200">
+                                        class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -224,22 +224,22 @@
         </div>
     </div>
 
-    @foreach ($peminjamanDiajukan as $item)
-    <div id="editModalDiajukan{{ $item->id }}" tabindex="-1" aria-hidden="true"
-        class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+@foreach ($peminjamanDiajukan as $item)
+<div id="editModalDiajukan{{ $item->id }}" tabindex="-1" aria-hidden="true"
+        class="fixed inset-0 z-[60] hidden overflow-hidden" data-modal-backdrop="static">
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModalDiajukan{{ $item->id }}"></div>
         
-        <div class="flex min-h-screen items-center justify-center p-4">
-            <div class="relative w-full max-w-4xl">
-                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                    <div class="flex items-start justify-between p-5 border-b rounded-t dark:border-gray-600 bg-gray-50">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
-                            <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                            </svg>
-                            Detail Peminjaman
-                        </h3>
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div class="relative w-full max-w-2xl">
+                    <div class="relative flex flex-col max-h-[90vh] bg-white rounded-lg shadow">
+                        <div class="sticky top-0 z-10 flex items-start justify-between p-5 border-b rounded-t bg-gray-50">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+                                <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                Detail Peminjaman
+                            </h3>
                         <button type="button"
                             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
                             data-modal-hide="editModalDiajukan{{ $item->id }}">
@@ -250,15 +250,17 @@
                             </svg>
                         </button>
                     </div>
-                    <div class="p-6 space-y-6">
-                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                                Informasi Peminjam
-                            </h4>
+                    <div class="flex-1 overflow-y-auto">
+                        <div class="p-6 space-y-6">
+                            {{-- Informasi Peminjam Section --}}
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                    Informasi Peminjam
+                                </h4>
                             <div class="grid grid-cols-2 gap-4 text-sm">
                                 <div class="space-y-2">
                                     <p class="flex items-center">
@@ -336,7 +338,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        @if($item->diajukan_at)
                         <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                             <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                                 <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -350,7 +352,6 @@
                                     $hasHistory = false;
                                 @endphp
 
-                                @if($item->diajukan_at)
                                     @php $hasHistory = true; @endphp
                                     <div class="flex items-center text-blue-600">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -364,9 +365,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                @endif
                             </div>
                         </div>
+                        @endif
+
                         <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                             <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                                 <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -414,7 +416,7 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Update Status</label>
                                         <select id="statusSelect{{ $item->id }}" name="status"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                                             required onchange="toggleFeedbackForm({{ $item->id }})">
                                                 @if($item->totalTarif == 0)
                                                     <option value="disetujui">Setujui</option>
@@ -431,28 +433,30 @@
                                             Alasan Penolakan
                                         </label>
                                         <textarea name="feedbackPenolakan" rows="3"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                                             placeholder="Masukkan alasan penolakan..."></textarea>
                                     </div>
                                 </div>
                             </div>
                         </form>
-                    <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 bg-gray-50 rounded-b">
+                    </div>
+                </div>
+                        <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 bg-gray-50 rounded-b">
                             <button type="button" onclick="confirmUpdate({{ $item->id }})"
-                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                 Simpan Perubahan
                             </button>
                         
                         @if(auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan')
-                            <button data-modal-toggle="batalModalDiajukan{{ $item->id }}"
-                                data-modal-target="batalModalDiajukan{{ $item->id }}"
-                                class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                                Batalkan Peminjaman
-                            </button>
+                        <button data-modal-toggle="batalModalDiajukan{{ $item->id }}"
+                            data-modal-target="batalModalDiajukan{{ $item->id }}"
+                            class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                            Batalkan Peminjaman
+                        </button>
                         @endif
 
-                        <button type="button"
-                            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900"
+                        <button 
+                            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900"
                             data-modal-hide="editModalDiajukan{{ $item->id }}">
                             Tutup
                         </button>
@@ -461,8 +465,8 @@
             </div>
         </div>
     </div>    
+    </div>
 </div>
-
     @endforeach
     @foreach ($peminjamanDiajukan as $item)
 <div id='batalModalDiajukan{{ $item->id }}' tabindex="-1" aria-hidden="true" 
@@ -497,7 +501,7 @@
                     <div class="mt-4">
                         <textarea id="feedbackPembatalan{{ $item->id }}" 
                             rows="4" 
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" 
                             placeholder="Masukkan alasan pembatalan..."></textarea>
                     </div>
                 </div>
@@ -511,9 +515,8 @@
                         </svg>
                         Batalkan Peminjaman
                     </button>
-                    <button type="button"
-                        onclick="closeModal('batalModalDiajukan{{ $item->id }}')"
-                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 inline-flex items-center">
+                    <button data-modal-hide="batalModalDiajukan{{ $item->id }}"
+                        class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 inline-flex items-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
@@ -529,6 +532,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+
         function closeModal(modalId) {
             const modalElement = document.getElementById(modalId);
             if (modalElement) {
@@ -565,7 +569,7 @@
 
 
         window.addEventListener('click', function(event) {
-            const modals = document.querySelectorAll('[id^="editModalDiajukan"], [id^="batalModalDiajukan"]');
+            const modals = document.querySelectorAll('[id^="editModalDiajukan"]');
             modals.forEach(modal => {
                 if (event.target === modal) {
                     closeModal(modal.id);
@@ -694,7 +698,7 @@
             const feedbackPembatalan = document.getElementById(`feedbackPembatalan${id}`).value;
             
             if (!feedbackPembatalan.trim()) {
-                Swal.fire({
+                Swal.fire({s
                     icon: 'error',
                     title: 'Error!',
                     text: 'Harap isi alasan pembatalan!',
@@ -712,7 +716,6 @@
                 cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Ya, Batalkan!',
                 cancelButtonText: 'Tidak',
-                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
@@ -726,20 +729,33 @@
                         }
                     });
 
-                    fetch(`/admin/peminjaman/${id}/batal`, {
-                        method: 'PUT',
+                    // Siapkan data untuk dikirim
+                    const formData = new FormData();
+                    formData.append('status', 'dibatalkan');
+                    formData.append('feedbackPembatalan', feedbackPembatalan);
+                    formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+                    formData.append('_method', 'PUT');
+
+                    // Kirim request dengan FormData
+                    fetch(`/admin/peminjaman/${id}/update-status-diajukan`, {
+                        method: 'POST',
+                        body: formData,
                         headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            feedbackPembatalan: feedbackPembatalan
-                        })
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        }
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            closeModal(`batalModalDiajukan${id}`);
+                            // Tutup modal pembatalan
+                            const modal = document.getElementById(`batalModalDiajukan${id}`);
+                            if (modal) {
+                                modal.classList.add('hidden');
+                                document.body.classList.remove('overflow-hidden');
+                            }
+
+                            // Tampilkan pesan sukses
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Berhasil!',
