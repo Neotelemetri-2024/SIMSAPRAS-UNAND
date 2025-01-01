@@ -469,10 +469,10 @@
                background-color: #059669 !important;
                border-color: #047857 !important;
            }
-           .status-diproses { 
-               background-color: #f97316 !important;
-               border-color: #ea580c !important;
-           }
+        .status-diproses { 
+    background-color: #facc15 !important; /* kuning */
+    border-color: #eab308 !important; /* kuning yang lebih gelap untuk border */
+}
            .status-ditolak { 
                background-color: #dc2626 !important;
                border-color: #b91c1c !important;

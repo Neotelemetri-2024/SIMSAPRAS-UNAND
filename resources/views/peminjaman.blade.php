@@ -1,4 +1,4 @@
-{{-- @extends('layouts.user')
+@extends('layouts.user')
 
 @section('content')
 <div class="pt-24 pb-16 bg-white">
@@ -520,4 +520,4 @@ document.querySelectorAll('select[name^="jadwal_dates"][name$="[jadwal_id]"]').f
 });
 </script>
 @endpush
-@endsection --}}
+@endsection 
