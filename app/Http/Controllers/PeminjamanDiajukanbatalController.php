@@ -24,7 +24,7 @@ class PeminjamanDiajukanbatalController extends Controller
         $today = now();
 
         $query = Peminjaman::with(['user', 'sarana', 'tanggalPeminjaman.jadwal'])
-            ->where('status', 'diajukan');
+            ->where('status', 'diajukanbatal');
 
         if ($search) {
             $query->whereHas('user', function($q) use ($search) {

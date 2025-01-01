@@ -98,8 +98,8 @@
                                                 </span>
                                     </td>             
                                    <td class="px-6 py-4">
-                                    <button data-modal-target="editModal{{ $item->id }}"
-                                        data-modal-toggle="editModal{{ $item->id }}"
+                                    <button data-modal-target="editModalDisetujui{{ $item->id }}"
+                                        data-modal-toggle="editModalDisetujui{{ $item->id }}"
                                         class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -229,9 +229,9 @@
     </div>
 
     @foreach ($peminjamanDisetujui as $item)
-    <div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true"
+    <div id="editModalDisetujui{{ $item->id }}" tabindex="-1" aria-hidden="true"
         class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
-        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModal{{ $item->id }}"></div>
+        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModalDisetujui{{ $item->id }}"></div>
         
         <!-- Modal Container -->
         <div class="flex min-h-screen items-center justify-center p-4">
@@ -249,7 +249,7 @@
                     </h3>
                     <button type="button"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
-                        data-modal-hide="editModal{{ $item->id }}">
+                        data-modal-hide="editModalDisetujui{{ $item->id }}">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 14 14">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -460,8 +460,8 @@
                         </button>
                     
                     @if(auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan')
-                        <button data-modal-toggle="batalModal{{ $item->id }}"
-                            data-modal-target="batalModal{{ $item->id }}"
+                        <button data-modal-toggle="batalModalDisetujui{{ $item->id }}"
+                            data-modal-target="batalModalDisetujui{{ $item->id }}"
                             class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                             Batalkan Peminjaman
                         </button>
@@ -469,7 +469,7 @@
 
                     <button type="button"
                         class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900"
-                        data-modal-hide="editModal{{ $item->id }}">
+                        data-modal-hide="editModalDisetujui{{ $item->id }}">
                         Tutup
                     </button>
                 </div>
@@ -481,10 +481,10 @@
     @endforeach
     @foreach ($peminjamanDisetujui as $item)
 <!-- Modal Pembatalan -->
-<div id='batalModal{{ $item->id }}' tabindex="-1" aria-hidden="true" 
+<div id='batalModalDisetujui{{ $item->id }}' tabindex="-1" aria-hidden="true" 
     class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
     <!-- Backdrop with higher z-index -->
-    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="batalModal{{ $item->id }}"></div>
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="batalModalDisetujui{{ $item->id }}"></div>
     
     <!-- Modal Container -->
     <div class="flex items-center justify-center min-h-screen p-4">
@@ -502,8 +502,8 @@
                     </h3>
                     <button type="button" 
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                        data-modal-hide="batalModal{{ $item->id }}"
-                        onclick="closeModal('batalModal{{ $item->id }}')">
+                        data-modal-hide="batalModalDisetujui{{ $item->id }}"
+                        onclick="closeModal('batalModalDisetujui{{ $item->id }}')">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                         </svg>
@@ -533,7 +533,7 @@
                         Batalkan Peminjaman
                     </button>
                     <button type="button"
-                        onclick="closeModal('batalModal{{ $item->id }}')"
+                        onclick="closeModal('batalModalDisetujui{{ $item->id }}')"
                         class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 inline-flex items-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -596,7 +596,7 @@
 
         // Click outside modal to close
         window.addEventListener('click', function(event) {
-            const modals = document.querySelectorAll('[id^="editModal"], [id^="batalModal"]');
+            const modals = document.querySelectorAll('[id^="editModalDisetujui"], [id^="batalModalDisetujui"]');
             modals.forEach(modal => {
                 if (event.target === modal) {
                     closeModal(modal.id);
@@ -717,9 +717,9 @@
         }
         // Inisialisasi feedback form saat modal dibuka
         document.addEventListener('DOMContentLoaded', function() {
-            const modals = document.querySelectorAll('[id^="editModal"]');
+            const modals = document.querySelectorAll('[id^="editModalDisetujui"]');
             modals.forEach(modal => {
-                const id = modal.id.replace('editModal', '');
+                const id = modal.id.replace('editModalDisetujui', '');
                 const select = document.getElementById(`statusSelect${id}`);
                 if (select) {
                     toggleFeedbackForm(id);
@@ -780,7 +780,7 @@
                     .then(data => {
                         if (data.success) {
                             // Close the modal first
-                            closeModal(`batalModal${id}`);
+                            closeModal(`batalModalDisetujui${id}`);
                             
                             // Show success message and reload
                             Swal.fire({

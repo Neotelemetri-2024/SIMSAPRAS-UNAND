@@ -172,6 +172,16 @@ class TanggalPeminjamanSeeder extends Seeder
                 'idJadwal' => 2,
                 'tanggal' => Carbon::now()->subWeeks(2)->addDays(1)->format('Y-m-d')
             ],
+            [
+                'idPeminjaman' => 15,
+                'idJadwal' => 3,
+                'tanggal' => Carbon::now()->subWeeks(2)->addDays(2)->format('Y-m-d')
+            ],
+            [
+                'idPeminjaman' => 15,
+                'idJadwal' => 1,
+                'tanggal' => Carbon::now()->subWeeks(2)->addDays(3)->format('Y-m-d')
+            ]
         ];
 
         foreach ($tanggal as $t) {

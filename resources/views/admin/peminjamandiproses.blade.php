@@ -99,7 +99,8 @@
                                     </td>             
                                    <td class="px-6 py-4">
                                         <button 
-                                          data-modal-toggle="editModal{{ $item->id }}"
+                                          data-modal-toggle="editModalDiproses{{ $item->id }}"
+                                          data-modal-target="editModalDiproses{{ $item->id }}"
                                           class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200">
                                           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -229,9 +230,9 @@
     </div>
 
 @foreach ($peminjamanDiproses as $item)
-<div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true"
+<div id="editModalDiproses{{ $item->id }}" tabindex="-1" aria-hidden="true"
     class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
-    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModal{{ $item->id }}"></div>
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModalDiproses{{ $item->id }}"></div>
     
     <!-- Modal Container -->
     <div class="flex min-h-screen items-center justify-center p-4">
@@ -249,7 +250,7 @@
                     </h3>
                     <button type="button"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
-                        data-modal-hide="editModal{{ $item->id }}">
+                        data-modal-hide="editModalDiproses{{ $item->id }}">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 14 14">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -477,7 +478,7 @@
 
                     <button type="button"
                         class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900"
-                        data-modal-hide="editModal{{ $item->id }}">
+                        data-modal-hide="editModalDiproses{{ $item->id }}">
                         Tutup
                     </button>
                 </div>
@@ -488,10 +489,10 @@
 @endforeach
     @foreach ($peminjamanDiproses as $item)
 <!-- Modal Pembatalan -->
-<div id="batalModal{{ $item->id }}" tabindex="-1" aria-hidden="true" 
+<div id="batalModalDiproses{{ $item->id }}" tabindex="-1" aria-hidden="true" 
     class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
     <!-- Backdrop with higher z-index -->
-    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="batalModal{{ $item->id }}"></div>
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="batalModalDiproses{{ $item->id }}"></div>
     
     <!-- Modal Container -->
     <div class="flex items-center justify-center min-h-screen p-4">
@@ -509,8 +510,8 @@
                     </h3>
                     <button type="button" 
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                        data-modal-hide="batalModal{{ $item->id }}"
-                        onclick="closeModal('batalModal{{ $item->id }}')">
+                        data-modal-hide="batalModalDiproses{{ $item->id }}"
+                        onclick="closeModal('batalModalDiproses{{ $item->id }}')">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                         </svg>
@@ -540,7 +541,7 @@
                         Batalkan Peminjaman
                     </button>
                     <button type="button"
-                        onclick="closeModal('batalModal{{ $item->id }}')"
+                        onclick="closeModal('batalModalDiproses{{ $item->id }}')"
                         class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 inline-flex items-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -608,7 +609,7 @@
 
         // Click outside modal to close
         window.addEventListener('click', function(event) {
-            const modals = document.querySelectorAll('[id^="createModal"], [id^="editModal"], [id^="deleteModal"]');
+            const modals = document.querySelectorAll('[id^="editModalDiproses"], [id^="batalModalDiproses"]');
             modals.forEach(modal => {
                 if (event.target === modal) {
                     closeModal(modal.id);
@@ -729,9 +730,9 @@
         }
         // Inisialisasi feedback form saat modal dibuka
         document.addEventListener('DOMContentLoaded', function() {
-            const modals = document.querySelectorAll('[id^="editModal"]');
+            const modals = document.querySelectorAll('[id^="editModalDiproses"]');
             modals.forEach(modal => {
-                const id = modal.id.replace('editModal', '');
+                const id = modal.id.replace('editModalDiproses', '');
                 const select = document.getElementById(`statusSelect${id}`);
                 if (select) {
                     toggleFeedbackForm(id);
@@ -742,7 +743,7 @@
 
         // Function to show modal with backdrop
         function showBatalkanModal(id) {
-            const modalElement = document.getElementById(`batalModal${id}`);
+            const modalElement = document.getElementById(`batalModalDiproses${id}`);
             if (modalElement) {
                 modalElement.classList.remove('hidden');
                 document.body.classList.add('overflow-hidden'); // Prevent background scrolling
@@ -817,7 +818,7 @@
                     .then(data => {
                         if (data.success) {
                             // Close the modal first
-                            closeModal(`batalModal${id}`);
+                            closeModal(`batalModalDiproses${id}`);
                             
                             // Show success message and reload
                             Swal.fire({
@@ -850,7 +851,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Close modal when clicking outside
             document.addEventListener('click', function(event) {
-                const modals = document.querySelectorAll('[id^="batalModal"]');
+                const modals = document.querySelectorAll('[id^="batalModalDiproses"]');
                 modals.forEach(modal => {
                     if (event.target === modal) {
                         closeModal(modal.id);
@@ -861,7 +862,7 @@
             // Handle escape key press
             document.addEventListener('keydown', function(event) {
                 if (event.key === 'Escape') {
-                    const visibleModal = document.querySelector('[id^="batalModal"]:not(.hidden)');
+                    const visibleModal = document.querySelector('[id^="batalModalDiproses"]:not(.hidden)');
                     if (visibleModal) {
                         closeModal(visibleModal.id);
                     }
