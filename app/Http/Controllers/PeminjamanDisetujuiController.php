@@ -19,9 +19,18 @@ class PeminjamanDisetujuiController extends Controller
 
     public function index(Request $request)
     {
-        $search = $request->input('search');
-        $sort = $request->input('sort');
-        $today = now();
+        Peminjaman::where('status', 'disetujui')
+        ->whereHas('tanggalPeminjaman', function($query) {
+            $query->where('tanggal', '<', now());
+        })
+        ->update([
+            'status' => 'selesai'
+        ]);
+
+    // Sisanya biarkan sama seperti code yang sudah ada
+    $search = $request->input('search');
+    $sort = $request->input('sort');
+    $today = now();
 
         $query = Peminjaman::with(['user', 'sarana', 'tanggalPeminjaman.jadwal'])
             ->where('status', 'disetujui');

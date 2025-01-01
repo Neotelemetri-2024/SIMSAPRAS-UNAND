@@ -30,6 +30,7 @@ return new class extends Migration
             $table->enum('statusPembayaran', ['lunas', 'tidak'])->nullable();
             $table->enum('statusPengembalian', ['sudah', 'belum'])->nullable();
             $table->string('buktiPembayaran')->nullable();
+            $table->string('buktiRefund')->nullable();
             $table->text('feedbackPembatalan')->nullable();
             $table->text('alasanPembatalan')->nullable();
             $table->text('alasanTolakBatal')->nullable();

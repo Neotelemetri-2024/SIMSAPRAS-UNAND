@@ -33,6 +33,7 @@ class Peminjaman extends Model
         'alasanTolakBatal',
         'buktiPembayaran',
         'statusSebelumBatal',
+        'buktifRefund',
         'disetujui_at',
         'diproses_at',
         'ditolak_at',

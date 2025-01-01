@@ -141,6 +141,13 @@
                                         </svg>
                                         Dibatalkan
                                     </span>
+                                @elseif($pinjam->status == 'selesai')
+                                <span class="bg-emerald-50 text-emerald-700 text-xs font-medium px-3 py-1.5 rounded-full border border-emerald-200 flex items-center w-fit gap-1">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd"/>
+                                        </svg>
+                                        selesai
+                                    </span>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
@@ -312,6 +319,14 @@
             Detail Pembayaran
         </h4>
 
+        <!-- Informasi Deadline Pembayaran -->
+        <div class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p class="text-yellow-800 text-sm">
+                <span class="font-semibold">Perhatian:</span> Pembayaran harus dilakukan maksimal 3 hari setelah pemesanan
+                (sebelum {{ \Carbon\Carbon::parse($pinjam->created_at)->addDays(3)->format('d F Y H:i') }} WIB)
+            </p>
+        </div>
+
         <!-- Total yang harus dibayar -->
         <div class="mb-6 p-4 bg-white rounded-lg border border-yellow-200">
             <div class="flex justify-between items-center mb-4">
@@ -335,20 +350,70 @@
             </div>
         </div>
 
-        <!-- Tombol Bayar -->
-        <form action="" method="POST">
-            @csrf
-            <button type="submit"
-                class="w-full px-6 py-3 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors flex items-center justify-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Bayar Sekarang - Rp{{ number_format($pinjam->totalTarif, 0, ',', '.') }}
-            </button>
-        </form>
+        <!-- Informasi Rekening -->
+        <div class="mb-6 p-4 bg-white rounded-lg border border-blue-200">
+            <h5 class="font-semibold text-gray-900 mb-3">Informasi Rekening Pembayaran</h5>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-600">Bank</span>
+                    <span class="font-medium">Bank Nagari</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-600">Nomor Rekening</span>
+                    <span class="font-medium">2102.0210.21345-3</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-600">Atas Nama</span>
+                    <span class="font-medium">BLU Universitas Andalas</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Pembayaran dan Upload -->
+        <div class="mb-6">
+            @if($pinjam->buktiPembayaran)
+                <!-- Jika sudah upload bukti -->
+                <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div class="flex items-center text-green-800">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="font-medium">Bukti pembayaran telah diupload</span>
+                    </div>
+                    <div class="mt-3">
+                        <img src="{{ Storage::url($pinjam->buktiPembayaran) }}" 
+                             alt="Bukti Pembayaran" 
+                             class="max-w-xs rounded-lg border border-green-200">
+                    </div>
+                </div>
+            @else
+                <!-- Form Upload jika belum upload -->
+                <form action="{{ route('riwayat.upload-bukti', $pinjam->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    @csrf
+                    <div class="flex flex-col space-y-2">
+                        <label for="buktiPembayaran" class="text-sm font-medium text-gray-700">Upload Bukti Pembayaran</label>
+                        <input type="file" 
+                               name="buktiPembayaran" 
+                               id="buktiPembayaran" 
+                               accept="image/*"
+                               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                               required>
+                        <p class="text-xs text-gray-500">Format: JPG, JPEG, PNG (Max. 2MB)</p>
+                    </div>
+                    <button type="submit"
+                        class="w-full px-6 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
+                        Upload Bukti Pembayaran
+                    </button>
+                </form>
+            @endif
+        </div>
     </div>
-    @endif
+@endif
 
                         <!-- Status Section -->
                         @if($pinjam->status == 'ditolak')

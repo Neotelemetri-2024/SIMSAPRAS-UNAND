@@ -79,6 +79,7 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
     Route::put('/peminjaman/{id}/update-status-diajukanbatal', [PeminjamanDiajukanbatalController::class, 'updateStatusDiajukanbatal'])->name('peminjaman.updateStatusDiajukanbatal');
     Route::get('/peminjaman-batal', [PeminjamanDibatalkanController::class, 'index'])->name('peminjaman.admin.dibatalkan');
     Route::get('/peminjaman-selesai', [PeminjamanSelesaiController::class, 'index'])->name('peminjaman.admin.selesai');
+    Route::get('/peminjaman-selesai/export', [PeminjamanSelesaiController::class, 'export'])->name('peminjaman.export');
 
     // Route::resource('peminjaman', PeminjamanAdminController::class);
     // Route::get('/peminjaman-masuk', [PeminjamanAdminController::class, 'PeminjamanMasuk'])->name('peminjaman.admin.masuk');
