@@ -62,10 +62,23 @@ class PeminjamanDiprosesController extends Controller
             $request->validate([
                 'status' => 'required|in:disetujui,diproses,ditolak,dibatalkan,diajukan',
                 'feedbackPenolakan' => 'nullable|required_if:status,ditolak|string|max:500',
-                ]);
+            ]);
     
             $peminjaman = Peminjaman::with('user')->findOrFail($id);
             $oldStatus = $peminjaman->status;
+    
+            // Add validation for proof of payment before approval
+            if ($request->status === 'disetujui' && !$peminjaman->buktiPembayaran) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Peminjaman tidak dapat disetujui karena belum ada bukti pembayaran.'
+                ], 422);
+            }
+    
+            if ($request->status === 'disetujui') {
+                $peminjaman->disetujui_oleh = auth()->id();
+                $peminjaman->disetujui_at = now();
+            }
 
         if ($request->status === 'disetujui') {
                 $peminjaman->disetujui_oleh = auth()->id();
