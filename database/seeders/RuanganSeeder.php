@@ -17,7 +17,8 @@ class RuanganSeeder extends Seeder
                 'deskripsi' => 'Ruang kuliah lantai 1',
                 'kapasitas' => 40,
                 'fasilitas' => 'AC, Proyektor, 40 kursi',
-                'tarifunand' => 100000,
+                'tariformawa' => 100000,
+                'tarifunit' => 150000,
                 'tarifumum' => 200000,
                 'kelas' => 1,
                 'status' => 'aktif'
@@ -29,7 +30,8 @@ class RuanganSeeder extends Seeder
                 'deskripsi' => 'Ruang kuliah lantai 1',
                 'kapasitas' => 40,
                 'fasilitas' => 'AC, Proyektor, 40 kursi',
-                'tarifunand' => 100000,
+                'tariformawa' => 100000,
+                'tarifunit' => 150000,
                 'tarifumum' => 200000,
                 'kelas' => 1,
                 'status' => 'nonaktif'
@@ -41,7 +43,8 @@ class RuanganSeeder extends Seeder
                 'deskripsi' => 'Ruang kelas besar gedung A',
                 'kapasitas' => 20,
                 'fasilitas' => 'Proyektor, 70 kursi, Papan Tulis',
-                'tarifunand' => 500000,
+                'tariformawa' => 500000,
+                'tarifunit' => 750000,
                 'tarifumum' => 1000000,
                 'kelas' => 1,
                 'status' => 'aktif'

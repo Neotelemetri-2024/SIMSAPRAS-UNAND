@@ -18,8 +18,9 @@ return new class extends Migration
             $table->text('deskripsi');
             $table->integer('kapasitas');
             $table->string('fasilitas');
-            $table->integer('tarifunand')->nullable();
-            $table->integer('tarifumum')->nullable();
+            $table->integer('tariformawa');
+            $table->integer('tarifunit');
+            $table->integer('tarifumum');
             $table->boolean('kelas');
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
