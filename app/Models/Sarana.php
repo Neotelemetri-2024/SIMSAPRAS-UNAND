@@ -16,7 +16,8 @@ class Sarana extends Model
         'nama',
         'fasilitas',
         'kapasitas',
-        'tarifunand',
+        'tariformawa',
+        'tarifunit',
         'tarifumum',
         'status',
     ];

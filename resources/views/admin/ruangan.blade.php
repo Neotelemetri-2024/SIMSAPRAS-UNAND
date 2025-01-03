@@ -278,13 +278,17 @@
                         <!-- Kolom Kanan -->
                         <div class="space-y-6">
                             <div>
-                                <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Mahasiswa UNAND</label>
-                                <input type="number" name="tarifunand" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
-                            </div>
-                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Ormawa UNAND</label>
+                                <input type="number" name="tariformawa" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
+                             </div>
+                             <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Fakultas-Unit UNAND</label>
+                                <input type="number" name="tarifunit" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
+                             </div>
+                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Non-Mahasiswa UNAND</label>
-                                <input type="number" name="tarifumum" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
-                            </div>
+                                <input type="number" name="tarifumum" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
+                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Apakah ini ruang kelas?</label>
                                 <select name="kelas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
@@ -358,7 +362,11 @@
                         <div class="space-y-6">
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Mahasiswa UNAND</label>
-                                <input type="number" name="tarifunand" min="0" value="{{ $item->tarifunand }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                                <input type="number" name="tarifunand" min="0" value="{{ $item->tariformawa }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Fakultas-Unit UNAND</label>
+                                <input type="number" name="tarifunit" min="0" value="{{ $item->tarifunit }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Non-Mahasiswa UNAND</label>

@@ -16,8 +16,6 @@ class SaranaSeeder extends Seeder
                 'gambar' => 'gedung-a.jpg',
                 'deskripsi' => 'Gedung perkuliahan 4 lantai',
                 'fasilitas' => 'AC, Proyektor, Wifi',
-                'tarifunand' => 1000000,
-                'tarifumum' => 2000000,
                 'status' => 'aktif'
             ],
             [
@@ -26,7 +24,8 @@ class SaranaSeeder extends Seeder
                 'gambar' => 'lapangan.jpg',
                 'deskripsi' => 'Lapangan sepakbola standar internasional',
                 'fasilitas' => 'Rumput sintetis, Tribun, Lampu sorot',
-                'tarifunand' => 500000,
+                'tariformawa' => 500000,
+                'tarifunit' => 750000,
                 'tarifumum' => 1000000,
                 'status' => 'nonaktif'
             ],
@@ -36,7 +35,8 @@ class SaranaSeeder extends Seeder
                 'gambar' => 'audi.jpg',
                 'deskripsi' => 'Auditorium dengan kapasitas 1000 orang',
                 'fasilitas' => 'Sound system, AC, Lighting',
-                'tarifunand' => 2000000,
+                'tariformawa' => 2000000,
+                'tarifunit' => 2500000,
                 'tarifumum' => 3000000,
                 'status' => 'aktif'
             ]
