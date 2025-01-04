@@ -12,11 +12,13 @@ class PengumumanSeeder extends Seeder
         $pengumuman = [
             [
                 'judul' => 'Pemeliharaan Sistem',
-                'isi' => 'Sistem akan mengalami pemeliharaan pada tanggal 20 December 2024'
+                'isi' => 'Sistem akan mengalami pemeliharaan pada tanggal 20 December 2024',
+                'penulis' => 2
             ],
             [
                 'judul' => 'Perubahan Jadwal',
-                'isi' => 'Mulai January 2025, jadwal peminjaman akan disesuaikan dengan kalender akademik baru'
+                'isi' => 'Mulai January 2025, jadwal peminjaman akan disesuaikan dengan kalender akademik baru',
+                'penulis' => 2
             ]
         ];
 

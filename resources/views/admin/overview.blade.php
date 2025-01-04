@@ -1,4 +1,3 @@
-{{-- resources/views/admin/overview.blade.php --}}
 @extends('layouts.main')
 @section('styles')
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet'>
@@ -64,14 +63,10 @@
 @endsection
 @section('content')
 <div class="p-4 sm:p-6">
-    <!-- Page Title -->
     <h5 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Kalender Peminjaman</h5>
-   <!-- Header Section -->
    <div class="space-y-6">
-      <!-- Header Controls: Legend and Filters -->
       <div class="bg-white rounded-xl shadow-md overflow-hidden">
          <div class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-            <!-- Calendar Legend -->
             <div class="flex flex-wrap gap-4">
                <div class="legend-item">
                   <div class="legend-color bg-blue-500"></div>
@@ -102,7 +97,6 @@
                     <span class="text-sm font-medium">Selesai</span>
                 </div>
             </div>
-            <!-- Filter Dropdowns -->
             <div class="filter-container flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                <select id="saranaFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5 w-full sm:w-48">
                   <option value="">Semua Sarana</option>
@@ -124,7 +118,7 @@
          </div>
       </div>
    </div>
-   @if (auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan') 
+   @canany(['is-superadmin', 'is-pimpinan'])
    <div class="flex justify-end mb-4">
       <button data-modal-toggle="bookingModal" data-modal-target="bookingModal" 
       type="button" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
@@ -134,8 +128,7 @@
          Tambah Peminjaman
       </button>
    </div>
-   @endif
-   <!-- Calendar Container -->
+   @endcanany
    <div class="calendar-wrapper">
       <div id="calendar-container"></div>
    </div>

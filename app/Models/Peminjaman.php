@@ -3,9 +3,11 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\FiltersSaranaAccess;
 
 class Peminjaman extends Model
 {
+    use FiltersSaranaAccess;
     protected $table = 'peminjaman';
 
     protected $fillable = [
@@ -98,14 +100,12 @@ class Peminjaman extends Model
 
     public function canBeCancelled()
     {
-        // 1. Cek status peminjaman
         $validStatus = in_array($this->status, ['diajukan', 'disetujui', 'diproses']);
 
         if (!$validStatus) {
             return false;
         }
 
-        // 2. Ambil tanggal peminjaman paling awal
         $earliestBookingDate = $this->tanggalPeminjaman()
             ->min('tanggal');
 
@@ -113,14 +113,11 @@ class Peminjaman extends Model
             return false;
         }
 
-        // 3. Convert ke Carbon untuk manipulasi tanggal
         $bookingDate = \Carbon\Carbon::parse($earliestBookingDate)->startOfDay();
         $today = now()->startOfDay();
         
-        // 4. Hitung selisih hari
         $daysDifference = $bookingDate->diffInDays($today);
 
-        // 5. Pembatalan hanya bisa dilakukan jika masih ada waktu >= 3 hari sebelum tanggal booking
         return $daysDifference >= 3 && $bookingDate->greaterThan($today);
     }
     public static function calculateTarif($jadwal_dates, $isUnand, $sarana = null, $ruangan = null)
@@ -134,14 +131,11 @@ class Peminjaman extends Model
             $jadwal = Jadwal::find($jadwalId);
             $jamSelesai = (int)explode(':', $jadwal->selesai)[0];
             
-            // Check if weekend
             $isWeekend = in_array(date('N', strtotime($date)), [6, 7]);
             
-            // Check if extends beyond 4 PM (16:00)
             $isAfterHours = $jamSelesai >= 16;
             
             if ($isWeekend || $isAfterHours) {
-                // Get appropriate tariff based on facility type and user type
                 if ($ruangan) {
                     $tarif = $isUnand ? $ruangan->tarifunand : $ruangan->tarifumum;
                 } else {

@@ -25,7 +25,7 @@ class PeminjamanDitolakController extends Controller
 
         $query = Peminjaman::with(['user', 'sarana', 'tanggalPeminjaman.jadwal'])
             ->where('status', 'ditolak');
-
+        $query->filterByUserAccess(auth()->user());
         if ($search) {
             $query->whereHas('user', function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");

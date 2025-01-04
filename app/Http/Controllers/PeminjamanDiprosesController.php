@@ -25,6 +25,7 @@ class PeminjamanDiprosesController extends Controller
 
         $query = Peminjaman::with(['user', 'sarana', 'tanggalPeminjaman.jadwal'])
             ->where('status', 'diproses');
+        $query->filterByUserAccess(auth()->user());
 
         if ($search) {
             $query->whereHas('user', function($q) use ($search) {

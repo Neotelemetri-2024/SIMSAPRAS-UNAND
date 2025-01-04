@@ -12,10 +12,18 @@ class PenjagaController extends Controller
 {
     public function index(Request $request)
     {
+        $user = auth()->user();
         $search = $request->input("search");
-        $selectedSarana = $request->input("sarana"); // Ubah default menjadi string kosong
+        $selectedSarana = $request->input("sarana");
+
+        $saranaQuery = Sarana::where('status', 'aktif');
+        $saranaQuery->filterByUserAccess($user);
+        $sarana = $saranaQuery->get();
+        
+        $accessibleSaranaIds = $sarana->pluck('id')->toArray();
 
         $penjaga = Penjaga::with('sarana')
+            ->whereIn('idSarana', $accessibleSaranaIds)
             ->when($search, function ($query, $search) {
                 $query->where('nama', 'like', "%{$search}%")
                     ->orWhere('kontak', 'like', "%{$search}%");
@@ -24,9 +32,7 @@ class PenjagaController extends Controller
                 $query->where('idSarana', $selectedSarana);
             })
             ->paginate(5);
-        
-        $sarana = Sarana::where('status', 'aktif')->get();
-        
+
         return view('admin.penjaga', compact('penjaga', 'sarana', 'search', 'selectedSarana'));
     }
 

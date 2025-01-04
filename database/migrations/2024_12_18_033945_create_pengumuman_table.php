@@ -12,6 +12,8 @@ return new class extends Migration
             $table->id();
             $table->string('judul');
             $table->text('isi');
+            $table->unsignedBigInteger('penulis');
+            $table->foreign('penulis')->references('id')->on('users');
             $table->timestamps();
         });
     }

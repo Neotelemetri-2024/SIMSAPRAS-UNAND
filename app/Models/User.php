@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -67,6 +66,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Notifikasi::class, 'penerima');
     }
 
+    public function pengumuman()
+    {
+        return $this->hasMany(Pengumuman::class, 'penulis');
+    }
+
     public function beamsInterest()
     {
         // Generate interest berdasarkan user ID dan role
@@ -83,6 +87,26 @@ class User extends Authenticatable implements MustVerifyEmail
     public function routeNotificationForBeams()
     {
         return $this->beamsInterest();
+    }
+
+    public function saranaAccess()
+    {
+        return $this->belongsToMany(Sarana::class, 'admin_access', 'user_id', 'sarana_id')
+                    ->withTimestamps();
+    }
+
+    // Method untuk mengecek akses ke sarana tertentu
+    public function canAccessSarana($saranaId): bool
+    {
+        if ($this->role === 'superadmin') {
+            return true;
+        }
+        
+        if ($this->role === 'admin') {
+            return $this->saranaAccess()->where('sarana_id', $saranaId)->exists();
+        }
+        
+        return false;
     }
 
     /**
