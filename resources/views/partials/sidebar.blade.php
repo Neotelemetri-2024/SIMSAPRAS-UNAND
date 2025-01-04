@@ -113,12 +113,14 @@
                 </svg>
              </button>
              <ul id="sarana" class="{{ request()->routeIs($saranaRoutes) ? 'block' : 'hidden' }} py-2 space-y-1">
-                <li>
+               @canany(['is-superadmin', 'is-pimpinan'])
+               <li>
                    <a href="{{ route('kategori.index') }}"
                       class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('kategori.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
                       Kategori Sarana
                    </a>
                 </li>
+                @endcanany
                 <li>
                    <a href="{{ route('sarana.index') }}"
                       class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('sarana.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
@@ -133,6 +135,7 @@
                 </li>
              </ul>
           </li>
+          @can('is-superadmin')
           <li>
              <a href="{{ route('jadwal.index') }}"
                 class="flex items-center p-2 rounded-lg group transition-colors duration-200 {{ request()->routeIs('jadwal.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
@@ -142,7 +145,6 @@
                 <span class="ml-3">Jadwal Peminjaman</span>
              </a>
           </li>
-          @can('is-superadmin')
           <li>
              <a href="{{ route('pengguna.index') }}"
                 class="flex items-center p-2 rounded-lg group transition-colors duration-200 {{ request()->routeIs('pengguna.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
@@ -153,7 +155,7 @@
              </a>
           </li>
           @endcan
-          @can('is-superadmin', 'is-admin')
+          @canany(['is-superadmin', 'is-admin'])
           <li>
              <a href="{{ route('pengumuman.index') }}"
                 class="flex items-center p-2 rounded-lg group transition-colors duration-200 {{ request()->routeIs('pengumuman.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
@@ -163,7 +165,7 @@
                 <span class="ml-3">Pengumuman</span>
              </a>
           </li>
-         @endcan
+         @endcanany
        </ul>
     </div>
  </aside>

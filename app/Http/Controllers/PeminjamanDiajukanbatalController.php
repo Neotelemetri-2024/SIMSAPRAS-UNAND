@@ -22,10 +22,9 @@ class PeminjamanDiajukanbatalController extends Controller
         $search = $request->input('search');
         $sort = $request->input('sort');
         $today = now();
-
         $query = Peminjaman::with(['user', 'sarana', 'tanggalPeminjaman.jadwal'])
             ->where('status', 'diajukanbatal');
-
+        $query->filterByUserAccess(auth()->user());
         if ($search) {
             $query->whereHas('user', function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");

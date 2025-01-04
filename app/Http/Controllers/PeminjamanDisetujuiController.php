@@ -27,14 +27,13 @@ class PeminjamanDisetujuiController extends Controller
             'status' => 'selesai'
         ]);
 
-    // Sisanya biarkan sama seperti code yang sudah ada
-    $search = $request->input('search');
-    $sort = $request->input('sort');
-    $today = now();
+        $search = $request->input('search');
+        $sort = $request->input('sort');
+        $today = now();
 
         $query = Peminjaman::with(['user', 'sarana', 'tanggalPeminjaman.jadwal'])
             ->where('status', 'disetujui');
-
+        $query->filterByUserAccess(auth()->user());
         if ($search) {
             $query->whereHas('user', function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");

@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\FiltersSaranaAccess;
 
 class Sarana extends Model
 {
+    use FiltersSaranaAccess;
     use HasFactory;
 
     protected $fillable = [
@@ -45,6 +47,12 @@ class Sarana extends Model
 
     public function peminjaman()
     {
-        return $this->hasMany(Peminjaman::class, 'idSarana'); // Tambahkan foreign key
+        return $this->hasMany(Peminjaman::class, 'idSarana'); 
+    }
+
+    public function admins()
+    {
+        return $this->belongsToMany(User::class, 'admin_access', 'sarana_id', 'user_id')
+                    ->withTimestamps();
     }
 }

@@ -1,19 +1,17 @@
 @extends('layouts.main')
 @section('content')
 <div class="p-4 sm:p-6">
-   <!-- Card Container -->
    <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
-      <!-- Card Header -->
       <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
          <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Daftar Sarana</h5>
+         @can('is-superadmin')
          <button data-modal-target="createModal" data-modal-toggle="createModal" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">
          + Tambah Sarana
          </button>
+         @endcan
       </div>
-      {{-- Search and Filter Bar --}}
       <div class="p-5 border-b border-gray-200 dark:border-gray-700">
          <form method="GET" action="{{ route('sarana.index') }}" class="flex gap-3">
-            {{-- Search Input --}}
             <div class="flex-1">
                   <div class="relative">
                      <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -29,11 +27,9 @@
                   </div>
             </div>
 
-            {{-- Category Filter Dropdown --}}
             <div class="w-48">
                <select name="filter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
                   <option value="">Semua Sarana</option>
-                  <!-- Kategori -->
                   <optgroup label="Kategori">
                      @foreach($kategori as $kat)
                            <option value="kategori_{{ $kat->id }}" {{ request('filter') == 'kategori_' . $kat->id ? 'selected' : '' }}>
@@ -41,7 +37,6 @@
                            </option>
                      @endforeach
                   </optgroup>
-                  <!-- Status -->
                   <optgroup label="Status">
                      <option value="status_aktif" {{ request('filter') == 'status_aktif' ? 'selected' : '' }}>Aktif</option>
                      <option value="status_nonaktif" {{ request('filter') == 'status_nonaktif' ? 'selected' : '' }}>Nonaktif</option>
@@ -49,16 +44,13 @@
                </select>
          </div>
 
-            {{-- Search Button --}}
             <button type="submit"
                      class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800">
                   Cari
             </button>
          </form>
       </div>
-      <!-- Card Body -->
       <div class="p-5">
-                  <!-- Table -->
          <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -150,7 +142,6 @@
                   @endforeach
                </tbody>
             </table>
-            <!-- Improved Pagination -->
             <div class="px-6 py-4">
                @if ($sarana->hasPages())
                   <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center justify-between">
@@ -191,7 +182,6 @@
 
                         <div>
                            <span class="relative z-0 inline-flex shadow-sm rounded-md">
-                              {{-- Previous Page Link --}}
                               @if ($sarana->onFirstPage())
                                  <span aria-disabled="true">
                                     <span class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-l-lg leading-5">
@@ -207,8 +197,6 @@
                                     </svg>
                                  </a>
                               @endif
-
-                              {{-- Pagination Elements --}}
                               @foreach ($sarana->getUrlRange(1, $sarana->lastPage()) as $page => $url)
                                  @if ($page == $sarana->currentPage())
                                     <span aria-current="page">
@@ -220,8 +208,6 @@
                                     </a>
                                  @endif
                               @endforeach
-
-                              {{-- Next Page Link --}}
                               @if ($sarana->hasMorePages())
                                  <a href="{{ $sarana->nextPageUrl() }}" rel="next" class="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-lg leading-5 hover:text-gray-400 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-green-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -247,11 +233,9 @@
       </div>
    </div>
 </div>
-<!-- Create Modal -->
 <div id="createModal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
-   <!-- Backdrop with higher z-index -->
    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="createModal"></div>
-   <div class="relative w-full max-w-4xl max-h-full"> <!-- Ubah max-w-2xl menjadi max-w-4xl -->
+   <div class="relative w-full max-w-4xl max-h-full"> 
       <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
          <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Tambah Sarana</h3>
@@ -264,8 +248,7 @@
          <form id="saranaForm" action="{{ route('sarana.store') }}" method="POST" enctype="multipart/form-data">
                @csrf
             <div class="p-6">
-               <div class="grid grid-cols-2 gap-6"> <!-- Tambahkan grid layout -->
-                              <!-- Kolom Kiri -->
+               <div class="grid grid-cols-2 gap-6"> 
                   <div class="space-y-6">
                      <div>
                         <label class="block mb-2 text-sm font-medium text-gray-900">Kategori</label>
@@ -294,7 +277,6 @@
                                  </div>
                               </div>
 
-                              <!-- Kolom Kanan -->
                               <div class="space-y-6">
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Ormawa UNAND</label>
@@ -329,10 +311,8 @@
                </div>
             </div>
 
-<!-- Edit Modal -->
             @foreach($sarana as $item)
             <div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
-               <!-- Backdrop with higher z-index -->
                <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModal{{ $item->id }}"></div>
                <div class="relative w-full max-w-4xl max-h-full">
                   <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -349,7 +329,6 @@
                         @method('PUT')
                         <div class="p-6">
                            <div class="grid grid-cols-2 gap-6">
-                              <!-- Kolom Kiri -->
                               <div class="space-y-6">
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Kategori</label>
@@ -378,8 +357,6 @@
                                     <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->fasilitas }}</textarea>
                                  </div>
                               </div>
-
-                              <!-- Kolom Kanan -->
                               <div class="space-y-6">
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Ormawa UNAND</label>
@@ -430,8 +407,6 @@
                                                    </svg>
                                                 </label>
                                              </div>
-
-                                             <!-- Indicator untuk gambar yang akan dihapus -->
                                              <div class="absolute inset-0 bg-red-500 bg-opacity-20 hidden deleteIndicator">
                                                 <div class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
                                                    Akan dihapus
@@ -457,7 +432,6 @@
                </div>
             </div>
             @endforeach
-<!-- Modal Preview Gambar untuk Edit Modal -->
             <div id="previewModal" tabindex="-1" aria-hidden="true"
                class="fixed top-0 left-0 right-0 bottom-0 z-[60] hidden w-full p-4 flex items-center justify-center bg-black bg-opacity-50">
                <div class="relative max-w-4xl w-full">
@@ -471,7 +445,6 @@
                   </div>
                </div>
             </div>
-<!-- Tambahkan di bagian script -->
  @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -481,7 +454,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeModals() {
-    // Toggle modal buttons
     document.querySelectorAll('[data-modal-toggle]').forEach(button => {
         button.addEventListener('click', () => {
             const modalId = button.getAttribute('data-modal-target');
@@ -490,7 +462,6 @@ function initializeModals() {
         });
     });
 
-    // Close modal buttons
     document.querySelectorAll('[data-modal-hide]').forEach(button => {
         button.addEventListener('click', () => {
             const modalId = button.getAttribute('data-modal-hide');
@@ -498,7 +469,6 @@ function initializeModals() {
         });
     });
 
-    // Close modal when clicking outside
     window.addEventListener('click', (event) => {
         if (event.target.matches('[id^="createModal"], [id^="editModal"]')) {
             closeModal(event.target.id);
@@ -506,7 +476,6 @@ function initializeModals() {
     });
 }
 
-   // Click outside modal to close
    window.addEventListener('click', function(event) {
        const modals = document.querySelectorAll('[id^="createModal"], [id^="editModal"]');
        modals.forEach(modal => {
@@ -517,7 +486,6 @@ function initializeModals() {
    });
 
 
-    // Fungsi untuk menampilkan preview gambar
     function showImagePreview(imageSrc) {
         const previewModal = document.getElementById('previewModal');
         const previewImage = document.getElementById('previewImage');
@@ -525,27 +493,22 @@ function initializeModals() {
         previewImage.src = imageSrc;
         previewModal.classList.remove('hidden');
 
-        // Mencegah scroll pada body
         document.body.style.overflow = 'hidden';
     }
 
-    // Fungsi untuk menutup preview gambar
     function closeImagePreview() {
         const previewModal = document.getElementById('previewModal');
         previewModal.classList.add('hidden');
 
-        // Mengembalikan scroll pada body
         document.body.style.overflow = 'auto';
     }
 
-    // Menutup preview saat mengklik area di luar gambar
     document.getElementById('previewModal').addEventListener('click', function(e) {
         if (e.target === this) {
             closeImagePreview();
         }
     });
 
-    // Menutup preview dengan tombol ESC
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && !document.getElementById('previewModal').classList.contains('hidden')) {
             closeImagePreview();
@@ -553,13 +516,10 @@ function initializeModals() {
     });
 document.querySelectorAll('.deleteImageBtn').forEach(btn => {
     btn.addEventListener('click', function(e) {
-        e.preventDefault(); // Tambahkan ini
+        e.preventDefault(); 
         const checkbox = this.parentElement.querySelector('input[type="checkbox"]');
         const imageContainer = this.closest('.relative');
         const deleteIndicator = imageContainer.querySelector('.deleteIndicator');
-
-        console.log('Checkbox value:', checkbox.value); // Debug
-        console.log('Checkbox checked:', checkbox.checked); // Debug
 
         if (checkbox.checked) {
             checkbox.checked = false;
@@ -571,20 +531,16 @@ document.querySelectorAll('.deleteImageBtn').forEach(btn => {
     });
 });
 
-// Form handling for create and edit forms
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle all forms with class 'sarana-form'
     document.querySelectorAll('form:not([action*="logout"])').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Validate all required fields
             const kategori = this.querySelector('select[name="IdKategori"]')?.value;
             const nama = this.querySelector('input[name="nama"]')?.value?.trim();
             const deskripsi = this.querySelector('textarea[name="deskripsi"]')?.value?.trim();
             const fasilitas = this.querySelector('textarea[name="fasilitas"]')?.value?.trim();
 
-            // Check for empty required fields
             const emptyFields = [];
             if (!kategori) emptyFields.push('Kategori');
             if (!nama) emptyFields.push('Nama');
@@ -601,7 +557,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // Show confirmation if all required fields are filled
             Swal.fire({
                 title: 'Konfirmasi Data',
                 text: 'Apakah Anda yakin data yang diisi sudah benar?',
@@ -620,7 +575,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Function to handle form submission
 function submitFormData(form) {
     const submitBtn = form.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
@@ -628,7 +582,6 @@ function submitFormData(form) {
     
     const formData = new FormData(form);
     
-    // If it's an edit form, add the PUT method
     if (form.method.toLowerCase() === 'post' && form.querySelector('input[name="_method"][value="PUT"]')) {
         formData.append('_method', 'PUT');
     }
@@ -652,7 +605,6 @@ function submitFormData(form) {
                 timer: 1500,
                 showConfirmButton: false
             }).then(() => {
-                // Refresh the page or redirect
                 window.location.reload();
             });
         } else {
@@ -674,7 +626,6 @@ function submitFormData(form) {
     });
 }
 
-// Updated delete confirmation function
 function confirmDelete(deleteUrl) {
     Swal.fire({
         title: 'Konfirmasi',
@@ -724,7 +675,6 @@ function confirmDelete(deleteUrl) {
     });
 }
 
-// Function to activate sarana
 function activateSarana(activateUrl) {
     Swal.fire({
         title: 'Konfirmasi',

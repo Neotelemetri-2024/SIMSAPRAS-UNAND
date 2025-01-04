@@ -25,6 +25,7 @@ class PeminjamanDibatalkanController extends Controller
 
         $query = Peminjaman::with(['user', 'sarana', 'tanggalPeminjaman.jadwal'])
             ->where('status', 'dibatalkan');
+        $query->filterByUserAccess(auth()->user());
 
         if ($search) {
             $query->whereHas('user', function($q) use ($search) {

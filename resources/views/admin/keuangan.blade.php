@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
-    <!-- Total Pemasukan Card -->
     <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
         <div class="p-3 mr-4 text-green-500 bg-green-100 rounded-full">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,7 +18,6 @@
         </div>
     </div>
 
-    <!-- Pemasukan Bulan Ini Card -->
     <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
         <div class="p-3 mr-4 text-blue-500 bg-blue-100 rounded-full">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,7 +34,6 @@
         </div>
     </div>
 
-    <!-- Total Transaksi Card -->
     <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
         <div class="p-3 mr-4 text-purple-500 bg-purple-100 rounded-full">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,7 +50,6 @@
         </div>
     </div>
 
-    <!-- Rata-rata Transaksi Card -->
     <div class="flex items-center p-4 bg-white rounded-lg shadow-xs hover:bg-green-100">
         <div class="p-3 mr-4 text-red-500 bg-red-100 rounded-full">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,7 +68,6 @@
 </div>
 
 <div class="grid gap-6">
-    <!-- Grafik Pemasukan Bulanan -->
     <div class="bg-white rounded-lg shadow-xs p-4">
         <h2 class="text-lg font-semibold text-gray-700 mb-4">Tren Pemasukan Bulanan</h2>
         <div class="h-64">
@@ -80,9 +75,7 @@
         </div>
     </div>
 
-    <!-- Three Charts Row -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Grafik Per Sarana -->
         <div class="bg-white rounded-lg shadow-xs p-4">
             <h2 class="text-lg font-semibold text-gray-700 mb-4">Pemasukan per Sarana</h2>
             <div class="h-48">
@@ -90,7 +83,6 @@
             </div>
         </div>
 
-        <!-- Grafik UNAND vs UMUM -->
         <div class="bg-white rounded-lg shadow-xs p-4">
             <h2 class="text-lg font-semibold text-gray-700 mb-4">UNAND vs UMUM</h2>
             <div class="h-48">
@@ -110,7 +102,6 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Grafik Pemasukan Bulanan
     new Chart(document.getElementById('monthlyChart'), {
         type: 'line',
         data: {

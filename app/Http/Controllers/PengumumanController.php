@@ -9,12 +9,18 @@ class PengumumanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pengumuman::query();
+        $query = Pengumuman::with('user');
+        
+        if (auth()->user()->role === 'admin') {
+            $query->where('penulis', auth()->id());
+        }
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where('judul', 'LIKE', "%{$search}%")
-                  ->orWhere('isi', 'LIKE', "%{$search}%");
+            $query->where(function($q) use ($search) {
+                $q->where('judul', 'LIKE', "%{$search}%")
+                ->orWhere('isi', 'LIKE', "%{$search}%");
+            });
         }
 
         $pengumuman = $query->latest()->paginate(10);
@@ -31,7 +37,8 @@ class PengumumanController extends Controller
         try {
             Pengumuman::create([
                 'judul' => $request->judul,
-                'isi' => $request->isi
+                'isi' => $request->isi,
+                'penulis' => auth()->id()
             ]);
 
             return response()->json([
@@ -58,7 +65,8 @@ class PengumumanController extends Controller
             $pengumuman = Pengumuman::findOrFail($id);
             $pengumuman->update([
                 'judul' => $request->judul,
-                'isi' => $request->isi
+                'isi' => $request->isi,
+                'penulis' => auth()->id()
             ]);
 
             return response()->json([
@@ -92,17 +100,18 @@ class PengumumanController extends Controller
             ], 500);
         }
     }
+
     public function indexUser(Request $request)
-{
-    $query = Pengumuman::query();
+    {
+        $query = Pengumuman::query();
 
-    if ($request->has('search')) {
-        $search = $request->search;
-        $query->where('judul', 'LIKE', "%{$search}%")
-              ->orWhere('isi', 'LIKE', "%{$search}%");
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where('judul', 'LIKE', "%{$search}%")
+                ->orWhere('isi', 'LIKE', "%{$search}%");
+        }
+
+        $pengumuman = $query->latest()->paginate(10);
+        return view('pengumuman', compact('pengumuman'));
     }
-
-    $pengumuman = $query->latest()->paginate(10);
-    return view('pengumuman', compact('pengumuman'));
-}
 }
