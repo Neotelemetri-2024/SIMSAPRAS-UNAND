@@ -225,7 +225,6 @@
     </div>
 
 @foreach ($peminjamanDiajukan as $item)
-<!-- Edit Modal -->
 <div id="editModalDiajukan{{ $item->id }}" tabindex="-1" aria-hidden="true"
         class="fixed inset-0 z-[60] hidden overflow-hidden" data-modal-backdrop="static">
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModalDiajukan{{ $item->id }}"></div>
@@ -233,7 +232,6 @@
         <div class="flex min-h-full items-center justify-center p-4">
             <div class="relative w-full max-w-2xl">
                 <div class="relative flex flex-col max-h-[90vh] bg-white rounded-lg shadow">
-                    <!-- Modal Header -->
                     <div class="sticky top-0 z-10 flex items-start justify-between p-5 border-b rounded-t bg-gray-50">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
                             <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -242,9 +240,7 @@
                             </svg>
                             Detail Peminjaman
                         </h3>
-                        <button type="button"
-                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center"
-                            onclick="closeModal('editModalDiajukan{{ $item->id }}')">
+                        <button class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center" data-modal-hide="editModalDiajukan{{ $item->id }}">
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 14 14">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -253,10 +249,8 @@
                         </button>
                     </div>
 
-                    <!-- Modal Body with Scrollable Content -->
                     <div class="flex-1 overflow-y-auto">
                         <div class="p-6 space-y-6">
-                            <!-- Informasi Peminjam Section -->
                             <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                                 <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                                     <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -296,8 +290,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Detail Peminjaman Section -->
                             <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                                 <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                                     <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -343,8 +335,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Riwayat Status Section -->
                             @if($item->diajukan_at)
                             <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                                 <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -370,8 +360,6 @@
                                 </div>
                             </div>
                             @endif
-
-                            <!-- Lampiran Section -->
                             <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                                 <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                                     <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -405,7 +393,6 @@
                                 </div>
                             </div>
 
-                            <!-- Form Update Status -->
                             <form id="updateForm{{ $item->id }}" 
                                   action="{{ route('peminjaman.updateStatusDiajukan', $item->id) }}" 
                                   method="POST">
@@ -424,7 +411,7 @@
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Update Status</label>
                                             <select id="statusSelect{{ $item->id }}" name="status"
                                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-                                                required onchange="toggleFeedbackForm({{ $item->id }})">
+                                                required onchange="handleStatusChange({{ $item->id }})">
                                                 <option value="">Pilih Status</option>
                                                 @if($item->totalTarif == 0)
                                                     <option value="disetujui">Setujui</option>
@@ -435,6 +422,54 @@
                                                 @endif
                                             </select>
                                         </div>
+
+                                        <div id="fileUploadForm{{ $item->id }}" class="hidden">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                Upload Surat Disposisi
+                                            </label>
+                                            <div class="mt-2">
+                                                <div class="relative border-2 border-gray-300 border-dashed rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-all duration-200">
+                                                    <input type="file" 
+                                                           id="dropzone-file{{ $item->id }}" 
+                                                           name="suratDisposisi" 
+                                                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                                           required 
+                                                           accept=".pdf,.doc,.docx"
+                                                           onchange="updateFileInfo(this, 'fileInfo{{ $item->id }}')">
+                                                    <div class="text-center" id="fileInfo{{ $item->id }}">
+                                                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                                        </svg>
+                                                        <p class="mt-2 text-sm text-gray-600">
+                                                            <span class="font-semibold">Klik untuk upload</span> atau drag and drop
+                                                        </p>
+                                                        <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX (Maks. 2MB)</p>
+                                                    </div>
+                                                    <div id="filePreview{{ $item->id }}" class="hidden mt-3">
+                                                        <div class="flex items-center p-3 bg-white rounded-lg border border-gray-200">
+                                                            <svg class="w-8 h-8 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                            </svg>
+                                                            <div class="flex-1 min-w-0">
+                                                                <p class="text-sm font-medium text-gray-900 truncate" id="fileName{{ $item->id }}"></p>
+                                                                <p class="text-sm text-gray-500" id="fileSize{{ $item->id }}"></p>
+                                                            </div>
+                                                            <button type="button" onclick="removeFile('dropzone-file{{ $item->id }}', 'fileInfo{{ $item->id }}', 'filePreview{{ $item->id }}')"
+                                                                    class="ml-3 text-sm font-medium text-red-500 hover:text-red-600 p-1">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @error('suratDisposisi')
+                                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>                      
 
                                         <div id="feedbackForm{{ $item->id }}" class="hidden">
                                             <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -449,8 +484,6 @@
                             </form>
                         </div>
                     </div>
-
-                    <!-- Modal Footer -->
                     <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 bg-gray-50 rounded-b">
                         <button type="button" onclick="handleSubmit({{ $item->id }})"
                             class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
@@ -465,8 +498,8 @@
                         </button>
                         @endif
 
-                        <button type="button"
-                            onclick="closeModal('editModalDiajukan{{ $item->id }}')"
+                        <button 
+                            data-modal-hide="editModalDiajukan{{ $item->id }}"
                             class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900">
                             Tutup
                         </button>
@@ -477,8 +510,8 @@
     </div>    
 </div>
 
-    @endforeach
-    @foreach ($peminjamanDiajukan as $item)
+@endforeach
+@foreach ($peminjamanDiajukan as $item)
 <div id='batalModalDiajukan{{ $item->id }}' tabindex="-1" aria-hidden="true" 
     class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
     <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="batalModalDiajukan{{ $item->id }}"></div>
@@ -542,216 +575,452 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    initializeModals();
-});
 
-function initializeModals() {
-    // Modal open buttons
-    document.querySelectorAll('[data-modal-target]').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            const modalId = button.getAttribute('data-modal-target');
-            openModal(modalId);
-        });
-    });
-
-    // Modal close buttons
-    document.querySelectorAll('[data-modal-hide]').forEach(element => {
-        element.addEventListener('click', (e) => {
-            e.preventDefault();
-            const modalId = element.getAttribute('data-modal-hide');
-            closeModal(modalId);
-        });
-    });
-
-    // Close modal on backdrop click
-    window.addEventListener('click', (event) => {
-        const modals = document.querySelectorAll('[id^="editModalDiajukan"]');
-        modals.forEach(modal => {
-            if (event.target === modal) {
-                closeModal(modal.id);
-            }
-        });
-    });
-}
-
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.remove('hidden');
-        document.body.classList.add('overflow-hidden');
-    }
-}
-
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
-        
-        // Reset form
-        const id = modalId.replace('editModalDiajukan', '');
-        const form = document.getElementById(`updateForm${id}`);
-        if (form) {
-            form.reset();
-            toggleFeedbackForm(id);
+    function updateFileInfo(input, infoId) {
+        const file = input.files[0];
+        if (!file) {
+            resetFileInput(input.id, infoId, infoId.replace('fileInfo', 'filePreview'));
+            return;
         }
-    }
-}
 
-function toggleFeedbackForm(id) {
-    const statusSelect = document.getElementById(`statusSelect${id}`);
-    const feedbackForm = document.getElementById(`feedbackForm${id}`);
-    
-    if (feedbackForm && statusSelect) {
-        if (statusSelect.value === 'ditolak') {
-            feedbackForm.classList.remove('hidden');
-        } else {
-            feedbackForm.classList.add('hidden');
-        }
-    }
-}
-
-function handleSubmit(id) {
-    const form = document.getElementById(`updateForm${id}`);
-    const statusSelect = document.getElementById(`statusSelect${id}`);
-    const status = statusSelect.value;
-
-    // Validate status selection
-    if (!status) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: 'Silakan pilih status terlebih dahulu!',
-            confirmButtonColor: '#3085d6'
-        });
-        return;
-    }
-
-    // Validate feedback for rejection
-    if (status === 'ditolak') {
-        const feedback = form.querySelector('textarea[name="feedbackPenolakan"]').value;
-        if (!feedback.trim()) {
+        // Validasi ukuran file (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error!',
-                text: 'Mohon isi alasan penolakan!',
+                text: 'Ukuran file tidak boleh lebih dari 2MB!',
+                confirmButtonColor: '#3085d6'
+            });
+            resetFileInput(input.id, infoId, infoId.replace('fileInfo', 'filePreview'));
+            return;
+        }
+
+        // Validasi tipe file
+        const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        if (!validTypes.includes(file.type)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'File harus berupa PDF atau DOC/DOCX!',
+                confirmButtonColor: '#3085d6'
+            });
+            resetFileInput(input.id, infoId, infoId.replace('fileInfo', 'filePreview'));
+            return;
+        }
+
+        // Format ukuran file
+        const size = (file.size / 1024).toFixed(2);
+        const formattedSize = size > 1024 ? (size / 1024).toFixed(2) + ' MB' : size + ' KB';
+
+        // Update tampilan
+        const fileInfo = document.getElementById(infoId);
+        const filePreview = document.getElementById(infoId.replace('fileInfo', 'filePreview'));
+        const fileName = document.getElementById(infoId.replace('fileInfo', 'fileName'));
+        const fileSize = document.getElementById(infoId.replace('fileInfo', 'fileSize'));
+
+        fileInfo.classList.add('hidden');
+        filePreview.classList.remove('hidden');
+        fileName.textContent = file.name;
+        fileSize.textContent = formattedSize;
+    }
+
+    function removeFile(inputId, infoId, previewId) {
+        resetFileInput(inputId, infoId, previewId);
+    }
+
+    function resetFileInput(inputId, infoId, previewId) {
+        const input = document.getElementById(inputId);
+        const info = document.getElementById(infoId);
+        const preview = document.getElementById(previewId);
+        
+        if (input) input.value = '';
+        if (info) info.classList.remove('hidden');
+        if (preview) preview.classList.add('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeModals();
+        initializeFileUploads();
+    });
+
+    function initializeModals() {
+        document.querySelectorAll('[data-modal-target]').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const modalId = button.getAttribute('data-modal-target');
+                openModal(modalId);
+            });
+        });
+
+        document.querySelectorAll('[data-modal-hide]').forEach(element => {
+            element.addEventListener('click', (e) => {
+                e.preventDefault();
+                const modalId = element.getAttribute('data-modal-hide');
+                closeModal(modalId);
+            });
+        });
+
+        window.addEventListener('click', (event) => {
+            const modals = document.querySelectorAll('[id^="editModalDiajukan"]');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+    }
+
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+            
+            const id = modalId.replace('editModalDiajukan', '');
+            const form = document.getElementById(`updateForm${id}`);
+            if (form) {
+                form.reset();
+                toggleFeedbackForm(id);
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('form[id^="updateForm"]');
+        forms.forEach(form => {
+            const itemId = form.id.replace('updateForm', '');
+            const fileInput = document.getElementById(`dropzone-file${itemId}`);
+            const fileNameDisplay = document.getElementById(`file-name${itemId}`);
+            
+            if (fileInput && fileNameDisplay) {
+                fileInput.addEventListener('change', function() {
+                    if (this.files.length > 0) {
+                        const fileName = this.files[0].name;
+                        fileNameDisplay.textContent = `File terpilih: ${fileName}`;
+                    } else {
+                        fileNameDisplay.textContent = '';
+                    }
+                });
+            }
+        });
+    });
+
+    function initializeFileUploads() {
+        const forms = document.querySelectorAll('form[id^="updateForm"]');
+        forms.forEach(form => {
+            const id = form.id.replace('updateForm', '');
+            const fileInput = document.getElementById(`dropzone-file${id}`);
+            const fileNameDisplay = document.getElementById(`file-name${id}`);
+            
+            if (fileInput && fileNameDisplay) {
+                fileInput.addEventListener('change', function() {
+                    if (this.files.length > 0) {
+                        const file = this.files[0];
+                        if (file.size > 2 * 1024 * 1024) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'Ukuran file tidak boleh lebih dari 2MB!',
+                                confirmButtonColor: '#3085d6'
+                            });
+                            this.value = '';
+                            fileNameDisplay.textContent = '';
+                            return;
+                        }
+                        
+                        const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                        if (!validTypes.includes(file.type)) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'File harus berupa PDF atau DOC/DOCX!',
+                                confirmButtonColor: '#3085d6'
+                            });
+                            this.value = '';
+                            fileNameDisplay.textContent = '';
+                            return;
+                        }
+                        
+                        fileNameDisplay.textContent = `File terpilih: ${file.name}`;
+                    } else {
+                        fileNameDisplay.textContent = '';
+                    }
+                });
+            }
+        });
+    }
+
+    function handleStatusChange(id) {
+        const statusSelect = document.getElementById(`statusSelect${id}`);
+        const feedbackForm = document.getElementById(`feedbackForm${id}`);
+        const fileUploadForm = document.getElementById(`fileUploadForm${id}`);
+        const fileInput = document.getElementById(`dropzone-file${id}`);
+        
+        feedbackForm.classList.add('hidden');
+        fileUploadForm.classList.add('hidden');
+        
+        const textarea = feedbackForm.querySelector('textarea');
+        if (textarea) textarea.removeAttribute('required');
+        if (fileInput) {
+            fileInput.removeAttribute('required');
+            resetFileInput(
+                `dropzone-file${id}`, 
+                `fileInfo${id}`, 
+                `filePreview${id}`
+            );
+        }
+        
+        if (statusSelect.value === 'ditolak') {
+            feedbackForm.classList.remove('hidden');
+            textarea.setAttribute('required', 'required');
+        } else if (statusSelect.value === 'disetujui') {
+            fileUploadForm.classList.remove('hidden');
+            fileInput.setAttribute('required', 'required');
+        }
+    }
+
+    function handleSubmit(id) {
+        const form = document.getElementById(`updateForm${id}`);
+        const statusSelect = document.getElementById(`statusSelect${id}`);
+        const status = statusSelect.value;
+
+        if (!status) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Silakan pilih status terlebih dahulu!',
                 confirmButtonColor: '#3085d6'
             });
             return;
         }
+
+        if (status === 'ditolak') {
+            const feedback = form.querySelector('textarea[name="feedbackPenolakan"]').value;
+            if (!feedback.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Mohon isi alasan penolakan!',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
+        } else if (status === 'disetujui') {
+            const fileInput = document.getElementById(`dropzone-file${id}`);
+            if (!fileInput.files.length) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Mohon upload dokumen persetujuan!',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
+        }
+
+        const confirmConfig = getConfirmationConfig(status);
+        Swal.fire({
+            title: confirmConfig.title,
+            text: confirmConfig.text,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Lanjutkan!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                submitForm(id);
+            }
+        });
     }
 
-    // Show confirmation dialog
-    const confirmConfig = getConfirmationConfig(status);
-    Swal.fire({
-        title: confirmConfig.title,
-        text: confirmConfig.text,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya, Lanjutkan!',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            submitForm(id);
-        }
-    });
-}
 
-function getConfirmationConfig(status) {
-    const configs = {
-        'disetujui': {
-            title: 'Konfirmasi Persetujuan',
-            text: 'Apakah Anda yakin ingin menyetujui peminjaman ini?'
-        },
-        'ditolak': {
-            title: 'Konfirmasi Penolakan',
-            text: 'Apakah Anda yakin ingin menolak peminjaman ini?'
-        },
-        'diproses': {
-            title: 'Konfirmasi Pemrosesan',
-            text: 'Apakah Anda yakin ingin memproses peminjaman ini?'
-        }
-    };
+    function getConfirmationConfig(status) {
+        const configs = {
+            'disetujui': {
+                title: 'Konfirmasi Persetujuan',
+                text: 'Apakah Anda yakin ingin menyetujui peminjaman ini?'
+            },
+            'ditolak': {
+                title: 'Konfirmasi Penolakan',
+                text: 'Apakah Anda yakin ingin menolak peminjaman ini?'
+            },
+            'diproses': {
+                title: 'Konfirmasi Pemrosesan',
+                text: 'Apakah Anda yakin ingin memproses peminjaman ini?'
+            }
+        };
 
-    return configs[status] || {
-        title: 'Konfirmasi Perubahan',
-        text: 'Apakah Anda yakin ingin mengubah status peminjaman ini?'
-    };
-}
+        return configs[status] || {
+            title: 'Konfirmasi Perubahan',
+            text: 'Apakah Anda yakin ingin mengubah status peminjaman ini?'
+        };
+    }
 
-function submitForm(id) {
-    const form = document.getElementById(`updateForm${id}`);
-    const formData = new FormData(form);
-    const status = document.getElementById(`statusSelect${id}`).value;
+    function submitForm(id) {
+        const form = document.getElementById(`updateForm${id}`);
+        const formData = new FormData(form);
+        const status = document.getElementById(`statusSelect${id}`).value;
 
-    // Show loading state
-    Swal.fire({
-        title: 'Memproses...',
-        text: 'Mohon tunggu sebentar',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
-
-    // Submit form
-    fetch(form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            const successMessage = getSuccessMessage(status);
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: successMessage,
-                timer: 1500,
-                showConfirmButton: false
-            }).then(() => {
-                window.location.reload();
-            });
-        } else {
-            throw new Error(data.message || 'Terjadi kesalahan saat memperbarui status');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
         Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: error.message || 'Terjadi kesalahan saat memproses permintaan',
-            confirmButtonColor: '#3085d6'
+            title: 'Memproses...',
+            text: 'Mohon tunggu sebentar',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
         });
-    });
-}
 
-function getSuccessMessage(status) {
-    const messages = {
-        'disetujui': 'Peminjaman berhasil disetujui',
-        'ditolak': 'Peminjaman berhasil ditolak',
-        'diproses': 'Peminjaman berhasil diproses'
-    };
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                const successMessage = getSuccessMessage(status);
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: successMessage,
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.reload();
+                });
+            } else {
+                throw new Error(data.message || 'Terjadi kesalahan saat memperbarui status');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: error.message || 'Terjadi kesalahan saat memproses permintaan',
+                confirmButtonColor: '#3085d6'
+            });
+        });
+    }
 
-    return messages[status] || 'Status peminjaman berhasil diperbarui';
-}
+    function getSuccessMessage(status) {
+        const messages = {
+            'disetujui': 'Peminjaman berhasil disetujui',
+            'ditolak': 'Peminjaman berhasil ditolak',
+            'diproses': 'Peminjaman berhasil diproses'
+        };
+
+        return messages[status] || 'Status peminjaman berhasil diperbarui';
+    }
+
+    function konfirmasiBatalkan(id) {
+        const feedbackPembatalan = document.getElementById(`feedbackPembatalan${id}`).value;
+            
+        if (!feedbackPembatalan.trim()) {
+            Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Harap isi alasan pembatalan!',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Konfirmasi Pembatalan',
+                text: "Apakah Anda yakin ingin membatalkan peminjaman ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Batalkan!',
+                cancelButtonText: 'Tidak',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Memproses...',
+                        text: 'Mohon tunggu sebentar',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Siapkan data untuk dikirim
+                    const formData = new FormData();
+                    formData.append('status', 'dibatalkan');
+                    formData.append('feedbackPembatalan', feedbackPembatalan);
+                    formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+                    formData.append('_method', 'PUT');
+
+                    // Kirim request dengan FormData
+                    fetch(`/admin/peminjaman/${id}/update-status-diajukan`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Tutup modal pembatalan
+                            const modal = document.getElementById(`batalModalDiajukan${id}`);
+                            if (modal) {
+                                modal.classList.add('hidden');
+                                document.body.classList.remove('overflow-hidden');
+                            }
+
+                            // Tampilkan pesan sukses
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: 'Peminjaman berhasil dibatalkan',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            throw new Error(data.message || 'Terjadi kesalahan saat membatalkan peminjaman');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: error.message || 'Terjadi kesalahan saat memproses pembatalan',
+                            confirmButtonColor: '#3085d6'
+                        });
+                    });
+                }
+            });
+        }
     </script>
 @endsection

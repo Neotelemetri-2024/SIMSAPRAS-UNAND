@@ -63,12 +63,12 @@ class PeminjamanDiprosesController extends Controller
             $request->validate([
                 'status' => 'required|in:disetujui,diproses,ditolak,dibatalkan,diajukan',
                 'feedbackPenolakan' => 'nullable|required_if:status,ditolak|string|max:500',
+                'suratDisposisi' => 'required_if:status,disetujui|mimes:pdf,doc,docx|max:2048',
             ]);
     
             $peminjaman = Peminjaman::with('user')->findOrFail($id);
             $oldStatus = $peminjaman->status;
     
-            // Add validation for proof of payment before approval
             if ($request->status === 'disetujui' && !$peminjaman->buktiPembayaran) {
                 return response()->json([
                     'success' => false,
@@ -79,11 +79,13 @@ class PeminjamanDiprosesController extends Controller
             if ($request->status === 'disetujui') {
                 $peminjaman->disetujui_oleh = auth()->id();
                 $peminjaman->disetujui_at = now();
+                $peminjaman->suratDisposisi = $request->file('suratDisposisi')->store('peminjaman/disposisi', 'public');
             }
 
         if ($request->status === 'disetujui') {
                 $peminjaman->disetujui_oleh = auth()->id();
                 $peminjaman->disetujui_at = now();
+                $peminjaman->suratDisposisi = $request->file('suratDisposisi')->store('peminjaman/disposisi', 'public');
             } elseif ($request->status === 'ditolak') {
                 $peminjaman->ditolak_oleh = auth()->id();
                 $peminjaman->ditolak_at = now();
@@ -95,7 +97,6 @@ class PeminjamanDiprosesController extends Controller
                 $peminjaman->dibatalkan_at = now();
             }
     
-            // Handle pembatalan
             if ($request->status === 'diajukan') {
                 $peminjaman->status = $peminjaman->statusSebelumBatal;
                 $peminjaman->alasanTolakBatal = $request->alasanTolakBatal;
@@ -103,7 +104,6 @@ class PeminjamanDiprosesController extends Controller
             } elseif ($request->status === 'dibatalkan') {
                 $peminjaman->status = 'dibatalkan';
             } else {
-                // Update file uploads dan data lainnya
                 if ($request->hasFile('suratPeminjaman')) {
                     $peminjaman->suratPeminjaman = $request->file('suratPeminjaman')->store('peminjaman/lampiran');
                 }
@@ -117,7 +117,6 @@ class PeminjamanDiprosesController extends Controller
                     $peminjaman->tarif = $request->tarif;
                 }
     
-                // Jika status disetujui dan ada tarif, ubah status menjadi diproses
                 if ($request->status === 'disetujui') {
                     $peminjaman->status = 'disetujui';
                 } elseif ($request->status === 'ditolak') {
@@ -129,11 +128,10 @@ class PeminjamanDiprosesController extends Controller
     
             $peminjaman->save();
     
-            // Siapkan pesan notifikasi
             $userMessage = match($peminjaman->status) {
                 'ditolak' => "Peminjaman Anda ditolak dengan alasan " . $request->feedbackPenolakan,
                 'diproses' => "Peminjaman Anda sedang diproses. Silakan melakukan pembayaran sebesar Rp " . number_format($peminjaman->totalTarif, 0, ',', '.'),
-                'disetujui' => "Selamat! Peminjaman Anda telah disetujui.",
+                'disetujui' => "Selamat! Peminjaman Anda telah disetujui. Silakan print surat disposisi dan berikan kepada penjaga gedung.",
                 'dibatalkan' => "Pembatalan peminjaman Anda telah disetujui.",
                 'diajukan' => "Pembatalan peminjaman Anda ditolak dengan alasan " . $request->alasanTolakBatal,
                 default => "Status peminjaman Anda telah diubah menjadi " . $peminjaman->status

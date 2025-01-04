@@ -462,17 +462,63 @@
                            Aksi
                         </h4>
                         <div class="space-y-4">
-                           <!-- Status Selection -->
                            <div>
                               <label class="block text-sm font-medium text-gray-700 mb-2">Update Status</label>
                               <select id="statusSelect{{ $item->id }}" name="status"
                                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-                                 required onchange="toggleFeedbackForm({{ $item->id }})">
+                                 required onchange="handleStatusChange({{ $item->id }})">
+                                 <option value="" disabled selected hidden>Pilih Status</option>
                                  <option value="disetujui">Setujui</option>
                                  <option value="ditolak">Tolak</option>
                               </select>
                            </div>
-                           <!-- Feedback Form (Hidden by default) -->
+                           <div id="fileUploadForm{{ $item->id }}" class="hidden">
+                              <label class="block text-sm font-medium text-gray-700 mb-2">
+                                  Upload Surat Disposisi
+                              </label>
+                              <div class="mt-2">
+                                  <div class="relative border-2 border-gray-300 border-dashed rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-all duration-200">
+                                      <input type="file" 
+                                             id="dropzone-file{{ $item->id }}" 
+                                             name="suratDisposisi" 
+                                             class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                             required 
+                                             accept=".pdf,.doc,.docx"
+                                             onchange="updateFileInfo(this, 'fileInfo{{ $item->id }}')">
+                                      <div class="text-center" id="fileInfo{{ $item->id }}">
+                                          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                          </svg>
+                                          <p class="mt-2 text-sm text-gray-600">
+                                              <span class="font-semibold">Klik untuk upload</span> atau drag and drop
+                                          </p>
+                                          <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX (Maks. 2MB)</p>
+                                      </div>
+                                      <div id="filePreview{{ $item->id }}" class="hidden mt-3">
+                                          <div class="flex items-center p-3 bg-white rounded-lg border border-gray-200">
+                                              <svg class="w-8 h-8 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                              </svg>
+                                              <div class="flex-1 min-w-0">
+                                                  <p class="text-sm font-medium text-gray-900 truncate" id="fileName{{ $item->id }}"></p>
+                                                  <p class="text-sm text-gray-500" id="fileSize{{ $item->id }}"></p>
+                                              </div>
+                                              <button type="button" onclick="removeFile('dropzone-file{{ $item->id }}', 'fileInfo{{ $item->id }}', 'filePreview{{ $item->id }}')"
+                                                      class="ml-3 text-sm font-medium text-red-500 hover:text-red-600 p-1">
+                                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                  </svg>
+                                              </button>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  @error('suratDisposisi')
+                                      <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                  @enderror
+                              </div>
+                          </div>                  
                            <div id="feedbackForm{{ $item->id }}" class="hidden">
                               <label class="block text-sm font-medium text-gray-700 mb-2">
                               Alasan Penolakan
@@ -570,6 +616,69 @@
 @endforeach
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+
+   function updateFileInfo(input, infoId) {
+        const file = input.files[0];
+        if (!file) {
+            resetFileInput(input.id, infoId, infoId.replace('fileInfo', 'filePreview'));
+            return;
+        }
+
+        // Validasi ukuran file (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Ukuran file tidak boleh lebih dari 2MB!',
+                confirmButtonColor: '#3085d6'
+            });
+            resetFileInput(input.id, infoId, infoId.replace('fileInfo', 'filePreview'));
+            return;
+        }
+
+        // Validasi tipe file
+        const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        if (!validTypes.includes(file.type)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'File harus berupa PDF atau DOC/DOCX!',
+                confirmButtonColor: '#3085d6'
+            });
+            resetFileInput(input.id, infoId, infoId.replace('fileInfo', 'filePreview'));
+            return;
+        }
+
+        // Format ukuran file
+        const size = (file.size / 1024).toFixed(2);
+        const formattedSize = size > 1024 ? (size / 1024).toFixed(2) + ' MB' : size + ' KB';
+
+        // Update tampilan
+        const fileInfo = document.getElementById(infoId);
+        const filePreview = document.getElementById(infoId.replace('fileInfo', 'filePreview'));
+        const fileName = document.getElementById(infoId.replace('fileInfo', 'fileName'));
+        const fileSize = document.getElementById(infoId.replace('fileInfo', 'fileSize'));
+
+        fileInfo.classList.add('hidden');
+        filePreview.classList.remove('hidden');
+        fileName.textContent = file.name;
+        fileSize.textContent = formattedSize;
+    }
+
+    function removeFile(inputId, infoId, previewId) {
+        resetFileInput(inputId, infoId, previewId);
+    }
+
+    function resetFileInput(inputId, infoId, previewId) {
+        const input = document.getElementById(inputId);
+        const info = document.getElementById(infoId);
+        const preview = document.getElementById(previewId);
+        
+        if (input) input.value = '';
+        if (info) info.classList.remove('hidden');
+        if (preview) preview.classList.add('hidden');
+    }
+
    function closeModal(modalId) {
        const modalElement = document.getElementById(modalId);
        if (modalElement) {
@@ -614,15 +723,34 @@
        });
    });
    
-   function toggleFeedbackForm(id) {
-       const status = document.getElementById(`statusSelect${id}`).value;
-       const feedbackForm = document.getElementById(`feedbackForm${id}`);
-       if (status === 'ditolak' || status === 'diajukan') {
-           feedbackForm.classList.remove('hidden');
-       } else {
-           feedbackForm.classList.add('hidden');
-       }
-   }
+   function handleStatusChange(id) {
+        const statusSelect = document.getElementById(`statusSelect${id}`);
+        const feedbackForm = document.getElementById(`feedbackForm${id}`);
+        const fileUploadForm = document.getElementById(`fileUploadForm${id}`);
+        const fileInput = document.getElementById(`dropzone-file${id}`);
+        
+        feedbackForm.classList.add('hidden');
+        fileUploadForm.classList.add('hidden');
+        
+        const textarea = feedbackForm.querySelector('textarea');
+        if (textarea) textarea.removeAttribute('required');
+        if (fileInput) {
+            fileInput.removeAttribute('required');
+            resetFileInput(
+                `dropzone-file${id}`, 
+                `fileInfo${id}`, 
+                `filePreview${id}`
+            );
+        }
+        
+        if (statusSelect.value === 'ditolak') {
+            feedbackForm.classList.remove('hidden');
+            textarea.setAttribute('required', 'required');
+        } else if (statusSelect.value === 'disetujui') {
+            fileUploadForm.classList.remove('hidden');
+            fileInput.setAttribute('required', 'required');
+        }
+    }
    
    function confirmUpdate(id) {
        event.preventDefault();
@@ -639,17 +767,9 @@
                title = 'Konfirmasi Penolakan';
                text = 'Apakah Anda yakin ingin menolak peminjaman ini?';
                break;
-           case 'diproses':
-               title = 'Konfirmasi Pemrosesan';
-               text = 'Apakah Anda yakin ingin memproses peminjaman ini?';
-               break;
            case 'dibatalkan':
                title = 'Konfirmasi Pembatalan';
                text = 'Apakah Anda yakin ingin menyetujui pembatalan peminjaman ini?';
-               break;
-           case 'diajukan':
-               title = 'Konfirmasi Penolakan Pembatalan';
-               text = 'Apakah Anda yakin ingin menolak pembatalan peminjaman ini?';
                break;
            default:
                title = 'Konfirmasi Perubahan';
@@ -699,14 +819,8 @@
            case 'ditolak':
                successMessage = 'Peminjaman berhasil ditolak';
                break;
-           case 'diproses':
-               successMessage = 'Peminjaman berhasil diproses';
-               break;
            case 'dibatalkan':
                successMessage = 'Pembatalan peminjaman berhasil disetujui';
-               break;
-           case 'diajukan':
-               successMessage = 'Pembatalan peminjaman berhasil ditolak';
                break;
            default:
                successMessage = 'Status peminjaman berhasil diperbarui';
@@ -722,7 +836,6 @@
            window.location.reload();
        });
    } else {
-       // Handle error response
        Swal.fire({
            icon: 'error',
            title: 'Gagal!',
@@ -753,79 +866,91 @@
    });
    
    function konfirmasiBatalkan(id) {
-       const feedbackPembatalan = document.getElementById(`feedbackPembatalan${id}`).value;
-       
-       if (!feedbackPembatalan.trim()) {
-           Swal.fire({
-               icon: 'error',
-               title: 'Error!',
-               text: 'Harap isi alasan pembatalan!',
-               confirmButtonColor: '#3085d6'
-           });
-           return;
-       }
-   
-       Swal.fire({
-           title: 'Konfirmasi Pembatalan',
-           text: "Apakah Anda yakin ingin membatalkan peminjaman ini?",
-           icon: 'warning',
-           showCancelButton: true,
-           confirmButtonColor: '#d33',
-           cancelButtonColor: '#3085d6',
-           confirmButtonText: 'Ya, Batalkan!',
-           cancelButtonText: 'Tidak',
-           reverseButtons: true
-       }).then((result) => {
-           if (result.isConfirmed) {
-               Swal.fire({
-                   title: 'Memproses...',
-                   text: 'Mohon tunggu sebentar',
-                   allowOutsideClick: false,
-                   allowEscapeKey: false,
-                   showConfirmButton: false,
-                   didOpen: () => {
-                       Swal.showLoading();
-                   }
-               });
-   
-               fetch(`/admin/peminjaman/${id}/batal`, {
-                   method: 'PUT',
-                   headers: {
-                       'Content-Type': 'application/json',
-                       'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                   },
-                   body: JSON.stringify({
-                       feedbackPembatalan: feedbackPembatalan
-                   })
-               })
-               .then(response => response.json())
-               .then(data => {
-                   if (data.success) {
-                       closeModal(`batalModalDiproses${id}`);
-                       Swal.fire({
-                           icon: 'success',
-                           title: 'Berhasil!',
-                           text: 'Peminjaman berhasil dibatalkan',
-                           timer: 1500,
-                           showConfirmButton: false
-                       }).then(() => {
-                           window.location.reload();
-                       });
-                   } else {
-                       throw new Error(data.message || 'Terjadi kesalahan saat membatalkan peminjaman');
-                   }
-               })
-               .catch(error => {
-                   console.error('Error:', error);
-                   Swal.fire({
-                       icon: 'error',
-                       title: 'Error!',
-                       text: error.message || 'Terjadi kesalahan saat memproses pembatalan',
-                       confirmButtonColor: '#3085d6'
-                   });
-               });
-           }
-       });
-   }
+            const feedbackPembatalan = document.getElementById(`feedbackPembatalan${id}`).value;
+            
+            if (!feedbackPembatalan.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Harap isi alasan pembatalan!',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Konfirmasi Pembatalan',
+                text: "Apakah Anda yakin ingin membatalkan peminjaman ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Batalkan!',
+                cancelButtonText: 'Tidak',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Memproses...',
+                        text: 'Mohon tunggu sebentar',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Siapkan data untuk dikirim
+                    const formData = new FormData();
+                    formData.append('status', 'dibatalkan');
+                    formData.append('feedbackPembatalan', feedbackPembatalan);
+                    formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+                    formData.append('_method', 'PUT');
+
+                    // Kirim request dengan FormData
+                    fetch(`/admin/peminjaman/${id}/update-status-diproses`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Tutup modal pembatalan
+                            const modal = document.getElementById(`batalModalDiproses${id}`);
+                            if (modal) {
+                                modal.classList.add('hidden');
+                                document.body.classList.remove('overflow-hidden');
+                            }
+
+                            // Tampilkan pesan sukses
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: 'Peminjaman berhasil dibatalkan',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            throw new Error(data.message || 'Terjadi kesalahan saat membatalkan peminjaman');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: error.message || 'Terjadi kesalahan saat memproses pembatalan',
+                            confirmButtonColor: '#3085d6'
+                        });
+                    });
+                }
+            });
+        }
 </script>
 @endsection

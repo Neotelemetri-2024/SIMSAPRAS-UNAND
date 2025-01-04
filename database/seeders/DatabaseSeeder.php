@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             RuanganSeeder::class,
             GambarSaranaSeeder::class,
             PenjagaSeeder::class,
+            AdminAccessSeeder::class,
 
             // 4. Tabel yang bergantung pada ruangan
             GambarRuanganSeeder::class,
