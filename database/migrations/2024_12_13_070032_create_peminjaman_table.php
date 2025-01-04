@@ -31,14 +31,15 @@ return new class extends Migration
             $table->enum('statusPengembalian', ['sudah', 'belum'])->nullable();
             $table->string('buktiPembayaran')->nullable();
             $table->string('buktiRefund')->nullable();
+            $table->string('suratDisposisi')->nullable();
             $table->text('feedbackPembatalan')->nullable();
             $table->text('alasanPembatalan')->nullable();
             $table->text('alasanTolakBatal')->nullable();
             $table->string('statusSebelumBatal')->nullable();
-             $table->timestamp('disetujui_at')->nullable();
-        $table->timestamp('diproses_at')->nullable();
-        $table->timestamp('ditolak_at')->nullable();
-        $table->timestamp('dibatalkan_at')->nullable();
+            $table->timestamp('disetujui_at')->nullable();
+            $table->timestamp('diproses_at')->nullable();
+            $table->timestamp('ditolak_at')->nullable();
+            $table->timestamp('dibatalkan_at')->nullable();
             $table->timestamps();
         });
     }

@@ -30,6 +30,15 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
+        User::create([
+            'name' => 'Admin2',
+            'email' => 'admin2@unand.ac.id',
+            'password' => Hash::make('password123'),
+            'kontak' => '081234567891',
+            'role' => 'admin',
+            'email_verified_at' => now(),
+        ]);
+
         // Create Pimpinan
         User::create([
             'name' => 'Pimpinan',

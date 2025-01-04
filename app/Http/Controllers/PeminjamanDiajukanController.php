@@ -64,25 +64,27 @@ class PeminjamanDiajukanController extends Controller
                 'feedbackPenolakan' => 'nullable|required_if:status,ditolak|string|max:500',
                 'alasanTolakBatal' => 'nullable|required_if:status,diajukan|string|max:500',
                 'feedbackPembatalan' => 'nullable|required_if:status,dibatalkan|string|max:500',
-                ]);
+                'suratDisposisi' => 'required_if:status,disetujui|mimes:pdf,doc,docx|max:2048',
+            ]);
     
             $peminjaman = Peminjaman::with('user')->findOrFail($id);
             $oldStatus = $peminjaman->status;
 
-      if ($request->status === 'disetujui') {
-            $peminjaman->disetujui_oleh = auth()->id();
-            $peminjaman->disetujui_at = now();
-        } elseif ($request->status === 'ditolak') {
-            $peminjaman->ditolak_oleh = auth()->id();
-            $peminjaman->ditolak_at = now();
-        } elseif ($request->status === 'diproses') {
-            $peminjaman->diproses_oleh = auth()->id();
-            $peminjaman->diproses_at = now();
-        } elseif ($request->status === 'dibatalkan') {
-            $peminjaman->dibatalkan_oleh = auth()->id();
-            $peminjaman->dibatalkan_at = now();
-            $peminjaman->feedbackPembatalan = $request->feedbackPembatalan;
-        }
+            if ($request->status === 'disetujui') {
+                    $peminjaman->disetujui_oleh = auth()->id();
+                    $peminjaman->disetujui_at = now();
+                    $peminjaman->suratDisposisi = $request->file('suratDisposisi')->store('peminjaman/disposisi', 'public');
+                } elseif ($request->status === 'ditolak') {
+                    $peminjaman->ditolak_oleh = auth()->id();
+                    $peminjaman->ditolak_at = now();
+                } elseif ($request->status === 'diproses') {
+                    $peminjaman->diproses_oleh = auth()->id();
+                    $peminjaman->diproses_at = now();
+                } elseif ($request->status === 'dibatalkan') {
+                    $peminjaman->dibatalkan_oleh = auth()->id();
+                    $peminjaman->dibatalkan_at = now();
+                    $peminjaman->feedbackPembatalan = $request->feedbackPembatalan;
+                }
     
             if ($request->status === 'diajukan') {
                 $peminjaman->status = $peminjaman->statusSebelumBatal;
@@ -123,7 +125,7 @@ class PeminjamanDiajukanController extends Controller
             $userMessage = match($peminjaman->status) {
                 'ditolak' => "Peminjaman Anda ditolak dengan alasan " . $request->feedbackPenolakan,
                 'diproses' => "Peminjaman Anda sedang diproses. Silakan melakukan pembayaran sebesar Rp " . number_format($peminjaman->totalTarif, 0, ',', '.'),
-                'disetujui' => "Selamat! Peminjaman Anda telah disetujui.",
+                'disetujui' => "Selamat! Peminjaman Anda telah disetujui. Silakan print surat disposisi dan berikan kepada penjaga gedung.",
                 'dibatalkan' => "Pembatalan peminjaman Anda telah disetujui.",
                 'diajukan' => "Pembatalan peminjaman Anda ditolak dengan alasan " . $request->alasanTolakBatal,
                 default => "Status peminjaman Anda telah diubah menjadi " . $peminjaman->status

@@ -11,7 +11,7 @@ class PeminjamanSeeder extends Seeder
     {
         $peminjaman = [
             [
-                'idUser' => 4,
+                'idUser' => 5,
                 'idRuangan' => null,
                 'idSarana' => 3, 
                 'kegiatan' => 'Workshop Microsoft',
@@ -26,7 +26,7 @@ class PeminjamanSeeder extends Seeder
                 'statusPengembalian' => 'belum'
             ],
             [
-                'idUser' => 4,
+                'idUser' => 5,
                 'idRuangan' => 1,
                 'idSarana' => 1, 
                 'kegiatan' => 'Seminar Tugas Akhir',
@@ -42,7 +42,7 @@ class PeminjamanSeeder extends Seeder
             ],
             // Status: diajukan (Sarana tanpa Ruangan)
             [
-                'idUser' => 4,
+                'idUser' => 5,
                 'idRuangan' => null,
                 'idSarana' => 2, // Lapangan Sepakbola
                 'kegiatan' => 'Turnamen Futsal Fakultas',
@@ -59,7 +59,7 @@ class PeminjamanSeeder extends Seeder
 
             // Status: diproses (Ruangan)
             [
-                'idUser' => 4,
+                'idUser' => 5,
                 'idRuangan' => 3,
                 'idSarana' => 1, 
                 'kegiatan' => 'Workshop Robotika',
@@ -77,7 +77,7 @@ class PeminjamanSeeder extends Seeder
             ],
             // Status: diproses (Sarana tanpa Ruangan)
             [
-                'idUser' => 4,
+                'idUser' => 5,
                 'idRuangan' => null,
                 'idSarana' => 3, // Auditorium Utama
                 'kegiatan' => 'Wisuda Periode II',
@@ -96,7 +96,7 @@ class PeminjamanSeeder extends Seeder
 
             // Status: disetujui (Ruangan)
             [
-                'idUser' => 4,
+                'idUser' => 5,
                 'idRuangan' => 1,
                 'idSarana' => 1, 
                 'kegiatan' => 'Rapat Kerja Fakultas',
@@ -117,7 +117,7 @@ class PeminjamanSeeder extends Seeder
             ],
             // Status: disetujui (Sarana tanpa Ruangan)
             [
-                'idUser' => 4,
+                'idUser' => 5,
                 'idRuangan' => null,
                 'idSarana' => 3, // Auditorium Utama
                 'kegiatan' => 'Kuliah Umum',
@@ -139,7 +139,7 @@ class PeminjamanSeeder extends Seeder
 
             // Status: ditolak (Ruangan)
             [
-                'idUser' => 4,
+                'idUser' => 5,
                 'idRuangan' => 2,
                 'idSarana' => 1, 
                 'kegiatan' => 'Seminar Nasional',
@@ -158,7 +158,7 @@ class PeminjamanSeeder extends Seeder
             ],
             // Status: ditolak (Sarana tanpa Ruangan)
             [
-                'idUser' => 4,
+                'idUser' => 5,
                 'idRuangan' => null,
                 'idSarana' => 2, // Lapangan Sepakbola
                 'kegiatan' => 'Pertandingan Futsal',
@@ -178,7 +178,7 @@ class PeminjamanSeeder extends Seeder
 
             // Status: dibatalkan (Ruangan)
             [
-                'idUser' => 4,
+                'idUser' => 5,
                 'idRuangan' => 1,
                 'idSarana' => 1, 
                 'kegiatan' => 'Workshop Programming',
@@ -199,7 +199,7 @@ class PeminjamanSeeder extends Seeder
             ],
             // Status: dibatalkan (Sarana tanpa Ruangan)
             [
-                'idUser' => 4,
+                'idUser' => 5,
                 'idRuangan' => null,
                 'idSarana' => 3, // Auditorium Utama
                 'kegiatan' => 'Seminar Internasional',
@@ -221,7 +221,7 @@ class PeminjamanSeeder extends Seeder
 
             // Status: diajukanbatal (Ruangan)
             [
-                'idUser' => 4,
+                'idUser' => 5,
                 'idRuangan' => 3,
                 'idSarana' => 1, 
                 'kegiatan' => 'Pelatihan Komputer',
@@ -239,7 +239,7 @@ class PeminjamanSeeder extends Seeder
             ],
             // Status: diajukanbatal (Sarana tanpa Ruangan)
             [
-                'idUser' => 3,
+                'idUser' => 4,
                 'idRuangan' => null,
                 'idSarana' => 3, // Auditorium Utama
                 'kegiatan' => 'Dies Natalis Fakultas',
@@ -258,7 +258,7 @@ class PeminjamanSeeder extends Seeder
 
             // Status: selesai (Ruangan)
             [
-                'idUser' => 4,
+                'idUser' => 5,
                 'idRuangan' => 1,
                 'idSarana' => 1, 
                 'kegiatan' => 'Ujian Akhir Semester',
@@ -280,7 +280,7 @@ class PeminjamanSeeder extends Seeder
             ],
             // Status: selesai (Sarana tanpa Ruangan)
             [
-               'idUser' => 4,
+               'idUser' => 5,
                 'idRuangan' => 1,
                 'idSarana' => 1, 
                 'kegiatan' => 'Wisuda Periode I',

@@ -260,62 +260,62 @@
                         </div>
                     </div>
                     <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-        <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                  d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
-        </svg>
-        Informasi Tarif
-    </h2>
-    <div class="space-y-6">
-        <!-- Status Peminjam -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Status Peminjam</label>
-            <select name="isUnand" id="isUnand" 
-                    class="w-full rounded-xl border-gray-200 focus:border-green-500 focus:ring-green-500"
-                    required>
-                <option value="" disabled selected hidden>Pilih Status</option>
-                <option value="1">Mahasiswa/Civitas UNAND</option>
-                <option value="0">Umum</option>
-            </select>
-        </div>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                            <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            Informasi Tarif
+                        </h2>
+                        <div class="space-y-6">
+                            <!-- Status Peminjam -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Status Peminjam</label>
+                                <select name="isUnand" id="isUnand" 
+                                        class="w-full rounded-xl border-gray-200 focus:border-green-500 focus:ring-green-500"
+                                        required>
+                                    <option value="" disabled selected hidden>Pilih Status</option>
+                                    <option value="1">Mahasiswa/Civitas UNAND</option>
+                                    <option value="0">Umum</option>
+                                </select>
+                            </div>
 
-        <!-- Tariff Information -->
-        <div class="bg-white p-4 rounded-lg border border-gray-200">
-            <h3 class="font-medium text-gray-900 mb-2">Informasi Tarif:</h3>
-            <ul class="space-y-2 text-sm text-gray-600">
-                <li class="flex items-center">
-                    <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Tarif UNAND: Rp{{ number_format(isset($ruangan) ? $ruangan->tarifunand : $sarana->tarifunand, 0, ',', '.') }}
-                </li>
-                <li class="flex items-center">
-                    <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Tarif Umum: Rp{{ number_format(isset($ruangan) ? $ruangan->tarifumum : $sarana->tarifumum, 0, ',', '.') }}
-                </li>
-            </ul>
-            <div class="mt-4 p-3 bg-yellow-50 rounded-lg">
-                <p class="text-sm text-yellow-800">
-                    <span class="font-medium">Catatan:</span> Tarif akan dikenakan untuk:
-                </p>
-                <ul class="mt-2 text-sm text-yellow-700 list-disc list-inside">
-                    <li>Peminjaman di hari Sabtu atau Minggu</li>
-                    <li>Peminjaman melewati pukul 16:00 (4 sore)</li>
-                </ul>
-            </div>
-        </div>
+                            <!-- Tariff Information -->
+                            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                                <h3 class="font-medium text-gray-900 mb-2">Informasi Tarif:</h3>
+                                <ul class="space-y-2 text-sm text-gray-600">
+                                    <li class="flex items-center">
+                                        <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Tarif UNAND: Rp{{ number_format(isset($ruangan) ? $ruangan->tarifunand : $sarana->tarifunand, 0, ',', '.') }}
+                                    </li>
+                                    <li class="flex items-center">
+                                        <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Tarif Umum: Rp{{ number_format(isset($ruangan) ? $ruangan->tarifumum : $sarana->tarifumum, 0, ',', '.') }}
+                                    </li>
+                                </ul>
+                                <div class="mt-4 p-3 bg-yellow-50 rounded-lg">
+                                    <p class="text-sm text-yellow-800">
+                                        <span class="font-medium">Catatan:</span> Tarif akan dikenakan untuk:
+                                    </p>
+                                    <ul class="mt-2 text-sm text-yellow-700 list-disc list-inside">
+                                        <li>Peminjaman di hari Sabtu atau Minggu</li>
+                                        <li>Peminjaman melewati pukul 16:00 (4 sore)</li>
+                                    </ul>
+                                </div>
+                            </div>
 
-        <!-- Estimated Total -->
-        <div id="estimatedTotal" class="hidden mt-4 p-4 bg-green-50 rounded-lg">
-            <p class="text-sm font-medium text-green-800">
-                Estimasi Total Tarif: <span id="totalTarif" class="text-lg">Rp0</span>
-            </p>
-        </div>
-    </div>
-</div>
+                            <!-- Estimated Total -->
+                            <div id="estimatedTotal" class="hidden mt-4 p-4 bg-green-50 rounded-lg">
+                                <p class="text-sm font-medium text-green-800">
+                                    Estimasi Total Tarif: <span id="totalTarif" class="text-lg">Rp0</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Form Actions -->
                     <div class="flex justify-end space-x-4 pt-6">
