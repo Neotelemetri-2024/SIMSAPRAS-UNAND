@@ -22,7 +22,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'role',
-        'kontak'
+        'kontak',
+        'email_verified_at'
     ];
    public function hasAnyRole($roles): bool
     {

@@ -142,18 +142,26 @@
                <div id="saranaSection" class="hidden">
                 <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Sarana yang Dapat Diakses</label>
                 <div class="space-y-2 max-h-40 overflow-y-auto p-2 border border-gray-200 rounded-lg">
-                   @foreach($sarana as $s)
+                    @foreach($sarana as $s)
+                    @php
+                        $isAssigned = \App\Models\AdminAccess::where('sarana_id', $s->id)->exists();
+                        $assignedTo = $isAssigned ? \App\Models\AdminAccess::where('sarana_id', $s->id)->first()->user->name : null;
+                    @endphp
                    <div class="flex items-center">
-                      <input type="checkbox" 
-                             name="sarana_ids[]" 
-                             value="{{ $s->id }}" 
-                             id="sarana_{{ $s->id }}"
-                             class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2">
-                      <label for="sarana_{{ $s->id }}" 
-                             class="ml-2 text-sm font-medium text-gray-900 dark:text-white">
-                         {{ $s->nama }}
-                      </label>
-                   </div>
+                    <input type="checkbox" 
+                           name="sarana_ids[]" 
+                           value="{{ $s->id }}" 
+                           id="sarana_{{ $s->id }}"
+                           {{ $isAssigned ? 'disabled' : '' }}
+                           class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2 {{ $isAssigned ? 'opacity-50' : '' }}">
+                    <label for="sarana_{{ $s->id }}" 
+                           class="ml-2 text-sm font-medium {{ $isAssigned ? 'text-gray-400' : 'text-gray-900' }} dark:text-white">
+                        {{ $s->nama }}
+                        @if($isAssigned)
+                            <span class="text-xs text-red-500 ml-2">(Ditugaskan ke: {{ $assignedTo }})</span>
+                        @endif
+                    </label>
+                </div>
                    @endforeach
                 </div>
                 <p class="mt-1 text-sm text-gray-500">*Pilih sarana yang akan dikelola oleh admin</p>
@@ -213,14 +221,25 @@
                         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Sarana yang Dapat Diakses</label>
                         <div class="space-y-2 max-h-40 overflow-y-auto p-2 border border-gray-200 rounded-lg">
                             @foreach($sarana as $s)
+                            @php
+                                $isAssigned = \App\Models\AdminAccess::where('sarana_id', $s->id)->exists();
+                                $assignedToCurrentUser = $item->saranaAccess->contains($s->id);
+                                $assignedTo = $isAssigned && !$assignedToCurrentUser ? 
+                                            \App\Models\AdminAccess::where('sarana_id', $s->id)->first()->user->name : 
+                                            null;
+                            @endphp
                             <div class="flex items-center">
                                 <input type="checkbox" 
-                                       name="sarana_ids[]" 
-                                       value="{{ $s->id }}" 
-                                       {{ $item->saranaAccess->contains($s->id) ? 'checked' : '' }}
-                                       class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500">
-                                <label class="ml-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    name="sarana_ids[]" 
+                                    value="{{ $s->id }}" 
+                                    {{ $assignedToCurrentUser ? 'checked' : '' }}
+                                    {{ ($isAssigned && !$assignedToCurrentUser) ? 'disabled' : '' }}
+                                    class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500">
+                                <label class="ml-2 text-sm font-medium {{ ($isAssigned && !$assignedToCurrentUser) ? 'text-gray-400' : 'text-gray-900' }} dark:text-white">
                                     {{ $s->nama }}
+                                    @if($isAssigned && !$assignedToCurrentUser)
+                                        <span class="text-xs text-red-500 ml-2">(Ditugaskan ke: {{ $assignedTo }})</span>
+                                    @endif
                                 </label>
                             </div>
                             @endforeach
