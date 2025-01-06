@@ -7,6 +7,7 @@ use App\Models\Sarana;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Models\AdminAccess;
 
 class PenggunaController extends Controller
 {
@@ -32,7 +33,22 @@ class PenggunaController extends Controller
                 'sarana_ids.*' => 'exists:sarana,id'
             ]);
 
+            if ($validated['role'] === 'admin' && isset($request->sarana_ids)) {
+                $assignedSarana = AdminAccess::whereIn('sarana_id', $request->sarana_ids)->get();
+                
+                if ($assignedSarana->isNotEmpty()) {
+                    $assignedSaranaNames = Sarana::whereIn('id', $assignedSarana->pluck('sarana_id'))
+                        ->pluck('nama')
+                        ->implode(', ');
+                        
+                    throw new \Exception("Sarana berikut sudah ditugaskan ke admin lain: " . $assignedSaranaNames);
+                }
+            }
+            
             $validated['password'] = Hash::make($request->password);
+            if (in_array($validated['role'], ['admin', 'superadmin', 'pimpinan'])) {
+                $validated['email_verified_at'] = now();
+            }
             $user = User::create($validated);
 
             if ($validated['role'] === 'admin' && isset($request->sarana_ids)) {

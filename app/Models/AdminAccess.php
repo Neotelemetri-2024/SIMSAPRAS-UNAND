@@ -23,4 +23,15 @@ class AdminAccess extends Model
     {
         return $this->belongsTo(Sarana::class);
     }
+
+    public static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($model) {
+            if (self::where('sarana_id', $model->sarana_id)->exists()) {
+                throw new \Exception("Sarana sudah ditugaskan ke admin lain");
+            }
+        });
+    }
 }
