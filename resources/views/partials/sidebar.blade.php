@@ -165,6 +165,20 @@
                 <span class="ml-3">Pengumuman</span>
              </a>
           </li>
+          <li>
+            <a href="{{ route('pengaduan.index') }}"
+               class="flex items-center p-2 rounded-lg group transition-colors duration-200 {{ request()->routeIs('pengaduan.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+               <svg class="w-5 h-5 transition duration-75 {{ request()->routeIs('pengaduan.index') ? 'text-green-600' : 'text-gray-500 group-hover:text-gray-900' }}" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke-width="1.5" 
+                  stroke="currentColor">
+                 <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.742 1.5 1.761 1.5 2.864 0 2.347-2.775 4.25-6.187 4.25-1.047 0-2.032-.184-2.907-.519L5.25 19.5l1.426-5.705c-1.154-.98-1.926-2.29-1.926-3.78 0-2.347 2.774-4.25 6.187-4.25.828 0 1.623.11 2.36.313" />
+             </svg>             
+               <span class="ml-3">Pengaduan</span>
+            </a>
+         </li>
          @endcanany
        </ul>
     </div>

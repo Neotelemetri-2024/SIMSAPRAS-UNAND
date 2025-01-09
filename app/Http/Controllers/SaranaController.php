@@ -31,7 +31,6 @@ class SaranaController extends Controller
             });
         }
         
-        // Handle filter
         if ($filter) {
             if (str_starts_with($filter, 'kategori_')) {
                 $kategoriId = substr($filter, 9); 
@@ -61,7 +60,6 @@ class SaranaController extends Controller
                 }
             }
 
-            // Check additional images size
             if ($request->hasFile('gambar_tambahan')) {
                 foreach ($request->file('gambar_tambahan') as $index => $image) {
                     if ($image->getSize() > 2048 * 1024) { 
@@ -73,7 +71,6 @@ class SaranaController extends Controller
                 }
             }
 
-            // Validasi input
             $validated = $request->validate([
                 'IdKategori' => 'required|exists:kategori_sarana,id',
                 'nama' => 'required|string|max:255',
@@ -220,7 +217,6 @@ class SaranaController extends Controller
         $search = $request->input("search");
         $filterKategori = $request->input("kategori");
 
-        // Query untuk sarana
         $sarana = Sarana::withCount('peminjaman')
             ->with('kategoriSarana')
             ->when($search, function ($query, $search) {
@@ -235,7 +231,6 @@ class SaranaController extends Controller
             ->where('status', 'aktif')
             ->paginate(6);
 
-        // Data untuk trend chart (6 bulan terakhir)
         $trendData = Peminjaman::selectRaw('DATE_FORMAT(created_at, "%b %Y") as month, YEAR(created_at) as year, MONTH(created_at) as month_num, COUNT(*) as total')
             ->whereRaw('created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)')
             ->groupBy('year', 'month_num', 'month')
@@ -244,14 +239,13 @@ class SaranaController extends Controller
             ->get();
 
         $topBorrowed = Sarana::withCount('peminjaman')
-            ->where('status', 'aktif')  // Tambahkan ini jika perlu
+            ->where('status', 'aktif')  
             ->orderBy('peminjaman_count', 'desc')
             ->limit(5)
             ->get();
 
         $pengumuman = Pengumuman::latest()->limit(3)->get();
 
-        // Get categories for filter
         $kategori = KategoriSarana::where('status', 'aktif')->get();
 
         return view('sarana', compact(
@@ -269,14 +263,11 @@ class SaranaController extends Controller
     {
         $search = $request->input('search');
         
-        // Load relationships
         $sarana->load(['kategoriSarana', 'gambarSarana', 'penjaga']);
         
-        // Initialize $ruangan and $events as empty collections by default
         $ruangan = collect();
         $events = []; 
         
-        // Query ruangan if kategori is Gedung Beruangan
         if ($sarana->kategoriSarana->jenis === 'Gedung Beruangan') {
             $ruangan = $sarana->ruangan()
                 ->when($search, function ($query, $search) {
@@ -287,13 +278,11 @@ class SaranaController extends Controller
                 ->where('status', 'aktif')
                 ->paginate(6);
         } else {
-            // Get peminjaman data for non-Gedung Beruangan
-            $peminjaman = Peminjaman::with(['tanggalPeminjaman.jadwal']) // Changed this line
+            $peminjaman = Peminjaman::with(['tanggalPeminjaman.jadwal']) 
                 ->where('idSarana', $sarana->id)
                 ->whereIn('status', ['diajukan', 'disetujui', 'diproses', 'diajukanbatal'])
                 ->get();
                 
-            // Create events array
             foreach($peminjaman as $item) {
                 foreach($item->tanggalPeminjaman as $tanggal) {
                     $events[] = [

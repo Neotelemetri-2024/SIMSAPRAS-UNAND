@@ -2,7 +2,6 @@
 @section('content')
 <div class="p-4 sm:p-6">
     <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
-        <!-- Card Header -->
         <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
             <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Data Pengumuman</h5>
             <button data-modal-target="createModal" data-modal-toggle="createModal" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">
@@ -10,7 +9,6 @@
             </button>
         </div>
 
-        <!-- Search Bar -->
         <div class="p-5 border-b border-gray-200 dark:border-gray-700">
             <form method="GET" action="{{ route('pengumuman.index') }}" class="flex gap-3">
                 <div class="flex-1">
@@ -29,7 +27,6 @@
             </form>
         </div>
 
-        <!-- Table -->
         <div class="p-5">
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -69,7 +66,6 @@
                 </table>
             </div>
 
-            <!-- Pagination -->
             <div class="p-5">
                 {{ $pengumuman->links() }}
             </div>
@@ -77,9 +73,7 @@
     </div>
 </div>
 
-<!-- Create Modal -->
 <div id="createModal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
-    <!-- Backdrop with higher z-index -->
     <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="createModal"></div>
     <div class="relative w-full max-w-2xl max-h-full">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
