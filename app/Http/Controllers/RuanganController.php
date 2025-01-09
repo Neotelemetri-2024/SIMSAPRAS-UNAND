@@ -65,7 +65,8 @@ class RuanganController extends Controller
                 'deskripsi' => $request->deskripsi,
                 'kapasitas' => $request->kapasitas,
                 'fasilitas' => $request->fasilitas,
-                'tarifunand' => $request->tarifunand,
+                'tariformawa' => $request->tariformawa,
+                'tarifunit' => $request->tarifunit,
                 'tarifumum' => $request->tarifumum,
                 'kelas' => $request->kelas,
                 'gambar' => $mainImagePath

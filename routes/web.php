@@ -28,6 +28,8 @@ use App\Http\Controllers\PeminjamanDitolakController;
 use App\Http\Controllers\PeminjamanDiajukanbatalController;
 use App\Http\Controllers\PeminjamanDibatalkanController;
 use App\Http\Controllers\PeminjamanSelesaiController;
+use App\Http\Controllers\PengaduanController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +56,8 @@ Route::get('/panduan/cara', [PanduanController::class, 'cara'])->name('panduan.c
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [DetailProfileController::class, 'index'])->name('profile.index');
+    Route::get('/pengaduan', [PengaduanController::class, 'userShow'])->name('user.pengaduan.show');
+    Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('user.pengaduan.store');
     Route::get('/change-password', [PasswordChangeController::class, 'edit'])->name('password.change');
     Route::post('/change-password', [PasswordChangeController::class, 'update'])->name('password.change.update');
 });
@@ -79,6 +83,8 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
     Route::get('/peminjaman-selesai/export', [PeminjamanSelesaiController::class, 'export'])->name('peminjaman.export');
 
     Route::resource('pengumuman', PengumumanController::class);
+
+    Route::get('/pengaduan', [PengaduanController::class, 'adminShow'])->name('pengaduan.index');
 
     Route::resource('sarana', SaranaController::class);
     Route::post('/sarana', [SaranaController::class, 'store'])->name('sarana.store');

@@ -1,10 +1,8 @@
 @extends('layouts.user')
 @section('content')
-<!-- Hero Section -->
 <div class="bg-gradient-to-r from-green-600 to-green-800 pt-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-16">
         <div class="flex flex-col md:flex-row items-center gap-8">
-            <!-- Profile Image -->
             <div class="relative flex-shrink-0">
                 <div class="w-36 h-36 bg-white/15 backdrop-blur rounded-full flex items-center justify-center border-4 border-white/20">
                     <i class="fas fa-user text-white/90 text-5xl"></i>
@@ -12,7 +10,6 @@
                 <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-emerald-400 rounded-full border-4 border-green-800"></div>
             </div>
 
-            <!-- Profile Info -->
             <div class="text-center md:text-left space-y-4">
                 <h1 class="text-4xl md:text-5xl font-bold text-white">{{ $pengguna->name ?? 'Tidak diketahui' }}</h1>
                 <div class="flex flex-col sm:flex-row gap-4 text-lg text-white/90">
@@ -30,11 +27,9 @@
     </div>
 </div>
 
-<!-- Stats Section -->
 <div class="bg-green-50/50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Total Peminjaman -->
             <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900">Total Peminjaman</h3>
@@ -69,10 +64,8 @@
     </div>
 </div>
 
-<!-- Content Section -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- Recent Activity -->
         <div class="space-y-6">
             <h2 class="text-2xl font-bold text-gray-900">Aktivitas Terbaru</h2>
             @forelse($aktivitasTerbaru as $aktivitas)
@@ -115,14 +108,14 @@
             @endforelse
         </div>
 
-        <!-- Quick Actions -->
         <div class="space-y-6">
             <h2 class="text-2xl font-bold text-gray-900">Aksi Cepat</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 @foreach([
                     ['title' => 'Peminjaman', 'desc' => 'Mulai peminjaman baru', 'icon' => 'building', 'route' => 'user.sarana'],
                     ['title' => 'Riwayat', 'desc' => 'Lihat riwayat peminjaman', 'icon' => 'history', 'route' => 'riwayat.index'],
-                    ['title' => 'Ubah Password', 'desc' => 'Perbarui password akun', 'icon' => 'key', 'route' => 'password.change']
+                    ['title' => 'Ubah Password', 'desc' => 'Perbarui password akun', 'icon' => 'key', 'route' => 'password.change'],
+                    ['title' => 'Pengaduan', 'desc' => 'Beri tahu kami yang perlu diperbaiki', 'icon' => 'comments', 'route' => 'user.pengaduan.show']
                 ] as $action)
                 <a href="{{ route($action['route']) }}" 
                    class="group bg-white rounded-2xl p-6 shadow-lg hover:bg-green-600 hover:shadow-md transition-all">

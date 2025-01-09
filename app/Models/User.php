@@ -40,19 +40,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Peminjaman::class, 'idUser');
     }
 
-      // Relasi untuk peminjaman yang disetujui oleh user ini
     public function peminjamanDisetujui()
     {
         return $this->hasMany(Peminjaman::class, 'disetujui_oleh');
     }
 
-    // Relasi untuk peminjaman yang ditolak oleh user ini
     public function peminjamanDitolak()
     {
         return $this->hasMany(Peminjaman::class, 'ditolak_oleh');
     }
 
-    // Relasi untuk peminjaman yang dibatalkan oleh user ini
     public function peminjamanDibatalkan()
     {
         return $this->hasMany(Peminjaman::class, 'dibatalkan_oleh');
@@ -74,10 +71,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function beamsInterest()
     {
-        // Generate interest berdasarkan user ID dan role
         $interests = ['user-' . $this->id];
         
-        // Tambahkan interest berdasarkan role
         if ($this->role) {
             $interests[] = 'role-' . $this->role;
         }
@@ -96,7 +91,6 @@ class User extends Authenticatable implements MustVerifyEmail
                     ->withTimestamps();
     }
 
-    // Method untuk mengecek akses ke sarana tertentu
     public function canAccessSarana($saranaId): bool
     {
         if ($this->role === 'superadmin') {
@@ -108,6 +102,11 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         
         return false;
+    }
+
+    public function pengaduan()
+    {
+        return $this->hasMany(Pengaduan::class, 'user_id');
     }
 
     /**

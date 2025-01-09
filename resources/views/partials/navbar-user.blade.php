@@ -1,6 +1,5 @@
 <nav class="bg-white dark:bg-gray-900 fixed w-full z-50 border-b border-gray-200 h-20">
     <div class="max-w-screen-xl h-full flex flex-wrap items-center justify-between mx-auto px-4">
-        <!-- Logo Section -->
         <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
             <div class="h-12 w-12">
                 <img src="/assets/images/unand.png" alt="Logo Unand" class="h-full w-full object-contain">
@@ -10,8 +9,6 @@
                 <span class="text-sm text-gray-500">Universitas Andalas</span>
             </div>
         </a>
-
-        <!-- Hamburger Button -->
         <button data-collapse-toggle="navbar-dropdown" type="button"
             class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
             aria-controls="navbar-dropdown" aria-expanded="false">
@@ -22,28 +19,21 @@
                     d="M1 1h15M1 7h15M1 13h15" />
             </svg>
         </button>
-
-        <!-- Navigation Menu -->
         <div class="hidden w-full md:block md:w-auto" id="navbar-dropdown">
             <ul
                 class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:items-center md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white h-full">
-                <!-- Beranda -->
                 <li class="flex items-center h-full">
                     <a href="{{ route('home') }}"
                         class="block py-2 px-3 {{ request()->routeIs('home') ? 'text-green-600' : 'text-gray-900' }} rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-600 md:p-0">
                         Beranda
                     </a>
                 </li>
-
-                <!-- Peminjaman -->
                 <li class="flex items-center h-full">
                     <a href="{{ route('user.sarana') }}"
                         class="block py-2 px-3 {{ request()->routeIs('user.sarana*') ? 'text-green-600' : 'text-gray-900' }} rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-600 md:p-0">
                         Peminjaman
                     </a>
                 </li>
-
-                <!-- Sumber Daya Dropdown -->
                 <li class="relative w-full md:w-auto">
                     <button id="dropdownNavbarLink2" data-dropdown-toggle="dropdownNavbar2"
                         class="flex items-center justify-between w-full py-2 px-3 {{ request()->routeIs('panduan*', 'faq*', 'download*') ? 'text-green-600' : 'text-gray-900' }} hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-600 md:p-0 md:w-auto">
@@ -54,7 +44,6 @@
                                 d="m1 1 4 4 4-4" />
                         </svg>
                     </button>
-                    <!-- Dropdown menu -->
                     <div id="dropdownNavbar2"
                         class="z-10 hidden w-full md:w-44 font-normal bg-white divide-y divide-gray-100 md:rounded-lg shadow md:absolute md:left-0">
                         <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownLargeButton">
@@ -70,17 +59,9 @@
                                     Pengumuman
                                 </a>
                             </li>
-                            <li>
-                                <a href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 {{ request()->routeIs('download*') ? 'text-green-600' : '' }}">
-                                    Download
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </li>
-
-                <!-- Riwayat (untuk user) -->
                 @can('is-user')
                     <li class="flex items-center h-full">
                         <a href="{{ route('riwayat.index') }}"
@@ -89,10 +70,7 @@
                         </a>
                     </li>
                 @endcan
-
-                <!-- Auth Section -->
                 @can('not-user')
-                    <!-- Login Button -->
                     <li class="flex items-center h-full md:ml-8">
                         <a href="{{ route('login') }}"
                             class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300">
@@ -105,17 +83,12 @@
                         </a>
                     </li>
                 @endcan
-
-                <!-- User Profile Dropdown -->
                 @can('is-user')
                     <li class="relative flex items-center h-full md:ml-8">
                         <div class="flex items-center space-x-3">
-                            <!-- Notification Button -->
                             <button type="button"
                                 class="notification-button p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 transition-colors">
                             </button>
-
-                            <!-- Profile Button -->
                             <button type="button"
                                 class="flex items-center text-sm  rounded-full focus:ring-4 focus:ring-green-300 dark:focus:ring-green-600"
                                 id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
@@ -126,7 +99,6 @@
                                     alt="user photo">
                             </button>
 
-                            <!-- User Dropdown Menu -->
                             <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
                                 id="user-dropdown">
                                 <div class="px-4 py-3">

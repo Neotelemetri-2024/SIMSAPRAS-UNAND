@@ -55,4 +55,9 @@ class Sarana extends Model
         return $this->belongsToMany(User::class, 'admin_access', 'sarana_id', 'user_id')
                     ->withTimestamps();
     }
+
+    public function pengaduan()
+    {
+        return $this->hasMany(Pengaduan::class, 'id_sarana', 'id');
+    }
 }

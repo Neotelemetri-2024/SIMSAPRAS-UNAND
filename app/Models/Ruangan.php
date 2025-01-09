@@ -24,10 +24,10 @@ class Ruangan extends Model
     ];
     protected $table = 'ruangan';
 
-  public function sarana()
-{
-    return $this->belongsTo(Sarana::class, 'idSarana', 'id');
-}
+    public function sarana()
+    {
+        return $this->belongsTo(Sarana::class, 'idSarana', 'id');
+    }
 
      public function gambarRuangan()
     {
