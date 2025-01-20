@@ -17,22 +17,12 @@ class KategoriSaranaSeeder extends Seeder
             [
                 'jenis' => 'Gedung Tunggal',
                 'deskripsi' => 'Sarana berupa gedung untuk berbagai kegiatan',
-                'status' => 'nonaktif'
+                'status' => 'aktif'
             ],
             [
                 'jenis' => 'Lapangan',
                 'deskripsi' => 'Sarana olahraga outdoor',
                 'status' => 'aktif'
-            ],
-            [
-                'jenis' => 'Perpustakaan',
-                'deskripsi' => 'Sarana berupa gedung untuk berbagai kegiatan',
-                'status' => 'aktif'
-            ],
-            [
-                'jenis' => 'Laboratorium',
-                'deskripsi' => 'Sarana berupa gedung untuk berbagai kegiatan',
-                'status' => 'nonaktif'
             ],
         ];
 

@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         @vite(['resources/css/app.css','resources/js/app.js'])
         <title>SIMSAPRAS Dashboard</title>
+        <link href="/assets/images/unand.png" rel="shortcut icon" type="image/vnd.microsoft.icon">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
         <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet'>
 

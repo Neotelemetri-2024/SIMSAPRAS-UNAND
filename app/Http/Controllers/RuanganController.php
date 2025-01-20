@@ -248,4 +248,28 @@ class RuanganController extends Controller
         
         return view('detailruangan', compact('ruangan', 'events'));
     }
+
+    public function activate($idSarana, $id)
+    {
+        $ruangan = Ruangan::findOrFail($id);
+        
+        DB::beginTransaction();
+        try {
+            $ruangan->update(['status' => 'aktif']);
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Ruangan berhasil diaktifkan',
+                'redirect' => route('ruangan.index', $idSarana)
+            ]);
+                
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'redirect' => route('ruangan.index', $idSarana)
+            ]);
+        }
+    }
 }
