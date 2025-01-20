@@ -97,6 +97,7 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
     Route::put('/sarana/{idSarana}/ruangan/{ruangan}', [RuanganController::class, 'update'])->name('ruangan.update');
     Route::delete('/sarana/{idSarana}/ruangan/{ruangan}', [RuanganController::class, 'destroy'])->name('ruangan.destroy');
     Route::delete('/sarana/{idSarana}/ruangan/delete-image/{id}', [RuanganController::class, 'deleteImage'])->name('ruangan.delete-image');
+    Route::patch('/sarana/{idSarana}/ruangan/{ruangan}/activate', [RuanganController::class, 'activate'])->name('ruangan.activate');
 
     Route::resource('jadwal', JadwalController::class)->except(['show']); 
     Route::patch('/jadwal/{jadwal}/activate', [JadwalController::class, 'activate'])->name('jadwal.activate');
