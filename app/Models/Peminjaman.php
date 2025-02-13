@@ -20,7 +20,7 @@ class Peminjaman extends Model
         'instansi',
         'estimasiPeserta',
         'totalTarif',
-        'isUnand',
+        'statusPeminjam',
         'feedbackPenolakan',
         'evaluasi',
         'status',
@@ -51,6 +51,7 @@ class Peminjaman extends Model
 
     protected $enums = [
         'status' => ['diajukan', 'ditolak', 'diproses', 'disetujui', 'dibatalkan', 'diajukanbatal', 'selesai'],
+        'statusPeminjam' => ['unit', 'ormawa', 'umum'],
         'statusPembayaran' => ['lunas', 'tidak'],
         'statusPengembalian' => ['sudah', 'belum']
     ];
@@ -121,7 +122,7 @@ class Peminjaman extends Model
 
         return $daysDifference >= 3 && $bookingDate->greaterThan($today);
     }
-    public static function calculateTarif($jadwal_dates, $isUnand, $sarana = null, $ruangan = null)
+    public static function calculateTarif($jadwal_dates, $statusPeminjam, $sarana = null, $ruangan = null)
     {
         $totalTarif = 0;
         
@@ -138,9 +139,21 @@ class Peminjaman extends Model
             
             if ($isWeekend || $isAfterHours) {
                 if ($ruangan) {
-                    $tarif = $isUnand ? $ruangan->tarifunand : $ruangan->tarifumum;
+                    if ($statusPeminjam == 'unit') {
+                        $tarif = $ruangan->tarifunit;
+                    } elseif ($statusPeminjam == 'ormawa') {
+                        $tarif = $ruangan->tariformawa;
+                    } else {
+                        $tarif = $ruangan->tarifumum;
+                    }
                 } else {
-                    $tarif = $isUnand ? $sarana->tarifunand : $sarana->tarifumum;
+                    if ($statusPeminjam == 'unit') {
+                        $tarif = $sarana->tarifunit;
+                    } elseif ($statusPeminjam == 'ormawa') {
+                        $tarif = $sarana->tariformawa;
+                    } else {
+                        $tarif = $sarana->tarifumum;
+                    }
                 }
                 
                 $totalTarif += $tarif;

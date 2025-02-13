@@ -22,45 +22,49 @@ SIMSAPRAS UNAND adalah sistem informasi manajemen yang dirancang khusus untuk me
 
 ## ✨ Fitur Utama
 
-- Manajemen peminjaman sarana dan prasarana
-- Sistem booking dengan kalender interaktif
-- Pengelolaan pengumuman
-- Dashboard admin yang komprehensif
-- Sistem tracking status peminjaman
-- Manajemen ruangan dan fasilitas
-- Notifikasi status peminjaman
+-   Manajemen peminjaman sarana dan prasarana
+-   Sistem booking dengan kalender interaktif
+-   Pengelolaan pengumuman
+-   Dashboard admin yang komprehensif
+-   Sistem tracking status peminjaman
+-   Manajemen ruangan dan fasilitas
+-   Notifikasi status peminjaman
 
 ## 🚀 Teknologi
 
 Sistem ini dibangun menggunakan teknologi-teknologi modern:
 
-- **[Laravel](https://laravel.com/)** - Framework PHP
-- **[Tailwind CSS](https://tailwindcss.com/)** - Framework CSS
-- **[Alpine.js](https://alpinejs.dev/)** - Framework JavaScript
-- **[MySQL](https://www.mysql.com/)** - Database Management System
-- **[SweetAlert2](https://sweetalert2.github.io/)** - Beautiful Alert Messages
-- **[FullCalendar](https://fullcalendar.io/)** - Calendar Interface
+-   **[Laravel](https://laravel.com/)** - Framework PHP
+-   **[Tailwind CSS](https://tailwindcss.com/)** - Framework CSS
+-   **[Alpine.js](https://alpinejs.dev/)** - Framework JavaScript
+-   **[MySQL](https://www.mysql.com/)** - Database Management System
+-   **[SweetAlert2](https://sweetalert2.github.io/)** - Beautiful Alert Messages
+-   **[FullCalendar](https://fullcalendar.io/)** - Calendar Interface
 
 ## 💻 Instalasi
 
 1. Clone repository
+
 ```bash
 git clone https://github.com/Neotelemetri-2024/SIMSAPRAS-UNAND.git
 ```
 
 2. Install dependencies
+
 ```bash
 composer install
 npm install
 ```
 
 3. Setup environment
+
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
 4. Konfigurasi database di file .env
+
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -71,12 +75,14 @@ DB_PASSWORD=
 ```
 
 5. Migrate database
+
 ```bash
 php artisan migrate
 php artisan db:seed
 ```
 
 6. Jalankan aplikasi
+
 ```bash
 php artisan serve
 npm run dev
@@ -85,37 +91,42 @@ npm run dev
 ## 📱 Penggunaan
 
 1. **Autentikasi**
-   - Akses halaman login
-   - Masukkan kredensial yang sesuai
+
+    - Akses halaman login
+    - Masukkan kredensial yang sesuai
 
 2. **Peminjaman Sarana**
-   - Pilih sarana yang akan dipinjam
-   - Isi form peminjaman
-   - Pilih tanggal dan waktu
-   - Submit permintaan peminjaman
+
+    - Pilih sarana yang akan dipinjam
+    - Isi form peminjaman
+    - Pilih tanggal dan waktu
+    - Submit permintaan peminjaman
 
 3. **Monitoring Status**
-   - Cek status peminjaman
-   - Lihat riwayat peminjaman
-   - Terima notifikasi update status
+    - Cek status peminjaman
+    - Lihat riwayat peminjaman
+    - Terima notifikasi update status
 
 ## 👥 Tim Pengembang
 
-- Project Manager: Muhammad Nouval Habibie
-- Developer: Khalied Nauly Maturino
+-   Project Manager: Muhammad Nouval Habibie
+-   Developer: Khalied Nauly Maturino
 
 ## 📞 Kontak
 
 Untuk informasi lebih lanjut, silakan hubungi:
-- Email: neotelemetri@gmail.com
-- Website: www.neotelemetri.com
+
+-   Email: neotelemetri@gmail.com
+-   Website: www.neotelemetri.com
 
 ## 🙏 Terima Kasih
 
 Terima kasih kepada seluruh pihak yang telah berkontribusi dalam pengembangan SIMSAPRAS UNAND:
-- Universitas Andalas
-- Tim Pengembang
-- Dan semua pihak yang telah membantu
+
+-   Universitas Andalas
+-   Tim Pengembang
+-   Dan semua pihak yang telah membantu
 
 ---
-<p align="center">© 2024 Neo Telemetri. All rights reserved.</p>
+
+<p align="center">© 2024-2025 Neo Telemetri. All rights reserved.</p>

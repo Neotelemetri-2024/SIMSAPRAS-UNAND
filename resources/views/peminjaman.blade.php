@@ -271,12 +271,13 @@
                             <!-- Status Peminjam -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Status Peminjam</label>
-                                <select name="isUnand" id="isUnand" 
+                                <select name="statusPeminjam" id="statusPeminjam" 
                                         class="w-full rounded-xl border-gray-200 focus:border-green-500 focus:ring-green-500"
                                         required>
                                     <option value="" disabled selected hidden>Pilih Status</option>
-                                    <option value="1">Mahasiswa/Civitas UNAND</option>
-                                    <option value="0">Umum</option>
+                                    <option value="unit">Fakultas/Unit</option>
+                                    <option value="ormawa">Ormawa</option>
+                                    <option value="umum">Umum</option>
                                 </select>
                             </div>
 
@@ -288,7 +289,13 @@
                                         <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
-                                        Tarif UNAND: Rp{{ number_format(isset($ruangan) ? $ruangan->tarifunand : $sarana->tarifunand, 0, ',', '.') }}
+                                        Tarif Fakultas/Unit: Rp{{ number_format(isset($ruangan) ? $ruangan->tarifunit : $sarana->tarifunit, 0, ',', '.') }}
+                                    </li>
+                                    <li class="flex items-center">
+                                        <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Tarif Ormawa: Rp{{ number_format(isset($ruangan) ? $ruangan->tariformawa : $sarana->tariformawa, 0, ',', '.') }}
                                     </li>
                                     <li class="flex items-center">
                                         <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -476,14 +483,16 @@ function confirmCancel() {
 <script>
 // Add this to your existing JavaScript
 function calculateEstimatedTarif() {
-    const isUnand = document.getElementById('isUnand').value;
-    if (!isUnand) return;
+    const statusPeminjam = document.getElementById('statusPeminjam').value;
+    if (!statusPeminjam) return;
 
     const jadwalSelects = document.querySelectorAll('select[name^="jadwal_dates"][name$="[jadwal_id]"]');
     const dates = Array.from(document.querySelectorAll('input[name^="jadwal_dates"][name$="[date]"]')).map(input => input.value);
     
-    const tarif = isUnand === '1' ? 
-        {{ isset($ruangan) ? $ruangan->tarifunand : $sarana->tarifunand }} :
+    const tarif = statusPeminjam === 'unit' ? 
+        {{ isset($ruangan) ? $ruangan->tarifunit : $sarana->tarifunit }} :
+        statusPeminjam === 'ormawa' ? 
+        {{ isset($ruangan) ? $ruangan->tariformawa : $sarana->tariformawa }} :
         {{ isset($ruangan) ? $ruangan->tarifumum : $sarana->tarifumum }};
 
     let totalTarif = 0;
@@ -514,7 +523,7 @@ function calculateEstimatedTarif() {
 }
 
 // Add event listeners
-document.getElementById('isUnand').addEventListener('change', calculateEstimatedTarif);
+document.getElementById('statusPeminjam').addEventListener('change', calculateEstimatedTarif);
 document.querySelectorAll('select[name^="jadwal_dates"][name$="[jadwal_id]"]').forEach(select => {
     select.addEventListener('change', calculateEstimatedTarif);
 });
