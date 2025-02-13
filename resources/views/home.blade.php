@@ -1,271 +1,212 @@
 @extends('layouts.user')
 
 @section('content')
-    <section class="bg-white pt-24">
-        <div class="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
-            <div class="mr-auto place-self-center lg:col-span-7">
-                <h1 class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl">
-                    Sistem Informasi Peminjaman <span class="text-green-600 block">Sarana & Prasarana</span>
-                </h1>
-                <p class="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl">
-                    Peminjaman Sarana & Prasarana Universitas Andalas dengan mudah dan efisien. Sistem modern untuk
-                    manajemen fasilitas kampus yang lebih baik.
-                </p>
-                <a href="{{ route('user.sarana') }}"
-                    class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300">
-                    Mulai Sekarang
-                    <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd"
-                            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                </a>
-            </div>
-            <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
-                <img src="/assets/images/unandnosky.png" alt="mockup">
-            </div>
-        </div>
-    </section>
-    <!-- Features Section -->
-    <section id="features" class="bg-gray-50 py-16">
-        <div class="max-w-screen-xl px-4 py-8 mx-auto lg:py-16">
-            <h2 class="mb-8 text-3xl font-extrabold tracking-tight leading-tight text-center text-gray-900 lg:mb-16">
-                Fitur Utama
-            </h2>
-            <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                <!-- Feature 1 -->
-                <div class="p-6 bg-white rounded-lg shadow-md">
-                    <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-green-100 lg:h-12 lg:w-12">
-                        <svg class="w-5 h-5 text-green-600 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M2 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V4zM8 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1H9a1 1 0 01-1-1V4zM15 3a1 1 0 00-1 1v12a1 1 0 001 1h2a1 1 0 001-1V4a1 1 0 00-1-1h-2z">
-                            </path>
-                        </svg>
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-white to-green-50 pt-12 overflow-hidden">
+        <div class="absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l from-green-50 to-transparent"></div>
+        <div class="max-w-screen-xl px-4 py-16 mx-auto lg:py-24">
+            <div class="grid lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-7 space-y-8 relative">
+                    <div class="space-y-4">
+                        <div class="inline-flex items-center px-4 py-1.5 rounded-full border border-green-100 bg-green-50">
+                            <span class="text-sm font-medium text-green-600">SIMSAPRAS UNAND</span>
+                        </div>
+                        <h1 class="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl text-gray-900">
+                            Sistem Informasi Peminjaman 
+                            <span class="text-green-600 inline-block">Sarana & Prasarana</span>
+                        </h1>
+                        <p class="text-lg text-gray-600 leading-relaxed max-w-2xl">
+                            Peminjaman Sarana & Prasarana Universitas Andalas dengan mudah dan efisien. 
+                            Sistem modern untuk manajemen fasilitas kampus yang lebih baik.
+                        </p>
                     </div>
-                    <h3 class="mb-2 text-xl font-bold">Cek Ketersediaan</h3>
-                    <p class="text-gray-500">Lihat jadwal dan ketersediaan sarana secara langsung melalui kalender
-                        interaktif.</p>
-                </div>
-                <!-- Feature 2 -->
-                <div class="p-6 bg-white rounded-lg shadow-md">
-                    <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-green-100 lg:h-12 lg:w-12">
-                        <svg class="w-5 h-5 text-green-600 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z">
-                            </path>
-                        </svg>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="{{ route('user.sarana') }}" 
+                           class="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-green-600 rounded-lg shadow-sm hover:bg-green-700 transition duration-200 group">
+                            Mulai Sekarang
+                            <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" 
+                                 fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" 
+                                      d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" 
+                                      clip-rule="evenodd">
+                                </path>
+                            </svg>
+                        </a>
                     </div>
-                    <h3 class="mb-2 text-xl font-bold">Peminjaman Mudah</h3>
-                    <p class="text-gray-500">Ajukan peminjaman kapan saja dan di mana saja dengan proses yang sederhana.</p>
                 </div>
-                <!-- Feature 3 -->
-                <div class="p-6 bg-white rounded-lg shadow-md">
-                    <div class="flex justify-center items-center mb-4 w-10 h-10 rounded-full bg-green-100 lg:h-12 lg:w-12">
-                        <svg class="w-5 h-5 text-green-600 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
-                            <path fill-rule="evenodd"
-                                d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                    <h3 class="mb-2 text-xl font-bold">Pantau Status</h3>
-                    <p class="text-gray-500">Lacak status peminjaman Anda dan terima notifikasi pembaruan secara langsung.
-                    </p>
+                <div class="lg:col-span-5 relative">
+                    <div class="absolute inset-0 bg-green-100 rounded-2xl opacity-20 blur-2xl"></div>
+                    <img src="/assets/images/unandnosky.png" 
+                         alt="UNAND" 
+                         class="relative rounded-lg shadow-lg transform hover:scale-[1.02] transition-transform duration-300">
                 </div>
-            </div>
-        </div>
-    </section>
-    <!-- How It Works Section -->
-    <section id="how-it-works" class="bg-white py-16">
-        <div class="max-w-screen-xl px-4 py-8 mx-auto lg:py-16">
-            <h2 class="mb-8 text-3xl font-extrabold tracking-tight leading-tight text-center text-gray-900">
-                Cara Kerja
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="text-center">
-                    <div class="flex justify-center mb-4">
-                        <span
-                            class="w-12 h-12 flex items-center justify-center rounded-full bg-green-100 text-green-600 text-xl font-bold">1</span>
-                    </div>
-                    <h3 class="mb-2 text-xl font-bold">Login</h3>
-                    <p class="text-gray-500">Daftar dan Masuk menggunakan akun Email Anda</p>
-                </div>
-                <div class="text-center">
-                    <div class="flex justify-center mb-4">
-                        <span
-                            class="w-12 h-12 flex items-center justify-center rounded-full bg-green-100 text-green-600 text-xl font-bold">2</span>
-                    </div>
-                    <h3 class="mb-2 text-xl font-bold">Pilih Ruangan</h3>
-                    <p class="text-gray-500">Cari dan pilih ruangan yang tersedia sesuai kebutuhan</p>
-                </div>
-                <div class="text-center">
-                    <div class="flex justify-center mb-4">
-                        <span
-                            class="w-12 h-12 flex items-center justify-center rounded-full bg-green-100 text-green-600 text-xl font-bold">3</span>
-                    </div>
-                    <h3 class="mb-2 text-xl font-bold">Konfirmasi</h3>
-                    <p class="text-gray-500">Terima konfirmasi dan gunakan ruangan sesuai jadwal</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- CTA Section -->
-    <section class="bg-green-600">
-        <div class="max-w-screen-xl px-4 py-8 mx-auto lg:py-16 lg:px-6">
-            <div class="max-w-screen-sm mx-auto text-center">
-                <h2 class="mb-4 text-3xl font-extrabold leading-tight text-white">
-                    Mulai Gunakan SIMSAPRAS
-                </h2>
-                <p class="mb-6 font-light text-green-100">
-                    Pinjam sarana dan prasarana dengan lebih efisien
-                </p>
-                @can('not-user')
-                    <a href="#"
-                        class="text-green-600 bg-white hover:bg-green-50 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none">
-                        Daftar Sekarang
-                    </a>
-                @endcan
             </div>
         </div>
     </section>
 
-    <section class="bg-gray-50 py-16">
-        <div class="max-w-screen-xl px-4 py-8 mx-auto lg:py-16">
-            <h2 class="mb-8 text-3xl font-extrabold tracking-tight leading-tight text-center text-gray-900">
-                Pertanyaan yang Sering Diajukan
-            </h2>
-            <div class="max-w-screen-md mx-auto">
-                <div id="accordion-flush" data-accordion="collapse" data-active-classes="bg-white text-gray-900"
-                    data-inactive-classes="text-gray-500">
-                    <!-- FAQ Item 1 -->
-                    <h2 id="accordion-flush-heading-1">
-                        <button type="button"
-                            class="flex items-center justify-between w-full py-5 font-medium text-left text-gray-500 border-b border-gray-200"
-                            data-accordion-target="#accordion-flush-body-1" aria-expanded="true"
-                            aria-controls="accordion-flush-body-1">
-                            <span>Bagaimana cara mendaftar di SIMSAPRAS?</span>
-                            <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor"
-                                viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                        </button>
-                    </h2>
-                    <div id="accordion-flush-body-1" class="hidden" aria-labelledby="accordion-flush-heading-1">
-                        <div class="py-5 border-b border-gray-200">
-                            <p class="mb-2 text-gray-500">Pendaftaran SIMSAPRAS menggunakan akun Google anda. Ikuti proses
-                                verifikasi lalu anda bisa menggunakan SIMSAPRAS</p>
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-screen-xl px-4 mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Fitur Utama</h2>
+                <p class="text-gray-600">Nikmati kemudahan dalam peminjaman sarana dan prasarana</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="group p-6 bg-white rounded-xl border border-gray-100 hover:border-green-100 transition-all duration-200 hover:shadow-lg">
+                    <div class="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-lg bg-green-50 text-green-600 group-hover:bg-green-100 transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="mb-3 text-xl font-semibold text-gray-900">Cek Ketersediaan</h3>
+                    <p class="text-gray-600 leading-relaxed">Lihat jadwal dan ketersediaan sarana secara langsung melalui kalender interaktif.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="group p-6 bg-white rounded-xl border border-gray-100 hover:border-green-100 transition-all duration-200 hover:shadow-lg">
+                    <div class="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-lg bg-green-50 text-green-600 group-hover:bg-green-100 transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </div>
+                    <h3 class="mb-3 text-xl font-semibold text-gray-900">Peminjaman Mudah</h3>
+                    <p class="text-gray-600 leading-relaxed">Ajukan peminjaman kapan saja dan di mana saja dengan proses yang sederhana.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="group p-6 bg-white rounded-xl border border-gray-100 hover:border-green-100 transition-all duration-200 hover:shadow-lg">
+                    <div class="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-lg bg-green-50 text-green-600 group-hover:bg-green-100 transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="mb-3 text-xl font-semibold text-gray-900">Pantau Status</h3>
+                    <p class="text-gray-600 leading-relaxed">Lacak status peminjaman Anda dan terima notifikasi pembaruan secara langsung.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-screen-xl px-4 mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Cara Kerja</h2>
+                <p class="text-gray-600">Proses peminjaman yang sederhana dalam tiga langkah mudah</p>
+            </div>
+            <div class="relative">
+                <!-- Connection Line -->
+                <div class="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-green-100 transform -translate-y-1/2"></div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Step 1 -->
+                    <div class="relative bg-white p-6 rounded-xl shadow-sm">
+                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-600 text-white font-semibold">1</span>
+                        </div>
+                        <div class="pt-4 text-center">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Login</h3>
+                            <p class="text-gray-600">Masuk menggunakan akun email institusi Anda</p>
                         </div>
                     </div>
-                    <!-- FAQ Item 2 -->
-                    <h2 id="accordion-flush-heading-2">
-                        <button type="button"
-                            class="flex items-center justify-between w-full py-5 font-medium text-left text-gray-500 border-b border-gray-200"
-                            data-accordion-target="#accordion-flush-body-2" aria-expanded="false"
-                            aria-controls="accordion-flush-body-2">
-                            <span>Berapa lama proses persetujuan peminjaman ruangan?</span>
-                            <svg data-accordion-icon class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                        </button>
-                    </h2>
-                    <div id="accordion-flush-body-2" class="hidden" aria-labelledby="accordion-flush-heading-2">
-                        <div class="py-5 border-b border-gray-200">
-                            <p class="mb-2 text-gray-500">Proses persetujuan peminjaman ruangan biasanya membutuhkan waktu
-                                maksimal 1x24 jam kerja. Untuk peminjaman mendesak, silakan hubungi admin melalui kontak
-                                yang tersedia.</p>
+
+                    <!-- Step 2 -->
+                    <div class="relative bg-white p-6 rounded-xl shadow-sm">
+                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-600 text-white font-semibold">2</span>
+                        </div>
+                        <div class="pt-4 text-center">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Pilih Ruangan</h3>
+                            <p class="text-gray-600">Pilih ruangan yang tersedia sesuai kebutuhan</p>
                         </div>
                     </div>
-                    <!-- FAQ Item 3 -->
-                    <h2 id="accordion-flush-heading-3">
-                        <button type="button"
-                            class="flex items-center justify-between w-full py-5 font-medium text-left text-gray-500 border-b border-gray-200"
-                            data-accordion-target="#accordion-flush-body-3" aria-expanded="false"
-                            aria-controls="accordion-flush-body-3">
-                            <span>Apa saja persyaratan peminjaman ruangan?</span>
-                            <svg data-accordion-icon class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                        </button>
-                    </h2>
-                    <div id="accordion-flush-body-3" class="hidden" aria-labelledby="accordion-flush-heading-3">
-                        <div class="py-5 border-b border-gray-200">
-                            <p class="mb-2 text-gray-500">Persyaratan utama meliputi: status aktif sebagai mahasiswa/staff
-                                Unand, surat peminjaman yang resmi, dan rundown kegiatan.</p>
+
+                    <!-- Step 3 -->
+                    <div class="relative bg-white p-6 rounded-xl shadow-sm">
+                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-600 text-white font-semibold">3</span>
+                        </div>
+                        <div class="pt-4 text-center">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Konfirmasi</h3>
+                            <p class="text-gray-600">Terima konfirmasi dan gunakan fasilitas</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <!-- Contact Section -->
-    <section id="contact" class="bg-white py-16">
-        <div class="max-w-screen-xl px-4 py-8 mx-auto lg:py-16">
-            <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                <div>
-                    <h2 class="mb-4 text-3xl font-extrabold text-gray-900">Hubungi Kami</h2>
-                    <p class="mb-6 text-gray-500">Ada pertanyaan atau kendala? Jangan ragu untuk menghubungi tim support
-                        kami.</p>
-                    <div class="flex flex-col gap-4">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
-                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
-                            </svg>
-                            <span class="text-gray-500">simsapras@gmail.com</span>
+
+    <!-- FAQ Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-3xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Pertanyaan Umum</h2>
+                <p class="text-gray-600">Temukan jawaban untuk pertanyaan yang sering diajukan</p>
+            </div>
+            
+            <div class="space-y-4">
+                <!-- FAQ Items using Blade Each -->
+                @foreach ([
+                    [
+                        'id' => 1,
+                        'question' => 'Bagaimana cara mendaftar di SIMSAPRAS?',
+                        'answer' => 'Pendaftaran SIMSAPRAS menggunakan akun email institusi Anda. Ikuti proses verifikasi yang sederhana untuk mulai menggunakan sistem.'
+                    ],
+                    [
+                        'id' => 2,
+                        'question' => 'Berapa lama proses persetujuan peminjaman?',
+                        'answer' => 'Proses persetujuan peminjaman membutuhkan waktu maksimal 1x24 jam kerja. Untuk keperluan mendesak, silakan hubungi admin.'
+                    ],
+                    [
+                        'id' => 3,
+                        'question' => 'Apa saja persyaratan peminjaman ruangan?',
+                        'answer' => 'Persyaratan utama meliputi status aktif sebagai mahasiswa/staff Unand, surat peminjaman resmi, dan rundown kegiatan.'
+                    ]
+                ] as $faq)
+                    <div class="border border-gray-200 rounded-lg">
+                        <div class="flex items-center justify-between w-full px-4 py-5 sm:p-6 text-left"
+                                x-data="{ open: false }"
+                                @click="open = !open">
+                            <span class="text-base font-semibold text-gray-900">{{ $faq['question'] }}</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                    d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z">
-                                </path>
-                            </svg>
-                            <span class="text-gray-500">(0751) 123456</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd"
-                                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                            <span class="text-gray-500">Universitas Andalas, Padang</span>
+                        <div class="px-4 pb-5 sm:px-6 sm:pb-6">
+                            <p class="text-gray-600">{{ $faq['answer'] }}</p>
                         </div>
                     </div>
-                </div>
-                <div>
-                    <form class="space-y-4">
-                        <div>
-                            <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Nama</label>
-                            <input type="text" id="name"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-                                required>
-                        </div>
-                        <div>
-                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email</label>
-                            <input type="email" id="email"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-                                required>
-                        </div>
-                        <div>
-                            <label for="message" class="block mb-2 text-sm font-medium text-gray-900">Pesan</label>
-                            <textarea id="message" rows="4"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
-                                required></textarea>
-                        </div>
-                        <button type="submit"
-                            class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Kirim
-                            Pesan</button>
-                    </form>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    @can('not-user')
+    <section class="relative py-20 bg-gradient-to-br from-green-600 to-green-700 overflow-hidden">
+        <div class="absolute inset-0 bg-grid-white/[0.1] bg-[size:16px]"></div>
+        <div class="relative max-w-screen-xl mx-auto px-4">
+            <div class="max-w-2xl mx-auto text-center">
+                <h2 class="text-3xl font-bold text-white mb-4">
+                    Mulai Gunakan SIMSAPRAS
+                </h2>
+                <p class="text-lg text-green-100 mb-8">
+                    Pinjam sarana dan prasarana dengan lebih efisien melalui sistem modern kami
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#" 
+                        class="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-green-600 bg-white rounded-lg shadow-sm hover:bg-green-50 transition duration-200">
+                        Daftar Sekarang
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </a>
+                    <a href="#features" 
+                        class="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white border border-white/20 rounded-lg hover:bg-white/10 transition duration-200">
+                        Pelajari Lebih Lanjut
+                    </a>
                 </div>
             </div>
         </div>
     </section>
+    @endcan
+
 @endsection

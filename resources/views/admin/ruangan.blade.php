@@ -294,7 +294,7 @@
                                 <input type="number" name="tarifunit" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
                              </div>
                              <div>
-                                <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Non-Mahasiswa UNAND</label>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Umum</label>
                                 <input type="number" name="tarifumum" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
                              </div>
                             <div>
@@ -377,7 +377,7 @@
                                 <input type="number" name="tarifunit" min="0" value="{{ $item->tarifunit }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                             </div>
                             <div>
-                                <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Non-Mahasiswa UNAND</label>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Umum</label>
                                 <input type="number" name="tarifumum" min="0" value="{{ $item->tarifumum }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                             </div>
                             <div>

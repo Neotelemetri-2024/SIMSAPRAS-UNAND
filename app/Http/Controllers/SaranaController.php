@@ -10,6 +10,7 @@ use App\Models\Pengumuman;
 use App\Models\Ruangan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Models\TanggalPeminjaman;
 
 DB::enableQueryLog();
 
@@ -231,8 +232,8 @@ class SaranaController extends Controller
             ->where('status', 'aktif')
             ->paginate(6);
 
-        $trendData = Peminjaman::selectRaw('DATE_FORMAT(created_at, "%b %Y") as month, YEAR(created_at) as year, MONTH(created_at) as month_num, COUNT(*) as total')
-            ->whereRaw('created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)')
+        $trendData = TanggalPeminjaman::selectRaw('DATE_FORMAT(tanggal, "%b %Y") as month, YEAR(tanggal) as year, MONTH(tanggal) as month_num, COUNT(*) as total')
+            ->whereRaw('tanggal >= DATE_SUB(NOW(), INTERVAL 6 MONTH)')
             ->groupBy('year', 'month_num', 'month')
             ->orderBy('year')
             ->orderBy('month_num')

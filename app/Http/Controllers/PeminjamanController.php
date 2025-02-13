@@ -86,7 +86,7 @@ class PeminjamanController extends Controller
                 'rundown' => 'required|file|mimes:pdf,doc,docx|max:2048',
                 'instansi' => 'required|string|max:255',
                 'estimasiPeserta' => 'required|integer|min:1',
-                'isUnand' => 'required|boolean',
+                'statusPeminjam' => 'required|in:unit,ormawa,umum',
             ];
     
             if ($request->has('idRuangan')) {
@@ -128,7 +128,7 @@ class PeminjamanController extends Controller
             $ruangan = isset($validated['idRuangan']) ? Ruangan::find($validated['idRuangan']) : null;
             $totalTarif = Peminjaman::calculateTarif(
                 $validated['jadwal_dates'],
-                $validated['isUnand'],
+                $validated['statusPeminjam'],
                 $sarana,
                 $ruangan
             );
@@ -143,7 +143,7 @@ class PeminjamanController extends Controller
                 'instansi' => $validated['instansi'],
                 'estimasiPeserta' => $validated['estimasiPeserta'],
                 'status' => 'diajukan',
-                'isUnand' => $validated['isUnand'],
+                'statusPeminjam' => $validated['statusPeminjam'],
                 'totalTarif' => $totalTarif
             ];
     
