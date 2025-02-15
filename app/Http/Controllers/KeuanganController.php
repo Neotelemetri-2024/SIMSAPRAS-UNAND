@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers;
 use App\Models\Peminjaman;
@@ -7,29 +7,31 @@ class KeuanganController extends Controller
 {
     public function index()
     {
+        $validStatuses = ['disetujui', 'selesai'];
+
         $totalYearToDate = Peminjaman::whereYear('created_at', date('Y'))
-            ->where('status', 'disetujui')
+            ->whereIn('status', $validStatuses)
             ->where('statusPembayaran', 'lunas')
             ->sum('totalTarif');
 
         $totalCurrentMonth = Peminjaman::whereYear('created_at', date('Y'))
             ->whereMonth('created_at', date('m'))
-            ->where('status', 'disetujui')
+            ->whereIn('status', $validStatuses)
             ->where('statusPembayaran', 'lunas')
             ->sum('totalTarif');
 
-        $totalTransactions = Peminjaman::where('status', 'disetujui')
+        $totalTransactions = Peminjaman::whereIn('status', $validStatuses)
             ->where('statusPembayaran', 'lunas')
             ->count();
 
-        $averagePerTransaction = $totalTransactions > 0 ? 
+        $averagePerTransaction = $totalTransactions > 0 ?
             $totalYearToDate / $totalTransactions : 0;
 
         $monthlyData = Peminjaman::selectRaw('
-                DATE_FORMAT(created_at, "%Y-%m") as month,
-                SUM(totalTarif) as total
+            DATE_FORMAT(created_at, "%Y-%m") as month,
+            SUM(totalTarif) as total
             ')
-            ->where('status', 'disetujui')
+            ->whereIn('status', $validStatuses)
             ->where('statusPembayaran', 'lunas')
             ->whereBetween('created_at', [
                 now()->subMonths(11)->startOfMonth(),
@@ -39,42 +41,45 @@ class KeuanganController extends Controller
             ->orderBy('month')
             ->get();
 
-        $saranaData = Peminjaman::selectRaw('
+        $saranaData = Peminjaman::join('tanggalpeminjaman', 'peminjaman.id', '=', 'tanggalpeminjaman.idPeminjaman')
+            ->selectRaw('
                 sarana.nama as sarana_name,
-                COUNT(*) as total_bookings,
+                COUNT(DISTINCT peminjaman.id) as total_bookings,
                 SUM(peminjaman.totalTarif) as total
             ')
             ->join('sarana', 'peminjaman.idSarana', '=', 'sarana.id')
-            ->where('peminjaman.status', 'disetujui')
+            ->whereIn('peminjaman.status', $validStatuses)
             ->where('peminjaman.statusPembayaran', 'lunas')
-            ->whereYear('peminjaman.created_at', date('Y'))
+            ->whereYear('tanggalpeminjaman.tanggal', date('Y'))
             ->groupBy('sarana.id', 'sarana.nama')
             ->get();
 
-        $topRooms = Peminjaman::selectRaw('
+        $topRooms = Peminjaman::join('tanggalpeminjaman', 'peminjaman.id', '=', 'tanggalpeminjaman.idPeminjaman')
+            ->selectRaw('
                 ruangan.nama as room_name,
-                COUNT(*) as total_bookings,
+                COUNT(DISTINCT peminjaman.id) as total_bookings,
                 SUM(peminjaman.totalTarif) as total_income,
                 ruangan.kapasitas
             ')
             ->join('ruangan', 'peminjaman.idRuangan', '=', 'ruangan.id')
-            ->where('peminjaman.status', 'disetujui')
+            ->whereIn('peminjaman.status', $validStatuses)
             ->where('peminjaman.statusPembayaran', 'lunas')
-            ->whereYear('peminjaman.created_at', date('Y'))
+            ->whereYear('tanggalpeminjaman.tanggal', date('Y'))
             ->groupBy('ruangan.id', 'ruangan.nama', 'ruangan.kapasitas')
             ->orderBy('total_income', 'desc')
             ->limit(5)
             ->get();
 
-        $customerTypeData = Peminjaman::selectRaw('
-                isUnand,
-                COUNT(*) as total_bookings,
+        $customerTypeData = Peminjaman::join('tanggalpeminjaman', 'peminjaman.id', '=', 'tanggalpeminjaman.idPeminjaman')
+            ->selectRaw('
+                statusPeminjam,
+                COUNT(DISTINCT peminjaman.id) as total_bookings,
                 SUM(totalTarif) as total_income
             ')
-            ->where('status', 'disetujui')
+            ->whereIn('status', $validStatuses)
             ->where('statusPembayaran', 'lunas')
-            ->whereYear('created_at', date('Y'))
-            ->groupBy('isUnand')
+            ->whereYear('tanggalpeminjaman.tanggal', date('Y'))
+            ->groupBy('statusPeminjam')
             ->get();
 
         return view('admin.keuangan', compact(

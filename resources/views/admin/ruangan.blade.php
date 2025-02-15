@@ -21,7 +21,7 @@
 
         <!-- Search Bar -->
         <div class="p-5 border-b border-gray-200 dark:border-gray-700">
-            <form method="GET" action="{{ route('ruangan.index', $sarana->id) }}" class="flex gap-3">
+            <form id="searchForm"  method="GET" action="{{ route('ruangan.index', $sarana->id) }}" class="flex gap-3">
                 <div class="flex-1">
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -60,7 +60,6 @@
                             <th scope="col" class="px-6 py-3">No</th>
                             <th scope="col" class="px-6 py-3">Nama</th>
                             <th scope="col" class="px-6 py-3">Kapasitas</th>
-                            <th scope="col" class="px-6 py-3">Deskripsi</th>
                             <th scope="col" class="px-6 py-3">Fasilitas</th>
                             <th scope="col" class="px-6 py-3">Gambar</th>
                             <th scope="col" class="px-6 py-3">Gambar Tambahan</th>
@@ -74,7 +73,6 @@
                             <td class="px-6 py-4">{{ $loop->iteration + ($ruangan->currentPage() - 1) * $ruangan->perPage() }}</td>
                             <td class="px-6 py-4">{{ $item->nama }}</td>
                             <td class="px-6 py-4">{{ $item->kapasitas }}</td>
-                            <td class="px-6 py-4">{{ $item->deskripsi }}</td>
                             <td class="px-6 py-4">{{ $item->fasilitas }}</td>
                             <td class="px-6 py-4">
                                 @if($item->gambar)
@@ -370,7 +368,7 @@
                         <div class="space-y-6">
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Mahasiswa UNAND</label>
-                                <input type="number" name="tarifunand" min="0" value="{{ $item->tariformawa }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                                <input type="number" name="tariformawa" min="0" value="{{ $item->tariformawa }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Fakultas-Unit UNAND</label>
@@ -552,7 +550,7 @@ function closeImagePreview() {
 
 // Form handling
 function initializeForms() {
-    document.querySelectorAll('form').forEach(form => {
+    document.querySelectorAll('#ruanganForm, [id^="editRuanganForm"]').forEach(form => {
         form.addEventListener('submit', handleFormSubmit);
     });
 }

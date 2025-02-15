@@ -16,6 +16,7 @@ class Sarana extends Model
         'gambar',
         'deskripsi',
         'nama',
+        'isRoom',
         'fasilitas',
         'kapasitas',
         'tariformawa',

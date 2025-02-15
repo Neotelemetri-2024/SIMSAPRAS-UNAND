@@ -158,14 +158,6 @@
                             </div>
                             <span class="text-gray-700">Manajemen peminjaman yang efisien</span>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="flex-shrink-0 w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <span class="text-gray-700">Terintegrasi dengan sistem Unand</span>
-                        </div>
                     </div>
                 </div>
             </div>

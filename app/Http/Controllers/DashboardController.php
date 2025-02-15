@@ -49,33 +49,37 @@ class DashboardController extends Controller
             ->get();
 
         $monthlyStatusTrend = DB::table('peminjaman')
+            ->join('tanggalpeminjaman', 'peminjaman.id', '=', 'tanggalpeminjaman.idPeminjaman')
             ->select(
-                DB::raw('MONTH(created_at) as bulan'),
-                DB::raw('YEAR(created_at) as tahun'),
-                DB::raw("SUM(CASE WHEN status = 'diajukan' THEN 1 ELSE 0 END) as diajukan"),
-                DB::raw("SUM(CASE WHEN status = 'diproses' THEN 1 ELSE 0 END) as diproses"),
-                DB::raw("SUM(CASE WHEN status = 'disetujui' THEN 1 ELSE 0 END) as disetujui"),
-                DB::raw("SUM(CASE WHEN status = 'ditolak' THEN 1 ELSE 0 END) as ditolak"),
-                DB::raw("SUM(CASE WHEN status = 'dibatalkan' THEN 1 ELSE 0 END) as dibatalkan"),
-                DB::raw("SUM(CASE WHEN status = 'diajukanbatal' THEN 1 ELSE 0 END) as diajukanbatal")
+                DB::raw('MONTH(tanggalpeminjaman.tanggal) as bulan'),
+                DB::raw('YEAR(tanggalpeminjaman.tanggal) as tahun'),
+                DB::raw("COUNT(DISTINCT CASE WHEN status = 'diajukan' THEN peminjaman.id END) as diajukan"),
+                DB::raw("COUNT(DISTINCT CASE WHEN status = 'diproses' THEN peminjaman.id END) as diproses"),
+                DB::raw("COUNT(DISTINCT CASE WHEN status = 'disetujui' THEN peminjaman.id END) as disetujui"),
+                DB::raw("COUNT(DISTINCT CASE WHEN status = 'ditolak' THEN peminjaman.id END) as ditolak"),
+                DB::raw("COUNT(DISTINCT CASE WHEN status = 'dibatalkan' THEN peminjaman.id END) as dibatalkan"),
+                DB::raw("COUNT(DISTINCT CASE WHEN status = 'diajukanbatal' THEN peminjaman.id END) as diajukanbatal")
             )
-            ->whereYear('created_at', date('Y'))
+            ->whereYear('tanggalpeminjaman.tanggal', date('Y'))
             ->groupBy('tahun', 'bulan')
             ->orderBy('tahun')
             ->orderBy('bulan')
             ->get();
+
         $statusDistribution = DB::table('peminjaman')
             ->select('status', DB::raw('COUNT(*) as total'))
             ->groupBy('status')
             ->get();
+            
         $trendSarana = DB::table('peminjaman as p')
             ->join('sarana as s', 'p.idSarana', '=', 's.id')
+            ->join('tanggalpeminjaman as tp', 'p.id', '=', 'tp.idPeminjaman')
             ->select(
                 's.nama as nama_sarana',
-                DB::raw('MONTH(p.created_at) as bulan'),
-                DB::raw('COUNT(*) as total')
+                DB::raw('MONTH(tp.tanggal) as bulan'),
+                DB::raw('COUNT(DISTINCT p.id) as total')
             )
-            ->whereYear('p.created_at', date('Y'))
+            ->whereYear('tp.tanggal', date('Y'))
             ->groupBy('s.nama', 'bulan')
             ->orderBy('bulan')
             ->get();

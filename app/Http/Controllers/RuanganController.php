@@ -108,7 +108,8 @@ class RuanganController extends Controller
             'deskripsi' => 'required|string',
             'kapasitas' => 'required|integer',
             'fasilitas' => 'required|string',
-            'tarifunand' => 'required|integer',
+            'tariformawa' => 'required|integer',
+            'tarifunit' => 'required|integer',
             'tarifumum' => 'required|integer',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'additional_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -123,7 +124,10 @@ class RuanganController extends Controller
             $ruangan->deskripsi = $request->deskripsi;
             $ruangan->kapasitas = $request->kapasitas;
             $ruangan->fasilitas = $request->fasilitas;
-
+            $ruangan->tariformawa = $request->tariformawa;
+            $ruangan->tarifunit = $request->tarifunit;
+            $ruangan->tarifumum = $request->tarifumum;
+            
             // Handle main image update
             if ($request->hasFile('gambar')) {
                 // Delete old image
