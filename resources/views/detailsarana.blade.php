@@ -326,7 +326,7 @@
         </div>
 
         <!-- Calendar/Room Section -->
-        @if($sarana->kategoriSarana->jenis !== 'Gedung Beruangan')
+        @if($sarana->isRoom == 0)
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                 <div class="p-8">
                     <div class="flex justify-between items-center mb-8">
@@ -391,7 +391,7 @@
                         @forelse($ruangan as $room)
                         <div class="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-green-200 hover:shadow-md transition-all duration-200">
                             <h3 class="text-xl font-semibold text-gray-900 mb-3">{{ $room->nama }}</h3>
-                            <p class="text-gray-600 mb-6">{{ $room->deskripsi }}</p>
+                            <p class="text-gray-600 mb-6">{{ \Illuminate\Support\Str::words($room->deskripsi, 18, '...') }}</p>
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center gap-2 text-gray-500">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

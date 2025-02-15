@@ -75,6 +75,7 @@ class SaranaController extends Controller
             $validated = $request->validate([
                 'IdKategori' => 'required|exists:kategori_sarana,id',
                 'nama' => 'required|string|max:255',
+                'isRoom' => 'required|boolean',
                 'deskripsi' => 'required|string',
                 'fasilitas' => 'required|string',
                 'kapasitas' => 'nullable|integer|min:0',
@@ -156,6 +157,7 @@ class SaranaController extends Controller
             $validated = $request->validate([
                 'IdKategori' => 'required|exists:kategori_sarana,id',
                 'nama' => 'required|string|max:255|unique:sarana,nama,'.$sarana->id,
+                'isRoom' => 'required|boolean',
                 'deskripsi' => 'required|string',
                 'fasilitas' => 'required|string',
                 'kapasitas' => 'nullable|integer|min:0',
@@ -269,11 +271,14 @@ class SaranaController extends Controller
         $ruangan = collect();
         $events = []; 
         
-        if ($sarana->kategoriSarana->jenis === 'Gedung Beruangan') {
+        if ($sarana->isRoom == 1) {
             $ruangan = $sarana->ruangan()
+                ->where('idSarana', $sarana->id) 
                 ->when($search, function ($query, $search) {
-                    $query->where('nama', 'like', "%{$search}%")
-                        ->orWhere('deskripsi', 'like', "%{$search}%");
+                    $query->where(function($q) use ($search) {
+                        $q->where('nama', 'like', "%{$search}%")
+                          ->orWhere('deskripsi', 'like', "%{$search}%");
+                    });
                 })
                 ->latest()
                 ->where('status', 'aktif')

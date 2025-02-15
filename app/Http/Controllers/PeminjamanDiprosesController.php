@@ -80,12 +80,14 @@ class PeminjamanDiprosesController extends Controller
                 $peminjaman->disetujui_oleh = auth()->id();
                 $peminjaman->disetujui_at = now();
                 $peminjaman->suratDisposisi = $request->file('suratDisposisi')->store('peminjaman/disposisi', 'public');
+                $peminjaman->statusPembayaran = 'lunas';
             }
 
         if ($request->status === 'disetujui') {
                 $peminjaman->disetujui_oleh = auth()->id();
                 $peminjaman->disetujui_at = now();
                 $peminjaman->suratDisposisi = $request->file('suratDisposisi')->store('peminjaman/disposisi', 'public');
+                $peminjaman->statusPembayaran = 'lunas';
             } elseif ($request->status === 'ditolak') {
                 $peminjaman->ditolak_oleh = auth()->id();
                 $peminjaman->ditolak_at = now();

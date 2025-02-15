@@ -78,7 +78,7 @@
                      </td>
                      <td class="px-6 py-4">
                         <div class="flex space-x-2">                    
-                            @if($item->status == "aktif" && $item->jenis != "Gedung Beruangan")
+                            @if($item->status == "aktif")
                             <button data-modal-target="editModal{{ $item->id }}"
                               data-modal-toggle="editModal{{ $item->id }}"
                               class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">

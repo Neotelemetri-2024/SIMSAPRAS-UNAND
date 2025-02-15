@@ -11,7 +11,7 @@
          @endcan
       </div>
       <div class="p-5 border-b border-gray-200 dark:border-gray-700">
-         <form method="GET" action="{{ route('sarana.index') }}" class="flex gap-3">
+         <form id="searchSarana" method="GET" action="{{ route('sarana.index') }}" class="flex gap-3">
             <div class="flex-1">
                   <div class="relative">
                      <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -87,7 +87,7 @@
                      </td>
                       <td class="px-6 py-4">
                         <div class="flex space-x-2">
-                              @if($item->kategoriSarana->jenis == 'Gedung Beruangan')
+                              @if($item->isRoom == 1)
                            <a href="{{ route('ruangan.index', ['idSarana' => $item->id]) }}"
                               class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200">
                               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -263,6 +263,14 @@
                         <label class="block mb-2 text-sm font-medium text-gray-900">Nama</label>
                         <input type="text" name="nama" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                      </div>
+                     <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-900">Apakah sarana ini memiliki ruangan?</label>
+                        <select name="isRoom" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                            <option value="" disabled selected hidden>Pilih Tipe</option>
+                            <option value="1">Ya</option>
+                            <option value="0">Tidak</option>
+                        </select>
+                    </div>
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Deskripsi</label>
                                     <textarea name="deskripsi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required></textarea>
@@ -271,13 +279,13 @@
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Kapasitas</label>
                                     <input type="number" min="0" name="kapasitas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
                                  </div>
+                              </div>
+
+                              <div class="space-y-6">
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
                                     <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required></textarea>
                                  </div>
-                              </div>
-
-                              <div class="space-y-6">
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Ormawa UNAND</label>
                                     <input type="number" name="tariformawa" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
@@ -345,6 +353,14 @@
                                     <input type="text" name="nama" value="{{ $item->nama }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                                  </div>
                                  <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-900">Apakah sarana ini memiliki ruangan?</label>
+                                    <select name="isRoom" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
+                                        <option value="" disabled hidden>Pilih Tipe</option>
+                                        <option value="1" {{ $item->isRoom == 1 ? 'selected' : '' }}>Ya</option>
+                                        <option value="0" {{ $item->isRoom == 0 ? 'selected' : '' }}>Tidak</option>
+                                    </select>
+                                </div>
+                                 <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Deskripsi</label>
                                     <textarea name="deskripsi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->deskripsi }}</textarea>
                                  </div>
@@ -352,12 +368,12 @@
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Kapasitas</label>
                                     <input type="number" name="kapasitas" value="{{ $item->kapasitas }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
                                  </div>
+                              </div>
+                              <div class="space-y-6">
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
                                     <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->fasilitas }}</textarea>
                                  </div>
-                              </div>
-                              <div class="space-y-6">
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Ormawa UNAND</label>
                                     <input type="number" name="tarifunand" min="0" value="{{ $item->tariformawa }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
@@ -532,7 +548,7 @@ document.querySelectorAll('.deleteImageBtn').forEach(btn => {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('form:not([action*="logout"])').forEach(form => {
+   document.querySelectorAll('#saranaForm, [id^="editSaranaForm"]').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
