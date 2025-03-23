@@ -84,7 +84,7 @@
                                             </div>
                                         @endforeach
                                     </td>
-                                    <td class="px-6 py-4">{{ $item->sarana->nama }}</td>
+                                    <td class="px-6 py-4">{{ $item->ruangan ? $item->ruangan->nama : $item->sarana->nama }}</td>
                                     <td class="px-6 py-4">{{ $item->kegiatan }}</td>
                                     <td class="px-6 py-4">
                                         <span

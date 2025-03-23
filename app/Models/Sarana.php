@@ -22,6 +22,8 @@ class Sarana extends Model
         'tariformawa',
         'tarifunit',
         'tarifumum',
+        'is_hourly_rate',
+        'hours_per_unit',
         'status',
     ];
     protected $table = 'sarana';

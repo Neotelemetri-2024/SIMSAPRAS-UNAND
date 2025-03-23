@@ -4,6 +4,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\FiltersSaranaAccess;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class Peminjaman extends Model
 {
@@ -122,42 +124,97 @@ class Peminjaman extends Model
 
         return $daysDifference >= 3 && $bookingDate->greaterThan($today);
     }
+
     public static function calculateTarif($jadwal_dates, $statusPeminjam, $sarana = null, $ruangan = null)
     {
         $totalTarif = 0;
         
-        foreach ($jadwal_dates as $booking) {
-            $date = $booking['date'];
-            $jadwalId = $booking['jadwal_id'];
-            
-            $jadwal = Jadwal::find($jadwalId);
-            $jamSelesai = (int)explode(':', $jadwal->selesai)[0];
-            
-            $isWeekend = in_array(date('N', strtotime($date)), [6, 7]);
-            
-            $isAfterHours = $jamSelesai >= 16;
-            
-            if ($isWeekend || $isAfterHours) {
-                if ($ruangan) {
-                    if ($statusPeminjam == 'unit') {
-                        $tarif = $ruangan->tarifunit;
-                    } elseif ($statusPeminjam == 'ormawa') {
-                        $tarif = $ruangan->tariformawa;
-                    } else {
-                        $tarif = $ruangan->tarifumum;
-                    }
-                } else {
-                    if ($statusPeminjam == 'unit') {
-                        $tarif = $sarana->tarifunit;
-                    } elseif ($statusPeminjam == 'ormawa') {
-                        $tarif = $sarana->tariformawa;
-                    } else {
-                        $tarif = $sarana->tarifumum;
-                    }
+        $targetEntity = $ruangan ?? $sarana;
+        $totalHours = 0;
+        
+        if ($targetEntity->is_hourly_rate) {
+            foreach ($jadwal_dates as $booking) {
+                $jadwal = Jadwal::find($booking['jadwal_id']);
+                $date = Carbon::parse($booking['date']);
+                $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
+                $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
+                $hours = $endTime->diffInHours($start);
+                $totalHours += $hours;
+                
+                $isWeekday = !$date->isWeekend();
+                $isBeforeFourPM = $start->hour < 16 && $endTime->hour <= 16;
+                $isFreeTimeSlot = $isWeekday && $isBeforeFourPM;
+                
+                if (!$isFreeTimeSlot) {
+                    $baseRate = match($statusPeminjam) {
+                        'ormawa' => $targetEntity->tariformawa,
+                        'unit' => $targetEntity->tarifunit,
+                        default => $targetEntity->tarifumum
+                    };
+                    
+                    $hoursPerUnit = $targetEntity->hours_per_unit ?? 1; 
+                    $units = ceil($hours / $hoursPerUnit);
+                    
+                    $bookingTarif = $baseRate * $units;
+                    $totalTarif += $bookingTarif;
+                }
+            }
+        }
+        else {
+            $bookingsByDate = [];
+            foreach ($jadwal_dates as $booking) {
+                $date = Carbon::parse($booking['date']);
+                $dateStr = $date->format('Y-m-d');
+                $jadwal = Jadwal::find($booking['jadwal_id']);
+                $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
+                $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
+                
+                if (!isset($bookingsByDate[$dateStr])) {
+                    $bookingsByDate[$dateStr] = [
+                        'bookings' => [],
+                        'date' => $date,
+                        'allDuringFreeTime' => true 
+                    ];
                 }
                 
-                $totalTarif += $tarif;
+                $isWeekday = !$date->isWeekend();
+                $isBeforeFourPM = $start->hour < 16 && $endTime->hour <= 16;
+                $isFreeTimeSlot = $isWeekday && $isBeforeFourPM;
+                
+                if (!$isFreeTimeSlot) {
+                    $bookingsByDate[$dateStr]['allDuringFreeTime'] = false;
+                }
+                
+                $bookingsByDate[$dateStr]['bookings'][] = $booking;
             }
+            
+            foreach ($bookingsByDate as $dateInfo) {
+                if (!$dateInfo['allDuringFreeTime']) {
+                    $baseRate = match($statusPeminjam) {
+                        'ormawa' => $targetEntity->tariformawa,
+                        'unit' => $targetEntity->tarifunit,
+                        default => $targetEntity->tarifumum
+                    };
+                    
+                    $totalTarif += $baseRate;
+                }
+                
+                foreach ($dateInfo['bookings'] as $booking) {
+                    $jadwal = Jadwal::find($booking['jadwal_id']);
+                    $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
+                    $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
+                    $hours = $endTime->diffInHours($start);
+                    $totalHours += $hours;
+                }
+            }
+        }
+        
+        $limitEntity = $ruangan ? $ruangan->sarana : $sarana;
+        
+        $monthlyUsed = $limitEntity->bulanan_terpakai;
+        
+        if(($monthlyUsed + $totalHours) > 40) {
+            throw new \Exception("Batas penggunaan bulanan 40 jam untuk {$limitEntity->nama} telah tercapai. Saat ini telah terpakai {$monthlyUsed} jam.");
         }
         
         return $totalTarif;

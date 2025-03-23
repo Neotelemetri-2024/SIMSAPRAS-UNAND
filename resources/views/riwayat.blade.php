@@ -55,7 +55,7 @@
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs uppercase bg-gray-50 border-b border-gray-200">
                         <tr>
-                            <th scope="col" class="px-6 py-4 text-gray-600">Sarana</th>
+                            <th scope="col" class="px-6 py-4 text-gray-600">Sarana/Ruangan</th>
                             <th scope="col" class="px-6 py-4 text-gray-600">Jadwal</th>
                             <th scope="col" class="px-6 py-4 text-gray-600">Kegiatan</th>
                             <th scope="col" class="px-6 py-4 text-gray-600">Instansi</th>
@@ -68,7 +68,9 @@
                         @forelse($peminjaman as $pinjam)
                         <tr class="bg-white hover:bg-gray-50 transition-colors duration-200">
                             <td class="px-6 py-4">
-                                <span class="font-medium text-gray-900">{{ $pinjam->sarana->nama }}</span>
+                                <span class="font-medium text-gray-900">
+                                    {{ $pinjam->ruangan ? $pinjam->ruangan->nama : $pinjam->sarana->nama }}
+                                </span>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="space-y-1">
@@ -528,25 +530,25 @@
                         
 
                         @if($pinjam->canBeCancelled())
-                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                    <svg class="w-5 h-5 mr-2 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                    Pembatalan Peminjaman
-                                </h4>
-                                <div class="space-y-3">
-                                    <p class="text-sm text-gray-600">Anda dapat membatalkan peminjaman ini karena:</p>
-                                    <ul class="list-disc list-inside text-sm text-gray-600 ml-2">
-                                        <li>Status peminjaman masih dalam tahap diajukan/diproses/disetujui</li>
-                                        <li>Masih lebih dari 3 hari sebelum tanggal peminjaman</li>
-                                    </ul>
-                                    <button onclick="showCancellationForm('{{ $pinjam->id }}')"
-                                            class="w-full mt-3 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors">
-                                        Batalkan Peminjaman
-                                    </button>
-                                </div>
-                            </div>  
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                Pembatalan Peminjaman
+                            </h4>
+                            <div class="space-y-3">
+                                <p class="text-sm text-gray-600">Anda dapat membatalkan peminjaman ini karena:</p>
+                                <ul class="list-disc list-inside text-sm text-gray-600 ml-2">
+                                    <li>Status peminjaman masih dalam tahap diajukan/diproses/disetujui</li>
+                                    <li>Masih lebih dari 3 hari sebelum tanggal peminjaman</li>
+                                </ul>
+                                <button onclick="showCancellationForm('{{ $pinjam->id }}')"
+                                        class="w-full mt-3 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors">
+                                    Batalkan Peminjaman
+                                </button>
+                            </div>
+                        </div>  
                         <!-- Cancellation Form Modal -->
                         <div id="cancellationModal{{ $pinjam->id }}" class="fixed inset-0 z-50 hidden overflow-y-auto">
                             <div class="min-h-screen px-4 text-center flex items-center justify-center">
@@ -555,15 +557,28 @@
                                 <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg">
                                     <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Konfirmasi Pembatalan</h3>
                                     
-                                    <form action="{{ route('peminjaman.cancel', $pinjam->id) }}" method="POST" class="space-y-4">
+                                    <!-- Error messages area -->
+                                    @if ($errors->any())
+                                    <div class="p-3 bg-red-50 text-red-800 border border-red-200 rounded mb-3">
+                                        <ul class="list-disc list-inside text-sm">
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                    @endif
+                                    
+                                    <form id="cancellationForm{{ $pinjam->id }}" action="{{ route('peminjaman.cancel', $pinjam->id) }}" method="POST" class="space-y-4">
                                         @csrf
                                         <div>
-                                            <label for="alasan_pembatalan" class="block text-sm font-medium text-gray-700 mb-2">
+                                            <label for="alasan_pembatalan{{ $pinjam->id }}" class="block text-sm font-medium text-gray-700 mb-2">
                                                 Alasan Pembatalan <span class="text-red-500">*</span>
                                             </label>
-                                            <textarea name="alasan_pembatalan" id="alasan_pembatalan" rows="4" 
-                                                    class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500"
-                                                    placeholder="Mohon berikan alasan pembatalan peminjaman minimal 10 karakter" required></textarea>
+                                            <textarea name="alasan_pembatalan" id="alasan_pembatalan{{ $pinjam->id }}" rows="4" 
+                                                    class="w-full rounded-lg border-gray-300 focus:border-red-500 focus:ring-red-500 @error('alasan_pembatalan') border-red-500 @enderror"
+                                                    placeholder="Mohon berikan alasan pembatalan peminjaman minimal 10 karakter" required>{{ old('alasan_pembatalan') }}</textarea>
+                                            
+                                            <div id="form-error-{{ $pinjam->id }}" class="hidden mt-1 text-sm text-red-600"></div>
                                         </div>
                                         
                                         <div class="flex items-center justify-end space-x-3">
@@ -588,105 +603,159 @@
         </div>
     @endforeach
  
-
-
-
-    <!-- Script untuk modal -->
-    <script>
-        function showDetailModal(id) {
-    console.log('Showing modal for ID:', id);
-    const modal = document.getElementById('detailModal' + id);
-    console.log('Modal element:', modal);
-    if (modal) {
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    } else {
-        console.error('Modal not found for ID:', id);
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+<script>
+    function showDetailModal(id) {
+        console.log('Showing modal for ID:', id);
+        const modal = document.getElementById('detailModal' + id);
+        console.log('Modal element:', modal);
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        } else {
+            console.error('Modal not found for ID:', id);
+        }
     }
-}
 
-function closeDetailModal(id) {
-    const modal = document.getElementById('detailModal' + id);
-    if (modal) {
-        modal.classList.add('hidden');
-        document.body.style.overflow = 'auto';
-    }
-}
-
-// Handle ESC key press
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        const visibleModals = document.querySelectorAll('[id^="detailModal"]:not(.hidden)');
-        visibleModals.forEach(modal => {
+    function closeDetailModal(id) {
+        const modal = document.getElementById('detailModal' + id);
+        if (modal) {
             modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
-        });
+        }
     }
-});
 
-// Handle clicking outside the modal
-document.addEventListener('click', function(event) {
-    const modals = document.querySelectorAll('[id^="detailModal"]');
-    modals.forEach(modal => {
-        // Check if click is on backdrop (modal itself) and not on modal content
-        if (event.target === modal) {
-            const modalContent = modal.querySelector('.modal-content');
-            if (!modalContent || !modalContent.contains(event.target)) {
+    // Handle ESC key press
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const visibleModals = document.querySelectorAll('[id^="detailModal"]:not(.hidden)');
+            visibleModals.forEach(modal => {
                 modal.classList.add('hidden');
                 document.body.style.overflow = 'auto';
+            });
+        }
+    });
+
+    // Handle clicking outside the modal
+    document.addEventListener('click', function(event) {
+        const modals = document.querySelectorAll('[id^="detailModal"]');
+        modals.forEach(modal => {
+            // Check if click is on backdrop (modal itself) and not on modal content
+            if (event.target === modal) {
+                const modalContent = modal.querySelector('.modal-content');
+                if (!modalContent || !modalContent.contains(event.target)) {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = 'auto';
+                }
             }
-        }
+        });
     });
-});
 
-// Rest of your existing functions remain the same
-function previewImage(input, id) {
-    const placeholder = document.getElementById(`placeholder-${id}`);
-    const preview = document.getElementById(`preview-${id}`);
-    const previewImg = document.getElementById(`preview-image-${id}`);
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            previewImg.src = e.target.result;
-            placeholder.classList.add('hidden');
-            preview.classList.remove('hidden');
+    // Rest of your existing functions remain the same
+    function previewImage(input, id) {
+        const placeholder = document.getElementById(`placeholder-${id}`);
+        const preview = document.getElementById(`preview-${id}`);
+        const previewImg = document.getElementById(`preview-image-${id}`);
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                placeholder.classList.add('hidden');
+                preview.classList.remove('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
         }
-        reader.readAsDataURL(input.files[0]);
     }
-}
 
-function showCancellationForm(id) {
-    document.getElementById('cancellationModal' + id).classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
+    function showCancellationForm(id) {
+        document.getElementById('cancellationModal' + id).classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
 
-function hideCancellationForm(id) {
-    document.getElementById('cancellationModal' + id).classList.add('hidden');
-    document.body.style.overflow = 'auto';
-}
+    document.addEventListener('DOMContentLoaded', function() {
+        // Cek apakah ada flash message sukses pembatalan
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        @endif
 
-// Initialize modals when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    initializeModals();
-});
-
-function initializeModals() {
-    // Toggle modal buttons
-    document.querySelectorAll('[data-modal-toggle]').forEach(button => {
-        button.addEventListener('click', () => {
-            const modalId = button.getAttribute('data-modal-target');
-            const modal = document.getElementById(modalId);
-            if (modal) modal.classList.remove('hidden');
+        // Cek apakah ada flash message error untuk alert
+        @if(session('error') && !session('modal_open'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: '{{ session('error') }}',
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'OK'
+            });
+        @endif
+        
+        // Cek apakah ada flash message untuk membuka modal
+        @if(session('modal_open'))
+            showCancellationForm('{{ session('modal_open') }}');
+        @endif
+        
+        // Initialize error validation untuk form-form pembatalan
+        document.querySelectorAll('[id^="cancellationForm"]').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                // Dapatkan ID peminjaman dari ID form
+                const peminjamanId = this.id.replace('cancellationForm', '');
+                
+                // Ambil input alasan
+                const alasanInput = document.getElementById(`alasan_pembatalan${peminjamanId}`);
+                const errorDiv = document.getElementById(`form-error-${peminjamanId}`);
+                
+                // Reset error
+                errorDiv.classList.add('hidden');
+                errorDiv.textContent = '';
+                
+                // Validasi panjang alasan
+                if (alasanInput.value.trim().length < 10) {
+                    e.preventDefault(); // Hentikan pengiriman form
+                    
+                    // Tampilkan pesan error
+                    errorDiv.textContent = 'Alasan pembatalan minimal 10 karakter';
+                    errorDiv.classList.remove('hidden');
+                    
+                    // Fokus ke input
+                    alasanInput.focus();
+                }
+            });
         });
     });
 
-    // Close modal buttons
-    document.querySelectorAll('[data-modal-hide]').forEach(button => {
-        button.addEventListener('click', () => {
-            const modalId = button.getAttribute('data-modal-hide');
-            closeDetailModal(modalId.replace('detailModal', ''));
-        });
+    function hideCancellationForm(id) {
+        document.getElementById('cancellationModal' + id).classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Initialize modals when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeModals();
     });
-}
-    </script>
+
+    function initializeModals() {
+        // Toggle modal buttons
+        document.querySelectorAll('[data-modal-toggle]').forEach(button => {
+            button.addEventListener('click', () => {
+                const modalId = button.getAttribute('data-modal-target');
+                const modal = document.getElementById(modalId);
+                if (modal) modal.classList.remove('hidden');
+            });
+        });
+
+        // Close modal buttons
+        document.querySelectorAll('[data-modal-hide]').forEach(button => {
+            button.addEventListener('click', () => {
+                const modalId = button.getAttribute('data-modal-hide');
+                closeDetailModal(modalId.replace('detailModal', ''));
+            });
+        });
+    }
+</script>
 @endsection

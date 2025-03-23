@@ -22,7 +22,10 @@ return new class extends Migration
             $table->integer('tariformawa')->nullable();
             $table->integer('tarifunit')->nullable();
             $table->integer('tarifumum')->nullable();
+            $table->integer('bulanan_terpakai')->default(0);
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
+            $table->boolean('is_hourly_rate')->default(false);
+            $table->integer('hours_per_unit')->nullable();
             $table->timestamps();
         });
     }

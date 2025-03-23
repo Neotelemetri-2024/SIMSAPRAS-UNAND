@@ -89,7 +89,7 @@
     </section>
 
     <!-- How It Works -->
-    <section class="py-20 bg-gray-50">
+    <section id="how-it-works" class="py-20 bg-gray-50">
         <div class="max-w-screen-xl px-4 mx-auto">
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <h2 class="text-3xl font-bold text-gray-900 mb-4">Cara Kerja</h2>
@@ -138,7 +138,7 @@
     </section>
 
     <!-- FAQ Section -->
-    <section class="py-20 bg-white">
+    <section id="faq" class="py-20 bg-white">
         <div class="max-w-3xl mx-auto px-4">
             <div class="text-center mb-16">
                 <h2 class="text-3xl font-bold text-gray-900 mb-4">Pertanyaan Umum</h2>

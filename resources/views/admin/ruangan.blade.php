@@ -2,7 +2,6 @@
 @section('content')
 <div class="p-4 sm:p-6">
     <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
-        <!-- Header dengan Back Button -->
         <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
             <div class="flex items-center gap-4">
                 <a href="{{ route('sarana.index') }}" class="text-gray-500 hover:text-gray-700">
@@ -367,7 +366,7 @@
                         <!-- Kolom Kanan -->
                         <div class="space-y-6">
                             <div>
-                                <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Mahasiswa UNAND</label>
+                                <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Ormawa UNAND</label>
                                 <input type="number" name="tariformawa" min="0" value="{{ $item->tariformawa }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                             </div>
                             <div>

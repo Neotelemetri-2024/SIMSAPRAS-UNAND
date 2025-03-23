@@ -11,6 +11,10 @@ use App\Models\Notifikasi;
 use App\Models\TanggalPeminjaman;
 use App\Models\Sarana;
 use App\Services\NotificationService;
+use Carbon\Carbon;
+use App\Models\FacilityUsage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class PeminjamanController extends Controller
 {
@@ -75,6 +79,7 @@ class PeminjamanController extends Controller
 
     public function store(Request $request)
     {
+        DB::beginTransaction();
         try {
             $validationRules = [
                 'idSarana' => 'required|exists:sarana,id',
@@ -88,26 +93,24 @@ class PeminjamanController extends Controller
                 'estimasiPeserta' => 'required|integer|min:1',
                 'statusPeminjam' => 'required|in:unit,ormawa,umum',
             ];
-    
+
             if ($request->has('idRuangan')) {
                 $validationRules['idRuangan'] = 'required|exists:ruangan,id';
                 $ruangan = Ruangan::find($request->idRuangan);
                 
-                // Validate room capacity
                 if ($request->estimasiPeserta > $ruangan->kapasitas) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Jumlah peserta melebihi kapasitas ruangan'
                     ], 422);
                 }
-    
-                // Validate classroom booking dates
+
                 if ($ruangan->kelas) {
                     $nonWeekendDates = collect($request->jadwal_dates)->filter(function ($booking) {
                         $date = new \Carbon\Carbon($booking['date']);
                         return !$date->isWeekend();
                     });
-    
+
                     if ($nonWeekendDates->isNotEmpty()) {
                         return response()->json([
                             'success' => false,
@@ -116,24 +119,42 @@ class PeminjamanController extends Controller
                     }
                 }
             }
-    
+
             $validated = $request->validate($validationRules);
-    
-            // Upload files
+
             $suratPath = $request->file('suratPeminjaman')->store('peminjaman/surat', 'public');
             $rundownPath = $request->file('rundown')->store('peminjaman/rundown', 'public');
-    
-            // Calculate tariff
+
             $sarana = Sarana::find($validated['idSarana']);
             $ruangan = isset($validated['idRuangan']) ? Ruangan::find($validated['idRuangan']) : null;
+            $targetSarana = $ruangan ? $ruangan->sarana : $sarana;
+            
+            $totalHours = 0;
+            foreach ($validated['jadwal_dates'] as $booking) {
+                $jadwal = Jadwal::findOrFail($booking['jadwal_id']);
+                $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
+                $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
+                $hours = $endTime->diffInHours($start);
+                $totalHours += $hours;
+            }
+            
+            $targetSarana = Sarana::where('id', $targetSarana->id)->lockForUpdate()->first();
+            
+            if (($targetSarana->bulanan_terpakai + $totalHours) > 40) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => "Batas penggunaan bulanan 40 jam untuk {$targetSarana->nama} telah tercapai. Saat ini telah terpakai {$targetSarana->bulanan_terpakai} jam."
+                ], 422);
+            }
+            
             $totalTarif = Peminjaman::calculateTarif(
                 $validated['jadwal_dates'],
                 $validated['statusPeminjam'],
                 $sarana,
                 $ruangan
             );
-    
-            // Create peminjaman data array
+
             $peminjamanData = [
                 'idUser' => auth()->id(),
                 'idSarana' => $validated['idSarana'],
@@ -146,23 +167,43 @@ class PeminjamanController extends Controller
                 'statusPeminjam' => $validated['statusPeminjam'],
                 'totalTarif' => $totalTarif
             ];
-    
+
             if ($request->has('idRuangan')) {
                 $peminjamanData['idRuangan'] = $validated['idRuangan'];
             }
-    
-            // Create peminjaman
+
             $peminjaman = Peminjaman::create($peminjamanData);
-    
-            // Create tanggal peminjaman records
-            foreach ($validated['jadwal_dates'] as $jadwalDate) {
-                $peminjaman->tanggalPeminjaman()->create([
-                    'tanggal' => $jadwalDate['date'],
-                    'idJadwal' => $jadwalDate['jadwal_id'],
+
+            foreach ($validated['jadwal_dates'] as $booking) {
+                $jadwal = Jadwal::findOrFail($booking['jadwal_id']);
+                $date = Carbon::parse($booking['date']);
+                
+                $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
+                $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
+                $hours = $endTime->diffInHours($start);
+                
+                TanggalPeminjaman::create([
+                    'idPeminjaman' => $peminjaman->id,
+                    'idJadwal' => $booking['jadwal_id'],
+                    'tanggal' => $date->format('Y-m-d')
+                ]);
+
+                FacilityUsage::create([
+                    'idSarana' => $targetSarana->id,
+                    'idRuangan' => $validated['idRuangan'] ?? null,
+                    'tanggal' => $date->format('Y-m-d'),
+                    'jam_terpakai' => $hours
                 ]);
             }
-    
-            // Single insert untuk notifikasi admin
+            
+            Sarana::where('id', $targetSarana->id)
+                ->increment('bulanan_terpakai', $totalHours);
+                
+            $targetSarana->refresh();
+            if ($targetSarana->bulanan_terpakai >= 40) {
+                $targetSarana->update(['status' => 'nonaktif']);
+            }
+
             $adminNotifications = User::whereIn('role', ['admin', 'superadmin', 'pimpinan'])
                 ->get()
                 ->map(function ($admin) use ($peminjaman) {
@@ -178,22 +219,22 @@ class PeminjamanController extends Controller
                 })
                 ->toArray();
 
-            // Bulk insert notifikasi
             Notifikasi::insert($adminNotifications);
 
-            // Kirim notifikasi Pusher
             $this->notificationService->sendToAll(
                 'Peminjaman Baru',
                 "Peminjaman " . ($peminjaman->ruangan ? $peminjaman->ruangan->nama : $peminjaman->sarana->nama) . " dari " . auth()->user()->name . " untuk kegiatan " . $peminjaman->kegiatan
             );
 
-            // Kirim response terakhir
+            DB::commit();
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Pengajuan peminjaman berhasil dikirim',
                 'redirect' => route('riwayat.index'),
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(
                 [
                     'success' => false,
@@ -203,9 +244,9 @@ class PeminjamanController extends Controller
             );
         }
     }
+    
     public function show(Peminjaman $peminjaman)
     {
-        // Load relationships
         $peminjaman->load(['sarana', 'ruangan', 'jadwal', 'tanggalPeminjaman', 'user']);
 
         return view('peminjaman.show', compact('peminjaman'));
@@ -227,57 +268,73 @@ class PeminjamanController extends Controller
         if ($peminjaman->idUser !== auth()->id()) {
             return back()->with('error', 'Anda tidak memiliki akses untuk membatalkan peminjaman ini');
         }
-
+        
         // Validasi status peminjaman
-        if (!in_array($peminjaman->status, ['diajukan', 'disetujui'])) {
+        if (!in_array($peminjaman->status, ['diajukan', 'diproses', 'disetujui'])) {
             return back()->with('error', 'Status peminjaman tidak dapat dibatalkan');
         }
-
+        
         // Cek apakah masih lebih dari 3 hari sebelum tanggal peminjaman
         $earliestBookingDate = $peminjaman->tanggalPeminjaman->min('tanggal');
         if ($earliestBookingDate <= now()->addDays(3)->format('Y-m-d')) {
             return back()->with('error', 'Peminjaman hanya dapat dibatalkan maksimal 3 hari sebelum tanggal peminjaman');
         }
-
-        // Validasi input alasan pembatalan
-        $request->validate([
+        
+        // Validasi input alasan pembatalan dengan redirect ke halaman yang sama jika error
+        $validator = Validator::make($request->all(), [
             'alasan_pembatalan' => 'required|string|min:10',
         ], [
             'alasan_pembatalan.required' => 'Alasan pembatalan wajib diisi',
             'alasan_pembatalan.min' => 'Alasan pembatalan minimal 10 karakter'
         ]);
-
+        
+        if ($validator->fails()) {
+            // Redirect dengan error dan input, dan tambahkan anchor untuk membuka modal
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('modal_open', $peminjaman->id);
+        }
+        
         try {
             $peminjaman->statusSebelumBatal = $peminjaman->status;
             $peminjaman->update([
                 'status' => 'diajukanbatal',
                 'alasanPembatalan' => $request->alasan_pembatalan
             ]);
-
+            
+            // Ambil informasi fasilitas untuk pesan sukses
+            $fasilitasNama = $peminjaman->ruangan ? $peminjaman->ruangan->nama : $peminjaman->sarana->nama;
+            
             // Kirim notifikasi ke admin
             $adminNotifications = User::whereIn('role', ['admin', 'superadmin', 'pimpinan'])
                 ->get()
-                ->map(function ($admin) use ($peminjaman) {
+                ->map(function ($admin) use ($peminjaman, $fasilitasNama) {
                     return [
                         'idPeminjaman' => $peminjaman->id,
                         'penerima' => $admin->id,
                         'judul' => 'Pengajuan Pembatalan',
-                        'isi' => "Pengajuan pembatalan " . ($peminjaman->ruangan ? $peminjaman->ruangan->nama : $peminjaman->sarana->nama) . " dari " . auth()->user()->name . " untuk kegiatan " . $peminjaman->kegiatan,
+                        'isi' => "Pengajuan pembatalan {$fasilitasNama} dari " . auth()->user()->name . " untuk kegiatan " . $peminjaman->kegiatan,
                         'isRead' => false,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
                 })
                 ->toArray();
-
+                
             // Bulk insert notifikasi
             Notifikasi::insert($adminNotifications);
-
+            
+            // Redirect dengan pesan sukses yang akan ditampilkan oleh SweetAlert
             return redirect()
                 ->route('riwayat.index')
-                ->with('success', 'Pengajuan Pembatalan berhasil dilakukan');
+                ->with('success', "Pengajuan pembatalan {$fasilitasNama} berhasil dilakukan");
         } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan saat membatalkan peminjaman');
+                       
+            return back()
+                ->with('error', 'Terjadi kesalahan saat membatalkan peminjaman')
+                ->with('modal_open', $peminjaman->id);
         }
     }
 }
