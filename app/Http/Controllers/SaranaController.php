@@ -82,6 +82,8 @@ class SaranaController extends Controller
                 'tariformawa' => 'nullable|integer|min:0',
                 'tarifunit' => 'nullable|integer|min:0',
                 'tarifumum' => 'nullable|integer|min:0',
+                'is_hourly_rate' => 'required|boolean',
+                'hours_per_unit' => 'nullable|integer|min:0',
                 'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
                 'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ], [
@@ -154,7 +156,7 @@ class SaranaController extends Controller
                 }
             }
 
-            $validated = $request->validate([
+            $validationRules = [
                 'IdKategori' => 'required|exists:kategori_sarana,id',
                 'nama' => 'required|string|max:255|unique:sarana,nama,'.$sarana->id,
                 'isRoom' => 'required|boolean',
@@ -164,11 +166,22 @@ class SaranaController extends Controller
                 'tariformawa' => 'nullable|integer|min:0',
                 'tarifunit' => 'nullable|integer|min:0',
                 'tarifumum' => 'nullable|integer|min:0',
+                'is_hourly_rate' =>'boolean',
                 'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            ], [
+            ];
+            
+            // Only require hours_per_unit if is_hourly_rate is true
+            if ($request->boolean('is_hourly_rate')) {
+                $validationRules['hours_per_unit'] = 'required|integer|min:1|max:24';
+            } else {
+                $validationRules['hours_per_unit'] = 'nullable|integer|min:0';
+            }
+    
+            $validated = $request->validate($validationRules, [
                 'gambar.max' => 'Gambar utama tidak boleh lebih dari 2MB',
-                'gambar_tambahan.*.max' => 'Gambar tambahan tidak boleh lebih dari 2MB'
+                'gambar_tambahan.*.max' => 'Gambar tambahan tidak boleh lebih dari 2MB',
+                'hours_per_unit.required' => 'Jam per unit harus diisi jika tarif per jam diaktifkan'
             ]);
 
             if ($request->has('delete_images')) {
@@ -242,7 +255,6 @@ class SaranaController extends Controller
             ->get();
 
         $topBorrowed = Sarana::withCount('peminjaman')
-            ->where('status', 'aktif')  
             ->orderBy('peminjaman_count', 'desc')
             ->limit(5)
             ->get();

@@ -271,6 +271,7 @@
                             <option value="0">Tidak</option>
                         </select>
                     </div>
+                    
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Deskripsi</label>
                                     <textarea name="deskripsi" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required></textarea>
@@ -286,18 +287,44 @@
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
                                     <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required></textarea>
                                  </div>
-                                 <div>
-                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Ormawa UNAND</label>
-                                    <input type="number" name="tariformawa" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
+                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Ormawa</label>
+                                        <input type="number" name="tariformawa" value="{{ old('tariformawa', $item->tariformawa) }}" 
+                                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                               required>
+                                    </div>
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Unit</label>
+                                        <input type="number" name="tarifunit" value="{{ old('tarifunit', $item->tarifunit) }}" 
+                                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                               required>
+                                    </div>
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Umum</label>
+                                        <input type="number" name="tarifumum" value="{{ old('tarifumum', $item->tarifumum) }}" 
+                                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                               required>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                 <label class="block mb-2 text-sm font-medium text-gray-900 flex items-center">
+                                     <input type="checkbox" name="is_hourly_rate" value="1" 
+                                            class="w-4 h-4 mr-2 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500"
+                                            onchange="toggleRateFields(this, 'hourlyConfigCreate')">
+                                     Apakah tarif per jam?
+                                 </label>
+                             </div>
+                             
+                             <div id="hourlyConfigCreate" class="hidden">
+                                 <div class="mb-4">
+                                     <label class="block mb-2 text-sm font-medium text-gray-900">Jam per Unit</label>
+                                     <input type="number" name="hours_per_unit" min="1" max="24" 
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                            placeholder="Contoh: 2 (untuk per 2 jam)">
                                  </div>
-                                 <div>
-                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Fakultas-Unit UNAND</label>
-                                    <input type="number" name="tarifunit" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
-                                 </div>
-                                 <div>
-                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Umum</label>
-                                    <input type="number" name="tarifumum" min="0" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
-                                 </div>
+                             </div>
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Utama</label>
                                     <input type="file" name="gambar" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50" required>
@@ -374,18 +401,46 @@
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Fasilitas</label>
                                     <textarea name="fasilitas" rows="4" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>{{ $item->fasilitas }}</textarea>
                                  </div>
-                                 <div>
-                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Ormawa UNAND</label>
-                                    <input type="number" name="tarifunand" min="0" value="{{ $item->tariformawa }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
+                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Ormawa</label>
+                                        <input type="number" name="tariformawa" value="{{ $item->tariformawa }}" 
+                                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                               required>
+                                    </div>
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Unit</label>
+                                        <input type="number" name="tarifunit" value="{{ $item->tarifunit }}" 
+                                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                               required>
+                                    </div>
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Umum</label>
+                                        <input type="number" name="tarifumum" value="{{ $item->tarifumum }}" 
+                                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                               required>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                 <label class="block mb-2 text-sm font-medium text-gray-900 flex items-center">
+                                     <input type="checkbox" name="is_hourly_rate" value="1" 
+                                            class="w-4 h-4 mr-2 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500"
+                                            {{ $item->is_hourly_rate ? 'checked' : '' }}
+                                            onchange="toggleRateFields(this, 'hourlyConfig{{ $item->id }}')">
+                                     Apakah tarif per jam?
+                                 </label>
+                             </div>
+                             
+                             <div id="hourlyConfig{{ $item->id }}" class="{{ $item->is_hourly_rate ? '' : 'hidden' }}">
+                                 <div class="mb-4">
+                                     <label class="block mb-2 text-sm font-medium text-gray-900">Jam per Unit</label>
+                                     <input type="number" name="hours_per_unit" min="1" max="24" 
+                                            value="{{ $item->hours_per_unit }}"
+                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                                            placeholder="Contoh: 2 (untuk per 2 jam)">
                                  </div>
-                                 <div>
-                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Fakultas-Unit UNAND</label>
-                                    <input type="number" name="tarifunit" min="0" value="{{ $item->tarifunit }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
-                                 </div>
-                                 <div>
-                                    <label class="block mb-2 text-sm font-medium text-gray-900">Tarif Umum</label>
-                                    <input type="number" name="tarifumum" min="0" value="{{ $item->tarifumum }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
-                                 </div>
+                             </div>
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Utama</label>
                                     @if($item->gambar)
@@ -739,6 +794,39 @@ function activateSarana(activateUrl) {
         }
     });
 }
+
+function toggleRateFields(checkbox, configId) {
+    const hourlyConfig = document.getElementById(configId);
+    
+    // Only toggle hourly configuration
+    hourlyConfig.classList.toggle('hidden', !checkbox.checked);
+    
+    // Toggle required for hourly input within this specific config
+    const hourlyInput = hourlyConfig.querySelector('[name="hours_per_unit"]');
+    if (hourlyInput) {
+        hourlyInput.required = checkbox.checked;
+    }
+}
+
+// Initialize on page load - update to pass the correct configId
+document.addEventListener('DOMContentLoaded', function() {
+    // For create modal
+    const createCheckbox = document.querySelector('#createModal [name="is_hourly_rate"]');
+    if (createCheckbox) {
+        toggleRateFields(createCheckbox, 'hourlyConfigCreate');
+        createCheckbox.addEventListener('change', () => toggleRateFields(createCheckbox, 'hourlyConfigCreate'));
+    }
+    
+    // For edit modals
+    document.querySelectorAll('[id^="editModal"] [name="is_hourly_rate"]').forEach(checkbox => {
+        const modalId = checkbox.closest('[id^="editModal"]').id;
+        const itemId = modalId.replace('editModal', '');
+        const configId = 'hourlyConfig' + itemId;
+        
+        toggleRateFields(checkbox, configId);
+        checkbox.addEventListener('change', () => toggleRateFields(checkbox, configId));
+    });
+});
 </script>
 @endpush
 @endsection
