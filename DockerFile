@@ -1,20 +1,26 @@
-# Dockerfile
 FROM php:8.2-fpm
-
-# Set working directory
-WORKDIR /var/www/html
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential \
+    git \
+    curl \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    libzip-dev \
     zip \
     unzip \
-    git \
-    curl
+    libzip-dev \
+    gnupg \
+    nano \
+    vim \
+    less
+
+# Install Node.js dan NPM
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
+# Verifikasi instalasi Node.js dan npm
+RUN node -v && npm -v
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -25,18 +31,17 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Set working directory
+WORKDIR /var/www
+
 # Copy existing application directory contents
-COPY . /var/www/html
+COPY . /var/www
 
 # Copy existing application directory permissions
-COPY --chown=www-data:www-data . /var/www/html
+COPY --chown=www-data:www-data . /var/www
 
-# Set permissions
-RUN chmod -R 755 /var/www/html/storage
-RUN chmod -R 755 /var/www/html/bootstrap/cache
-
-# Install composer dependencies
-RUN composer install --no-interaction --no-dev --optimize-autoloader
+# Change current user to www-data
+USER www-data
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000

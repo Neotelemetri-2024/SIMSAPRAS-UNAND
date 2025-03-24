@@ -1,66 +1,32 @@
-# docker-compose.yml
-version: '3'
-
+version: "3"
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: simsapras_app
-    restart: unless-stopped
-    working_dir: /var/www/html
-    volumes:
-      - ./:/var/www/html
-    networks:
-      - simsapras-network
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: simsapras
+        container_name: simsapras-app
+        restart: unless-stopped
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+            - ./storage:/var/www/storage
+            - ./.env:/var/www/.env
+        networks:
+            - simsapras-network
 
-  nginx:
-    image: nginx:alpine
-    container_name: simsapras_nginx
-    restart: unless-stopped
-    ports:
-      - "8000:80"
-    volumes:
-      - ./:/var/www/html
-      - ./docker/nginx/conf.d:/etc/nginx/conf.d
-    networks:
-      - simsapras-network
-
-  db:
-    image: mysql:8.0
-    container_name: simsapras_db
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
-    volumes:
-      - mysql-data:/var/lib/mysql
-    networks:
-      - simsapras-network
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: simsapras_phpmyadmin
-    restart: unless-stopped
-    ports:
-      - "8080:80"
-    environment:
-      PMA_HOST: db
-      PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    networks:
-      - simsapras-network
-    depends_on:
-      - db
+    webserver:
+        image: nginx:alpine
+        container_name: simsapras-webserver
+        restart: unless-stopped
+        ports:
+            - "8000:80"
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d
+        networks:
+            - simsapras-network
 
 networks:
-  simsapras-network:
-    driver: bridge
-
-volumes:
-  mysql-data:
-    driver: local
+    simsapras-network:
+        driver: bridge
