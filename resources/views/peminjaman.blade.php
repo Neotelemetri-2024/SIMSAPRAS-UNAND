@@ -310,7 +310,10 @@
                                     </p>
                                     <ul class="mt-2 text-sm text-yellow-700 list-disc list-inside">
                                         <li>Peminjaman di hari Sabtu atau Minggu</li>
-                                        <li>Peminjaman melewati pukul 16:00 (4 sore)</li>
+                                        <li>Peminjaman pada atau melewati pukul 16:00 (4 sore)</li>
+                                        @if(isset($ruangan) ? $ruangan->is_hourly_rate : $sarana->is_hourly_rate)
+                                        <li>Tarif dihitung per {{ isset($ruangan) ? $ruangan->hours_per_unit : $sarana->hours_per_unit }} jam untuk durasi peminjaman</li>
+                                        @endif
                                     </ul>
                                 </div>
                             </div>
@@ -481,52 +484,82 @@ function confirmCancel() {
 @endif
 </script>
 <script>
-// Add this to your existing JavaScript
-function calculateEstimatedTarif() {
-    const statusPeminjam = document.getElementById('statusPeminjam').value;
-    if (!statusPeminjam) return;
-
-    const jadwalSelects = document.querySelectorAll('select[name^="jadwal_dates"][name$="[jadwal_id]"]');
-    const dates = Array.from(document.querySelectorAll('input[name^="jadwal_dates"][name$="[date]"]')).map(input => input.value);
+    // Add this to your existing JavaScript
+    function calculateEstimatedTarif() {
+        const statusPeminjam = document.getElementById('statusPeminjam').value;
+        if (!statusPeminjam) return;
     
-    const tarif = statusPeminjam === 'unit' ? 
-        {{ isset($ruangan) ? $ruangan->tarifunit : $sarana->tarifunit }} :
-        statusPeminjam === 'ormawa' ? 
-        {{ isset($ruangan) ? $ruangan->tariformawa : $sarana->tariformawa }} :
-        {{ isset($ruangan) ? $ruangan->tarifumum : $sarana->tarifumum }};
-
-    let totalTarif = 0;
-
-    dates.forEach((date, index) => {
-        const jadwalId = jadwalSelects[index].value;
-        if (!jadwalId) return;
-
-        // Check if weekend
-        const dayOfWeek = new Date(date).getDay();
-        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-
-        // Check if after hours (you'll need to add logic to check the actual jadwal time)
-        const selectedOption = jadwalSelects[index].options[jadwalSelects[index].selectedIndex];
-        const timeText = selectedOption.text;
-        const endTime = timeText.split(' - ')[1];
-        const endHour = parseInt(endTime.split(':')[0]);
+        const jadwalSelects = document.querySelectorAll('select[name^="jadwal_dates"][name$="[jadwal_id]"]');
+        const dates = Array.from(document.querySelectorAll('input[name^="jadwal_dates"][name$="[date]"]')).map(input => input.value);
         
-        const isAfterHours = endHour >= 16;
-
-        if (isWeekend || isAfterHours) {
-            totalTarif += tarif;
-        }
+        const tarif = statusPeminjam === 'unit' ? 
+            {{ isset($ruangan) ? $ruangan->tarifunit : $sarana->tarifunit }} :
+            statusPeminjam === 'ormawa' ? 
+            {{ isset($ruangan) ? $ruangan->tariformawa : $sarana->tariformawa }} :
+            {{ isset($ruangan) ? $ruangan->tarifumum : $sarana->tarifumum }};
+    
+        // Check if hourly rate is enabled
+        const isHourlyRate = {{ isset($ruangan) ? ($ruangan->is_hourly_rate ? 'true' : 'false') : ($sarana->is_hourly_rate ? 'true' : 'false') }};
+        const hoursPerUnit = {{ isset($ruangan) ? ($ruangan->hours_per_unit ?? 0) : ($sarana->hours_per_unit ?? 0) }};
+    
+        let totalTarif = 0;
+    
+        dates.forEach((date, index) => {
+            const jadwalId = jadwalSelects[index].value;
+            if (!jadwalId) return;
+    
+            // Check if weekend
+            const dayOfWeek = new Date(date).getDay();
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // 0 is Sunday, 6 is Saturday
+    
+            // Check if after hours
+            const selectedOption = jadwalSelects[index].options[jadwalSelects[index].selectedIndex];
+            const timeText = selectedOption.text;
+            const timeRange = timeText.split(' - ');
+            const startTime = timeRange[0];
+            const endTime = timeRange[1];
+            
+            const startHour = parseInt(startTime.split(':')[0]);
+            const endHour = parseInt(endTime.split(':')[0]);
+            
+            // Updated condition: Now considers 16:00 as chargeable time
+            const isAfterHours = startHour >= 16 || endHour >= 16;
+    
+            // Apply tariff if weekend OR after hours
+            if (isWeekend || isAfterHours) {
+                // If hourly rate is enabled, calculate based on duration
+                if (isHourlyRate && hoursPerUnit > 0) {
+                    // Calculate duration in hours
+                    const startMinutes = parseInt(startTime.split(':')[1]) || 0;
+                    const endMinutes = parseInt(endTime.split(':')[1]) || 0;
+                    
+                    const startTimeInMinutes = startHour * 60 + startMinutes;
+                    const endTimeInMinutes = endHour * 60 + endMinutes;
+                    
+                    const durationHours = Math.ceil((endTimeInMinutes - startTimeInMinutes) / 60);
+                    
+                    // Calculate multiplier based on hours_per_unit
+                    const multiplier = Math.max(1, Math.ceil(durationHours / hoursPerUnit));
+                    
+                    // Apply tariff with multiplier
+                    totalTarif += tarif * multiplier;
+                } else {
+                    // Standard tariff (not hourly)
+                    totalTarif += tarif;
+                }
+            }
+            // If weekday before 16:00, tariff is 0 (free)
+        });
+    
+        document.getElementById('estimatedTotal').classList.remove('hidden');
+        document.getElementById('totalTarif').textContent = `Rp${totalTarif.toLocaleString('id-ID')}`;
+    }
+    
+    // Add event listeners
+    document.getElementById('statusPeminjam').addEventListener('change', calculateEstimatedTarif);
+    document.querySelectorAll('select[name^="jadwal_dates"][name$="[jadwal_id]"]').forEach(select => {
+        select.addEventListener('change', calculateEstimatedTarif);
     });
-
-    document.getElementById('estimatedTotal').classList.remove('hidden');
-    document.getElementById('totalTarif').textContent = `Rp${totalTarif.toLocaleString('id-ID')}`;
-}
-
-// Add event listeners
-document.getElementById('statusPeminjam').addEventListener('change', calculateEstimatedTarif);
-document.querySelectorAll('select[name^="jadwal_dates"][name$="[jadwal_id]"]').forEach(select => {
-    select.addEventListener('change', calculateEstimatedTarif);
-});
 </script>
 @endpush
 @endsection 
