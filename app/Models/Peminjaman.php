@@ -142,7 +142,8 @@ class Peminjaman extends Model
                 $totalHours += $hours;
                 
                 $isWeekday = !$date->isWeekend();
-                $isBeforeFourPM = $start->hour < 16 && $endTime->hour <= 16;
+                // Updated condition: Now considers 16:00 as chargeable time
+                $isBeforeFourPM = $start->hour < 16 && $endTime->hour < 16;
                 $isFreeTimeSlot = $isWeekday && $isBeforeFourPM;
                 
                 if (!$isFreeTimeSlot) {
@@ -178,7 +179,8 @@ class Peminjaman extends Model
                 }
                 
                 $isWeekday = !$date->isWeekend();
-                $isBeforeFourPM = $start->hour < 16 && $endTime->hour <= 16;
+                // Updated condition: Now considers 16:00 as chargeable time
+                $isBeforeFourPM = $start->hour < 16 && $endTime->hour < 16;
                 $isFreeTimeSlot = $isWeekday && $isBeforeFourPM;
                 
                 if (!$isFreeTimeSlot) {
