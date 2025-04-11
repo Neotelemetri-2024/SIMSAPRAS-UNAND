@@ -64,7 +64,7 @@ class PeminjamanDiajukanController extends Controller
                 'feedbackPenolakan' => 'nullable|required_if:status,ditolak|string|max:500',
                 'alasanTolakBatal' => 'nullable|required_if:status,diajukan|string|max:500',
                 'feedbackPembatalan' => 'nullable|required_if:status,dibatalkan|string|max:500',
-                'suratDisposisi' => 'required_if:status,disetujui|mimes:pdf,doc,docx|max:2048',
+                'suratDisposisi' => 'required_if:status,disetujui|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
             ]);
     
             $peminjaman = Peminjaman::with('user')->findOrFail($id);

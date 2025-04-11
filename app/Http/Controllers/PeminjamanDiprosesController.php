@@ -63,7 +63,7 @@ class PeminjamanDiprosesController extends Controller
             $request->validate([
                 'status' => 'required|in:disetujui,diproses,ditolak,dibatalkan,diajukan',
                 'feedbackPenolakan' => 'nullable|required_if:status,ditolak|string|max:500',
-                'suratDisposisi' => 'required_if:status,disetujui|mimes:pdf,doc,docx|max:2048',
+                'suratDisposisi' => 'required_if:status,disetujui|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
             ]);
     
             $peminjaman = Peminjaman::with('user')->findOrFail($id);

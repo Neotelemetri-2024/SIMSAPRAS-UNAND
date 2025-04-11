@@ -320,16 +320,62 @@
                                 Surat Disposisi
                             </h4>
                             <div class="space-y-3">
-                                <a href="{{ asset('storage/' . $pinjam->suratDisposisi) }}" target="_blank"
-                                    class="flex items-center p-3 bg-white rounded-lg border border-gray-200 hover:bg-blue-50 transition-colors group">
-                                    <svg class="w-6 h-6 text-blue-500 group-hover:text-blue-600" fill="none"
-                                        stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    <span class="ml-3 text-sm font-medium text-gray-600 group-hover:text-gray-900">Surat
-                                        Disposisi</span>
-                                </a>
+                                @php
+                                    $fileExtension = pathinfo($pinjam->suratDisposisi, PATHINFO_EXTENSION);
+                                    $isImage = in_array(strtolower($fileExtension), ['jpg', 'jpeg', 'png']);
+                                @endphp
+                                
+                                @if($isImage)
+                                    <a href="javascript:void(0)" onclick="showImageModal('{{ asset('storage/' . $pinjam->suratDisposisi) }}')"
+                                        class="flex items-center p-3 bg-white rounded-lg border border-gray-200 hover:bg-blue-50 transition-colors group">
+                                        <svg class="w-6 h-6 text-blue-500 group-hover:text-blue-600" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <span class="ml-3 text-sm font-medium text-gray-600 group-hover:text-gray-900">Surat
+                                            Disposisi (Gambar)</span>
+                                    </a>
+                                @else
+                                    <a href="{{ asset('storage/' . $pinjam->suratDisposisi) }}" target="_blank"
+                                        class="flex items-center p-3 bg-white rounded-lg border border-gray-200 hover:bg-blue-50 transition-colors group">
+                                        <svg class="w-6 h-6 text-blue-500 group-hover:text-blue-600" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        <span class="ml-3 text-sm font-medium text-gray-600 group-hover:text-gray-900">Surat
+                                            Disposisi (Dokumen)</span>
+                                    </a>
+                                @endif
+                            </div>
+                            <div id="imageModal" class="fixed inset-0 z-[100] hidden overflow-y-auto">
+                                <div class="fixed inset-0 bg-black bg-opacity-75 transition-opacity" onclick="closeImageModal()"></div>
+                                <div class="flex items-center justify-center min-h-screen p-4">
+                                    <div class="relative bg-white rounded-lg shadow-xl max-w-3xl mx-auto">
+                                        <div class="flex items-start justify-between p-4 border-b rounded-t">
+                                            <h3 class="text-xl font-semibold text-gray-900">
+                                                Surat Disposisi
+                                            </h3>
+                                            <button type="button" onclick="closeImageModal()" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center">
+                                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="p-6 space-y-6 flex justify-center">
+                                            <img id="modalImage" src="" alt="Surat Disposisi" class="max-w-full max-h-[70vh] object-contain">
+                                        </div>
+                                        <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 rounded-b">
+                                            <a id="downloadLink" href="" download class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                                Download Gambar
+                                            </a>
+                                            <button type="button" onclick="closeImageModal()" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10">
+                                                Tutup
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>                            
                         @endif
@@ -605,23 +651,36 @@
  
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
 <script>
-    function showDetailModal(id) {
-        console.log('Showing modal for ID:', id);
-        const modal = document.getElementById('detailModal' + id);
-        console.log('Modal element:', modal);
-        if (modal) {
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        } else {
-            console.error('Modal not found for ID:', id);
-        }
+    function showImageModal(imageUrl) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const downloadLink = document.getElementById('downloadLink');
+        
+        modalImage.src = imageUrl;
+        downloadLink.href = imageUrl;
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+    }
+    
+    function closeImageModal() {
+        const modal = document.getElementById('imageModal');
+        modal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
     }
 
+    function showDetailModal(id) {
+        const modal = document.getElementById('detailModal' + id);
+        if (modal) {
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+    }
+    
     function closeDetailModal(id) {
         const modal = document.getElementById('detailModal' + id);
         if (modal) {
             modal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
+            document.body.classList.remove('overflow-hidden');
         }
     }
 

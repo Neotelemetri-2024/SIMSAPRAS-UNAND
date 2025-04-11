@@ -25,20 +25,17 @@ function createNotificationBox(title, message) {
 
     document.getElementById("notification-container").appendChild(notifBox);
 
-    // Animate in
     setTimeout(() => {
         notifBox.style.transform = "translateX(0)";
         notifBox.style.opacity = "1";
     }, 100);
 
-    // Remove after 5 seconds
     setTimeout(() => {
         notifBox.style.transform = "translateX(100%)";
         notifBox.style.opacity = "0";
         setTimeout(() => notifBox.remove(), 300);
     }, 5000);
 
-    // Close button handler
     notifBox.querySelector("button").addEventListener("click", () => {
         notifBox.style.transform = "translateX(100%)";
         notifBox.style.opacity = "0";
@@ -50,8 +47,6 @@ beamsClient
     .start()
     .then(() => beamsClient.addDeviceInterest("peminjaman"))
     .then(() => {
-        console.log("Successfully registered device");
-        // Listener untuk notifikasi
         beamsClient.onNotification((notification) => {
             createNotificationBox(
                 notification.notification.title,

@@ -310,11 +310,28 @@
                                     </p>
                                     <ul class="mt-2 text-sm text-yellow-700 list-disc list-inside">
                                         <li>Peminjaman di hari Sabtu atau Minggu</li>
-                                        <li>Peminjaman pada atau melewati pukul 16:00 (4 sore)</li>
+                                        <li>Peminjaman melewati pukul 16:00 (4 sore)</li>
                                         @if(isset($ruangan) ? $ruangan->is_hourly_rate : $sarana->is_hourly_rate)
                                         <li>Tarif dihitung per {{ isset($ruangan) ? $ruangan->hours_per_unit : $sarana->hours_per_unit }} jam untuk durasi peminjaman</li>
                                         @endif
                                     </ul>
+                                </div>
+                                <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                                    <p class="text-sm text-blue-800 font-medium">
+                                        Informasi Jam Lembur {{ isset($ruangan) ? $ruangan->sarana->nama : $sarana->nama }}:
+                                    </p>
+                                    <div class="mt-2 flex items-center">
+                                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                            <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ (isset($ruangan) ? $ruangan->sarana->bulanan_terpakai : $sarana->bulanan_terpakai) / 40 * 100 }}%"></div>
+                                        </div>
+                                    </div>
+                                    <p class="mt-2 text-sm text-blue-700">
+                                        <span class="font-medium">Sisa Jam Lembur:</span> 
+                                        {{ 40 - (isset($ruangan) ? $ruangan->sarana->bulanan_terpakai : $sarana->bulanan_terpakai) }} jam dari 40 jam per bulan
+                                    </p>
+                                    <p class="text-xs text-blue-600 mt-1">
+                                        <i>Jam lembur hanya dihitung untuk penggunaan di hari Sabtu/Minggu atau setelah pukul 16:00</i>
+                                    </p>
                                 </div>
                             </div>
 
@@ -438,14 +455,14 @@ function submitForm(form) {
                 window.location.href = data.redirect;
             });
         } else {
-            throw new Error(data.message || 'Terjadi kesalahan');
+            throw new Error(data.message);
         }
     })
     .catch(error => {
         Swal.fire({
             icon: 'error',
             title: 'Gagal!',
-            text: error.message || 'Terjadi kesalahan',
+            text: error.message,
             timer: 2000,
             showConfirmButton: false
         });
@@ -520,10 +537,12 @@ function confirmCancel() {
             const endTime = timeRange[1];
             
             const startHour = parseInt(startTime.split(':')[0]);
+            const startMinute = parseInt(startTime.split(':')[1]) || 0;
             const endHour = parseInt(endTime.split(':')[0]);
+            const endMinute = parseInt(endTime.split(':')[1]) || 0;
             
             // Updated condition: Now considers 16:00 as chargeable time
-            const isAfterHours = startHour >= 16 || endHour >= 16;
+            const isAfterHours = startHour > 16 || (startHour === 16 && startMinute > 0) || endHour > 16 || (endHour === 16 && endMinute > 0);
     
             // Apply tariff if weekend OR after hours
             if (isWeekend || isAfterHours) {

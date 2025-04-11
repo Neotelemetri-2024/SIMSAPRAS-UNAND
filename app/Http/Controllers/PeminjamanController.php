@@ -15,6 +15,8 @@ use Carbon\Carbon;
 use App\Models\FacilityUsage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+
 
 class PeminjamanController extends Controller
 {
@@ -41,7 +43,6 @@ class PeminjamanController extends Controller
             $ruangan = Ruangan::with('sarana')->findOrFail($request->ruangan_id);
             $sarana = $ruangan->sarana;
     
-            // Add warning message for classroom
             if ($ruangan->kelas) {
                 session()->flash('warning', 'Ruangan ini merupakan ruangan kelas yang hanya dapat dipinjam pada hari Sabtu dan Minggu.');
             }
@@ -130,23 +131,42 @@ class PeminjamanController extends Controller
             $targetSarana = $ruangan ? $ruangan->sarana : $sarana;
             
             $totalHours = 0;
+            $hasChargeableHours = false; 
+
             foreach ($validated['jadwal_dates'] as $booking) {
                 $jadwal = Jadwal::findOrFail($booking['jadwal_id']);
+                $date = Carbon::parse($booking['date']);
                 $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
                 $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
                 $hours = $endTime->diffInHours($start);
-                $totalHours += $hours;
+                
+                $isWeekend = $date->isWeekend();
+                
+                $isAfterHours = $start->hour > 16 || ($start->hour == 16 && $start->minute > 0) || $endTime->hour > 16 || ($endTime->hour == 16 && $endTime->minute > 0);
+                 
+                if ($isWeekend || $isAfterHours) {
+                    $hasChargeableHours = true; 
+
+                    $chargeableHours = $hours;
+                    
+                    if (!$isWeekend && $isAfterHours && $start->hour < 16) {
+                        $cutoffTime = Carbon::createFromFormat('H:i:s', '16:00:00');
+                        $chargeableHours = $endTime->diffInHours($cutoffTime);
+                    }
+                    
+                    $totalHours += $chargeableHours;
+                } 
             }
-            
+
             $targetSarana = Sarana::where('id', $targetSarana->id)->lockForUpdate()->first();
-            
-            if (($targetSarana->bulanan_terpakai + $totalHours) > 40) {
+
+            if ($hasChargeableHours && ($targetSarana->bulanan_terpakai + $totalHours) > 40) {
                 DB::rollBack();
                 return response()->json([
                     'success' => false,
                     'message' => "Batas penggunaan bulanan 40 jam untuk {$targetSarana->nama} telah tercapai. Saat ini telah terpakai {$targetSarana->bulanan_terpakai} jam."
                 ], 422);
-            }
+            } 
             
             $totalTarif = Peminjaman::calculateTarif(
                 $validated['jadwal_dates'],
@@ -187,17 +207,31 @@ class PeminjamanController extends Controller
                     'idJadwal' => $booking['jadwal_id'],
                     'tanggal' => $date->format('Y-m-d')
                 ]);
-
-                FacilityUsage::create([
-                    'idSarana' => $targetSarana->id,
-                    'idRuangan' => $validated['idRuangan'] ?? null,
-                    'tanggal' => $date->format('Y-m-d'),
-                    'jam_terpakai' => $hours
-                ]);
-            }
             
-            Sarana::where('id', $targetSarana->id)
-                ->increment('bulanan_terpakai', $totalHours);
+                $isWeekend = $date->isWeekend();
+                
+                $isAfterHours = $start->hour >= 16 || $endTime->hour >= 16;
+                
+                if ($isWeekend || $isAfterHours) {
+                    $chargeableHours = $hours;
+                    
+                    if (!$isWeekend && $isAfterHours && $start->hour < 16) {
+                        $cutoffTime = Carbon::createFromFormat('H:i:s', '16:00:00');
+                        $chargeableHours = $endTime->diffInHours($cutoffTime);
+                    }
+                    
+                    if ($chargeableHours > 0) {
+                        FacilityUsage::create([
+                            'idSarana' => $targetSarana->id,
+                            'idRuangan' => $validated['idRuangan'] ?? null,
+                            'tanggal' => $date->format('Y-m-d'),
+                            'jam_terpakai' => $chargeableHours
+                        ]);
+                        
+                        $targetSarana->increment('bulanan_terpakai', $chargeableHours);
+                    }
+                }
+            }
                 
             $targetSarana->refresh();
             if ($targetSarana->bulanan_terpakai >= 40) {
@@ -264,23 +298,19 @@ class PeminjamanController extends Controller
 
     public function cancel(Peminjaman $peminjaman, Request $request)
     {
-        // Validasi bahwa peminjaman milik user yang login
         if ($peminjaman->idUser !== auth()->id()) {
             return back()->with('error', 'Anda tidak memiliki akses untuk membatalkan peminjaman ini');
         }
         
-        // Validasi status peminjaman
         if (!in_array($peminjaman->status, ['diajukan', 'diproses', 'disetujui'])) {
             return back()->with('error', 'Status peminjaman tidak dapat dibatalkan');
         }
         
-        // Cek apakah masih lebih dari 3 hari sebelum tanggal peminjaman
         $earliestBookingDate = $peminjaman->tanggalPeminjaman->min('tanggal');
         if ($earliestBookingDate <= now()->addDays(3)->format('Y-m-d')) {
             return back()->with('error', 'Peminjaman hanya dapat dibatalkan maksimal 3 hari sebelum tanggal peminjaman');
         }
         
-        // Validasi input alasan pembatalan dengan redirect ke halaman yang sama jika error
         $validator = Validator::make($request->all(), [
             'alasan_pembatalan' => 'required|string|min:10',
         ], [
@@ -289,7 +319,6 @@ class PeminjamanController extends Controller
         ]);
         
         if ($validator->fails()) {
-            // Redirect dengan error dan input, dan tambahkan anchor untuk membuka modal
             return redirect()
                 ->back()
                 ->withErrors($validator)
@@ -304,10 +333,8 @@ class PeminjamanController extends Controller
                 'alasanPembatalan' => $request->alasan_pembatalan
             ]);
             
-            // Ambil informasi fasilitas untuk pesan sukses
             $fasilitasNama = $peminjaman->ruangan ? $peminjaman->ruangan->nama : $peminjaman->sarana->nama;
             
-            // Kirim notifikasi ke admin
             $adminNotifications = User::whereIn('role', ['admin', 'superadmin', 'pimpinan'])
                 ->get()
                 ->map(function ($admin) use ($peminjaman, $fasilitasNama) {
@@ -323,10 +350,8 @@ class PeminjamanController extends Controller
                 })
                 ->toArray();
                 
-            // Bulk insert notifikasi
             Notifikasi::insert($adminNotifications);
             
-            // Redirect dengan pesan sukses yang akan ditampilkan oleh SweetAlert
             return redirect()
                 ->route('riwayat.index')
                 ->with('success', "Pengajuan pembatalan {$fasilitasNama} berhasil dilakukan");

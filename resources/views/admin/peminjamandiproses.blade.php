@@ -483,7 +483,7 @@
                                              name="suratDisposisi" 
                                              class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                              required 
-                                             accept=".pdf,.doc,.docx"
+                                             accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                                              onchange="updateFileInfo(this, 'fileInfo{{ $item->id }}')">
                                       <div class="text-center" id="fileInfo{{ $item->id }}">
                                           <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -493,7 +493,7 @@
                                           <p class="mt-2 text-sm text-gray-600">
                                               <span class="font-semibold">Klik untuk upload</span> atau drag and drop
                                           </p>
-                                          <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX (Maks. 2MB)</p>
+                                          <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX, JPG, JPEG, atau PNG (Maks. 2MB)</p>
                                       </div>
                                       <div id="filePreview{{ $item->id }}" class="hidden mt-3">
                                           <div class="flex items-center p-3 bg-white rounded-lg border border-gray-200">
@@ -637,12 +637,12 @@
         }
 
         // Validasi tipe file
-        const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'image/jpg'];
         if (!validTypes.includes(file.type)) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error!',
-                text: 'File harus berupa PDF atau DOC/DOCX!',
+                text: 'File harus berupa PDF, DOC/DOCX, atau gambar (JPG, JPEG, PNG)!',
                 confirmButtonColor: '#3085d6'
             });
             resetFileInput(input.id, infoId, infoId.replace('fileInfo', 'filePreview'));
