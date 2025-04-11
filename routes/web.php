@@ -86,7 +86,7 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
 
     Route::get('/pengaduan', [PengaduanController::class, 'adminShow'])->name('pengaduan.index');
 
-    Route::resource('sarana', SaranaController::class);
+    // Route::resource('sarana', SaranaController::class);
     Route::post('/sarana', [SaranaController::class, 'store'])->name('sarana.store');
     Route::get('/sarana', [SaranaController::class, 'index'])->name('sarana.index');
     Route::put('/sarana/{sarana}', [SaranaController::class, 'update'])->name('sarana.update');
@@ -102,7 +102,7 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
     Route::resource('jadwal', JadwalController::class)->except(['show']); 
     Route::patch('/jadwal/{jadwal}/activate', [JadwalController::class, 'activate'])->name('jadwal.activate');
 
-    Route::resource('penjaga', PenjagaController::class);
+    Route::resource('penjaga', PenjagaController::class)->except(['index']);
     Route::get('/penjaga', [PenjagaController::class, 'index'])->name('penjaga.index');
 
     Route::get('/profile', fn() => view('admin.profile'))->name('admin.profile');

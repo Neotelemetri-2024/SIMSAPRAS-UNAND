@@ -3,7 +3,7 @@
     <div class="p-4 md:py-6">
         <div class="text-center">
             <span class="text-sm text-gray-500">
-                © {{ date('Y') }} <a href="#" class="hover:underline">SIMSAPRAS by Neo Telemetri</a>. All Rights Reserved.
+                © 2024 <a href="#" class="hover:underline">SIMSAPRAS by Neo Telemetri</a>. All Rights Reserved.
             </span>
         </div>
        
