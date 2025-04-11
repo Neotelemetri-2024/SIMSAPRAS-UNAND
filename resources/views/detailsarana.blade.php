@@ -319,6 +319,22 @@
                                 </div>
                                 @endforelse
                             </div>
+
+                            <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                                <h3 class="text-md font-semibold text-blue-800 mb-2">Informasi Jam Lembur</h3>
+                                <div class="flex items-center">
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ ($sarana->bulanan_terpakai / 40) * 100 }}%"></div>
+                                    </div>
+                                </div>
+                                <p class="mt-2 text-sm text-blue-700">
+                                    <span class="font-medium">Sisa Jam Lembur:</span> 
+                                    {{ 40 - $sarana->bulanan_terpakai }} jam dari 40 jam per bulan
+                                </p>
+                                <p class="text-xs text-blue-600 mt-1">
+                                    <i>Jam lembur adalah penggunaan fasilitas di hari Sabtu/Minggu atau setelah pukul 16:00</i>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -1,7 +1,6 @@
 let hasNewNotifications = false;
 
 function isNotificationPage() {
-    // Sesuaikan dengan URL halaman notifikasi Anda
     return window.location.pathname === "/admin/notifikasi";
 }
 
@@ -10,59 +9,36 @@ function updateNotificationBadge(show) {
     if (badge) {
         badge.style.display = show ? "flex" : "none";
     }
-    // Simpan state ke localStorage
     localStorage.setItem("hasNewNotifications", show);
 }
 
 if ("serviceWorker" in navigator) {
-    console.log("Starting service worker registration");
-
-    // Unregister existing service workers
     navigator.serviceWorker
-    .getRegistrations()
-    .then(() => {
-        console.log("All old service workers unregistered");
-
-        return navigator.serviceWorker.register("/service-worker.js");
-    })
-    .then((registration) => {
-        console.log("Service Worker registered:", registration);
-
-        // Initialize Beams
-        const beamsClient = new PusherPushNotifications.Client({
-            instanceId: "a4ee9c23-af7c-4ff5-906a-76a948d016b1",
-        });
-
-        console.log("Initializing Beams client");
-
-        return beamsClient
-            .start()
-            .then(() => {
-                console.log("Beams started");
-
-                return beamsClient.getDeviceInterests();
-            })
-            .then((interests) => {
-                console.log("Current device interests:", interests);
-
-                if (!interests.includes("peminjamanadmin")) {
-                    console.log("Adding device interest: peminjamanadmin");
-                    return beamsClient.addDeviceInterest("peminjamanadmin");
-                } else {
-                    console.log("Device already subscribed to interest");
-                }
+        .getRegistrations()
+        .then(() => {
+            return navigator.serviceWorker.register("/service-worker.js");
+        })
+        .then((registration) => {
+            const beamsClient = new PusherPushNotifications.Client({
+                instanceId: "a4ee9c23-af7c-4ff5-906a-76a948d016b1",
             });
-    })
-    .catch((error) => {
-        console.error("Setup failed:", error);
-    });
 
+            return beamsClient
+                .start()
+                .then(() => {
+                    return beamsClient.getDeviceInterests();
+                })
+                .then((interests) => {
+                    if (!interests.includes("peminjamanadmin")) {
+                        return beamsClient.addDeviceInterest("peminjamanadmin");
+                    } else {
+                    }
+                });
+        })
+        .catch((error) => {});
 
-    // Listen for messages
     navigator.serviceWorker.addEventListener("message", function (event) {
-        console.log("Message received from SW:", event.data);
         if (event.data.type === "PUSH_NOTIFICATION") {
-            console.log("Processing notification:", event.data.data);
             const notifData = event.data.data;
             createNotificationBox(
                 notifData.title || "New Notification",
@@ -74,7 +50,6 @@ if ("serviceWorker" in navigator) {
                 updateNotificationBadge(true);
             }
 
-            // Optional: Add to notification list if needed
             if (typeof displaylisnotifpage === "function") {
                 displaylisnotifpage(event.data.data);
             }
@@ -88,17 +63,13 @@ if (document.readyState === "loading") {
     initializeNotificationButton();
 }
 
-// Add cleanup untuk logout jika diperlukan
 function cleanup() {
     hasNewNotifications = false;
     updateNotificationBadge(false);
 }
 
-// Add this to check permission
 if ("Notification" in window) {
-    Notification.requestPermission().then(function (permission) {
-        console.log("Notification permission:", permission);
-    });
+    Notification.requestPermission().then(function (permission) {});
 }
 
 function createNotificationBox(title, message) {
@@ -106,10 +77,8 @@ function createNotificationBox(title, message) {
     if (!isNotificationPage()) {
         updateNotificationBadge(true);
     }
-    console.log("Creating notification box:", { title, message });
 
     if (!title || !message) {
-        console.error("Title or message missing for notification");
         return;
     }
 
@@ -160,7 +129,6 @@ function createNotificationBox(title, message) {
         </div>
     `;
 
-    // Progress bar animation style
     if (!document.querySelector("#notification-style")) {
         const style = document.createElement("style");
         style.id = "notification-style";
@@ -187,25 +155,21 @@ function createNotificationBox(title, message) {
 
     container.appendChild(notifBox);
 
-    // Animation
     requestAnimationFrame(() => {
         notifBox.style.transform = "translateX(0) translateY(0)";
         notifBox.style.opacity = "1";
     });
 
-    // Auto-hide after 5 seconds
     const hideTimeout = setTimeout(() => {
         hideNotification(notifBox);
     }, 5000);
 
-    // Close button handler
     const closeButton = notifBox.querySelector("button");
     closeButton.addEventListener("click", () => {
         clearTimeout(hideTimeout);
         hideNotification(notifBox);
     });
 
-    // Hover to pause timer
     notifBox.addEventListener("mouseenter", () => {
         notifBox.querySelector(".progress-bar").style.animationPlayState =
             "paused";
@@ -220,7 +184,6 @@ function createNotificationBox(title, message) {
 function initializeNotificationButton() {
     const notifButton = document.querySelector(".notification-button");
     if (notifButton) {
-        // Update HTML structure dengan class untuk badge
         notifButton.innerHTML = `
             <span class="sr-only">View notifications</span>
             <div class="relative inline-block">
@@ -231,29 +194,24 @@ function initializeNotificationButton() {
             </div>
         `;
 
-        // Add click event handler
         notifButton.addEventListener("click", handleNotificationClick);
 
         const hasNewNotifications =
             localStorage.getItem("hasNewNotifications") === "true";
 
-        // Jika di halaman notifikasi, reset badge
         if (isNotificationPage()) {
             updateNotificationBadge(false);
         } else {
-            // Jika tidak di halaman notifikasi, gunakan state dari localStorage
             updateNotificationBadge(hasNewNotifications);
         }
     }
 }
 
 function handleNotificationClick() {
-    // Reset status notifikasi
     hasNewNotifications = false;
     updateNotificationBadge(false);
 
-    // Redirect ke halaman notifikasi
-    window.location.href = "/admin/notifikasi"; // Sesuaikan dengan route Anda
+    window.location.href = "/admin/notifikasi";
 }
 
 function hideNotification(notifBox) {

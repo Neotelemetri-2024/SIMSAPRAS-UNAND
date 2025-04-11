@@ -131,6 +131,7 @@ class Peminjaman extends Model
         
         $targetEntity = $ruangan ?? $sarana;
         $totalHours = 0;
+        $hasChargeableHours = false; 
         
         if ($targetEntity->is_hourly_rate) {
             foreach ($jadwal_dates as $booking) {
@@ -141,9 +142,23 @@ class Peminjaman extends Model
                 $hours = $endTime->diffInHours($start);
                 $totalHours += $hours;
                 
+                $isWeekend = $date->isWeekend();
+                $isAfterHours = $start->hour > 16 || ($start->hour == 16 && $start->minute > 0) || $endTime->hour > 16 || ($endTime->hour == 16 && $endTime->minute > 0);
+                $isChargeableTime = $isWeekend || $isAfterHours;
+                
+                if ($isChargeableTime) {
+                    $hasChargeableHours = true;
+                    
+                    $chargeableHours = $hours;
+                    
+                    if (!$isWeekend && $isAfterHours && $start->hour < 16) {
+                        $cutoffTime = Carbon::createFromFormat('H:i:s', '16:00:00');
+                        $chargeableHours = $endTime->diffInHours($cutoffTime);
+                    }
+                }
+                
                 $isWeekday = !$date->isWeekend();
-                // Updated condition: Now considers 16:00 as chargeable time
-                $isBeforeFourPM = $start->hour < 16 && $endTime->hour < 16;
+                $isBeforeFourPM = $start->hour <= 16 && $endTime->hour <= 16;
                 $isFreeTimeSlot = $isWeekday && $isBeforeFourPM;
                 
                 if (!$isFreeTimeSlot) {
@@ -179,8 +194,7 @@ class Peminjaman extends Model
                 }
                 
                 $isWeekday = !$date->isWeekend();
-                // Updated condition: Now considers 16:00 as chargeable time
-                $isBeforeFourPM = $start->hour < 16 && $endTime->hour < 16;
+                $isBeforeFourPM = $start->hour <= 16 && $endTime->hour <= 16;
                 $isFreeTimeSlot = $isWeekday && $isBeforeFourPM;
                 
                 if (!$isFreeTimeSlot) {
@@ -212,10 +226,10 @@ class Peminjaman extends Model
         }
         
         $limitEntity = $ruangan ? $ruangan->sarana : $sarana;
-        
+    
         $monthlyUsed = $limitEntity->bulanan_terpakai;
         
-        if(($monthlyUsed + $totalHours) > 40) {
+        if ($hasChargeableHours && ($monthlyUsed + $totalHours) > 40) {
             throw new \Exception("Batas penggunaan bulanan 40 jam untuk {$limitEntity->nama} telah tercapai. Saat ini telah terpakai {$monthlyUsed} jam.");
         }
         

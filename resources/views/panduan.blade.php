@@ -161,7 +161,7 @@
                             dikenakan tarif pada kondisi sebagai berikut:</p>
                         <ul class="ps-5 text-gray-500 list-disc">
                             <li>Peminjaman dilakukan di hari sabtu atau minggu</li>
-                            <li>Peminjaman dilakukan melewati pukul 16:00 WIB (4 sore)</li>
+                            <li>Peminjaman dilakukan setelah pukul 16:00 WIB (4 sore)</li>
                         </ul>
                     </div>
                 </div>

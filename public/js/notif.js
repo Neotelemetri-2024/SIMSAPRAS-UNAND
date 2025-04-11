@@ -1,68 +1,48 @@
-// Definisikan TokenProvider
 const beamsTokenProvider = new PusherPushNotifications.TokenProvider({
     url: "/beams/auth",
 });
 
 function isNotificationPage() {
-    // Sesuaikan dengan URL halaman notifikasi Anda
     return window.location.pathname === "/notifikasi";
 }
 
-let beamsClient = null; // Simpan instance beamsClient secara global
+let beamsClient = null;
 let hasNewNotifications = false;
 
 async function initializeNotifications() {
-    // Cek dulu apakah ada meta user-id (user login)
     const userIdMeta = document.querySelector('meta[name="user-id"]');
     if (!userIdMeta || !userIdMeta.content) {
-        // User tidak login, exit quietly tanpa error
-        console.log("User not logged in, skipping notification setup");
         return;
     }
 
     if (!("serviceWorker" in navigator) || !("Notification" in window)) {
-        console.error("Push notifications not supported");
         return;
     }
 
     try {
-        // Unregister existing service workers
-       
-
-        // Register service worker
         const registration = await navigator.serviceWorker.register(
             "/service-worker.js"
         );
         await navigator.serviceWorker.ready;
-        console.log("Service Worker registered and activated:", registration);
 
         const permission = await Notification.requestPermission();
-        console.log("Notification permission status:", permission);
 
         if (permission !== "granted") {
-            console.warn("Notification permission denied");
             return;
         }
 
-        // Get user ID from meta tag
-        const userId = userIdMeta.content; // Gunakan userIdMeta yang sudah dicek di awal
-        console.log("User ID:", userId);
+        const userId = userIdMeta.content;
 
-        // Initialize Beams Client dengan TokenProvider
         beamsClient = new PusherPushNotifications.Client({
             instanceId: "a4ee9c23-af7c-4ff5-906a-76a948d016b1",
             serviceWorkerRegistration: registration,
             tokenProvider: beamsTokenProvider,
         });
 
-        // Start dan setup Beams Client
         await beamsClient.start();
         await beamsClient.setUserId(String(userId), beamsTokenProvider);
-        console.log("Notification setup complete");
 
-        // Setup event listener untuk service worker
         navigator.serviceWorker.addEventListener("message", function (event) {
-            console.log("Received message from service worker:", event);
             if (event.data && event.data.type === "PUSH_NOTIFICATION") {
                 createNotificationBox(
                     event.data.data?.title || "Notification",
@@ -75,19 +55,10 @@ async function initializeNotifications() {
             }
         });
     } catch (error) {
-        // console.error("Notification setup failed:", error);
-        // // Hanya tampilkan error notification box jika error bukan karena user tidak login
-        // if (!error.message.includes("User ID not found")) {
-        //     createNotificationBox("Notification Error", error.message);
-        // }
-
-        // Attempt cleanup on error
         if (beamsClient) {
             try {
                 await beamsClient.stop();
-            } catch (e) {
-                console.error("Error stopping beams client:", e);
-            }
+            } catch (e) {}
         }
     }
 }
@@ -98,32 +69,25 @@ if (document.readyState === "loading") {
     initializeNotificationButton();
 }
 
-// Cleanup function
 async function handlePushNotificationLogout() {
     try {
         if (beamsClient) {
             await beamsClient.stop();
-            console.log("Beams client stopped successfully");
         }
 
         const registrations = await navigator.serviceWorker.getRegistrations();
         for (let registration of registrations) {
             await registration.unregister();
         }
-        console.log("Service workers unregistered");
-    } catch (error) {
-        console.error("Error during push notification logout:", error);
-    }
+    } catch (error) {}
 }
 
-// Initialize when DOM is ready
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initializeNotifications);
 } else {
     initializeNotifications();
 }
 
-// Cleanup on page unload
 window.addEventListener("beforeunload", handlePushNotificationLogout);
 
 function updateNotificationBadge(show) {
@@ -131,7 +95,6 @@ function updateNotificationBadge(show) {
     if (badge) {
         badge.style.display = show ? "flex" : "none";
     }
-    // Simpan state ke localStorage
     localStorage.setItem("hasNewNotifications", show);
 }
 
@@ -140,10 +103,8 @@ function createNotificationBox(title, message) {
     if (!isNotificationPage()) {
         updateNotificationBadge(true);
     }
-    console.log("Creating notification box:", { title, message });
 
     if (!title || !message) {
-        console.error("Title or message missing for notification");
         return;
     }
 
@@ -194,7 +155,6 @@ function createNotificationBox(title, message) {
         </div>
     `;
 
-    // Progress bar animation style
     const style = document.createElement("style");
     style.textContent = `
         @keyframes progress {
@@ -218,25 +178,21 @@ function createNotificationBox(title, message) {
 
     container.appendChild(notifBox);
 
-    // Entrance animation
     requestAnimationFrame(() => {
         notifBox.style.transform = "translateX(0) translateY(0)";
         notifBox.style.opacity = "1";
     });
 
-    // Auto-hide after 5 seconds
     const hideTimeout = setTimeout(() => {
         hideNotification(notifBox);
     }, 5000);
 
-    // Close button handler
     const closeButton = notifBox.querySelector("button");
     closeButton.addEventListener("click", () => {
         clearTimeout(hideTimeout);
         hideNotification(notifBox);
     });
 
-    // Hover to pause timer
     notifBox.addEventListener("mouseenter", () => {
         notifBox.querySelector(".progress-bar").style.animationPlayState =
             "paused";
@@ -251,7 +207,6 @@ function createNotificationBox(title, message) {
 function initializeNotificationButton() {
     const notifButton = document.querySelector(".notification-button");
     if (notifButton) {
-        // Update HTML structure dengan class untuk badge
         notifButton.innerHTML = `
             <span class="sr-only">View notifications</span>
             <div class="relative inline-block">
@@ -262,28 +217,23 @@ function initializeNotificationButton() {
             </div>
         `;
 
-        // Add click event handler
         notifButton.addEventListener("click", handleNotificationClick);
         const hasNewNotifications =
             localStorage.getItem("hasNewNotifications") === "true";
 
-        // Jika di halaman notifikasi, reset badge
         if (isNotificationPage()) {
             updateNotificationBadge(false);
         } else {
-            // Jika tidak di halaman notifikasi, gunakan state dari localStorage
             updateNotificationBadge(hasNewNotifications);
         }
     }
 }
 
 function handleNotificationClick() {
-    // Reset status notifikasi
     hasNewNotifications = false;
     updateNotificationBadge(false);
 
-    // Redirect ke halaman notifikasi
-    window.location.href = "/notifikasi"; // Sesuaikan dengan route notifikasi Anda
+    window.location.href = "/notifikasi";
 }
 
 function hideNotification(notifBox) {
@@ -291,7 +241,6 @@ function hideNotification(notifBox) {
     notifBox.style.opacity = "0";
     setTimeout(() => {
         notifBox.remove();
-        // Remove style tag if no more notifications
         if (!document.querySelector(".progress-bar")) {
             const style = document.querySelector("style");
             if (style) style.remove();
