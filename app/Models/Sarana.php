@@ -22,6 +22,8 @@ class Sarana extends Model
         'tariformawa',
         'tarifunit',
         'tarifumum',
+        'requiresFaculty',
+        'bulanan_terpakai',
         'is_hourly_rate',
         'hours_per_unit',
         'status',
@@ -62,5 +64,13 @@ class Sarana extends Model
     public function pengaduan()
     {
         return $this->hasMany(Pengaduan::class, 'id_sarana', 'id');
+    }
+
+    public function canBeAccessedBy(User $user)
+    {
+        if ($this->requiresFaculty) {
+            return $user->isFacultyUser();
+        }
+        return true;
     }
 }

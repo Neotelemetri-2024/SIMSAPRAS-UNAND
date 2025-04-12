@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Peminjaman;
 use App\Models\Pengumuman;
 use App\Models\Ruangan;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Models\TanggalPeminjaman;
@@ -233,6 +234,9 @@ class SaranaController extends Controller
         $search = $request->input("search");
         $filterKategori = $request->input("kategori");
 
+        $user = auth()->check() ? User::find(auth()->id()) : null;
+        $isFacultyUser = $user && $user->isFacultyUser();
+
         $sarana = Sarana::withCount('peminjaman')
             ->with('kategoriSarana')
             ->when($search, function ($query, $search) {
@@ -242,6 +246,12 @@ class SaranaController extends Controller
             })
             ->when($filterKategori, function ($query, $filterKategori) {
                 $query->where('IdKategori', $filterKategori);
+            })
+            ->when(!$isFacultyUser, function ($query) {
+                $query->where(function($q) {
+                    $q->where('requiresFaculty', false)
+                    ->orWhereNull('requiresFaculty');
+                });
             })
             ->orderBy('peminjaman_count', 'desc')
             ->where('status', 'aktif')
@@ -282,6 +292,12 @@ class SaranaController extends Controller
         
         $ruangan = collect();
         $events = []; 
+
+        $user = User::find(auth()->id());
+
+        if ($sarana->requiresFaculty && (!$user || !$user->isFacultyUser())) {
+            return redirect()->route('user.sarana')->with('faculty-error', 'Sarana ini hanya dapat diakses oleh pengguna dari fakultas/unit.');
+        }
         
         if ($sarana->isRoom == 1) {
             $ruangan = $sarana->ruangan()

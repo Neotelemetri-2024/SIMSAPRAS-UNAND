@@ -23,16 +23,21 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'role',
         'kontak',
-        'email_verified_at'
+        'email_verified_at',
+        'isFakultas'
     ];
-   public function hasAnyRole($roles): bool
+    
+    public function hasAnyRole($roles): bool
     {
-        // Jika string diberikan, ubah menjadi array
         if (is_string($roles)) {
             $roles = [$roles];
         }
-
         return in_array($this->role, $roles);
+    }
+
+    public function isFacultyUser()
+    {
+        return $this->isFakultas;
     }
 
     public function peminjaman()

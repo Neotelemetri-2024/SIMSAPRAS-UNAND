@@ -51,6 +51,7 @@
                      <th scope="col" class="px-6 py-3">Kontak</th>
                      <th scope="col" class="px-6 py-3">Email</th>
                      <th scope="col" class="px-6 py-3">Role</th>
+                     <th scope="col" class="px-6 py-3">Akun Fakultas?</th>
                      <th scope="col" class="px-6 py-3">Aksi</th>
                   </tr>
                </thead>
@@ -78,6 +79,13 @@
                      <td class="px-6 py-4">{{ $item->kontak }}</td>
                      <td class="px-6 py-4">{{ $item->email }}</td>
                      <td class="px-6 py-4">{{ $item->role }}</td>
+                     <td class="px-6 py-4">
+                        @if($item->isFakultas)
+                            <span class="text-gray-500">Ya</span>
+                        @else
+                            <span class="text-gray-500">Tidak</span>
+                        @endif
+                     </td>
                      <td class="px-6 py-4">
                         <div class="flex space-x-2">
                             @if($item->role === 'admin')
@@ -139,6 +147,13 @@
                      <option value="pimpinan">Pimpinan</option>
                   </select>
                </div>
+               <div id="fakultasSection" class="hidden">
+                    <div class="flex items-center">
+                    <input id="isFakultas" name="isFakultas" type="checkbox" value="1" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2">
+                    <label for="isFakultas" class="ml-2 text-sm font-medium text-gray-900 dark:text-white">Akun Fakultas?</label>
+                    </div>
+                    <p class="mt-1 text-xs text-gray-500">*Centang jika akun digunakan untuk peminjaman dari Fakultas</p>
+                </div>
                <div id="saranaSection" class="hidden">
                 <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Sarana yang Dapat Diakses</label>
                 <div class="space-y-2 max-h-40 overflow-y-auto p-2 border border-gray-200 rounded-lg">
@@ -399,15 +414,25 @@
         // Handle role selection for admin
         const roleSelect = document.getElementById('roleSelect');
         const saranaSection = document.getElementById('saranaSection');
+        const fakultasSection = document.getElementById('fakultasSection');
         
-        if (roleSelect && saranaSection) {
+        if (roleSelect && saranaSection && fakultasSection) {
             roleSelect.addEventListener('change', function() {
-                const isAdmin = this.value === 'admin';
+                const selectedRole = this.value;
+                const isAdmin = selectedRole === 'admin';
+                const isUser = selectedRole === 'user';
+                
+                // Show/hide sections based on role
                 saranaSection.classList.toggle('hidden', !isAdmin);
+                fakultasSection.classList.toggle('hidden', !isUser);
                 
                 if (!isAdmin) {
                     document.querySelectorAll('input[name="sarana_ids[]"]')
                         .forEach(checkbox => checkbox.checked = false);
+                }
+                
+                if (!isUser) {
+                    document.getElementById('isFakultas').checked = false;
                 }
             });
         }

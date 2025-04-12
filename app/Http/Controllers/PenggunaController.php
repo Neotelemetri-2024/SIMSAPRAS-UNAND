@@ -30,7 +30,8 @@ class PenggunaController extends Controller
                 'password' => 'required|string|min:8',
                 'role' => 'required|in:user,admin,superadmin,pimpinan',
                 'sarana_ids' => 'required_if:role,admin|array', 
-                'sarana_ids.*' => 'exists:sarana,id'
+                'sarana_ids.*' => 'exists:sarana,id',
+                'isFakultas' => 'nullable|boolean'
             ]);
 
             if ($validated['role'] === 'admin' && isset($request->sarana_ids)) {
@@ -49,6 +50,13 @@ class PenggunaController extends Controller
             if (in_array($validated['role'], ['admin', 'superadmin', 'pimpinan'])) {
                 $validated['email_verified_at'] = now();
             }
+
+            $validated['isFakultas'] = $request->has('isFakultas') ? true : false;
+
+            if ($validated['isFakultas']) {
+                $validated['email_verified_at'] = now();
+            }
+
             $user = User::create($validated);
 
             if ($validated['role'] === 'admin' && isset($request->sarana_ids)) {

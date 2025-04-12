@@ -70,7 +70,7 @@
                                 :value="old('email')"
                                 required
                                 autocomplete="username"
-                                placeholder="nama@unand.ac.id" />
+                                placeholder="Masukkan Email" />
                         </div>
                         <x-input-error :messages="$errors->get('email')" class="mt-2" />
                     </div>
