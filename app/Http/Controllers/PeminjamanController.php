@@ -51,6 +51,13 @@ class PeminjamanController extends Controller
         }
     
         $sarana = Sarana::findOrFail($request->sarana_id);
+
+        $user = User::find(auth()->id());
+
+        if ($sarana->requiresFaculty && (!$user || !$user->isFacultyUser())) {
+            return redirect()->route('home')->with('error', 'Sarana ini hanya dapat diakses oleh pengguna dari fakultas.');
+        }
+
         return view('peminjaman', compact('sarana', 'selectedDates', 'jadwals', 'bookedJadwals'));
     }
 
@@ -122,6 +129,21 @@ class PeminjamanController extends Controller
             }
 
             $validated = $request->validate($validationRules);
+
+            $saranaId = $validated['idSarana'] ?? null;
+
+            $user = User::find(auth()->id());
+    
+            if ($saranaId) {
+                $sarana = Sarana::findOrFail($saranaId);
+                
+                if ($sarana->requiresFaculty && (!$user || !$user->isFacultyUser())) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Sarana ini hanya dapat diakses oleh pengguna dari fakultas.'
+                    ], 403);
+                }
+            }
 
             $suratPath = $request->file('suratPeminjaman')->store('peminjaman/surat', 'public');
             $rundownPath = $request->file('rundown')->store('peminjaman/rundown', 'public');

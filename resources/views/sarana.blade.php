@@ -204,6 +204,7 @@
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const ctx = document.getElementById('trendChart').getContext('2d');
@@ -246,6 +247,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+    @if(session('faculty-error'))
+        Swal.fire({
+            title: 'Akses Terbatas',
+            text: "{{ session('faculty-error') }}",
+            icon: 'warning',
+            confirmButtonColor: '#059669',
+            confirmButtonText: 'Mengerti'
+        });
+    @endif
 });
 
     function openPengumumanModal(id) {

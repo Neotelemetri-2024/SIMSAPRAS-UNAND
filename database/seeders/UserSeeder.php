@@ -18,6 +18,7 @@ class UserSeeder extends Seeder
             'kontak' => '081234567890',
             'role' => 'superadmin',
             'email_verified_at' => now(),
+            'isFakultas' => 0,
         ]);
 
         // Create Admin
@@ -28,6 +29,7 @@ class UserSeeder extends Seeder
             'kontak' => '081234567891',
             'role' => 'admin',
             'email_verified_at' => now(),
+            'isFakultas' => 0,
         ]);
 
         User::create([
@@ -37,6 +39,7 @@ class UserSeeder extends Seeder
             'kontak' => '081234567891',
             'role' => 'admin',
             'email_verified_at' => now(),
+            'isFakultas' => 0,
         ]);
 
         // Create Pimpinan
@@ -47,6 +50,7 @@ class UserSeeder extends Seeder
             'kontak' => '081234567892',
             'role' => 'pimpinan',
             'email_verified_at' => now(),
+            'isFakultas' => 0,
         ]);
 
         // Create Regular User
@@ -57,6 +61,17 @@ class UserSeeder extends Seeder
             'kontak' => '081234567893',
             'role' => 'user',
             'email_verified_at' => now(),
+            'isFakultas' => 0,
+        ]);
+
+        User::create([
+            'name' => 'Fakultas 1',
+            'email' => 'fakultas@unand.ac.id',
+            'password' => Hash::make('password123'),
+            'kontak' => '081234567893',
+            'role' => 'user',
+            'email_verified_at' => now(),
+            'isFakultas' => 0,
         ]);
     }
 }

@@ -271,14 +271,21 @@
                             <!-- Status Peminjam -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Status Peminjam</label>
-                                <select name="statusPeminjam" id="statusPeminjam" 
-                                        class="w-full rounded-xl border-gray-200 focus:border-green-500 focus:ring-green-500"
-                                        required>
-                                    <option value="" disabled selected hidden>Pilih Status</option>
-                                    <option value="unit">Fakultas/Unit</option>
-                                    <option value="ormawa">Ormawa</option>
-                                    <option value="umum">Umum</option>
-                                </select>
+                                @if(auth()->user()->isFakultas)
+                                    <input type="hidden" name="statusPeminjam" value="unit">
+                                    <div class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-700">
+                                        <span class="font-medium">Fakultas/Unit</span>
+                                    </div>
+                                    <p class="mt-1 text-xs text-green-600">Status peminjam otomatis diatur sebagai Fakultas/Unit</p>
+                                @else
+                                    <select name="statusPeminjam" id="statusPeminjam" 
+                                            class="w-full rounded-xl border-gray-200 focus:border-green-500 focus:ring-green-500"
+                                            required>
+                                        <option value="" disabled selected hidden>Pilih Status</option>
+                                        <option value="ormawa">Ormawa</option>
+                                        <option value="umum">Umum</option>
+                                    </select>
+                                @endif
                             </div>
 
                             <!-- Tariff Information -->
@@ -503,7 +510,11 @@ function confirmCancel() {
 <script>
     // Add this to your existing JavaScript
     function calculateEstimatedTarif() {
+        @if(auth()->user()->isFakultas)
+        const statusPeminjam = 'unit';
+        @else
         const statusPeminjam = document.getElementById('statusPeminjam').value;
+        @endif
         if (!statusPeminjam) return;
     
         const jadwalSelects = document.querySelectorAll('select[name^="jadwal_dates"][name$="[jadwal_id]"]');
