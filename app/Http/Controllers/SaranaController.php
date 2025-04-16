@@ -73,7 +73,7 @@ class SaranaController extends Controller
                 }
             }
 
-            $validated = $request->validate([
+            $validationRules = [
                 'IdKategori' => 'required|exists:kategori_sarana,id',
                 'nama' => 'required|string|max:255',
                 'isRoom' => 'required|boolean',
@@ -83,13 +83,23 @@ class SaranaController extends Controller
                 'tariformawa' => 'nullable|integer|min:0',
                 'tarifunit' => 'nullable|integer|min:0',
                 'tarifumum' => 'nullable|integer|min:0',
-                'is_hourly_rate' => 'required|boolean',
+                'is_hourly_rate' => 'boolean',
+                'requiresFaculty' => 'boolean',
                 'hours_per_unit' => 'nullable|integer|min:0',
                 'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
                 'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            ], [
+            ];
+            
+            // Adjust hours_per_unit validation based on is_hourly_rate
+            if ($request->boolean('is_hourly_rate')) {
+                $validationRules['hours_per_unit'] = 'required|integer|min:1|max:24';
+            }
+            
+            // Now validate with the complete rules
+            $validated = $request->validate($validationRules, [
                 'gambar.max' => 'Gambar utama tidak boleh lebih dari 2MB',
-                'gambar_tambahan.*.max' => 'Gambar tambahan tidak boleh lebih dari 2MB'
+                'gambar_tambahan.*.max' => 'Gambar tambahan tidak boleh lebih dari 2MB',
+                'hours_per_unit.required' => 'Jam per unit harus diisi jika tarif per jam diaktifkan'
             ]);
 
             $existingSarana = Sarana::where('nama', $validated['nama'])
@@ -102,7 +112,7 @@ class SaranaController extends Controller
                     'message' => 'Sarana dengan nama tersebut sudah ada dan masih aktif'
                 ]);
             }
-
+            
             if ($request->hasFile('gambar')) {
                 $validated['gambar'] = $request->file('gambar')->store('sarana', 'public');
             }
@@ -168,6 +178,7 @@ class SaranaController extends Controller
                 'tarifunit' => 'nullable|integer|min:0',
                 'tarifumum' => 'nullable|integer|min:0',
                 'is_hourly_rate' =>'boolean',
+                'requiresFaculty' => 'boolean',
                 'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ];

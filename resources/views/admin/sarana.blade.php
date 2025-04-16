@@ -325,6 +325,14 @@
                                             placeholder="Contoh: 2 (untuk per 2 jam)">
                                  </div>
                              </div>
+                             <div class="mb-4">
+                              <label class="block mb-2 text-sm font-medium text-gray-900 flex items-center">
+                                  <input type="checkbox" name="requiresFaculty" value="1" 
+                                         class="w-4 h-4 mr-2 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500">
+                                  Apakah sarana ini hanya bisa dipinjam oleh Fakultas/Unit?
+                              </label>
+                              <p class="mt-1 text-xs text-gray-500">Jika dicentang, sarana ini hanya bisa dipinjam Fakultas/Unit Internal Universitas Andalas</p>
+                           </div>
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Utama</label>
                                     <input type="file" name="gambar" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50" required>
@@ -441,6 +449,15 @@
                                             placeholder="Contoh: 2 (untuk per 2 jam)">
                                  </div>
                              </div>
+                             <div class="mb-4">
+                              <label class="block mb-2 text-sm font-medium text-gray-900 flex items-center">
+                                  <input type="checkbox" name="requiresFaculty" value="1" 
+                                         class="w-4 h-4 mr-2 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500"
+                                         {{ $item->requiresFaculty ? 'checked' : '' }}>
+                                         Apakah sarana ini hanya bisa dipinjam oleh Fakultas/Unit?
+                              </label>
+                              <p class="mt-1 text-xs text-gray-500">Jika dicentang, sarana ini hanya bisa dipinjam Fakultas/Unit Internal Universitas Andalas</p>
+                           </div>
                                  <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Utama</label>
                                     @if($item->gambar)
