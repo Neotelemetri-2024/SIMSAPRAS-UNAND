@@ -42,29 +42,14 @@ WORKDIR /var/www
 # Copy composer.json and package.json
 COPY composer.json composer.lock package.json package-lock.json ./
 
-# Install composer dependencies
-RUN composer install --no-scripts --no-autoloader
-
-# Install npm dependencies
-RUN npm install
-
 # Copy existing application directory contents
 COPY . /var/www
-
-# Build frontend assets
-RUN npm run build
 
 # Generate autoloader and optimize
 RUN composer dump-autoload --optimize
 
-# Ensure storage directory is writable
-RUN mkdir -p /var/www/storage /var/www/bootstrap/cache \
-    && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
-
-# Create entrypoint script
-RUN echo '#!/bin/bash\nset -e\n\nphp artisan optimize\n\nnginx -g "daemon off;" &\nphp-fpm' > /usr/local/bin/docker-entrypoint.sh \
-    && chmod +x /usr/local/bin/docker-entrypoint.sh
+COPY ./docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Expose port 80
 EXPOSE 80

@@ -103,6 +103,9 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         
         if ($this->role === 'admin') {
+            if (!$this->saranaAccess()->exists()) {
+                return false; 
+            }
             return $this->saranaAccess()->where('sarana_id', $saranaId)->exists();
         }
         

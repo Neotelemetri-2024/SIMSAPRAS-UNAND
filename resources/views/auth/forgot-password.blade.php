@@ -67,16 +67,6 @@
                     </div>
                 </form>
             </div>
-
-            <!-- Footer -->
-            <div class="text-center mt-6">
-                <p class="text-sm text-gray-600">
-                    {{ __('Butuh bantuan?') }}
-                    <a href="#" class="text-green-600 hover:text-green-700 font-medium">
-                        {{ __('Hubungi Support') }}
-                    </a>
-                </p>
-            </div>
         </div>
     </div>
 </x-guest-layout>

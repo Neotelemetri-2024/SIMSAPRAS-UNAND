@@ -29,12 +29,12 @@ class PenggunaController extends Controller
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|string|min:8',
                 'role' => 'required|in:user,admin,superadmin,pimpinan',
-                'sarana_ids' => 'required_if:role,admin|array', 
+                'sarana_ids' => 'nullable|array', 
                 'sarana_ids.*' => 'exists:sarana,id',
                 'isFakultas' => 'nullable|boolean'
             ]);
 
-            if ($validated['role'] === 'admin' && isset($request->sarana_ids)) {
+            if ($validated['role'] === 'admin' && isset($request->sarana_ids) && !empty($request->sarana_ids)) {
                 $assignedSarana = AdminAccess::whereIn('sarana_id', $request->sarana_ids)->get();
                 
                 if ($assignedSarana->isNotEmpty()) {
@@ -59,7 +59,7 @@ class PenggunaController extends Controller
 
             $user = User::create($validated);
 
-            if ($validated['role'] === 'admin' && isset($request->sarana_ids)) {
+            if ($validated['role'] === 'admin' && isset($request->sarana_ids) && !empty($request->sarana_ids)) {
                 $user->saranaAccess()->attach($request->sarana_ids);
             }
 
@@ -88,7 +88,7 @@ class PenggunaController extends Controller
                 'name' => 'required|string|max:255',
                 'kontak' => 'required|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:10|max:15',
                 'role' => 'required|in:user,admin,superadmin,pimpinan',
-                'sarana_ids' => 'required_if:role,admin|array',
+                'sarana_ids' => 'nullable|array',
                 'sarana_ids.*' => 'exists:sarana,id'
             ];
 
