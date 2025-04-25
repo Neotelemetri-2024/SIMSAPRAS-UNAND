@@ -251,9 +251,11 @@ class SaranaController extends Controller
         $sarana = Sarana::withCount('peminjaman')
             ->with('kategoriSarana')
             ->when($search, function ($query, $search) {
-                $query->where('nama', 'like', "%{$search}%")
-                    ->orWhere('deskripsi', 'like', "%{$search}%")
-                    ->orWhere('fasilitas', 'like', "%{$search}%");
+                $query->where(function($q) use ($search) {
+                    $q->where('nama', 'like', "%{$search}%")
+                      ->orWhere('deskripsi', 'like', "%{$search}%")
+                      ->orWhere('fasilitas', 'like', "%{$search}%");
+                });
             })
             ->when($filterKategori, function ($query, $filterKategori) {
                 $query->where('IdKategori', $filterKategori);

@@ -27,7 +27,7 @@
                             <x-text-input id="email"
                                 class="pl-10 w-full border-2 border-gray-200 rounded-lg py-3 focus:ring-green-500 focus:border-green-500"
                                 type="email" name="email" :value="old('email')" required autofocus
-                                autocomplete="username" placeholder="nama@email.com" />
+                                autocomplete="username" placeholder="Masukkan Email Anda" />
                         </div>
                         <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-600" />
                     </div>
