@@ -27,7 +27,7 @@
                                 required
                                 autofocus
                                 autocomplete="name"
-                                placeholder="Masukkan nama lengkap" />
+                                placeholder="Masukkan Nama Lengkap" />
                         </div>
                         <x-input-error :messages="$errors->get('name')" class="mt-2" />
                     </div>
@@ -48,7 +48,7 @@
                                 required
                                 autofocus
                                 autocomplete="kontak"
-                                placeholder="Masukkan nomor Handphone" />
+                                placeholder="Masukkan Nomor WhatsApp" />
                         </div>
                         <x-input-error :messages="$errors->get('kontak')" class="mt-2" />
                     </div>
@@ -70,7 +70,7 @@
                                 :value="old('email')"
                                 required
                                 autocomplete="username"
-                                placeholder="Masukkan Email" />
+                                placeholder="Masukkan Email Pribadi/Instansi" />
                         </div>
                         <x-input-error :messages="$errors->get('email')" class="mt-2" />
                     </div>
@@ -91,14 +91,14 @@
                                 name="password"
                                 required
                                 autocomplete="new-password"
-                                placeholder="Minimal 8 karakter" />
+                                placeholder="Minimal 8 Karakter" />
                         </div>
                         <x-input-error :messages="$errors->get('password')" class="mt-2" />
                     </div>
 
                     <!-- Confirm Password -->
                     <div>
-                        <x-input-label for="password_confirmation" :value="__('Confirm Password')" class="block text-sm font-medium text-gray-700 mb-2"/>
+                        <x-input-label for="password_confirmation" :value="__('Konfirmasi Password')" class="block text-sm font-medium text-gray-700 mb-2"/>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -112,7 +112,7 @@
                                 name="password_confirmation"
                                 required
                                 autocomplete="new-password"
-                                placeholder="Ulangi password" />
+                                placeholder="Ulangi Password" />
                         </div>
                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                     </div>

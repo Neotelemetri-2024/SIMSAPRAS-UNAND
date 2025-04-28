@@ -41,7 +41,7 @@
                                 value="{{ old('email') }}"
                                 required
                                 autofocus
-                                placeholder="nama@example.com"
+                                placeholder="Masukkan Email Anda"
                             />
                         </div>
                         <x-input-error :messages="$errors->get('email')" class="mt-2" />
