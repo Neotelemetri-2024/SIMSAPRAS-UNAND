@@ -12,6 +12,7 @@ export default defineConfig({
         host: "0.0.0.0",
         hmr: {
             host: "localhost",
+            // host: "10.250.30.14",
         },
     },
     optimizeDeps: {

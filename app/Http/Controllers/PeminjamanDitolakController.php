@@ -50,7 +50,9 @@ class PeminjamanDitolakController extends Controller
             ->orderBy('earliest_date', $sort);
         }
 
-        $peminjamanDitolak = $query->paginate(10);
+        $peminjamanDitolak = $query
+            ->paginate(10)
+            ->appends(['search' => $search, 'sort' => $sort]);
         $title = 'Peminjaman Ditolak';
 
         return view('admin.peminjamanditolak', compact('peminjamanDitolak', 'search', 'sort', 'title'));

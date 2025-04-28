@@ -61,7 +61,9 @@ class PeminjamanSelesaiController extends Controller
             ->orderBy('earliest_date', $sort);
         }
 
-        $peminjamanSelesai = $query->paginate(10);
+        $peminjamanSelesai = $query
+            ->paginate(10)
+            ->appends(['search' => $search, 'sort' => $sort]);
         $title = 'Pengajuan Selesai';
 
         return view('admin.peminjamanselesai', compact('peminjamanSelesai', 'search', 'sort', 'title'));

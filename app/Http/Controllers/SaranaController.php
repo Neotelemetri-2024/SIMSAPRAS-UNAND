@@ -43,7 +43,9 @@ class SaranaController extends Controller
             }
         }
         
-        $sarana = $query->latest()->paginate(5);
+        $sarana = $query->latest()
+        ->paginate(5)
+        ->appends($request->except('page'));
         $kategori = KategoriSarana::where('status', 'aktif')->get();
                 
         return view('admin.sarana', compact('sarana', 'kategori', 'search', 'filter'));
@@ -268,7 +270,8 @@ class SaranaController extends Controller
             })
             ->orderBy('peminjaman_count', 'desc')
             ->where('status', 'aktif')
-            ->paginate(6);
+            ->paginate(6)
+            ->appends($request->except('page'));
 
         $trendData = TanggalPeminjaman::selectRaw('DATE_FORMAT(tanggal, "%b %Y") as month, YEAR(tanggal) as year, MONTH(tanggal) as month_num, COUNT(*) as total')
             ->whereRaw('tanggal >= DATE_SUB(NOW(), INTERVAL 6 MONTH)')
@@ -307,6 +310,10 @@ class SaranaController extends Controller
         $events = []; 
 
         $user = User::find(auth()->id());
+
+        if ($sarana->status !== 'aktif') {
+            return redirect()->route('user.sarana')->with('error', 'Sarana ini tidak tersedia atau telah dinonaktifkan.');
+        }
 
         if ($sarana->requiresFaculty && (!$user || !$user->isFacultyUser())) {
             return redirect()->route('user.sarana')->with('faculty-error', 'Sarana ini hanya dapat diakses oleh pengguna dari fakultas/unit.');

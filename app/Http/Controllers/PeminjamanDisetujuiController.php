@@ -58,7 +58,9 @@ class PeminjamanDisetujuiController extends Controller
             ->orderBy('earliest_date', $sort);
         }
 
-        $peminjamanDisetujui = $query->paginate(10);
+        $peminjamanDisetujui = $query
+            ->paginate(10)
+            ->appends(['search' => $search, 'sort' => $sort]);
         $title = 'Peminjaman Disetujui';
 
         return view('admin.peminjamandisetujui', compact('peminjamanDisetujui', 'search', 'sort', 'title'));

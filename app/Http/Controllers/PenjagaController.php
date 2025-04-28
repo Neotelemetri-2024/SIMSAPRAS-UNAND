@@ -31,7 +31,8 @@ class PenjagaController extends Controller
             ->when($selectedSarana, function ($query) use ($selectedSarana) {
                 $query->where('idSarana', $selectedSarana);
             })
-            ->paginate(5);
+            ->paginate(5)
+            ->appends(['search' => $search, 'sarana' => $selectedSarana]);
 
         return view('admin.penjaga', compact('penjaga', 'sarana', 'search', 'selectedSarana'));
     }

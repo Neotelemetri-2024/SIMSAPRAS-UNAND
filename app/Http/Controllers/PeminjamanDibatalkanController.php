@@ -51,7 +51,9 @@ class PeminjamanDibatalkanController extends Controller
             ->orderBy('earliest_date', $sort);
         }
 
-        $peminjamanDibatalkan = $query->paginate(10);
+        $peminjamanDibatalkan = $query
+            ->paginate(10)
+            ->appends(['search' => $search, 'sort' => $sort]);
         $title = 'Peminjaman Dibatalkan';
 
         return view('admin.peminjamandibatalkan', compact('peminjamanDibatalkan', 'search', 'sort', 'title'));

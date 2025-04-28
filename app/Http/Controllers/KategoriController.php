@@ -24,7 +24,8 @@ class KategoriController extends Controller
                 $query->where('status', $status);
             })
             ->latest()
-            ->paginate(5);
+            ->paginate(5)
+            ->appends(['search' => $search, 'status' => $status]);
 
         return view('admin.kategori', compact('kategori'));
     }

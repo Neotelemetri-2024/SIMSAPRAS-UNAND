@@ -51,7 +51,9 @@ class PeminjamanDiprosesController extends Controller
             ->orderBy('earliest_date', $sort);
         }
 
-        $peminjamanDiproses = $query->paginate(10);
+        $peminjamanDiproses = $query
+            ->paginate(10)
+            ->appends(['search' => $search, 'sort' => $sort]);
         $title = 'Peminjaman Diproses';
 
         return view('admin.peminjamandiproses', compact('peminjamanDiproses', 'search', 'sort', 'title'));

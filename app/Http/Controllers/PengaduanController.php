@@ -53,7 +53,7 @@ class PengaduanController extends Controller
         }
     }
 
-    public function adminShow()
+    public function adminShow(Request $request)
     {
         $pengaduan = Pengaduan::with(['user', 'sarana'])
             ->whereHas('sarana', function($query) {
@@ -67,7 +67,8 @@ class PengaduanController extends Controller
                 $query->where('id_sarana', request('filter'));
             })
             ->latest()
-            ->paginate(5);
+            ->paginate(5)
+            ->appends($request->except('page'));
 
         $sarana = Sarana::query()
             ->filterByUserAccess(auth()->user())

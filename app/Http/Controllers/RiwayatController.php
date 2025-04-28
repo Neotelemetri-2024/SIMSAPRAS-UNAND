@@ -30,7 +30,8 @@ class RiwayatController extends Controller
             ->when($sort == 'oldest', function ($query) {
                 return $query->orderBy('created_at', 'asc');
             })
-            ->paginate(5);
+            ->paginate(5)
+            ->appends(['sort' => $sort, 'status' => $status]);
     
         // Pass status to view for maintaining filter state
         return view('riwayat', compact('peminjaman', 'sort', 'status'));

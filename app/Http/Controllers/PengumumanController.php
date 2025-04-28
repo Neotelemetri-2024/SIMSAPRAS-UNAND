@@ -23,7 +23,9 @@ class PengumumanController extends Controller
             });
         }
 
-        $pengumuman = $query->latest()->paginate(10);
+        $pengumuman = $query->latest()
+            ->paginate(10)
+            ->appends($request->all());
         return view('admin.pengumuman', compact('pengumuman'));
     }
 
