@@ -309,6 +309,10 @@ class SaranaController extends Controller
         $ruangan = collect();
         $events = []; 
 
+        $admin = User::whereHas('saranaAccess', function($query) use ($sarana) {
+            $query->where('sarana_id', $sarana->id);
+        })->where('role', 'admin')->first();    
+
         $user = User::find(auth()->id());
 
         if ($sarana->status !== 'aktif') {
@@ -350,7 +354,7 @@ class SaranaController extends Controller
             }
         }
         
-        return view('detailsarana', compact('sarana', 'ruangan', 'search', 'events'));
+        return view('detailsarana', compact('sarana', 'ruangan', 'search', 'events', 'admin'));
     }
     
     public function destroy(Sarana $sarana)

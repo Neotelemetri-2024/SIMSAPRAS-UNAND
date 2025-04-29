@@ -87,9 +87,9 @@
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
                                 <div class="flex items-center justify-between mb-2">
                                     <span class="text-sm font-medium text-gray-700">Contoh Surat Peminjaman</span>
-                                    <a href="#" class="text-blue-600 hover:text-blue-700 text-sm">Lihat Full</a>
+                                    <a href="/assets/images/panduan/surat-peminjaman.png" target="_blank" class="text-blue-600 hover:text-blue-700 text-sm">Lihat Full</a>
                                 </div>
-                                <img src="/assets/images/contoh-surat.jpg" alt="Contoh Surat Peminjaman"
+                                <img src="/assets/images/panduan/surat-peminjaman.png" alt="Contoh Surat Peminjaman"
                                     class="w-full h-48 object-cover rounded-lg shadow-sm" onclick="window.open(this.src)">
                             </div>
                         </div>
@@ -278,7 +278,7 @@
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
-                    <span class="text-green-700">Ajukan peminjaman minimal 7 hari sebelum penggunaan untuk memastikan
+                    <span class="text-green-700">Ajukan peminjaman maksimal 5 hari sebelum penggunaan untuk memastikan
                         proses berjalan lancar.</span>
                 </li>
                 <li class="flex items-start">

@@ -9,6 +9,7 @@ use App\Models\Sarana;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class RuanganController extends Controller
 {
@@ -233,6 +234,9 @@ class RuanganController extends Controller
     public function show(Ruangan $ruangan)
     {
         $ruangan->load(['sarana', 'gambarRuangan']);
+        $admin = User::whereHas('saranaAccess', function($query) use ($ruangan) {
+            $query->where('sarana_id', $ruangan->idSarana);
+        })->where('role', 'admin')->first();
         $peminjaman = Peminjaman::with(['tanggalPeminjaman.jadwal'])
             ->where('idRuangan', $ruangan->id)
             ->whereIn('status', ['diajukan', 'disetujui', 'diajukanbatal', 'diproses'])
@@ -250,7 +254,7 @@ class RuanganController extends Controller
             }
         }
         
-        return view('detailruangan', compact('ruangan', 'events'));
+        return view('detailruangan', compact('ruangan', 'events', 'admin'));
     }
 
     public function activate($idSarana, $id)

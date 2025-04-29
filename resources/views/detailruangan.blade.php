@@ -297,7 +297,42 @@
                             <p class="text-gray-600 leading-relaxed">{{ $ruangan->kapasitas }} orang</p>
                         </div>
 
-                        <!-- Keeper Info -->
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                                <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Informasi Admin
+                            </h2>
+                            <div class="space-y-4">
+                                @if($admin)
+                                <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl transition-all hover:bg-gray-100">
+                                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-medium text-gray-900 mb-1">{{ $admin->name }}</h3>
+                                        <div class="flex items-center text-gray-600">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                            </svg>
+                                            <span>{{ $admin->kontak }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                @else
+                                <div class="p-4 bg-gray-50 rounded-xl text-gray-500 text-center">
+                                    Tidak ada informasi admin
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                        
                         <div>
                             <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                                 <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -573,7 +608,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Get date 1 week from now
     var minDate = new Date();
-    minDate.setDate(minDate.getDate() + 7);
+    minDate.setDate(minDate.getDate() + 4);
     
     // Check if room is a classroom
     const isClassroom = {{ $ruangan->kelas ? 'true' : 'false' }};
@@ -625,7 +660,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Check if date is before minimum date
             if (clickedDate < minDate) {
-                showWarning('Peminjaman harus dilakukan minimal 7 hari sebelum jadwal yang diinginkan');
+                showWarning('Peminjaman harus dilakukan minimal 5 hari sebelum jadwal yang diinginkan');
                 return;
             }
             

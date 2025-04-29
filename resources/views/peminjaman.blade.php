@@ -318,6 +318,7 @@
                                     <ul class="mt-2 text-sm text-yellow-700 list-disc list-inside">
                                         <li>Peminjaman di hari Sabtu atau Minggu</li>
                                         <li>Peminjaman melewati pukul 16:00 (4 sore)</li>
+                                        <li>Peminjam dengan status Umum akan selalu dikenakan tarif untuk setiap peminjaman</li>
                                         @if(isset($ruangan) ? $ruangan->is_hourly_rate : $sarana->is_hourly_rate)
                                         <li>Tarif dihitung per {{ isset($ruangan) ? $ruangan->hours_per_unit : $sarana->hours_per_unit }} jam untuk durasi peminjaman</li>
                                         @endif
@@ -351,7 +352,6 @@
                         </div>
                     </div>
 
-                    <!-- Form Actions -->
                     <div class="flex justify-end space-x-4 pt-6">
                         <button type="button" onclick="confirmCancel()"
                                 class="px-6 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200">
@@ -381,7 +381,6 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-// File Upload Handler
 function updateFileInfo(input, infoId) {
     const file = input.files[0];
     const fileInfo = document.getElementById(infoId);
@@ -390,11 +389,9 @@ function updateFileInfo(input, infoId) {
     const fileSize = document.getElementById(infoId.replace('FileInfo', 'FileSize'));
 
     if (file) {
-        // Format file size
         const size = (file.size / 1024).toFixed(2);
         const formattedSize = size > 1024 ? (size / 1024).toFixed(2) + ' MB' : size + ' KB';
 
-        // Update preview
         fileInfo.classList.add('hidden');
         filePreview.classList.remove('hidden');
         fileName.textContent = file.name;
@@ -414,7 +411,6 @@ function resetFileInput(inputId, infoId, previewId) {
     document.getElementById(previewId).classList.add('hidden');
 }
 
-// Form Submit Handler
 document.getElementById('peminjamanForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
@@ -497,7 +493,6 @@ function confirmCancel() {
     });
 }
 
-// Initialize error alerts if any
 @if ($errors->any())
     Swal.fire({
         icon: 'error',
@@ -508,7 +503,6 @@ function confirmCancel() {
 @endif
 </script>
 <script>
-    // Add this to your existing JavaScript
     function calculateEstimatedTarif() {
         @if(auth()->user()->isFakultas)
         const statusPeminjam = 'unit';
@@ -526,7 +520,6 @@ function confirmCancel() {
             {{ isset($ruangan) ? $ruangan->tariformawa : $sarana->tariformawa }} :
             {{ isset($ruangan) ? $ruangan->tarifumum : $sarana->tarifumum }};
     
-        // Check if hourly rate is enabled
         const isHourlyRate = {{ isset($ruangan) ? ($ruangan->is_hourly_rate ? 'true' : 'false') : ($sarana->is_hourly_rate ? 'true' : 'false') }};
         const hoursPerUnit = {{ isset($ruangan) ? ($ruangan->hours_per_unit ?? 0) : ($sarana->hours_per_unit ?? 0) }};
     
@@ -536,11 +529,9 @@ function confirmCancel() {
             const jadwalId = jadwalSelects[index].value;
             if (!jadwalId) return;
     
-            // Check if weekend
             const dayOfWeek = new Date(date).getDay();
-            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // 0 is Sunday, 6 is Saturday
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; 
     
-            // Check if after hours
             const selectedOption = jadwalSelects[index].options[jadwalSelects[index].selectedIndex];
             const timeText = selectedOption.text;
             const timeRange = timeText.split(' - ');
@@ -552,14 +543,10 @@ function confirmCancel() {
             const endHour = parseInt(endTime.split(':')[0]);
             const endMinute = parseInt(endTime.split(':')[1]) || 0;
             
-            // Updated condition: Now considers 16:00 as chargeable time
             const isAfterHours = startHour > 16 || (startHour === 16 && startMinute > 0) || endHour > 16 || (endHour === 16 && endMinute > 0);
     
-            // Apply tariff if weekend OR after hours
-            if (isWeekend || isAfterHours) {
-                // If hourly rate is enabled, calculate based on duration
+            if (isWeekend || isAfterHours || statusPeminjam === 'umum') {
                 if (isHourlyRate && hoursPerUnit > 0) {
-                    // Calculate duration in hours
                     const startMinutes = parseInt(startTime.split(':')[1]) || 0;
                     const endMinutes = parseInt(endTime.split(':')[1]) || 0;
                     
@@ -568,27 +555,26 @@ function confirmCancel() {
                     
                     const durationHours = Math.ceil((endTimeInMinutes - startTimeInMinutes) / 60);
                     
-                    // Calculate multiplier based on hours_per_unit
                     const multiplier = Math.max(1, Math.ceil(durationHours / hoursPerUnit));
                     
-                    // Apply tariff with multiplier
                     totalTarif += tarif * multiplier;
                 } else {
-                    // Standard tariff (not hourly)
                     totalTarif += tarif;
                 }
             }
-            // If weekday before 16:00, tariff is 0 (free)
         });
     
         document.getElementById('estimatedTotal').classList.remove('hidden');
         document.getElementById('totalTarif').textContent = `Rp${totalTarif.toLocaleString('id-ID')}`;
     }
     
-    // Add event listeners
     document.getElementById('statusPeminjam').addEventListener('change', calculateEstimatedTarif);
     document.querySelectorAll('select[name^="jadwal_dates"][name$="[jadwal_id]"]').forEach(select => {
         select.addEventListener('change', calculateEstimatedTarif);
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        calculateEstimatedTarif();
     });
 </script>
 @endpush

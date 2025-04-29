@@ -2,7 +2,6 @@
 
 @section('content')
     <div class="pt-24 px-4 max-w-screen-xl mx-auto min-h-screen">
-        <!-- Header Section -->
         <div class="mb-8">
             <nav class="flex mb-4" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -37,9 +36,7 @@
             </p>
         </div>
 
-        <!-- Panduan Cards -->
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Card 1: Cara Peminjaman -->
             <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition-shadow">
                 <div class="flex items-center mb-4">
                     <div class="p-2 bg-green-100 rounded-lg">
@@ -61,7 +58,6 @@
                 </a>
             </div>
 
-            <!-- Card 2: Syarat dan Ketentuan -->
             <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition-shadow">
                 <div class="flex items-center mb-4">
                     <div class="p-2 bg-blue-100 rounded-lg">
@@ -84,7 +80,6 @@
                 </a>
             </div>
 
-            <!-- Card 3: Status Peminjaman -->
             <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:shadow-lg transition-shadow">
                 <div class="flex items-center mb-4">
                     <div class="p-2 bg-purple-100 rounded-lg">
@@ -108,7 +103,6 @@
             </div>
         </div>
 
-        <!-- FAQ Section -->
         <div class="mt-12">
             <h2 class="text-2xl font-bold text-gray-900 mb-6">Pertanyaan yang Sering Diajukan</h2>
             <div id="accordion-flush" data-accordion="collapse" data-active-classes="bg-white text-gray-900"
@@ -140,7 +134,6 @@
                     </div>
                 </div>
 
-                <!-- Tambahkan accordion items lainnya dengan format yang sama -->
                 <h3 id="accordion-flush-heading-2">
                     <button type="button"
                         class="flex items-center justify-between w-full py-5 font-medium rtl:text-right text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400"
@@ -157,15 +150,32 @@
                 </h3>
                 <div id="accordion-flush-body-2" class="hidden" aria-labelledby="accordion-flush-heading-2">
                     <div class="py-5 border-b border-gray-200 dark:border-gray-700">
-                        <p class="mb-2 text-gray-500">Peminjaman sarana dan prasarana di Universitas Andalas hanya akan
-                            dikenakan tarif pada kondisi sebagai berikut:</p>
-                        <ul class="ps-5 text-gray-500 list-disc">
-                            <li>Peminjaman dilakukan di hari sabtu atau minggu</li>
-                            <li>Peminjaman dilakukan setelah pukul 16:00 WIB (4 sore)</li>
-                        </ul>
+                        <p class="mb-2 text-gray-500">Peminjaman sarana dan prasarana di Universitas Andalas hanya akan dikenakan tarif pada kondisi sebagai berikut:</p>
+                            <ul class="ps-5 text-gray-500 list-disc">
+                                <li>Peminjaman dilakukan di hari Sabtu atau Minggu</li>
+                                <li>Peminjaman dilakukan setelah pukul 16:00 WIB (4 sore)</li>
+                                <li>Peminjam berstatus Umum akan selalu dikenakan tarif sesuai SK yang berlaku</li>
+                            </ul>
+                            
+                            <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100 flex items-center">
+                                <svg class="w-8 h-8 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <div>
+                                    <p class="text-gray-700 font-medium">Dokumen Resmi:</p>
+                                    <a class="text-blue-600 hover:text-blue-800 flex items-center" 
+                                       href="/assets/SK Rektor 1124 Tarif Layanan Sarpras.pdf" target="_blank">
+                                        SK Rektor No. 1124 Tentang Tarif Layanan Sarana dan Prasarana Universitas Andalas
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

@@ -61,7 +61,6 @@ class PanduanController extends Controller
             [
                 'title' => 'Persyaratan Umum',
                 'items' => [
-                    'Merupakan civitas akademika Universitas Andalas',
                     'Melakukan pendaftaran akun SIMSAPRAS dengan menggunakan identitas yang sesuai dan terverifikasi',
                     'Mengisi formulir peminjaman dengan lengkap dan benar',
                     'Bersedia mematuhi semua peraturan yang berlaku'
@@ -71,18 +70,18 @@ class PanduanController extends Controller
                 'title' => 'Dokumen yang Diperlukan',
                 'items' => [
                     'Surat permohonan peminjaman resmi dari instansi',
-                    'Rundown acara (untuk peminjaman ruangan)',
+                    'Rundown acara',
                     'Formulir yang diisi langsung melalui website SIMSAPRAS',
-                    'Surat rekomendasi dari fakultas/jurusan (jika diperlukan)'
                 ]
             ],
             [
                 'title' => 'Ketentuan Peminjaman',
                 'items' => [
-                    'Peminjaman harus diajukan minimal 7 hari sebelum penggunaan',
+                    'Peminjaman harus diajukan maksimal 5 hari sebelum penggunaan',
                     'Peminjaman Ruangan Kelas hanya dapat dilakukan pada hari Sabtu dan Minggu',
-                    'Peminjaman yang dilakukan melewati pukul 16:00 (4 sore) akan dikenakan tarif tambahan',
-                    'Peminjaman di hari Sabtu atau Minggu akan dikenakan tarif tambahan',
+                    'Peminjaman yang dilakukan melewati pukul 16:00 (4 sore) akan dikenakan tarif',
+                    'Peminjaman di hari Sabtu atau Minggu akan dikenakan tarif',
+                    'Peminjam berstatus Umum akan selalu dikenakan tarif',
                     'Peminjam bertanggung jawab atas kondisi sarana yang dipinjam',
                     'Kerusakan atau kehilangan menjadi tanggung jawab peminjam'
                 ]
@@ -90,7 +89,7 @@ class PanduanController extends Controller
             [
                 'title' => 'Pembatalan dan Perubahan',
                 'items' => [
-                    'Pembatalan harus dilakukan minimal 3 hari sebelum jadwal penggunaan',
+                    'Pembatalan harus dilakukan maksimal 3 hari sebelum jadwal penggunaan',
                     'Pembatalan mendadak dapat mempengaruhi pengajuan peminjaman selanjutnya',
                     'Perubahan data peminjaman harus mendapat persetujuan admin',
                     'Peminjaman yang telah disetujui dapat sewaktu-waktu dibatalkan jika terdapat agenda mendesak dari pihak Universitas Andalas',

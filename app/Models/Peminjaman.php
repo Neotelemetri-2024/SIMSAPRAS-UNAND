@@ -159,7 +159,7 @@ class Peminjaman extends Model
                 
                 $isWeekday = !$date->isWeekend();
                 $isBeforeFourPM = $start->hour <= 16 && $endTime->hour <= 16;
-                $isFreeTimeSlot = $isWeekday && $isBeforeFourPM;
+                $isFreeTimeSlot = $isWeekday && $isBeforeFourPM && $statusPeminjam !== 'umum';
                 
                 if (!$isFreeTimeSlot) {
                     $baseRate = match($statusPeminjam) {
@@ -195,7 +195,7 @@ class Peminjaman extends Model
                 
                 $isWeekday = !$date->isWeekend();
                 $isBeforeFourPM = $start->hour <= 16 && $endTime->hour <= 16;
-                $isFreeTimeSlot = $isWeekday && $isBeforeFourPM;
+                $isFreeTimeSlot = $isWeekday && $isBeforeFourPM && $statusPeminjam !== 'umum';
                 
                 if (!$isFreeTimeSlot) {
                     $bookingsByDate[$dateStr]['allDuringFreeTime'] = false;
