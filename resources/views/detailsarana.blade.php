@@ -356,19 +356,49 @@
                                 @endforelse
                             </div>
 
+                            <!-- Ganti bagian informasi jam lembur dengan tampilan seluruh bulan -->
                             <div class="mt-4 p-4 bg-blue-50 rounded-lg">
-                                <h3 class="text-md font-semibold text-blue-800 mb-2">Informasi Jam Lembur</h3>
-                                <div class="flex items-center">
-                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ ($sarana->bulanan_terpakai / 40) * 100 }}%"></div>
+                                <h3 class="text-md font-semibold text-blue-800 mb-2">Informasi Jam Lembur Tahun {{ now()->year }}</h3>
+                                
+                                <!-- Tampilkan bulan berjalan terlebih dahulu -->
+                                <div class="mb-4 p-3 bg-white rounded-lg border border-blue-200">
+                                    <h4 class="text-sm font-semibold text-blue-700 mb-2">Bulan {{ $bulanIni }} (Bulan Berjalan)</h4>
+                                    <div class="flex items-center">
+                                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                            <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ ($jamLemburBulanIni / 40) * 100 }}%"></div>
+                                        </div>
                                     </div>
+                                    <p class="mt-2 text-sm text-blue-700">
+                                        <span class="font-medium">Sisa Jam Lembur:</span> 
+                                        {{ 40 - $jamLemburBulanIni }} jam dari 40 jam per bulan
+                                    </p>
                                 </div>
-                                <p class="mt-2 text-sm text-blue-700">
-                                    <span class="font-medium">Sisa Jam Lembur:</span> 
-                                    {{ 40 - $sarana->bulanan_terpakai }} jam dari 40 jam per bulan
-                                </p>
-                                <p class="text-xs text-blue-600 mt-1">
+                                
+                                <!-- Tampilkan data seluruh bulan dalam setahun -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                    @foreach($dataJamLembur as $data)
+                                        @if(!$data['is_current']) <!-- Skip bulan berjalan karena sudah ditampilkan di atas -->
+                                        <div class="p-3 bg-white rounded-lg border {{ $data['bulan_format'] === $currentMonth ? 'border-blue-300' : 'border-gray-200' }}">
+                                            <h4 class="text-sm font-semibold text-gray-700 mb-2">{{ $data['bulan'] }}</h4>
+                                            <div class="flex items-center">
+                                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                                    <div class="bg-blue-500 h-2 rounded-full" style="width: {{ $data['persentase'] }}%"></div>
+                                                </div>
+                                            </div>
+                                            <p class="mt-1 text-xs text-gray-600">
+                                                <span class="font-medium">Terpakai:</span> 
+                                                {{ $data['jam_terpakai'] }} jam (Sisa: {{ $data['sisa_jam'] }} jam)
+                                            </p>
+                                        </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                
+                                <p class="text-xs text-blue-600 mt-3">
                                     <i>Jam lembur adalah penggunaan fasilitas di hari Sabtu/Minggu atau setelah pukul 16:00</i>
+                                </p>
+                                <p class="text-xs text-blue-800 mt-1">
+                                    <i>* Batas maksimal jam lembur adalah 40 jam per bulan</i>
                                 </p>
                             </div>
                         </div>

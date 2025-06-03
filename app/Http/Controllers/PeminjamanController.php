@@ -155,29 +155,69 @@ class PeminjamanController extends Controller
             $totalHours = 0;
             $hasChargeableHours = false; 
 
-            foreach ($validated['jadwal_dates'] as $booking) {
-                $jadwal = Jadwal::findOrFail($booking['jadwal_id']);
-                $date = Carbon::parse($booking['date']);
-                $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
-                $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
-                $hours = $endTime->diffInHours($start);
-                
-                $isWeekend = $date->isWeekend();
-                
-                $isAfterHours = $start->hour > 16 || ($start->hour == 16 && $start->minute > 0) || $endTime->hour > 16 || ($endTime->hour == 16 && $endTime->minute > 0);
-                 
-                if ($isWeekend || $isAfterHours) {
-                    $hasChargeableHours = true; 
+            // Ambil bulan dari tanggal peminjaman yang diajukan
+            $bookingMonths = collect($validated['jadwal_dates'])->map(function($booking) {
+                return Carbon::parse($booking['date'])->format('Y-m');
+            })->unique();
 
-                    $chargeableHours = $hours;
-                    
-                    if (!$isWeekend && $isAfterHours && $start->hour < 16) {
-                        $cutoffTime = Carbon::createFromFormat('H:i:s', '16:00:00');
-                        $chargeableHours = $endTime->diffInHours($cutoffTime);
+            // Hitung jam terpakai per bulan
+            $monthlyUsage = [];
+            foreach ($bookingMonths as $yearMonth) {
+                // Hitung jam yang sudah terpakai di bulan tersebut dari database
+                $usedHours = FacilityUsage::where('idSarana', $targetSarana->id)
+                    ->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$yearMonth])
+                    ->sum('jam_terpakai');
+                
+                // Hitung jam yang akan digunakan di bulan tersebut dari peminjaman saat ini
+                $requestedHours = 0;
+                foreach ($validated['jadwal_dates'] as $booking) {
+                    $date = Carbon::parse($booking['date']);
+                    if ($date->format('Y-m') == $yearMonth) {
+                        $jadwal = Jadwal::findOrFail($booking['jadwal_id']);
+                        $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
+                        $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
+                        $hours = $endTime->diffInHours($start);
+                        
+                        $isWeekend = $date->isWeekend();
+                        $isAfterHours = $start->hour > 16 || ($start->hour == 16 && $start->minute > 0) || 
+                                    $endTime->hour > 16 || ($endTime->hour == 16 && $endTime->minute > 0);
+                        
+                        if ($isWeekend || $isAfterHours) {
+                            $chargeableHours = $hours;
+                            
+                            if (!$isWeekend && $isAfterHours && $start->hour < 16) {
+                                $cutoffTime = Carbon::createFromFormat('H:i:s', '16:00:00');
+                                $chargeableHours = $endTime->diffInHours($cutoffTime);
+                            }
+                            
+                            $requestedHours += $chargeableHours;
+                        }
                     }
-                    
-                    $totalHours += $chargeableHours;
-                } 
+                }
+                
+                $monthlyUsage[$yearMonth] = [
+                    'used' => $usedHours,
+                    'requested' => $requestedHours,
+                    'total' => $usedHours + $requestedHours
+                ];
+            }
+
+            // Periksa apakah ada bulan yang melebihi batas 40 jam
+            $overLimitMonth = null;
+            foreach ($monthlyUsage as $yearMonth => $usage) {
+                if ($usage['total'] > 40) {
+                    $overLimitMonth = $yearMonth;
+                    break;
+                }
+            }
+
+            if ($overLimitMonth) {
+                $month = Carbon::createFromFormat('Y-m', $overLimitMonth)->format('F Y');
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => "Batas penggunaan 40 jam untuk bulan {$month} akan terlampaui. Saat ini telah terpakai {$monthlyUsage[$overLimitMonth]['used']} jam, dan Anda meminta tambahan {$monthlyUsage[$overLimitMonth]['requested']} jam."
+                ], 422);
             }
 
             $targetSarana = Sarana::where('id', $targetSarana->id)->lockForUpdate()->first();
@@ -256,9 +296,6 @@ class PeminjamanController extends Controller
             }
                 
             $targetSarana->refresh();
-            if ($targetSarana->bulanan_terpakai >= 40) {
-                $targetSarana->update(['status' => 'nonaktif']);
-            }
 
             $adminNotifications = User::whereIn('role', ['admin', 'superadmin', 'pimpinan'])
                 ->get()

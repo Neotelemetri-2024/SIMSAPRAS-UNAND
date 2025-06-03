@@ -395,7 +395,7 @@
                                 <div class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                                     <p class="text-yellow-800 text-sm">
                                         <span class="font-semibold">Perhatian:</span> Pembayaran harus dilakukan maksimal 3 hari setelah pemesanan
-                                        (sebelum {{ \Carbon\Carbon::parse($pinjam->created_at)->addDays(3)->locale('id')->IsoFormat('D MMMM Y H:m') }} WIB)
+                                        (sebelum {{ \Carbon\Carbon::parse($pinjam->diproses_at)->addDays(3)->locale('id')->IsoFormat('D MMMM Y HH:mm') }} WIB)
                                     </p>
                                 </div>
 
@@ -450,11 +450,11 @@
                                         </div>
                                         <div class="flex items-center justify-between">
                                             <span class="text-sm text-gray-600">Nomor Rekening</span>
-                                            <span class="font-medium">2102.0210.21345-3</span>
+                                            <span class="font-medium">XXXXXXXXXXXXX</span>
                                         </div>
                                         <div class="flex items-center justify-between">
                                             <span class="text-sm text-gray-600">Atas Nama</span>
-                                            <span class="font-medium">BLU Universitas Andalas</span>
+                                            <span class="font-medium">Universitas Andalas</span>
                                         </div>
                                     </div>
                                 </div>
