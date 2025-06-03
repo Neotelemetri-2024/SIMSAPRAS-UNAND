@@ -9,9 +9,11 @@ use App\Models\Peminjaman;
 use App\Models\Pengumuman;
 use App\Models\Ruangan;
 use App\Models\User;
+use App\Models\FacilityUsage;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Models\TanggalPeminjaman;
+use Carbon\Carbon;
 
 DB::enableQueryLog();
 
@@ -322,6 +324,40 @@ class SaranaController extends Controller
         if ($sarana->requiresFaculty && (!$user || !$user->isFacultyUser())) {
             return redirect()->route('user.sarana')->with('faculty-error', 'Sarana ini hanya dapat diakses oleh pengguna dari fakultas/unit.');
         }
+
+        // Hitung jam lembur bulan ini
+        $currentMonth = Carbon::now()->format('Y-m');
+        $bulanIni = Carbon::now()->translatedFormat('F Y');
+        $currentMonth = Carbon::now()->format('Y-m');
+        
+        // Data jam lembur bulan ini (tetap dipertahankan untuk kompatibilitas)
+        $jamLemburBulanIni = FacilityUsage::where('idSarana', $sarana->id)
+            ->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$currentMonth])
+            ->sum('jam_terpakai');
+        
+        // Data jam lembur seluruh bulan dalam setahun
+        $tahunIni = Carbon::now()->year;
+        $dataJamLembur = [];
+        
+        // Mengumpulkan data untuk 12 bulan
+        for ($i = 1; $i <= 12; $i++) {
+            $bulan = Carbon::createFromDate($tahunIni, $i, 1);
+            $bulanFormat = $bulan->format('Y-m');
+            $namaBulan = $bulan->translatedFormat('F Y');
+            
+            $jamLembur = FacilityUsage::where('idSarana', $sarana->id)
+                ->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$bulanFormat])
+                ->sum('jam_terpakai');
+            
+            $dataJamLembur[] = [
+                'bulan' => $namaBulan,
+                'bulan_format' => $bulanFormat,
+                'jam_terpakai' => $jamLembur,
+                'sisa_jam' => 40 - $jamLembur,
+                'persentase' => ($jamLembur / 40) * 100,
+                'is_current' => $bulanFormat === $currentMonth
+            ];
+        }
         
         if ($sarana->isRoom == 1) {
             $ruangan = $sarana->ruangan()
@@ -354,7 +390,10 @@ class SaranaController extends Controller
             }
         }
         
-        return view('detailsarana', compact('sarana', 'ruangan', 'search', 'events', 'admin'));
+        return view('detailsarana', compact(
+            'sarana', 'ruangan', 'search', 'events', 'admin', 
+            'jamLemburBulanIni', 'bulanIni', 'dataJamLembur', 'currentMonth'
+        ));
     }
     
     public function destroy(Sarana $sarana)
