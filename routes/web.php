@@ -6,7 +6,6 @@ use App\Http\Controllers\SaranaController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\JadwalController;
-use App\Http\Controllers\PeminjamanAdminController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PenjagaController;
 use App\Http\Controllers\PeminjamanController;
@@ -105,8 +104,6 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
     Route::resource('penjaga', PenjagaController::class)->except(['index']);
     Route::get('/penjaga', [PenjagaController::class, 'index'])->name('penjaga.index');
 
-    Route::get('/profile', fn() => view('admin.profile'))->name('admin.profile');
-
     Route::get('/notifikasi', [NotifikasiAdminController::class, 'index'])->name('notifikasi.admin.index');
     Route::post('/notifikasi/{notifikasi}/mark-as-read', [NotifikasiAdminController::class, 'markAsRead'])->name('notifikasi.admin.mark-as-read');
 });
@@ -133,7 +130,6 @@ Route::group(['middleware' => ['checkRole:superadmin,pimpinan', 'verified']], fu
 
 Route::group(['middleware' => ['checkRole:superadmin', 'verified']], function () {
     Route::resource('pengguna', PenggunaController::class);
-    Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.index');
 });
 
 Route::group(['middleware' => ['checkRole:pimpinan', 'verified']], function () {
