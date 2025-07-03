@@ -28,6 +28,7 @@ use App\Http\Controllers\PeminjamanDiajukanbatalController;
 use App\Http\Controllers\PeminjamanDibatalkanController;
 use App\Http\Controllers\PeminjamanSelesaiController;
 use App\Http\Controllers\PengaduanController;
+use App\Http\Controllers\BuktiController;
 
 
 /*
@@ -126,15 +127,13 @@ Route::group(['middleware' => ['checkRole:user', 'verified']], function () {
 Route::group(['middleware' => ['checkRole:superadmin,pimpinan', 'verified']], function () {
     Route::resource('kategori', KategoriController::class)->except(['show']);
     Route::patch('/kategori/{kategori}/activate', [KategoriController::class, 'activate'])->name('kategori.activate');
+
+    Route::get('/bukti-bayar', [BuktiController::class, 'index'])->name('bukti.index');
+    Route::get('/keuangan', [KeuanganController::class, 'index'])->name('keuangan.index');
 });
 
 Route::group(['middleware' => ['checkRole:superadmin', 'verified']], function () {
     Route::resource('pengguna', PenggunaController::class);
-});
-
-Route::group(['middleware' => ['checkRole:pimpinan', 'verified']], function () {
-    Route::resource('keuangan', PenggunaController::class);
-    Route::get('/keuangan', [KeuanganController::class, 'index'])->name('keuangan.index');
 });
 
 Route::get('/pengumuman', [PengumumanController::class, 'indexUser'])->name('pengumuman.user');
