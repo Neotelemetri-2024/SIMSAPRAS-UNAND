@@ -188,186 +188,188 @@
 @endpush
 @section('content')
 <section class="bg-white pt-32 pb-12">
-    <div class="max-w-screen-2xl mx-auto px-4 lg:px-8">
-        <!-- Breadcrumb -->
-        <div class="mb-8">
-            <div class="flex items-center gap-2 text-gray-500 mb-2">
-                <a href="{{ route('user.sarana.show', $ruangan->sarana) }}" class="hover:text-green-600">
-                    {{ $ruangan->sarana->nama }}
-                </a>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <span>{{ $ruangan->nama }}</span>
-            </div>
-        </div>
-
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Main Content Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
-            <!-- Left Column - Carousel -->
-            <div class="sticky top-24 h-fit">
-                <div id="carousel" class="relative group rounded-2xl overflow-hidden shadow-lg border border-gray-100">
-                    <div class="relative h-[600px]">
-                        <!-- Progress bar -->
-                        <div class="absolute top-0 left-0 w-full h-1 bg-white/20 z-10">
-                            <div class="progress-bar h-full bg-white/60 transition-all duration-[5000ms] w-0"></div>
-                        </div>
+        <div class="space-y-8 mb-12">
+            <!-- Title Section -->
+            <div class="text-center">
+                <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">{{ $ruangan->nama }}</h1>
+                
+                <!-- Breadcrumb -->
+                <div class="flex items-center justify-center gap-2 text-sm text-gray-600 mb-6">
+                    <a href="{{ route('user.sarana.show', $ruangan->sarana) }}" class="hover:text-green-600">
+                        {{ $ruangan->sarana->nama }}
+                    </a>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                    <span class="font-medium">{{ $ruangan->nama }}</span>
+                </div>
 
-                        <div class="carousel-container absolute w-full h-full flex">
-                            @foreach($ruangan->gambarRuangan as $index => $gambar)
-                            <div class="carousel-item w-full h-full flex-shrink-0">
-                                <img src="{{ Storage::url($gambar->gambar) }}"
-                                     alt="{{ $ruangan->nama }}"
-                                     class="w-full h-full object-cover"
-                                     loading="lazy">
-                            </div>
-                            @endforeach
-                        </div>
+                @if($ruangan->kelas)
+                <!-- Warning untuk ruang kelas -->
+                <div class="inline-flex items-center p-3 bg-yellow-50 border border-yellow-200 rounded-lg mb-6">
+                    <svg class="h-5 w-5 text-yellow-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <div class="text-center">
+                        <p class="text-xs text-yellow-800 font-medium">Ruangan Kelas</p>
+                        <p class="text-xs text-yellow-700">
+                            Hanya dapat dipinjam pada hari Sabtu dan Minggu
+                        </p>
+                    </div>
+                </div>
+                @endif
+            </div>
 
-                        <!-- Navigation Buttons -->
-                        <button onclick="moveSlide(-1)"
-                                class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 text-white p-3 rounded-full
-                                       transform transition-all duration-300 ease-out opacity-0 group-hover:opacity-100 hover:scale-110
-                                       hover:bg-black/60 focus:outline-none focus:ring-2 focus:ring-white/50">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                            </svg>
+            <!-- Carousel Section - Full Width -->
+            <div id="carousel" class="relative group rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+                <div class="relative h-[500px] lg:h-[600px]">
+                    <!-- Progress bar -->
+                    <div class="absolute top-0 left-0 w-full h-1 bg-white/20 z-10">
+                        <div class="progress-bar h-full bg-white/60 transition-all duration-[5000ms] w-0"></div>
+                    </div>
+
+                    <div class="carousel-container absolute w-full h-full flex">
+                        @foreach($ruangan->gambarRuangan as $index => $gambar)
+                        <div class="carousel-item w-full h-full flex-shrink-0">
+                            <img src="{{ Storage::url($gambar->gambar) }}"
+                                 alt="{{ $ruangan->nama }}"
+                                 class="w-full h-full object-cover"
+                                 loading="lazy">
+                        </div>
+                        @endforeach
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <button onclick="moveSlide(-1)"
+                            class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 text-white p-3 rounded-full
+                                   transform transition-all duration-300 ease-out opacity-0 group-hover:opacity-100 hover:scale-110
+                                   hover:bg-black/60 focus:outline-none focus:ring-2 focus:ring-white/50">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <button onclick="moveSlide(1)"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 text-white p-3 rounded-full
+                                   transform transition-all duration-300 ease-out opacity-0 group-hover:opacity-100 hover:scale-110
+                                   hover:bg-black/60 focus:outline-none focus:ring-2 focus:ring-white/50">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+
+                    <!-- Indicators -->
+                    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-3 z-10">
+                        @foreach($ruangan->gambarRuangan as $index => $gambar)
+                        <button onclick="goToSlide({{ $index }})"
+                                class="w-2.5 h-2.5 rounded-full transition-all duration-300 ease-out transform
+                                       {{ $index === 0 ? 'bg-white scale-125' : 'bg-white/50 hover:scale-110 hover:bg-white/70' }}">
                         </button>
-                        <button onclick="moveSlide(1)"
-                                class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 text-white p-3 rounded-full
-                                       transform transition-all duration-300 ease-out opacity-0 group-hover:opacity-100 hover:scale-110
-                                       hover:bg-black/60 focus:outline-none focus:ring-2 focus:ring-white/50">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
-                        </button>
-
-                        <!-- Indicators -->
-                        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-3 z-10">
-                            @foreach($ruangan->gambarRuangan as $index => $gambar)
-                            <button onclick="goToSlide({{ $index }})"
-                                    class="w-2.5 h-2.5 rounded-full transition-all duration-300 ease-out transform
-                                           {{ $index === 0 ? 'bg-white scale-125' : 'bg-white/50 hover:scale-110 hover:bg-white/70' }}">
-                            </button>
-                            @endforeach
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column - Details -->
-            <div>
-                <h1 class="text-4xl font-bold text-gray-900 mb-6">{{ $ruangan->nama }}</h1>
-
-                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                    <div class="p-8 space-y-8">
-                        <!-- Description -->
-                        <div>
-                            <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                                <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                Deskripsi
-                            </h2>
-                            <p class="text-gray-600 leading-relaxed">{{ $ruangan->deskripsi }}</p>
+            <!-- Detail Information Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Kolom Kiri: Deskripsi & Fasilitas -->
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Detail Informasi
+                    </h2>
+                    
+                    <!-- Kapasitas -->
+                    <div class="mb-6">
+                        <h3 class="text-md font-semibold text-gray-700 mb-3">Kapasitas</h3>
+                        <div class="flex items-center text-gray-600">
+                            <svg class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 515.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            <span class="font-medium text-lg">{{ $ruangan->kapasitas }} orang</span>
                         </div>
+                    </div>
+                    
+                    <!-- Deskripsi -->
+                    <div class="mb-6">
+                        <h3 class="text-md font-semibold text-gray-700 mb-3">Deskripsi</h3>
+                        <p class="text-gray-600 leading-relaxed">{{ $ruangan->deskripsi }}</p>
+                    </div>
 
-                        <!-- Facilities -->
-                        <div>
-                            <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                                <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <!-- Fasilitas -->
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-700 mb-3">Fasilitas</h3>
+                        <p class="text-gray-600 leading-relaxed">{{ $ruangan->fasilitas }}</p>
+                    </div>
+                </div>
+
+                <!-- Kolom Kanan: Admin & Penjaga -->
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Kontak & Pengelola
+                    </h2>
+                    
+                    <!-- Admin -->
+                    <div class="mb-6">
+                        <h3 class="text-md font-semibold text-gray-700 mb-3">Admin</h3>
+                        @if($admin)
+                        <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
-                                Fasilitas
-                            </h2>
-                            <p class="text-gray-600 leading-relaxed">{{ $ruangan->fasilitas }}</p>
-                        </div>
-
-                        <!-- Capacity -->
-                        <div>
-                            <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                                <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                </svg>
-                                Kapasitas
-                            </h2>
-                            <p class="text-gray-600 leading-relaxed">{{ $ruangan->kapasitas }} orang</p>
-                        </div>
-
-                        <div>
-                            <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                                <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                          d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                Informasi Admin
-                            </h2>
-                            <div class="space-y-4">
-                                @if($admin)
-                                <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl transition-all hover:bg-gray-100">
-                                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-medium text-gray-900 mb-1">{{ $admin->name }}</h3>
-                                        <div class="flex items-center text-gray-600">
-                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                                            </svg>
-                                            <span>{{ $admin->kontak }}</span>
-                                        </div>
-                                    </div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-1">{{ $admin->name }}</h4>
+                                <div class="flex items-center text-gray-600">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                    </svg>
+                                    <span>{{ $admin->kontak }}</span>
                                 </div>
-                                @else
-                                <div class="p-4 bg-gray-50 rounded-xl text-gray-500 text-center">
-                                    Tidak ada informasi admin
-                                </div>
-                                @endif
                             </div>
                         </div>
-                        
-                        <div>
-                            <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                                <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        @else
+                        <p class="text-gray-500 py-2">Tidak ada informasi admin</p>
+                        @endif
+                    </div>
+
+                    <!-- Penjaga -->
+                    <div>
+                        <h3 class="text-md font-semibold text-gray-700 mb-3">Penjaga</h3>
+                        @forelse($ruangan->sarana->penjaga as $penjaga)
+                        <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl {{ !$loop->last ? 'mb-3' : '' }}">
+                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
-                                Informasi Penjaga
-                            </h2>
-                            <div class="space-y-4">
-                                @forelse($ruangan->sarana->penjaga as $penjaga)
-                                <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl transition-all hover:bg-gray-100">
-                                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-medium text-gray-900 mb-1">{{ $penjaga->nama }}</h3>
-                                        <div class="flex items-center text-gray-600">
-                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                                            </svg>
-                                            <span>{{ $penjaga->kontak }}</span>
-                                        </div>
-                                    </div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-1">{{ $penjaga->nama }}</h4>
+                                <div class="flex items-center text-gray-600">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                    </svg>
+                                    <span>{{ $penjaga->kontak }}</span>
                                 </div>
-                                @empty
-                                <div class="p-4 bg-gray-50 rounded-xl text-gray-500 text-center">
-                                    Tidak ada informasi penjaga
-                                </div>
-                                @endforelse
                             </div>
                         </div>
+                        @empty
+                        <p class="text-gray-500 py-2">Tidak ada informasi penjaga</p>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -713,26 +715,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(warningMessage);
     }
 
-    // Add classroom warning if applicable
-    if (isClassroom) {
-        const warningDiv = document.createElement('div');
-        warningDiv.className = 'bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4';
-        warningDiv.innerHTML = `
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm text-yellow-700">
-                        Ruangan ini merupakan ruangan kelas yang hanya dapat dipinjam pada hari Sabtu dan Minggu.
-                    </p>
-                </div>
-            </div>
-        `;
-        calendar.el.parentNode.insertBefore(warningDiv, calendar.el);
-    }
+
        
        function updateSelectedDatesDisplay() {
            if (selectedDates.size === 0) {

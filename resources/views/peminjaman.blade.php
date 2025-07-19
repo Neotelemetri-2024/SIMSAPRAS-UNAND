@@ -4,9 +4,9 @@
 <div class="pt-24 pb-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-2xl shadow-lg border border-gray-100">
-            <!-- Header Section -->
-            <div class="p-8 border-b border-gray-100">
-                <h1 class="text-3xl font-bold text-gray-900 ">Form Pengajuan Peminjaman</h1>
+            <!-- Header Section - Centered -->
+            <div class="p-8 border-b border-gray-100 text-center">
+                <h1 class="text-3xl font-bold text-gray-900">Form Pengajuan Peminjaman</h1>
                 <p class="mt-2 text-gray-600">Silakan lengkapi form berikut untuk mengajukan peminjaman fasilitas.</p>
             </div>
 
@@ -15,9 +15,9 @@
                 <input type="hidden" name="idSarana" value="{{ $sarana->id }}">
                 <input type="hidden" name="selected_dates" value="{{ $selectedDates }}">
 
-                <div class="p-8 space-y-8">
-                    <!-- Informasi Fasilitas -->
-                    <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                <div class="p-8 space-y-0">
+                    <!-- Informasi Fasilitas - Full Width -->
+                    <div class="bg-white p-6">
                         <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
                             <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -25,7 +25,7 @@
                             Informasi Fasilitas
                         </h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="bg-white p-6 rounded-xl border border-gray-200 hover:border-green-200 transition-all duration-200">
+                            <div class="border border-gray-200 p-6 rounded-xl hover:border-green-200 transition-all duration-200">
                                 <p class="mb-3 flex items-center text-gray-700">
                                     <span class="font-medium w-24">Sarana:</span> 
                                     <span class="text-gray-900">{{ $sarana->nama }}</span>
@@ -42,11 +42,11 @@
                                     </p>
                                 @endif
                             </div>
-                            <div class="bg-white p-6 rounded-xl border border-gray-200 hover:border-green-200 transition-all duration-200">
+                            <div class="border border-gray-200 p-6 rounded-xl hover:border-green-200 transition-all duration-200">
                                 <h3 class="font-medium text-gray-900 mb-4">Tanggal Peminjaman:</h3>
                                 <div class="space-y-3">
                                     @foreach(json_decode($selectedDates) as $date)
-                                        <div class="bg-gray-50 px-4 py-3 rounded-lg border border-gray-100 text-gray-700">
+                                        <div class="bg-white px-4 py-3 rounded-lg border border-gray-100 text-gray-700">
                                             {{ \Carbon\Carbon::parse($date)->isoFormat('dddd, D MMMM Y') }}
                                         </div>
                                     @endforeach
@@ -55,51 +55,11 @@
                         </div>
                     </div>
 
-                    <!-- Jadwal per Tanggal -->
-                    <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                        <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                            <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            Jadwal per Tanggal
-                        </h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            @foreach(json_decode($selectedDates) as $date)
-                                <div class="bg-white p-6 rounded-xl border border-gray-200 hover:border-green-200 transition-all duration-200">
-                                    <p class="font-medium text-gray-900 mb-4">
-                                        {{ \Carbon\Carbon::parse($date)->isoFormat('dddd, D MMMM Y') }}
-                                    </p>
-                                    <select name="jadwal_dates[{{ $loop->index }}][jadwal_id]"
-                                            class="w-full rounded-xl border-gray-200 focus:border-green-500 focus:ring-green-500 py-3"
-                                            required>
-                                        <option value="">Pilih Jadwal</option>
-                                        @foreach($jadwals as $jadwal)
-                                            @if(!in_array($jadwal->id, $bookedJadwals[$date] ?? []))
-                                                <option value="{{ $jadwal->id }}">
-                                                    {{ $jadwal->mulai }} - {{ $jadwal->selesai }}
-                                                </option>
-                                            @endif
-                                        @endforeach
-                                    </select>
-                                    @if(count($bookedJadwals[$date] ?? []) == $jadwals->count())
-                                        <p class="mt-3 text-red-500 text-sm flex items-center">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                            Semua jadwal telah dibooking untuk tanggal ini
-                                        </p>
-                                    @endif
-                                    <input type="hidden" name="jadwal_dates[{{ $loop->index }}][date]" value="{{ $date }}">
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
+                    <!-- Garis Pembatas -->
+                    <div class="border-t border-gray-200"></div>
 
-                    <!-- Form Details -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <!-- Left Column -->
-                        <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                    <!-- Informasi Kegiatan - Full Width -->
+                    <div class="bg-white p-6">
                             <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
                                 <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -153,8 +113,64 @@
                             </div>
                         </div>
 
-                        <!-- Right Column -->
-                        <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                    <!-- Garis Pembatas -->
+                    <div class="border-t border-gray-200"></div>
+
+                    <!-- Jadwal per Tanggal - Vertikal -->
+                    <div class="bg-white p-6">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                            <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Jadwal per Tanggal
+                        </h2>
+                        <div class="space-y-4">
+                            @foreach(json_decode($selectedDates) as $date)
+                                <div class="border border-gray-200 p-6 rounded-xl hover:border-green-200 transition-all duration-200">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                                        <div>
+                                            <p class="font-medium text-gray-900 mb-2">
+                                                {{ \Carbon\Carbon::parse($date)->isoFormat('dddd, D MMMM Y') }}
+                                            </p>
+                                            <p class="text-sm text-gray-600">
+                                                Pilih jadwal untuk tanggal ini
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <select name="jadwal_dates[{{ $loop->index }}][jadwal_id]"
+                                                    class="w-full rounded-xl border-gray-200 focus:border-green-500 focus:ring-green-500 py-3"
+                                                    required>
+                                                <option value="">Pilih Jadwal</option>
+                                                @foreach($jadwals as $jadwal)
+                                                    @if(!in_array($jadwal->id, $bookedJadwals[$date] ?? []))
+                                                        <option value="{{ $jadwal->id }}">
+                                                            {{ $jadwal->mulai }} - {{ $jadwal->selesai }}
+                                                        </option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                            @if(count($bookedJadwals[$date] ?? []) == $jadwals->count())
+                                                <p class="mt-2 text-red-500 text-sm flex items-center">
+                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                    Semua jadwal telah dibooking untuk tanggal ini
+                                                </p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="jadwal_dates[{{ $loop->index }}][date]" value="{{ $date }}">
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Garis Pembatas -->
+                    <div class="border-t border-gray-200"></div>
+
+                    <!-- Dokumen Pendukung - 2 Kolom -->
+                    <div class="bg-white p-6">
                             <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
                                 <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -162,12 +178,12 @@
                                 </svg>
                                 Dokumen Pendukung
                             </h2>
-                            <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Surat Peminjaman -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Surat Peminjaman</label>
                                     <div class="mt-2">
-                                        <div class="relative border-2 border-gray-200 border-dashed rounded-xl p-6 hover:border-green-200 transition-all duration-200">
+                                        <div class="relative border-2 border-gray-200 border-dashed rounded-xl p-8 h-48 hover:border-green-200 transition-all duration-200 flex items-center justify-center">
                                             <input type="file" 
                                                    id="suratPeminjaman" 
                                                    name="suratPeminjaman" 
@@ -176,14 +192,14 @@
                                                    accept=".pdf,.doc,.docx"
                                                    onchange="updateFileInfo(this, 'suratFileInfo')">
                                             <div class="text-center" id="suratFileInfo">
-                                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg class="mx-auto h-20 w-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                                           d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                                                 </svg>
-                                                <p class="mt-2 text-sm text-gray-600">
+                                                <p class="mt-4 text-base text-gray-600 font-medium">
                                                     Klik untuk upload atau drag and drop
                                                 </p>
-                                                <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX (Maks. 2MB)</p>
+                                                <p class="mt-2 text-sm text-gray-500">PDF, DOC, DOCX (Maks. 2MB)</p>
                                             </div>
                                             <div id="suratFilePreview" class="hidden mt-3">
                                                 <div class="flex items-center p-3 bg-white rounded-lg border border-gray-200">
@@ -214,7 +230,7 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Rundown Acara</label>
                                     <div class="mt-2">
-                                        <div class="relative border-2 border-gray-200 border-dashed rounded-xl p-6 hover:border-green-200 transition-all duration-200">
+                                        <div class="relative border-2 border-gray-200 border-dashed rounded-xl p-8 h-48 hover:border-green-200 transition-all duration-200 flex items-center justify-center">
                                             <input type="file" 
                                                    id="rundown" 
                                                    name="rundown" 
@@ -223,14 +239,14 @@
                                                    accept=".pdf,.doc,.docx"
                                                    onchange="updateFileInfo(this, 'rundownFileInfo')">
                                             <div class="text-center" id="rundownFileInfo">
-                                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg class="mx-auto h-20 w-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                                           d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                                                 </svg>
-                                                <p class="mt-2 text-sm text-gray-600">
+                                                <p class="mt-4 text-base text-gray-600 font-medium">
                                                     Klik untuk upload atau drag and drop
                                                 </p>
-                                                <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX (Maks. 2MB)</p>
+                                                <p class="mt-2 text-sm text-gray-500">PDF, DOC, DOCX (Maks. 2MB)</p>
                                             </div>
                                             <div id="rundownFilePreview" class="hidden mt-3">
                                                 <div class="flex items-center p-3 bg-white rounded-lg border border-gray-200">
@@ -258,28 +274,37 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                        <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                            <svg class="w-6 h-6 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                    <!-- Garis Pembatas -->
+                    <div class="border-t border-gray-200"></div>
+
+                    <!-- Informasi Tarif & Jam Lembur - Clean Layout -->
+                    <div class="bg-white p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                     d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                             </svg>
-                            Informasi Tarif
+                            Tarif & Jam Lembur
                         </h2>
-                        <div class="space-y-6">
-                            <!-- Status Peminjam -->
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <!-- Kolom Kiri: Informasi Tarif -->
                             <div>
+                                <h3 class="font-medium text-gray-900 mb-4">Informasi Tarif</h3>
+                                
+                                <!-- Status Peminjam -->
+                                <div class="mb-6">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Status Peminjam</label>
                                 @if(auth()->user()->isFakultas)
                                     <input type="hidden" name="statusPeminjam" value="unit">
-                                    <div class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-700">
+                                        <div class="border border-gray-200 rounded-lg px-4 py-3 text-gray-700 bg-white">
                                         <span class="font-medium">Fakultas/Unit</span>
                                     </div>
-                                    <p class="mt-1 text-xs text-green-600">Status peminjam otomatis diatur sebagai Fakultas/Unit</p>
+                                        <p class="mt-1 text-xs text-green-600">Status otomatis: Fakultas/Unit</p>
                                 @else
                                     <select name="statusPeminjam" id="statusPeminjam" 
-                                            class="w-full rounded-xl border-gray-200 focus:border-green-500 focus:ring-green-500"
+                                                class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500 py-3"
                                             required>
                                         <option value="" disabled selected hidden>Pilih Status</option>
                                         <option value="ormawa">Ormawa</option>
@@ -289,69 +314,99 @@
                             </div>
 
                             <!-- Tariff Information -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200">
-                                <h3 class="font-medium text-gray-900 mb-2">Informasi Tarif:</h3>
-                                <ul class="space-y-2 text-sm text-gray-600">
-                                    <li class="flex items-center">
-                                        <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Tarif Fakultas/Unit: Rp{{ number_format(isset($ruangan) ? $ruangan->tarifunit : $sarana->tarifunit, 0, ',', '.') }}
-                                    </li>
-                                    <li class="flex items-center">
-                                        <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Tarif Ormawa: Rp{{ number_format(isset($ruangan) ? $ruangan->tariformawa : $sarana->tariformawa, 0, ',', '.') }}
-                                    </li>
-                                    <li class="flex items-center">
-                                        <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Tarif Umum: Rp{{ number_format(isset($ruangan) ? $ruangan->tarifumum : $sarana->tarifumum, 0, ',', '.') }}
-                                    </li>
-                                </ul>
-                                <div class="mt-4 p-3 bg-yellow-50 rounded-lg">
-                                    <p class="text-sm text-yellow-800">
-                                        <span class="font-medium">Catatan:</span> Tarif akan dikenakan untuk:
-                                    </p>
-                                    <ul class="mt-2 text-sm text-yellow-700 list-disc list-inside">
-                                        <li>Peminjaman di hari Sabtu atau Minggu</li>
-                                        <li>Peminjaman melewati pukul 16:00 (4 sore)</li>
-                                        <li>Peminjam dengan status Umum akan selalu dikenakan tarif untuk setiap peminjaman</li>
+                                <div class="mb-6">
+                                    <h4 class="font-medium text-gray-900 mb-3">Daftar Tarif:</h4>
+                                    <div class="space-y-3">
+                                        <div class="flex justify-between items-center p-3 border border-gray-200 rounded-lg bg-white">
+                                            <span class="text-gray-700">Fakultas/Unit:</span>
+                                            <span class="font-medium">Rp{{ number_format(isset($ruangan) ? $ruangan->tarifunit : $sarana->tarifunit, 0, ',', '.') }}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 border border-gray-200 rounded-lg bg-white">
+                                            <span class="text-gray-700">Ormawa:</span>
+                                            <span class="font-medium">Rp{{ number_format(isset($ruangan) ? $ruangan->tariformawa : $sarana->tariformawa, 0, ',', '.') }}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 border border-gray-200 rounded-lg bg-white">
+                                            <span class="text-gray-700">Umum:</span>
+                                            <span class="font-medium">Rp{{ number_format(isset($ruangan) ? $ruangan->tarifumum : $sarana->tarifumum, 0, ',', '.') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Catatan Tarif -->
+                                <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                                    <p class="text-sm text-yellow-800 font-medium mb-2">Catatan:</p>
+                                    <ul class="text-sm text-yellow-700 space-y-1">
+                                        <li>• Sabtu/Minggu atau setelah 16:00</li>
+                                        <li>• Status Umum selalu dikenakan tarif</li>
                                         @if(isset($ruangan) ? $ruangan->is_hourly_rate : $sarana->is_hourly_rate)
-                                        <li>Tarif dihitung per {{ isset($ruangan) ? $ruangan->hours_per_unit : $sarana->hours_per_unit }} jam untuk durasi peminjaman</li>
+                                        <li>• Per {{ isset($ruangan) ? $ruangan->hours_per_unit : $sarana->hours_per_unit }} jam</li>
                                         @endif
                                     </ul>
                                 </div>
-                                <div class="mt-4 p-3 bg-blue-50 rounded-lg">
-                                    <p class="text-sm text-blue-800 font-medium">
-                                        Informasi Jam Lembur {{ isset($ruangan) ? $ruangan->sarana->nama : $sarana->nama }}:
-                                    </p>
-                                    <div class="mt-2 flex items-center">
-                                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                            <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ (isset($ruangan) ? $ruangan->sarana->bulanan_terpakai : $sarana->bulanan_terpakai) / 40 * 100 }}%"></div>
-                                        </div>
-                                    </div>
-                                    <p class="mt-2 text-sm text-blue-700">
-                                        <span class="font-medium">Sisa Jam Lembur:</span> 
-                                        {{ 40 - (isset($ruangan) ? $ruangan->sarana->bulanan_terpakai : $sarana->bulanan_terpakai) }} jam dari 40 jam per bulan
-                                    </p>
-                                    <p class="text-xs text-blue-600 mt-1">
-                                        <i>Jam lembur hanya dihitung untuk penggunaan di hari Sabtu/Minggu atau setelah pukul 16:00</i>
+
+                                <!-- Estimated Total -->
+                                <div id="estimatedTotal" class="hidden mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                                    <p class="text-sm font-medium text-green-800">
+                                        Estimasi Total: <span id="totalTarif" class="text-lg font-bold">Rp0</span>
                                     </p>
                                 </div>
                             </div>
 
-                            <!-- Estimated Total -->
-                            <div id="estimatedTotal" class="hidden mt-4 p-4 bg-green-50 rounded-lg">
-                                <p class="text-sm font-medium text-green-800">
-                                    Estimasi Total Tarif: <span id="totalTarif" class="text-lg">Rp0</span>
-                                </p>
+                            <!-- Kolom Kanan: Informasi Jam Lembur -->
+                            <div>
+                                <h3 class="font-medium text-gray-900 mb-4">
+                                    Jam Lembur {{ isset($ruangan) ? $ruangan->sarana->nama : $sarana->nama }}
+                                </h3>
+                                
+                                @foreach($jamLemburPerBulan as $monthKey => $monthData)
+                                    <div class="mb-4 {{ !$loop->last ? 'border-b border-gray-200 pb-4' : '' }}">
+                                        <p class="text-sm text-gray-600 mb-3 font-medium">{{ $monthData['month_name'] }}</p>
+                                        
+                                    @php
+                                            $jamTerpakai = $monthData['hours'];
+                                            $totalJamPerBulan = 40;
+                                            $sisaJam = max(0, $totalJamPerBulan - $jamTerpakai);
+                                            $persen = max(0, min(100, ($jamTerpakai / $totalJamPerBulan) * 100));
+                                    @endphp
+                                        
+                                        <!-- Info Jam Lembur dalam satu row -->
+                                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-white mb-3">
+                                            <div class="flex items-center space-x-4">
+                                                <span class="text-sm text-gray-700">Terpakai: <span class="font-medium">{{ $jamTerpakai }} jam</span></span>
+                                                <span class="text-sm text-gray-700">Sisa: <span class="font-medium">{{ $sisaJam }} jam</span></span>
+                                                <span class="text-sm text-gray-700">Limit: <span class="font-medium">{{ $totalJamPerBulan }} jam</span></span>
+                                            </div>
+                                            <span class="text-sm font-medium text-gray-900">{{ number_format($persen, 1) }}%</span>
+                                        </div>
+                                        
+                                        <!-- Progress Bar -->
+                                        <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+                                            <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: {{ $persen }}%"></div>
+                                        </div>
+                                        
+                                        @if($sisaJam <= 5)
+                                            <div class="p-3 bg-red-50 border border-red-200 rounded-lg mb-3">
+                                                <p class="text-sm text-red-700 font-medium flex items-center">
+                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                                    </svg>
+                                                    Peringatan: Sisa jam lembur hampir habis!
+                                                </p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endforeach
+                                
+                                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                    <p class="text-sm text-blue-700">
+                                        <i>Jam lembur dihitung untuk peminjaman di hari Sabtu/Minggu atau setelah pukul 16:00</i>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Submit Buttons -->
                     <div class="flex justify-end space-x-4 pt-6">
                         <button type="button" onclick="confirmCancel()"
                                 class="px-6 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200">
@@ -576,6 +631,60 @@ function confirmCancel() {
     document.addEventListener('DOMContentLoaded', function() {
         calculateEstimatedTarif();
     });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// Validasi ukuran file maksimal 2MB pada input file (onchange)
+function validateFileSize(input) {
+    if (input.files && input.files[0]) {
+        if (input.files[0].size > 2 * 1024 * 1024) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Ukuran file terlalu besar',
+                text: 'Ukuran file maksimal 2MB!',
+                confirmButtonColor: '#059669'
+            });
+            input.value = '';
+            return false;
+        }
+    }
+    return true;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var suratInput = document.getElementById('suratPeminjaman');
+    if (suratInput) {
+        suratInput.addEventListener('change', function() {
+            validateFileSize(this);
+        });
+    }
+    var rundownInput = document.getElementById('rundown');
+    if (rundownInput) {
+        rundownInput.addEventListener('change', function() {
+            validateFileSize(this);
+        });
+    }
+
+    // Validasi ukuran file pada submit form
+    var form = document.getElementById('peminjamanForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            var surat = document.getElementById('suratPeminjaman');
+            var rundown = document.getElementById('rundown');
+            if ((surat.files[0] && surat.files[0].size > 2 * 1024 * 1024) ||
+                (rundown.files[0] && rundown.files[0].size > 2 * 1024 * 1024)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ukuran file terlalu besar',
+                    text: 'Ukuran file maksimal 2MB!',
+                    confirmButtonColor: '#059669'
+                });
+                e.preventDefault();
+                return false;
+            }
+        });
+    }
+});
 </script>
 @endpush
 @endsection 

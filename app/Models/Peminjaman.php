@@ -225,14 +225,6 @@ class Peminjaman extends Model
             }
         }
         
-        $limitEntity = $ruangan ? $ruangan->sarana : $sarana;
-    
-        $monthlyUsed = $limitEntity->bulanan_terpakai;
-        
-        if ($hasChargeableHours && ($monthlyUsed + $totalHours) > 40) {
-            throw new \Exception("Batas penggunaan bulanan 40 jam untuk {$limitEntity->nama} telah tercapai. Saat ini telah terpakai {$monthlyUsed} jam.");
-        }
-        
         return $totalTarif;
     }
 }

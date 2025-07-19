@@ -23,7 +23,6 @@ class Sarana extends Model
         'tarifunit',
         'tarifumum',
         'requiresFaculty',
-        'bulanan_terpakai',
         'is_hourly_rate',
         'hours_per_unit',
         'status',

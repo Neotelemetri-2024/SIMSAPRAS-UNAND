@@ -38,19 +38,43 @@ class PeminjamanController extends Controller
         $selectedDates = $request->selected_dates;
         $jadwals = Jadwal::where('status', 'aktif')->get();
         $bookedJadwals = $this->getBookedJadwals($request->selected_dates, $request->ruangan_id ?? null, $request->sarana_id ?? null);
-    
+        
+        // Hitung jam lembur berdasarkan bulan dari tanggal yang dipilih
+        $dates = json_decode($selectedDates);
+        $uniqueMonths = collect($dates)->map(function($date) {
+            return Carbon::parse($date)->format('Y-m');
+        })->unique()->values();
+        
+        $jamLemburPerBulan = [];
+        foreach ($uniqueMonths as $month) {
+            $monthName = Carbon::createFromFormat('Y-m', $month)->translatedFormat('F Y');
+            $jamLemburPerBulan[$month] = [
+                'month_name' => $monthName,
+                'hours' => 0
+            ];
+        }
+        
         if ($request->has('ruangan_id')) {
             $ruangan = Ruangan::with('sarana')->findOrFail($request->ruangan_id);
             $sarana = $ruangan->sarana;
-    
+            
+            // Hitung jam lembur untuk setiap bulan yang dipilih
+            foreach ($uniqueMonths as $month) {
+                $jamLemburPerBulan[$month]['hours'] = $this->calculateOvertimeHours($sarana->id, $month, $ruangan->id);
+            }
+            
             if ($ruangan->kelas) {
                 session()->flash('warning', 'Ruangan ini merupakan ruangan kelas yang hanya dapat dipinjam pada hari Sabtu dan Minggu.');
             }
-    
-            return view('peminjaman', compact('sarana', 'ruangan', 'selectedDates', 'jadwals', 'bookedJadwals'));
+            return view('peminjaman', compact('sarana', 'ruangan', 'selectedDates', 'jadwals', 'bookedJadwals', 'jamLemburPerBulan'));
         }
     
         $sarana = Sarana::findOrFail($request->sarana_id);
+        
+        // Hitung jam lembur untuk setiap bulan yang dipilih
+        foreach ($uniqueMonths as $month) {
+            $jamLemburPerBulan[$month]['hours'] = $this->calculateOvertimeHours($sarana->id, $month);
+        }
 
         $user = User::find(auth()->id());
 
@@ -58,7 +82,7 @@ class PeminjamanController extends Controller
             return redirect()->route('home')->with('error', 'Sarana ini hanya dapat diakses oleh pengguna dari fakultas.');
         }
 
-        return view('peminjaman', compact('sarana', 'selectedDates', 'jadwals', 'bookedJadwals'));
+        return view('peminjaman', compact('sarana', 'selectedDates', 'jadwals', 'bookedJadwals', 'jamLemburPerBulan'));
     }
 
     private function getBookedJadwals($selectedDates, $ruanganId = null, $saranaId = null)
@@ -83,6 +107,63 @@ class PeminjamanController extends Controller
         }
 
         return $bookedJadwals;
+    }
+
+    /**
+     * Hitung jam lembur berdasarkan peminjaman aktif
+     */
+    private function calculateOvertimeHours($saranaId, $bulanFilter = null, $ruanganId = null)
+    {
+        $query = Peminjaman::with(['tanggalPeminjaman.jadwal'])
+            ->where('idSarana', $saranaId)
+            ->whereIn('status', ['diajukan', 'diproses', 'disetujui', 'diajukanbatal']);
+            
+        if ($ruanganId) {
+            $query->where('idRuangan', $ruanganId);
+        }
+        
+        if ($bulanFilter) {
+            $query->whereHas('tanggalPeminjaman', function($q) use ($bulanFilter) {
+                $q->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$bulanFilter]);
+            });
+        }
+        
+        $peminjamans = $query->get();
+        $totalJamLembur = 0;
+        
+        foreach ($peminjamans as $peminjaman) {
+            foreach ($peminjaman->tanggalPeminjaman as $tanggalPeminjaman) {
+                if ($bulanFilter && Carbon::parse($tanggalPeminjaman->tanggal)->format('Y-m') !== $bulanFilter) {
+                    continue;
+                }
+                
+                $jadwal = $tanggalPeminjaman->jadwal;
+                if (!$jadwal) continue;
+                
+                $date = Carbon::parse($tanggalPeminjaman->tanggal);
+                $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
+                $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
+                $hours = $endTime->diffInHours($start);
+                
+                $isWeekend = $date->isWeekend();
+                $isAfterHours = $start->hour >= 16 || $endTime->hour >= 16;
+                
+                // Hanya hitung jam lembur (weekend atau after hours)
+                if ($isWeekend || $isAfterHours) {
+                    $chargeableHours = $hours;
+                    
+                    // Jika bukan weekend tapi after hours, hitung hanya bagian setelah jam 16:00
+                    if (!$isWeekend && $isAfterHours && $start->hour < 16) {
+                        $cutoffTime = Carbon::createFromFormat('H:i:s', '16:00:00');
+                        $chargeableHours = $endTime->diffInHours($cutoffTime);
+                    }
+                    
+                    $totalJamLembur += $chargeableHours;
+                }
+            }
+        }
+        
+        return $totalJamLembur;
     }
 
     public function store(Request $request)
@@ -130,8 +211,40 @@ class PeminjamanController extends Controller
 
             $validated = $request->validate($validationRules);
 
-            $saranaId = $validated['idSarana'] ?? null;
+            // CEK OVERLAP JADWAL
+            foreach ($validated['jadwal_dates'] as $booking) {
+                $date = $booking['date'];
+                $jadwalBaru = Jadwal::findOrFail($booking['jadwal_id']);
+                $mulaiBaru = $jadwalBaru->mulai;
+                $selesaiBaru = $jadwalBaru->selesai;
 
+                $query = TanggalPeminjaman::where('tanggal', $date)
+                    ->whereHas('peminjaman', function ($q) use ($request) {
+                        $q->whereIn('status', ['diajukan', 'diproses', 'disetujui', 'diajukanbatal']);
+                        if ($request->has('idRuangan')) {
+                            $q->where('idRuangan', $request->idRuangan);
+                        } else {
+                            $q->where('idSarana', $request->idSarana);
+                        }
+                    })
+                    ->with('jadwal');
+
+                $tanggalBentrok = $query->get();
+                foreach ($tanggalBentrok as $tb) {
+                    $jadwalLama = $tb->jadwal;
+                    if (!$jadwalLama) continue;
+                    // Cek overlap waktu
+                    if ($mulaiBaru < $jadwalLama->selesai && $selesaiBaru > $jadwalLama->mulai) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Terdapat jadwal yang bentrok/overlap pada tanggal ' . $date . ' (' . $jadwalBaru->mulai . ' - ' . $jadwalBaru->selesai . '). Silakan pilih jadwal lain.'
+                        ], 422);
+                    }
+                }
+            }
+
+            // Validasi akses fakultas
+            $saranaId = $validated['idSarana'] ?? null;
             $user = User::find(auth()->id());
     
             if ($saranaId) {
@@ -145,6 +258,7 @@ class PeminjamanController extends Controller
                 }
             }
 
+            // Upload file
             $suratPath = $request->file('suratPeminjaman')->store('peminjaman/surat', 'public');
             $rundownPath = $request->file('rundown')->store('peminjaman/rundown', 'public');
 
@@ -152,21 +266,16 @@ class PeminjamanController extends Controller
             $ruangan = isset($validated['idRuangan']) ? Ruangan::find($validated['idRuangan']) : null;
             $targetSarana = $ruangan ? $ruangan->sarana : $sarana;
             
-            $totalHours = 0;
-            $hasChargeableHours = false; 
-
             // Ambil bulan dari tanggal peminjaman yang diajukan
             $bookingMonths = collect($validated['jadwal_dates'])->map(function($booking) {
                 return Carbon::parse($booking['date'])->format('Y-m');
             })->unique();
 
-            // Hitung jam terpakai per bulan
+            // Hitung jam terpakai per bulan berdasarkan peminjaman aktif
             $monthlyUsage = [];
             foreach ($bookingMonths as $yearMonth) {
-                // Hitung jam yang sudah terpakai di bulan tersebut dari database
-                $usedHours = FacilityUsage::where('idSarana', $targetSarana->id)
-                    ->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$yearMonth])
-                    ->sum('jam_terpakai');
+                // Hitung jam yang sudah terpakai di bulan tersebut dari peminjaman aktif
+                $usedHours = $this->calculateOvertimeHours($targetSarana->id, $yearMonth);
                 
                 // Hitung jam yang akan digunakan di bulan tersebut dari peminjaman saat ini
                 $requestedHours = 0;
@@ -219,16 +328,6 @@ class PeminjamanController extends Controller
                     'message' => "Batas penggunaan 40 jam untuk bulan {$month} akan terlampaui. Saat ini telah terpakai {$monthlyUsage[$overLimitMonth]['used']} jam, dan Anda meminta tambahan {$monthlyUsage[$overLimitMonth]['requested']} jam."
                 ], 422);
             }
-
-            $targetSarana = Sarana::where('id', $targetSarana->id)->lockForUpdate()->first();
-
-            if ($hasChargeableHours && ($targetSarana->bulanan_terpakai + $totalHours) > 40) {
-                DB::rollBack();
-                return response()->json([
-                    'success' => false,
-                    'message' => "Batas penggunaan bulanan 40 jam untuk {$targetSarana->nama} telah tercapai. Saat ini telah terpakai {$targetSarana->bulanan_terpakai} jam."
-                ], 422);
-            } 
             
             $totalTarif = Peminjaman::calculateTarif(
                 $validated['jadwal_dates'],
@@ -256,47 +355,18 @@ class PeminjamanController extends Controller
 
             $peminjaman = Peminjaman::create($peminjamanData);
 
+            // Buat record tanggal peminjaman
             foreach ($validated['jadwal_dates'] as $booking) {
-                $jadwal = Jadwal::findOrFail($booking['jadwal_id']);
                 $date = Carbon::parse($booking['date']);
-                
-                $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
-                $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
-                $hours = $endTime->diffInHours($start);
                 
                 TanggalPeminjaman::create([
                     'idPeminjaman' => $peminjaman->id,
                     'idJadwal' => $booking['jadwal_id'],
                     'tanggal' => $date->format('Y-m-d')
                 ]);
-            
-                $isWeekend = $date->isWeekend();
-                
-                $isAfterHours = $start->hour >= 16 || $endTime->hour >= 16;
-                
-                if ($isWeekend || $isAfterHours) {
-                    $chargeableHours = $hours;
-                    
-                    if (!$isWeekend && $isAfterHours && $start->hour < 16) {
-                        $cutoffTime = Carbon::createFromFormat('H:i:s', '16:00:00');
-                        $chargeableHours = $endTime->diffInHours($cutoffTime);
-                    }
-                    
-                    if ($chargeableHours > 0) {
-                        FacilityUsage::create([
-                            'idSarana' => $targetSarana->id,
-                            'idRuangan' => $validated['idRuangan'] ?? null,
-                            'tanggal' => $date->format('Y-m-d'),
-                            'jam_terpakai' => $chargeableHours
-                        ]);
-                        
-                        $targetSarana->increment('bulanan_terpakai', $chargeableHours);
-                    }
-                }
             }
                 
-            $targetSarana->refresh();
-
+            // Buat notifikasi untuk admin
             $adminNotifications = User::whereIn('role', ['admin', 'superadmin', 'pimpinan'])
                 ->get()
                 ->map(function ($admin) use ($peminjaman) {
@@ -326,6 +396,13 @@ class PeminjamanController extends Controller
                 'message' => 'Pengajuan peminjaman berhasil dikirim',
                 'redirect' => route('riwayat.index'),
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Tangkap error validasi dan kirim response JSON agar bisa ditangkap SweetAlert
+            return response()->json([
+                'success' => false,
+                'message' => $e->validator->errors()->first(),
+                'errors' => $e->validator->errors(),
+            ], 422);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(

@@ -328,12 +328,9 @@ class SaranaController extends Controller
         // Hitung jam lembur bulan ini
         $currentMonth = Carbon::now()->format('Y-m');
         $bulanIni = Carbon::now()->translatedFormat('F Y');
-        $currentMonth = Carbon::now()->format('Y-m');
         
-        // Data jam lembur bulan ini (tetap dipertahankan untuk kompatibilitas)
-        $jamLemburBulanIni = FacilityUsage::where('idSarana', $sarana->id)
-            ->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$currentMonth])
-            ->sum('jam_terpakai');
+        // Data jam lembur bulan ini berdasarkan peminjaman aktif
+        $jamLemburBulanIni = $this->calculateOvertimeHours($sarana->id, $currentMonth);
         
         // Data jam lembur seluruh bulan dalam setahun
         $tahunIni = Carbon::now()->year;
@@ -345,9 +342,7 @@ class SaranaController extends Controller
             $bulanFormat = $bulan->format('Y-m');
             $namaBulan = $bulan->translatedFormat('F Y');
             
-            $jamLembur = FacilityUsage::where('idSarana', $sarana->id)
-                ->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$bulanFormat])
-                ->sum('jam_terpakai');
+            $jamLembur = $this->calculateOvertimeHours($sarana->id, $bulanFormat);
             
             $dataJamLembur[] = [
                 'bulan' => $namaBulan,
@@ -451,5 +446,62 @@ class SaranaController extends Controller
                 'redirect' => route('sarana.index')
             ]);
         }
+    }
+
+    /**
+     * Hitung jam lembur berdasarkan peminjaman aktif
+     */
+    private function calculateOvertimeHours($saranaId, $bulanFilter = null, $ruanganId = null)
+    {
+        $query = Peminjaman::with(['tanggalPeminjaman.jadwal'])
+            ->where('idSarana', $saranaId)
+            ->whereIn('status', ['diajukan', 'diproses', 'disetujui', 'diajukanbatal']);
+            
+        if ($ruanganId) {
+            $query->where('idRuangan', $ruanganId);
+        }
+        
+        if ($bulanFilter) {
+            $query->whereHas('tanggalPeminjaman', function($q) use ($bulanFilter) {
+                $q->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$bulanFilter]);
+            });
+        }
+        
+        $peminjamans = $query->get();
+        $totalJamLembur = 0;
+        
+        foreach ($peminjamans as $peminjaman) {
+            foreach ($peminjaman->tanggalPeminjaman as $tanggalPeminjaman) {
+                if ($bulanFilter && Carbon::parse($tanggalPeminjaman->tanggal)->format('Y-m') !== $bulanFilter) {
+                    continue;
+                }
+                
+                $jadwal = $tanggalPeminjaman->jadwal;
+                if (!$jadwal) continue;
+                
+                $date = Carbon::parse($tanggalPeminjaman->tanggal);
+                $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
+                $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
+                $hours = $endTime->diffInHours($start);
+                
+                $isWeekend = $date->isWeekend();
+                $isAfterHours = $start->hour >= 16 || $endTime->hour >= 16;
+                
+                // Hanya hitung jam lembur (weekend atau after hours)
+                if ($isWeekend || $isAfterHours) {
+                    $chargeableHours = $hours;
+                    
+                    // Jika bukan weekend tapi after hours, hitung hanya bagian setelah jam 16:00
+                    if (!$isWeekend && $isAfterHours && $start->hour < 16) {
+                        $cutoffTime = Carbon::createFromFormat('H:i:s', '16:00:00');
+                        $chargeableHours = $endTime->diffInHours($cutoffTime);
+                    }
+                    
+                    $totalJamLembur += $chargeableHours;
+                }
+            }
+        }
+        
+        return $totalJamLembur;
     }
 }
