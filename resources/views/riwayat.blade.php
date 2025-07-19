@@ -446,15 +446,15 @@
                                     <div class="space-y-3">
                                         <div class="flex items-center justify-between">
                                             <span class="text-sm text-gray-600">Bank</span>
-                                            <span class="font-medium">Bank Nagari</span>
+                                            <span class="font-medium">Bank Mandiri</span>
                                         </div>
                                         <div class="flex items-center justify-between">
                                             <span class="text-sm text-gray-600">Nomor Rekening</span>
-                                            <span class="font-medium">XXXXXXXXXXXXX</span>
+                                            <span class="font-medium">1110010521405</span>
                                         </div>
                                         <div class="flex items-center justify-between">
                                             <span class="text-sm text-gray-600">Atas Nama</span>
-                                            <span class="font-medium">Universitas Andalas</span>
+                                            <span class="font-medium">RPL UNAND OPR BLU SEWA</span>
                                         </div>
                                     </div>
                                 </div>
