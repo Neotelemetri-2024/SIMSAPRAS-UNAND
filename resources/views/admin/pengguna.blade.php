@@ -110,15 +110,15 @@
 </div>
 
 <!-- Create Modal -->
-<div id="createModal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
-    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="createModal"></div>
+<div id="createModal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onclick="closeModal('createModal')"></div>
     <div class="relative w-full max-w-2xl max-h-full mx-auto my-4">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                     Tambah Pengguna
                 </h3>
-                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="createModal">
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" onclick="closeModal('createModal')">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                     </svg>
@@ -189,7 +189,7 @@
                 </div>
                 <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
                     <button type="submit" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Simpan</button>
-                    <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10" data-modal-hide="createModal">Batal</button>
+                    <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10" onclick="closeModal('createModal')">Batal</button>
                 </div>
             </form>
         </div>
@@ -198,14 +198,14 @@
 
 <!-- Edit Modal -->
 @foreach($pengguna as $item)
-<div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
-    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModal{{ $item->id }}"></div>
+<div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onclick="closeModal('editModal{{ $item->id }}')"></div>
     <div class="relative w-full max-w-2xl bg-white rounded-lg shadow dark:bg-gray-700 m-4">
         <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                 Edit Admin
             </h3>
-            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="editModal{{ $item->id }}">
+            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" onclick="closeModal('editModal{{ $item->id }}')">
                 <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                 </svg>
@@ -263,13 +263,14 @@
             </div>
             <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
                 <button type="submit" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Simpan Perubahan</button>
-                <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10" data-modal-hide="editModal{{ $item->id }}">Batal</button>
+                <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10" onclick="closeModal('editModal{{ $item->id }}')">Batal</button>
             </div>
         </form>
     </div>
 </div>
 @endforeach
 
+@push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -278,50 +279,24 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('[data-modal-toggle]').forEach(button => {
             button.addEventListener('click', () => {
                 const target = document.getElementById(button.dataset.modalTarget);
-                if (target) target.classList.toggle('hidden');
-            });
-        });
-
-        document.querySelectorAll('[data-modal-hide]').forEach(button => {
-            button.addEventListener('click', () => {
-                const target = document.getElementById(button.dataset.modalHide);
-                if (target) {
-                    target.classList.add('hidden');
-                    const form = target.querySelector('form');
-                    if (form) form.reset();
-                }
-            });
-        });
-
-        // Close on outside click
-        window.addEventListener('click', function(event) {
-            document.querySelectorAll('[id^="createModal"], [id^="editModal"]').forEach(modal => {
-                if (event.target === modal) {
-                    modal.classList.add('hidden');
-                    const form = modal.querySelector('form');
-                    if (form) form.reset();
-                }
+                if (target) target.classList.remove('hidden');
             });
         });
     };
 
-    // Form handling
+    // Function to close modal
+    window.closeModal = function(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('hidden');
+            const form = modal.querySelector('form');
+            if (form) form.reset();
+        }
+    };
+
+    // Simplified form handling - removed excessive validation
     const handleFormSubmission = async (e, form) => {
         e.preventDefault();
-
-        const roleSelect = form.querySelector('#roleSelect');
-        if (roleSelect?.value === 'admin') {
-            const checkedSarana = form.querySelectorAll('input[name="sarana_ids[]"]:checked');
-            if (checkedSarana.length === 0) {
-                await Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: 'Admin harus memilih minimal satu sarana untuk dikelola',
-                    confirmButtonColor: '#dc2626',
-                });
-                return;
-            }
-        }
 
         const result = await Swal.fire({
             title: 'Konfirmasi',
@@ -346,19 +321,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
 
-                // Check if response is ok
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                // Check content type
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    const text = await response.text();
-                    console.error('Response is not JSON:', text);
-                    throw new Error('Server returned non-JSON response');
-                }
-
                 const data = await response.json();
 
                 await Swal.fire({
@@ -376,66 +338,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 await Swal.fire({
                     icon: 'error',
                     title: 'Error!',
-                    text: 'Terjadi kesalahan pada server: ' + error.message,
-                    confirmButtonColor: '#dc2626'
-                });
-            }
-        }
-    };
-
-    // Handle delete confirmation
-    window.confirmDelete = async (url) => {
-        const result = await Swal.fire({
-            title: 'Konfirmasi Hapus',
-            text: 'Apakah Anda yakin ingin menghapus pengguna ini?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc2626',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal'
-        });
-
-        if (result.isConfirmed) {
-            try {
-                const response = await fetch(url, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    const text = await response.text();
-                    console.error('Response is not JSON:', text);
-                    throw new Error('Server returned non-JSON response');
-                }
-
-                const data = await response.json();
-
-                await Swal.fire({
-                    icon: data.success ? 'success' : 'error',
-                    title: data.success ? 'Berhasil!' : 'Gagal!',
-                    text: data.message,
-                    confirmButtonColor: data.success ? '#15803d' : '#dc2626'
-                });
-
-                if (data.success && data.redirect) {
-                    window.location.href = data.redirect;
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                await Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: 'Terjadi kesalahan pada server: ' + error.message,
+                    text: 'Terjadi kesalahan pada server',
                     confirmButtonColor: '#dc2626'
                 });
             }
@@ -472,4 +375,5 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeModals();
 });
 </script>
+@endpush
 @endsection

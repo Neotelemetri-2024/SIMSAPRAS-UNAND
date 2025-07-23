@@ -176,6 +176,60 @@
                             </div>
                     </div>
                 </div>
+
+                <h3 id="accordion-flush-heading-3">
+                    <button type="button"
+                        class="flex items-center justify-between w-full py-5 font-medium rtl:text-right text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400"
+                        data-accordion-target="#accordion-flush-body-3" aria-expanded="true"
+                        aria-controls="accordion-flush-body-3">
+                        <span>Bagaimana cara melakukan pembayaran dan ke rekening mana?</span>
+                        <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5 5 1 1 5" />
+                        </svg>
+                    </button>
+                </h3>
+                <div id="accordion-flush-body-3" class="hidden" aria-labelledby="accordion-flush-heading-3">
+                    <div class="py-5 border-b border-gray-200 dark:border-gray-700">
+                        <p class="mb-4 text-gray-500">Untuk melakukan pembayaran, ikuti langkah-langkah berikut:</p>
+                        <ol class="ps-5 text-gray-500 list-decimal mb-4">
+                            <li>Transfer ke rekening resmi Universitas Andalas</li>
+                            <li>Simpan bukti pembayaran</li>
+                            <li>Upload bukti pembayaran melalui sistem</li>
+                            <li>Tunggu konfirmasi dari admin</li>
+                        </ol>
+                        
+                        <div class="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                            <h5 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                </svg>
+                                Informasi Rekening Pembayaran
+                            </h5>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Bank:</span>
+                                    <span class="font-medium text-gray-900">Bank Mandiri</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Nomor Rekening:</span>
+                                    <span class="font-medium text-gray-900">1110010521405</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Atas Nama:</span>
+                                    <span class="font-medium text-gray-900">RPL UNAND OPR BLU SEWA</span>
+                                </div>
+                            </div>
+                            <div class="mt-3 p-3 bg-yellow-50 rounded border border-yellow-200">
+                                <p class="text-sm text-yellow-800">
+                                    <strong>Catatan:</strong> Pastikan transfer dilakukan ke rekening resmi di atas. Pembayaran harus diselesaikan dalam waktu 3 hari setelah peminjaman disetujui.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

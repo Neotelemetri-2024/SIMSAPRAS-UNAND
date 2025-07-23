@@ -45,6 +45,13 @@ class PenggunaController extends Controller
                     'isFakultas' => 'nullable|boolean'
                 ]);
 
+                // Validasi khusus untuk admin
+                if ($validated['role'] === 'admin') {
+                    if (!isset($request->sarana_ids) || empty($request->sarana_ids)) {
+                        throw new \Exception('Admin harus memilih minimal satu sarana untuk dikelola');
+                    }
+                }
+
                 if ($validated['role'] === 'admin' && isset($request->sarana_ids) && !empty($request->sarana_ids)) {
                     $assignedSarana = AdminAccess::whereIn('sarana_id', $request->sarana_ids)->get();
 
