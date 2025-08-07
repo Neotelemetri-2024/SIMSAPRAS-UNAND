@@ -158,7 +158,7 @@
                             <option value="">Pilih Sarana</option>
                             @foreach($saranas as $sarana)
                             <option value="{{ $sarana->id }}"
-                                data-kategori="{{ $sarana->kategoriSarana->jenis }}"
+                                data-kategori="{{ $sarana->isRoom }}"
                                 data-ruangan='@json($sarana->ruangan)'>
                                 {{ $sarana->nama }}
                             </option>
@@ -340,13 +340,13 @@
                // Set status with appropriate styling
                const statusEl = document.getElementById('modalStatus');
                const statusMap = {
-    'disetujui': ['bg-green-100 text-green-800'],
-    'diproses': ['bg-yellow-100 text-yellow-800'],
-    'ditolak': ['bg-red-100 text-red-800'],
-    'diajukan': ['bg-blue-100 text-blue-800'],
-    'dibatalkan': ['bg-gray-100 text-gray-800'],
-    'diajukanbatal': ['bg-purple-100 text-purple-800']
-};
+                    'disetujui': ['bg-green-100 text-green-800'],
+                    'diproses': ['bg-yellow-100 text-yellow-800'],
+                    'ditolak': ['bg-red-100 text-red-800'],
+                    'diajukan': ['bg-blue-100 text-blue-800'],
+                    'dibatalkan': ['bg-gray-100 text-gray-800'],
+                    'diajukanbatal': ['bg-purple-100 text-purple-800']
+                };
                const [statusClass] = statusMap[info.event.extendedProps.status] || ['bg-gray-100 text-gray-800', ''];
                
                statusEl.innerHTML = `
@@ -445,69 +445,68 @@
        // Add custom CSS for event colors
        const styleSheet = document.createElement('style');
        styleSheet.textContent = `
-
-       .status-dibatalkan { 
-        background-color: #6b7280 !important;
-        border-color: #4b5563 !important;
-    }
-    .status-diajukanbatal { 
-        background-color: #8b5cf6 !important;
-        border-color: #7c3aed !important;
-    }
-           .status-disetujui { 
-               background-color: #059669 !important;
-               border-color: #047857 !important;
-           }
-        .status-diproses { 
-    background-color: #facc15 !important; /* kuning */
-    border-color: #eab308 !important; /* kuning yang lebih gelap untuk border */
-}
-           .status-ditolak { 
-               background-color: #dc2626 !important;
-               border-color: #b91c1c !important;
-           }
-           .status-diajukan { 
-               background-color: #3b82f6 !important;
-               border-color: #2563eb !important;
-           }
-           .fc .fc-button {
-               background-color: #ffffff;
-               border: 1px solid #e5e7eb;
-               color: #374151;
-           }
-           .fc .fc-button:hover {
-               background-color: #f9fafb;
-               border-color: #d1d5db;
-           }
-         .fc .fc-button-primary:not(:disabled).fc-button-active,
-.fc .fc-button-primary:not(:disabled):active {
-    background-color: #059669 !important;
-    border-color: #047857 !important;
-    color: #ffffff;
-}
-           .fc .fc-button-primary:disabled {
-               background-color: #f3f4f6;
-               border-color: #e5e7eb;
-               color: #9ca3af;
-           }
-           .fc .fc-toolbar-title {
-               font-size: 1.25rem;
-               font-weight: 600;
-               color: #111827;
-           }
-           .fc-theme-standard td, 
-           .fc-theme-standard th {
-               border-color: #f3f4f6;
-           }
-           .fc .fc-day-today {
-               background-color: #f0f9ff !important;
-           }
-           .fc-event {
-               padding: 2px 4px;
-               font-size: 0.875rem;
-               border-radius: 4px;
-               color: white !important;
-           }
+        .status-dibatalkan { 
+                background-color: #6b7280 !important;
+                border-color: #4b5563 !important;
+            }
+            .status-diajukanbatal { 
+                background-color: #8b5cf6 !important;
+                border-color: #7c3aed !important;
+            }
+            .status-disetujui { 
+                background-color: #059669 !important;
+                border-color: #047857 !important;
+            }
+            .status-diproses { 
+                background-color: #facc15 !important; /* kuning */
+                border-color: #eab308 !important; /* kuning yang lebih gelap untuk border */
+            }
+            .status-ditolak { 
+                background-color: #dc2626 !important;
+                border-color: #b91c1c !important;
+            }
+            .status-diajukan { 
+                background-color: #3b82f6 !important;
+                border-color: #2563eb !important;
+            }
+            .fc .fc-button {
+                background-color: #ffffff;
+                border: 1px solid #e5e7eb;
+                color: #374151;
+            }
+            .fc .fc-button:hover {
+                background-color: #f9fafb;
+                border-color: #d1d5db;
+            }
+            .fc .fc-button-primary:not(:disabled).fc-button-active,
+            .fc .fc-button-primary:not(:disabled):active {
+                background-color: #059669 !important;
+                border-color: #047857 !important;
+                color: #ffffff;
+            }
+            .fc .fc-button-primary:disabled {
+                background-color: #f3f4f6;
+                border-color: #e5e7eb;
+                color: #9ca3af;
+            }
+            .fc .fc-toolbar-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #111827;
+            }
+            .fc-theme-standard td, 
+            .fc-theme-standard th {
+                border-color: #f3f4f6;
+            }
+            .fc .fc-day-today {
+                background-color: #f0f9ff !important;
+            }
+            .fc-event {
+                padding: 2px 4px;
+                font-size: 0.875rem;
+                border-radius: 4px;
+                color: white !important;
+            }
        `;
        document.head.appendChild(styleSheet);
    });
@@ -528,9 +527,9 @@ function checkSaranaType() {
         return;
     }
 
-    const kategori = selectedOption.getAttribute('data-kategori');
+    const beruangan = selectedOption.getAttribute('data-kategori');
     
-    if (kategori === 'Gedung Beruangan') {
+    if (beruangan === '1') {
         ruanganSection.classList.remove('hidden');
         ruanganSelect.innerHTML = '<option value="">Pilih Ruangan</option>';
         const ruangans = JSON.parse(selectedOption.getAttribute('data-ruangan'));

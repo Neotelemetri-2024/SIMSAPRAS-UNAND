@@ -415,22 +415,22 @@ class PeminjamanController extends Controller
         }
     }
     
-    public function show(Peminjaman $peminjaman)
-    {
-        $peminjaman->load(['sarana', 'ruangan', 'jadwal', 'tanggalPeminjaman', 'user']);
+    // public function show(Peminjaman $peminjaman)
+    // {
+    //     $peminjaman->load(['sarana', 'ruangan', 'jadwal', 'tanggalPeminjaman', 'user']);
 
-        return view('peminjaman.show', compact('peminjaman'));
-    }
+    //     return view('peminjaman.show', compact('peminjaman'));
+    // }
 
-    public function index()
-    {
-        $peminjamans = Peminjaman::with(['sarana', 'ruangan', 'jadwal'])
-            ->where('idUser', auth()->id())
-            ->latest()
-            ->paginate(10);
+    // public function index()
+    // {
+    //     $peminjamans = Peminjaman::with(['sarana', 'ruangan', 'jadwal'])
+    //         ->where('idUser', auth()->id())
+    //         ->latest()
+    //         ->paginate(10);
 
-        return view('peminjaman.index', compact('peminjamans'));
-    }
+    //     return view('peminjaman.index', compact('peminjamans'));
+    // }
 
     public function cancel(Peminjaman $peminjaman, Request $request)
     {

@@ -4,6 +4,8 @@ use App\Models\Sarana;
 use App\Models\Jadwal;
 use App\Models\Peminjaman;
 use Illuminate\Http\Request;
+use App\Models\TanggalPeminjaman;
+use Illuminate\Support\Facades\DB;
 
 class OverviewController extends Controller
 {
@@ -71,5 +73,49 @@ class OverviewController extends Controller
         })->values();
 
         return view('admin.overview', compact('events', 'saranas', 'jadwals'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'idSarana' => 'required|exists:sarana,id',
+            'kegiatan' => 'required|string|max:255',
+            'jadwal_dates' => 'required|array|min:1',
+            'jadwal_dates.*.date' => 'required|date',
+            'jadwal_dates.*.jadwal_id' => 'required|exists:jadwal,id',
+            'idRuangan' => 'nullable|exists:ruangan,id', // tambahkan validasi ini
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $data = [
+                'idUser' => auth()->id(),
+                'idSarana' => $request->idSarana,
+                'kegiatan' => $request->kegiatan,
+                'status' => 'disetujui',
+                'instansi' => 'Superadmin SIMSAPRAS',
+                'statusPeminjam' => 'unit',
+            ];
+
+            if ($request->filled('idRuangan')) {
+                $data['idRuangan'] = $request->idRuangan;
+            }
+
+            $peminjaman = Peminjaman::create($data);
+
+            foreach ($request->jadwal_dates as $jadwal) {
+                TanggalPeminjaman::create([
+                    'idPeminjaman' => $peminjaman->id,
+                    'tanggal' => $jadwal['date'],
+                    'idJadwal' => $jadwal['jadwal_id'],
+                ]);
+            }
+
+            DB::commit();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 }
