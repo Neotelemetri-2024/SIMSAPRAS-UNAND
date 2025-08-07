@@ -8,6 +8,8 @@ php artisan storage:link || true
 
 php artisan optimize
 
+echo "* * * * * cd /var/www && php artisan schedule:run >> /dev/null 2>&1" | crontab -
+
 nginx -g 'daemon off;' &
 
-php-fpm
+service cron start && php-fpm

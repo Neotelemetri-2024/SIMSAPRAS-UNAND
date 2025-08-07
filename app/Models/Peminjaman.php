@@ -227,4 +227,28 @@ class Peminjaman extends Model
         
         return $totalTarif;
     }
+
+    public static function autoCancelExpired()
+    {
+        $today = now()->startOfDay();
+        $statuses = ['diajukan', 'diproses', 'diajukanbatal'];
+
+        $peminjamanList = self::whereIn('status', $statuses)
+            ->whereHas('tanggalPeminjaman', function($query) use ($today) {
+                $query->where('tanggal', '<', $today);
+            })
+            ->get();
+
+        foreach ($peminjamanList as $peminjaman) {
+            $allDatesPassed = $peminjaman->tanggalPeminjaman->every(function($tanggal) use ($today) {
+                return Carbon::parse($tanggal->tanggal)->lt($today);
+            });
+
+            if ($allDatesPassed) {
+                $peminjaman->status = 'dibatalkan';
+                $peminjaman->dibatalkan_at = now();
+                $peminjaman->save();
+            }
+        }
+    }
 }
