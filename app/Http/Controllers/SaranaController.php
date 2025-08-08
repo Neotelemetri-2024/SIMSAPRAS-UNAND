@@ -455,7 +455,8 @@ class SaranaController extends Controller
     {
         $query = Peminjaman::with(['tanggalPeminjaman.jadwal'])
             ->where('idSarana', $saranaId)
-            ->whereIn('status', ['diajukan', 'diproses', 'disetujui', 'diajukanbatal']);
+            ->whereIn('status', ['diajukan', 'diproses', 'disetujui', 'diajukanbatal'])
+            ->where('instansi', '!=', 'Superadmin SIMSAPRAS');
             
         if ($ruanganId) {
             $query->where('idRuangan', $ruanganId);
