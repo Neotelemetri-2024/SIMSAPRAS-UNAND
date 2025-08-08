@@ -117,7 +117,7 @@ class Peminjaman extends Model
             return false;
         }
 
-        $bookingDate = \Carbon\Carbon::parse($earliestBookingDate)->startOfDay();
+        $bookingDate = Carbon::parse($earliestBookingDate)->startOfDay();
         $today = now()->startOfDay();
         
         $daysDifference = $bookingDate->diffInDays($today);
@@ -128,10 +128,12 @@ class Peminjaman extends Model
     public static function calculateTarif($jadwal_dates, $statusPeminjam, $sarana = null, $ruangan = null)
     {
         $totalTarif = 0;
-        
         $targetEntity = $ruangan ?? $sarana;
-        $totalHours = 0;
-        $hasChargeableHours = false; 
+
+        $isLapangan = false;
+        if ($sarana && $sarana->kategoriSarana && strtolower($sarana->kategoriSarana->jenis) === 'lapangan') {
+            $isLapangan = true;
+        }
         
         if ($targetEntity->is_hourly_rate) {
             foreach ($jadwal_dates as $booking) {
@@ -140,43 +142,28 @@ class Peminjaman extends Model
                 $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
                 $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
                 $hours = $endTime->diffInHours($start);
-                $totalHours += $hours;
-                
-                $isWeekend = $date->isWeekend();
-                $isAfterHours = $start->hour > 16 || ($start->hour == 16 && $start->minute > 0) || $endTime->hour > 16 || ($endTime->hour == 16 && $endTime->minute > 0);
-                $isChargeableTime = $isWeekend || $isAfterHours;
-                
-                if ($isChargeableTime) {
-                    $hasChargeableHours = true;
-                    
-                    $chargeableHours = $hours;
-                    
-                    if (!$isWeekend && $isAfterHours && $start->hour < 16) {
-                        $cutoffTime = Carbon::createFromFormat('H:i:s', '16:00:00');
-                        $chargeableHours = $endTime->diffInHours($cutoffTime);
-                    }
-                }
-                
+
+                // Untuk Lapangan, semua slot dianggap berbayar
                 $isWeekday = !$date->isWeekend();
                 $isBeforeFourPM = $start->hour <= 16 && $endTime->hour <= 16;
                 $isFreeTimeSlot = $isWeekday && $isBeforeFourPM && $statusPeminjam !== 'umum';
-                
-                if (!$isFreeTimeSlot) {
+
+                // Jika Lapangan, slot reguler juga berbayar
+                if ($isLapangan || !$isFreeTimeSlot) {
                     $baseRate = match($statusPeminjam) {
                         'ormawa' => $targetEntity->tariformawa,
                         'unit' => $targetEntity->tarifunit,
                         default => $targetEntity->tarifumum
                     };
-                    
-                    $hoursPerUnit = $targetEntity->hours_per_unit ?? 1; 
+
+                    $hoursPerUnit = $targetEntity->hours_per_unit ?? 1;
                     $units = ceil($hours / $hoursPerUnit);
-                    
+
                     $bookingTarif = $baseRate * $units;
                     $totalTarif += $bookingTarif;
                 }
             }
-        }
-        else {
+        } else {
             $bookingsByDate = [];
             foreach ($jadwal_dates as $booking) {
                 $date = Carbon::parse($booking['date']);
@@ -184,47 +171,39 @@ class Peminjaman extends Model
                 $jadwal = Jadwal::find($booking['jadwal_id']);
                 $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
                 $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
-                
+
                 if (!isset($bookingsByDate[$dateStr])) {
                     $bookingsByDate[$dateStr] = [
                         'bookings' => [],
                         'date' => $date,
-                        'allDuringFreeTime' => true 
+                        'allDuringFreeTime' => true
                     ];
                 }
-                
+
                 $isWeekday = !$date->isWeekend();
                 $isBeforeFourPM = $start->hour <= 16 && $endTime->hour <= 16;
                 $isFreeTimeSlot = $isWeekday && $isBeforeFourPM && $statusPeminjam !== 'umum';
-                
-                if (!$isFreeTimeSlot) {
+
+                // Jika Lapangan, slot reguler juga berbayar
+                if ($isLapangan || !$isFreeTimeSlot) {
                     $bookingsByDate[$dateStr]['allDuringFreeTime'] = false;
                 }
-                
+
                 $bookingsByDate[$dateStr]['bookings'][] = $booking;
             }
-            
+
             foreach ($bookingsByDate as $dateInfo) {
-                if (!$dateInfo['allDuringFreeTime']) {
+                if ($isLapangan || !$dateInfo['allDuringFreeTime']) {
                     $baseRate = match($statusPeminjam) {
                         'ormawa' => $targetEntity->tariformawa,
                         'unit' => $targetEntity->tarifunit,
                         default => $targetEntity->tarifumum
                     };
-                    
+
                     $totalTarif += $baseRate;
-                }
-                
-                foreach ($dateInfo['bookings'] as $booking) {
-                    $jadwal = Jadwal::find($booking['jadwal_id']);
-                    $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
-                    $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
-                    $hours = $endTime->diffInHours($start);
-                    $totalHours += $hours;
                 }
             }
         }
-        
         return $totalTarif;
     }
 

@@ -564,7 +564,6 @@ function confirmCancel() {
         @else
         const statusPeminjam = document.getElementById('statusPeminjam').value;
         @endif
-        if (!statusPeminjam) return;
     
         const jadwalSelects = document.querySelectorAll('select[name^="jadwal_dates"][name$="[jadwal_id]"]');
         const dates = Array.from(document.querySelectorAll('input[name^="jadwal_dates"][name$="[date]"]')).map(input => input.value);
@@ -578,6 +577,10 @@ function confirmCancel() {
         const isHourlyRate = {{ isset($ruangan) ? ($ruangan->is_hourly_rate ? 'true' : 'false') : ($sarana->is_hourly_rate ? 'true' : 'false') }};
         const hoursPerUnit = {{ isset($ruangan) ? ($ruangan->hours_per_unit ?? 0) : ($sarana->hours_per_unit ?? 0) }};
     
+        const isLapangan = "{{ isset($ruangan) ? strtolower($ruangan->sarana->kategoriSarana->jenis) : strtolower($sarana->kategoriSarana->jenis) }}" === "lapangan";
+
+        if (!statusPeminjam && !isLapangan) return;
+
         let totalTarif = 0;
     
         dates.forEach((date, index) => {
@@ -600,7 +603,7 @@ function confirmCancel() {
             
             const isAfterHours = startHour > 16 || (startHour === 16 && startMinute > 0) || endHour > 16 || (endHour === 16 && endMinute > 0);
     
-            if (isWeekend || isAfterHours || statusPeminjam === 'umum') {
+            if (isLapangan || isWeekend || isAfterHours || statusPeminjam === 'umum') {
                 if (isHourlyRate && hoursPerUnit > 0) {
                     const startMinutes = parseInt(startTime.split(':')[1]) || 0;
                     const endMinutes = parseInt(endTime.split(':')[1]) || 0;

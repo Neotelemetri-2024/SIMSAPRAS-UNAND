@@ -357,13 +357,13 @@
                     <h4 class="text-md font-semibold text-blue-700 mb-3">{{ $bulanIni }} (Bulan Berjalan)</h4>
                     <div class="flex items-center mb-2">
                         <div class="w-full bg-gray-200 rounded-full h-3">
-                            <div class="bg-blue-600 h-3 rounded-full" style="width: {{ ($jamLemburBulanIni / 40) * 100 }}%"></div>
+                            <div class="bg-blue-600 h-3 rounded-full" style="width: {{ min(100, ($jamLemburBulanIni / 40) * 100) }}%"></div>
                         </div>
-                        <span class="ml-3 text-sm font-medium text-blue-700">{{ round(($jamLemburBulanIni / 40) * 100) }}%</span>
+                        <span class="ml-3 text-sm font-medium text-blue-700">{{ min(100, round(($jamLemburBulanIni / 40) * 100)) }}%</span>
                     </div>
                     <p class="text-sm text-blue-700">
                         <span class="font-medium">Terpakai:</span> {{ $jamLemburBulanIni }} jam | 
-                        <span class="font-medium">Sisa:</span> {{ 40 - $jamLemburBulanIni }} jam dari 40 jam
+                        <span class="font-medium">Sisa:</span> {{ max(0, 40 - $jamLemburBulanIni) }} jam dari 40 jam
                     </p>
                 </div>
                 

@@ -83,7 +83,8 @@ class OverviewController extends Controller
             'jadwal_dates' => 'required|array|min:1',
             'jadwal_dates.*.date' => 'required|date',
             'jadwal_dates.*.jadwal_id' => 'required|exists:jadwal,id',
-            'idRuangan' => 'nullable|exists:ruangan,id', // tambahkan validasi ini
+            'idRuangan' => 'nullable|exists:ruangan,id',
+            'totalTarif' =>'nullable|integer|min:0',
         ]);
 
         DB::beginTransaction();
@@ -95,6 +96,8 @@ class OverviewController extends Controller
                 'status' => 'disetujui',
                 'instansi' => 'Superadmin SIMSAPRAS',
                 'statusPeminjam' => 'unit',
+                'totalTarif' => $request->totalTarif ?? 0,
+                'statusPembayaran' => 'lunas',
             ];
 
             if ($request->filled('idRuangan')) {
