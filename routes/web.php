@@ -135,6 +135,8 @@ Route::group(['middleware' => ['checkRole:superadmin,pimpinan', 'verified']], fu
 
 Route::group(['middleware' => ['checkRole:superadmin', 'verified']], function () {
     Route::resource('pengguna', PenggunaController::class);
+    Route::get('/admin', [PenggunaController::class, 'showAdmins'])->name('admin.index');
+    Route::get('/pimpinan', [PenggunaController::class, 'showPimpinans'])->name('pimpinan.index');
 });
 
 Route::get('/pengumuman', [PengumumanController::class, 'indexUser'])->name('pengumuman.user');
