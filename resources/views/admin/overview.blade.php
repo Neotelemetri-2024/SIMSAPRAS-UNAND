@@ -1,6 +1,7 @@
 @extends('layouts.main')
 @section('styles')
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet'>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
    .fc { 
    height: 100%;
@@ -59,6 +60,11 @@
    transform: scale(1);
    opacity: 1;
    }
+   .booked-date {
+        background: #fbbf24 !important;
+        color: #fff !important;
+        border-radius: 50%;
+    }
 </style>
 @endsection
 @section('content')
@@ -257,6 +263,10 @@
                      <span class="text-sm text-gray-600">Tanggal</span>
                      <div id="modalTanggal" class="text-sm text-gray-900"></div>
                   </div>
+                  <div class="flex justify-between items-center py-2 border-b">
+                     <span class="text-sm text-gray-600">Jadwal</span>
+                     <div id="modalJadwal" class="text-sm text-gray-900"></div>
+                  </div>
                   <!-- Sarana -->
                   <div class="flex justify-between items-center py-2 border-b">
                      <span class="text-sm text-gray-600">Sarana</span>
@@ -289,9 +299,11 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales/id.global.min.js'></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-   document.addEventListener('DOMContentLoaded', function() {
+    window.bookedJadwals = @json($booked);
+
+    document.addEventListener('DOMContentLoaded', function() {
        const calendarEl = document.getElementById('calendar-container');
        const events = @json($events);
        const modal = document.getElementById('eventModal');
@@ -375,7 +387,8 @@
                    month: 'long',
                    day: 'numeric'
                });
-   
+               document.getElementById('modalJadwal').textContent = info.event.extendedProps.jadwal || '-';
+
                // Show modal with animation
                modal.classList.remove('hidden');
                setTimeout(() => {
@@ -552,25 +565,82 @@ function checkSaranaType() {
         saranaSelect.classList.add('bg-green-100');
     }
 }
+
+const bookedDates = window.bookedJadwals.map(b => b.tanggal);
+
+function timeToMinutes(time) {
+    const [h, m] = time.split(':').map(Number);
+    return h * 60 + m;
+}
+
+function isOverlap(startA, endA, startB, endB) {
+    return startA < endB && startB < endA;
+}
+
+function getAvailableJadwals(selectedDate, saranaId, ruanganId) {
+    const booked = window.bookedJadwals || [];
+    return window.jadwals.map(jadwal => {
+        // Cek hanya jika jadwal_id sama pada tanggal & sarana/ruangan yang sama
+        const isBooked = booked.some(b =>
+            b.tanggal === selectedDate &&
+            b.jadwal_id == jadwal.id &&
+            (b.sarana_id == saranaId || (ruanganId && b.ruangan_id == ruanganId))
+        );
+        return {
+            ...jadwal,
+            disabled: isBooked // hanya untuk label, option tetap bisa dipilih
+        };
+    });
+}
+
+function getFilteredBookedDates(saranaId, ruanganId) {
+    return (window.bookedJadwals || [])
+        .filter(b => {
+            // Jika ada ruanganId, filter berdasarkan ruangan_id
+            if (ruanganId) {
+                return b.ruangan_id == ruanganId;
+            }
+            // Jika tidak ada ruanganId, filter berdasarkan sarana_id
+            return b.sarana_id == saranaId;
+        })
+        .map(b => b.tanggal); // Ambil hanya tanggalnya
+}
+
 // Function untuk menambah entry tanggal dan jadwal
+// Ganti fungsi addDateEntry Anda dengan yang ini
+
 let dateCounter = 0;
 function addDateEntry() {
     const container = document.getElementById('dateContainer');
     const dateId = dateCounter++;
-    
+    const saranaId = document.getElementById('bookingSarana').value;
+    const ruanganId = document.getElementById('ruanganSelect') ? document.getElementById('ruanganSelect').value : null;
+
+    if (!saranaId) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Peringatan',
+            text: 'Silakan pilih sarana terlebih dahulu.',
+            confirmButtonColor: '#059669'
+        });
+        return;
+    }
+
     const dateEntry = document.createElement('div');
     dateEntry.className = 'flex items-center gap-4 p-4 bg-gray-50 rounded-lg relative';
     dateEntry.id = `date_entry_${dateId}`;
-    
+
     dateEntry.innerHTML = `
         <div class="flex-1">
-            <input type="date" 
+            <input type="text" 
                    name="jadwal_dates[${dateId}][date]" 
-                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                   class="datepicker block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                   placeholder="Pilih Tanggal..."
                    required>
         </div>
         <div class="flex-1">
             <select name="jadwal_dates[${dateId}][jadwal_id]"
+                    id="jadwalSelect_${dateId}"
                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     required>
                 <option value="">Pilih Jadwal</option>
@@ -587,9 +657,63 @@ function addDateEntry() {
             </svg>
         </button>
     `;
-    
     container.appendChild(dateEntry);
+
+    const filteredBookedDates = getFilteredBookedDates(saranaId, ruanganId);
+
+    flatpickr(dateEntry.querySelector('.datepicker'), {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        onChange: function(selectedDates, dateStr, instance) {
+            updateJadwalOptions(dateId, dateStr); 
+        },
+        onDayCreate: function(dObj, dStr, fp, dayElem) {
+            
+            const year = dayElem.dateObj.getFullYear();
+            const month = String(dayElem.dateObj.getMonth() + 1).padStart(2, '0'); 
+            const day = String(dayElem.dateObj.getDate()).padStart(2, '0');
+            const localDateString = `${year}-${month}-${day}`;
+
+            if (filteredBookedDates.includes(localDateString)) {
+                dayElem.classList.add('booked-date');
+            }
+        }
+    });
 }
+
+function updateJadwalOptions(dateId, selectedDate) {
+    const jadwalSelect = document.getElementById(`jadwalSelect_${dateId}`);
+    const saranaId = document.getElementById('bookingSarana').value;
+    const ruanganId = document.getElementById('ruanganSelect').value;
+
+    // Pastikan sarana sudah dipilih
+    if (!saranaId) {
+        jadwalSelect.innerHTML = '<option value="">Pilih Sarana terlebih dahulu</option>';
+        return;
+    }
+
+    // Dapatkan jadwal yang tersedia menggunakan fungsi yang sudah ada
+    const availableJadwals = getAvailableJadwals(selectedDate, saranaId, ruanganId);
+    
+    // Perbarui opsi pada elemen <select>
+    let optionsHTML = '<option value="">Pilih Jadwal</option>';
+    availableJadwals.forEach(jadwal => {
+        // Selalu bisa dipilih, tapi beri label (Terisi) jika jadwal.disabled true
+        const label = `${jadwal.mulai} - ${jadwal.selesai}${jadwal.disabled ? ' (Terisi)' : ''}`;
+        optionsHTML += `<option value="${jadwal.id}">${label}</option>`;
+    });
+    jadwalSelect.innerHTML = optionsHTML;
+}
+
+document.getElementById('bookingSarana').addEventListener('change', function() {
+    // Kosongkan container tanggal setiap kali sarana utama berubah
+    document.getElementById('dateContainer').innerHTML = '';
+});
+
+document.getElementById('ruanganSelect').addEventListener('change', function() {
+    // Kosongkan juga container tanggal jika ruangan berubah
+    document.getElementById('dateContainer').innerHTML = '';
+});
 
 // Function untuk menghapus entry tanggal
 function removeDateEntry(dateId) {

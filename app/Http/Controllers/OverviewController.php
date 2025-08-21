@@ -33,7 +33,8 @@ class OverviewController extends Controller
                 'saranaName' => $peminjaman->sarana->nama,
                 'kegiatan' => $peminjaman->kegiatan,
                 'start' => optional($tanggal)->tanggal,
-                'jadwal' => optional($tanggal)->jadwal,
+                // Jadwal HARUS string, bukan object!
+                'jadwal' => $tanggal && $tanggal->jadwal ? $tanggal->jadwal->mulai . ' - ' . $tanggal->jadwal->selesai : '-',
                 'status' => $peminjaman->status,
                 'peminjam' => $peminjaman->user->name ?? 'Anonim',
                 'instansi' => $peminjaman->instansi ?? '-',
@@ -64,7 +65,7 @@ class OverviewController extends Controller
                     'kegiatan' => $peminjaman->kegiatan ?? '-',
                     'sarana' => $peminjaman->sarana->nama ?? '-',
                     'ruangan' => $peminjaman->ruangan->nama ?? '-',
-                    'jadwal' => optional($tanggal->jadwal)->mulai . ' - ' . optional($tanggal->jadwal)->selesai,
+                    'jadwal' => $tanggal && $tanggal->jadwal ? $tanggal->jadwal->mulai . ' - ' . $tanggal->jadwal->selesai : '-',
                     'estimasiPeserta' => $peminjaman->estimasiPeserta
                 ]
             ];
@@ -72,7 +73,30 @@ class OverviewController extends Controller
             return !empty($event['start']);
         })->values();
 
-        return view('admin.overview', compact('events', 'saranas', 'jadwals'));
+        $booked = TanggalPeminjaman::with(['jadwal', 'peminjaman'])
+            ->whereHas('peminjaman', function($q) {
+                $q->whereIn('status', ['diajukan', 'diproses', 'disetujui']);
+            })
+            ->get()
+            ->map(function($item) {
+                // Pastikan relasi peminjaman dan jadwal ada untuk menghindari error
+                if (!$item->peminjaman || !$item->jadwal) {
+                    return null;
+                }
+                
+                return [
+                    'tanggal'    => $item->tanggal,
+                    'jadwal_id'  => $item->idJadwal,
+                    'sarana_id'  => $item->peminjaman->idSarana,
+                    'ruangan_id' => $item->peminjaman->idRuangan,
+                    'mulai'      => $item->jadwal->mulai,  // Tambahkan ini
+                    'selesai'    => $item->jadwal->selesai, // Tambahkan ini
+                ];
+            })
+            ->filter() // Hapus item yang null
+            ->values(); // Reset key array
+
+        return view('admin.overview', compact('events', 'saranas', 'jadwals', 'booked'));
     }
 
     public function store(Request $request)
