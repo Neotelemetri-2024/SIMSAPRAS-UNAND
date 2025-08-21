@@ -15,17 +15,35 @@ class PenggunaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::query()->where('role', '!=', 'superadmin');
-
-        // Filter berdasarkan role dari dropdown
-        if ($request->filled('role') && in_array($request->role, ['user', 'admin', 'pimpinan'])) {
-            $query->where('role', $request->role);
-        }
+        $query = User::query()->where('role', 'user');
 
         $pengguna = $query->orderBy('created_at', 'desc')->paginate(25)->appends($request->all());
+
         $sarana = Sarana::all();
 
-        return view('admin.pengguna', compact('pengguna', 'sarana'));
+        return view('admin.pengguna.user', compact('pengguna', 'sarana'));
+    }
+
+    public function showAdmins(Request $request)
+    {
+        $query = User::query()->where('role', 'admin');
+
+        $admins = $query->orderBy('created_at', 'desc')->paginate(25)->appends($request->all());
+
+        $sarana = Sarana::all();
+
+        return view('admin.pengguna.admin', compact('admins', 'sarana'));
+    }
+
+    public function showPimpinans(Request $request)
+    {
+        $query = User::query()->where('role', 'pimpinan');
+
+        $pimpinans = $query->orderBy('created_at', 'desc')->paginate(25)->appends($request->all());
+
+        $sarana = Sarana::all();
+
+        return view('admin.pengguna.pimpinan', compact('pimpinans', 'sarana'));
     }
 
     public function store(Request $request)
@@ -83,10 +101,17 @@ class PenggunaController extends Controller
 
                 DB::commit();
 
+                $redirect = route('pengguna.index');
+                if ($validated['role'] === 'admin') {
+                    $redirect = route('admin.index');
+                } elseif ($validated['role'] === 'pimpinan') {
+                    $redirect = route('pimpinan.index');
+                }
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Data Pengguna berhasil ditambahkan',
-                    'redirect' => route('pengguna.index')
+                    'redirect' => $redirect
                 ]);
             } catch (\Illuminate\Validation\ValidationException $e) {
                 DB::rollBack();
@@ -139,7 +164,7 @@ class PenggunaController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Data Pengguna berhasil diperbarui',
-                    'redirect' => route('pengguna.index')
+                    'redirect' => route('admin.index')
                 ]);
             } catch (\Illuminate\Validation\ValidationException $e) {
                 DB::rollBack();

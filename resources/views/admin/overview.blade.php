@@ -119,7 +119,7 @@
       </div>
    </div>
    @canany(['is-superadmin', 'is-pimpinan'])
-   <div class="flex justify-end mb-4">
+   <div class="flex justify-end mb-4 mt-4">
       <button data-modal-toggle="bookingModal" data-modal-target="bookingModal" 
       type="button" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">

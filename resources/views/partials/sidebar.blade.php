@@ -156,15 +156,45 @@
                 <span class="ml-3">Jadwal Peminjaman</span>
              </a>
           </li>
-          <li>
-             <a href="{{ route('pengguna.index') }}"
-                class="flex items-center p-2 rounded-lg group transition-colors duration-200 {{ request()->routeIs('pengguna.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
-                <svg class="w-5 h-5 transition duration-75 {{ request()->routeIs('pengguna.index') ? 'text-green-600' : 'text-gray-500 group-hover:text-gray-900' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+          @php
+            $penggunaRoutes = [
+               'pimpinan.index', 'admin.index', 'pengguna.index'
+            ];
+         @endphp
+         <li class="relative">
+            <button type="button"
+                     class="flex items-center w-full p-2 text-base rounded-lg group transition duration-200 {{ request()->routeIs($penggunaRoutes) ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}"
+                     data-collapse-toggle="pengguna-dropdown"
+                     aria-expanded="{{ request()->routeIs($penggunaRoutes) ? 'true' : 'false' }}">
+               <svg class="w-5 h-5 transition duration-75 {{ request()->routeIs($penggunaRoutes) ? 'text-green-600' : 'text-gray-500 group-hover:text-gray-900' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                </svg>
-                <span class="ml-3">Pengguna</span>
-             </a>
-          </li>
+               <span class="flex-1 ml-3 text-left whitespace-nowrap">Pengguna</span>
+               <svg class="w-3 h-3 transition-transform duration-200 {{ request()->routeIs($penggunaRoutes) ? 'rotate-180' : '' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+               </svg>
+            </button>
+            <ul id="pengguna-dropdown" class="{{ request()->routeIs($penggunaRoutes) ? 'block' : 'hidden' }} py-2 space-y-1">
+               <li>
+                     <a href="{{ route('pimpinan.index') }}"
+                        class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('pimpinan.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                        Pimpinan
+                     </a>
+               </li>
+               <li>
+                     <a href="{{ route('admin.index') }}"
+                        class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('admin.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                        Admin Gedung
+                     </a>
+               </li>
+               <li>
+                     <a href="{{ route('pengguna.index') }}"
+                        class="flex items-center w-full p-2 rounded-lg pl-11 transition duration-75 {{ request()->routeIs('pengguna.index') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                        Peminjam
+                     </a>
+               </li>
+            </ul>
+         </li>
           @endcan
           @canany(['is-superadmin', 'is-admin'])
           <li>
