@@ -37,7 +37,7 @@
                                             required>
                                         <option value="" disabled selected hidden>Pilih Sarana</option>
                                         @foreach($sarana as $item)
-                                            <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                            <option value="{{ $item->hashed_id }}">{{ $item->nama }}</option>
                                         @endforeach
                                     </select>
                                     @error('id_sarana')

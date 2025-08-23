@@ -27,7 +27,7 @@
                <select name="filter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
                   <option value="">Semua Sarana</option>
                   @foreach($sarana as $item)
-                  <option value="{{ $item->id }}" {{ request('filter') == $item->id ? 'selected' : '' }}>
+                  <option value="{{ $item->hashed_id }}" {{ request('filter') == $item->id ? 'selected' : '' }}>
                      {{ $item->nama }}
                   </option>
                   @endforeach
@@ -74,7 +74,7 @@
                         @endif
                      </td>
                      <td class="px-6 py-4">
-                        <button data-modal-target="detailModal{{ $item->id }}" 
+                        <button data-modal-target="detailModal{{ $item->hashed_id }}" 
                            data-modal-toggle="detailModal{{ $item->id }}"
                            class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">
                            Detail
@@ -93,8 +93,8 @@
 </div>
 
 @foreach($pengaduan as $item)
-<div id="detailModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] overflow-y-auto hidden" data-modal-backdrop="static">
-    <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" data-modal-hide="detailModal{{ $item->id }}"></div>
+<div id="detailModal{{ $item->hashed_id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] overflow-y-auto hidden" data-modal-backdrop="static">
+    <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" data-modal-hide="detailModal{{ $item->hashed_id }}"></div>
     <div class="flex min-h-screen items-center justify-center py-8">
         <div class="relative w-full max-w-3xl mx-auto px-4">
             <div class="relative bg-white rounded-xl shadow-2xl dark:bg-gray-800 transform transition-all">
@@ -108,7 +108,7 @@
                                 Dilaporkan pada {{ $item->created_at->format('d F Y, H:i') }}
                             </p>
                         </div>
-                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-100 hover:text-gray-900 rounded-lg p-2 ml-auto inline-flex items-center dark:hover:bg-gray-700 dark:hover:text-white transition-colors" data-modal-hide="detailModal{{ $item->id }}">
+                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-100 hover:text-gray-900 rounded-lg p-2 ml-auto inline-flex items-center dark:hover:bg-gray-700 dark:hover:text-white transition-colors" data-modal-hide="detailModal{{ $item->hashed_id }}">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
@@ -171,7 +171,7 @@
                     <div class="flex items-center justify-end px-6 py-4">
                         <button type="button" 
                                 class="px-5 py-2.5 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-600 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors" 
-                                data-modal-hide="detailModal{{ $item->id }}">
+                                data-modal-hide="detailModal{{ $item->hashed_id }}">
                             Tutup
                         </button>
                     </div>

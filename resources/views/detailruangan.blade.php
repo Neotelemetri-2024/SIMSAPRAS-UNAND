@@ -396,7 +396,7 @@
 
                 <div class="mt-8">
                     <form action="{{ route('peminjaman.create') }}" method="GET" id="peminjamanForm">
-                        <input type="hidden" name="ruangan_id" value="{{ $ruangan->id }}">
+                        <input type="hidden" name="ruangan_id" value="{{ $ruangan->hashed_id }}">
                         <input type="hidden" name="selected_dates" id="selectedDates">
 
                         <div class="mb-6">

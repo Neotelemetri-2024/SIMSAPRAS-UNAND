@@ -143,7 +143,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex space-x-2">
-                                    <button data-modal-target="buktiModal{{ $item->id }}"
+                                    <button data-modal-target="buktiModal{{ $item->hashed_id }}"
                                         data-modal-toggle="buktiModal{{ $item->id }}"
                                         class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200"
                                         title="Lihat Bukti Pembayaran">
@@ -184,8 +184,8 @@
 
 <!-- Modal Bukti Pembayaran -->
 @foreach($buktiPembayaran as $item)
-<div id="buktiModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden">
-    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="buktiModal{{ $item->id }}"></div>
+<div id="buktiModal{{ $item->hashed_id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="buktiModal{{ $item->hashed_id }}"></div>
     <div class="relative w-full max-w-5xl max-h-full mx-auto my-4 p-4">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <!-- Modal header -->
@@ -193,7 +193,7 @@
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                     Bukti Pembayaran - {{ $item->user->name }}
                 </h3>
-                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="buktiModal{{ $item->id }}">
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="buktiModal{{ $item->hashed_id }}">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                     </svg>

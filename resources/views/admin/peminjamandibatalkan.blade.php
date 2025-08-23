@@ -228,7 +228,7 @@
     </div>
 
     @foreach ($peminjamanDibatalkan as $item)
-    <div id="editModalDibatalkan{{ $item->id }}" tabindex="-1" aria-hidden="true"
+    <div id="editModalDibatalkan{{ $item->hashed_id }}" tabindex="-1" aria-hidden="true"
         class="fixed inset-0 z-[60] hidden overflow-hidden" data-modal-backdrop="static">
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModalDibatalkan{{ $item->id }}"></div>
         

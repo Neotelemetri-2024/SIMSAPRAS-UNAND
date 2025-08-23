@@ -235,7 +235,7 @@
     </div>
 
     @foreach ($peminjamanSelesai as $item)
-    <div id="editModalSelesai{{ $item->id }}" tabindex="-1" aria-hidden="true"
+    <div id="editModalSelesai{{ $item->hashed_id }}" tabindex="-1" aria-hidden="true"
         class="fixed inset-0 z-[60] hidden overflow-hidden" data-modal-backdrop="static">
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModalSelesai{{ $item->id }}"></div>
         
@@ -468,7 +468,7 @@
                         </div>
                     </div>
                     @if(!$item->evaluasi)
-                    <form id="evaluasiForm{{ $item->id }}" action="{{ route('peminjaman.isiEvaluasi', $item->id) }}" method="POST">
+                    <form id="evaluasiForm{{ $item->hashed_id }}" action="{{ route('peminjaman.isiEvaluasi', $item->hashed_id) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">

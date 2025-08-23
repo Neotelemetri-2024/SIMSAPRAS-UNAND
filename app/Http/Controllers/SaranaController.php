@@ -78,7 +78,7 @@ class SaranaController extends Controller
             }
 
             $validationRules = [
-                'IdKategori' => 'required|exists:kategori_sarana,id',
+                "IdKategori" => "required|string|required",
                 'nama' => 'required|string|max:255',
                 'isRoom' => 'required|boolean',
                 'deskripsi' => 'required|string',
@@ -172,7 +172,7 @@ class SaranaController extends Controller
             }
 
             $validationRules = [
-                'IdKategori' => 'required|exists:kategori_sarana,id',
+                "IdKategori" => "required|string|required",
                 'nama' => 'required|string|max:255|unique:sarana,nama,'.$sarana->id,
                 'isRoom' => 'required|boolean',
                 'deskripsi' => 'required|string',
