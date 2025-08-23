@@ -8,6 +8,7 @@
         "php": "^8.1",
         "google/apiclient": "^2.18",
         "guzzlehttp/guzzle": "^7.2",
+        "hashids/hashids": "^5.0",
         "laravel/breeze": "^1.29",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",

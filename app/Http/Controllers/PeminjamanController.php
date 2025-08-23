@@ -13,6 +13,7 @@ use App\Models\Sarana;
 use App\Services\NotificationService;
 use Carbon\Carbon;
 use App\Models\FacilityUsage;
+use App\Services\HolidayService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -38,6 +39,10 @@ class PeminjamanController extends Controller
         $selectedDates = $request->selected_dates;
         $jadwals = Jadwal::where('status', 'aktif')->get();
         $bookedJadwals = $this->getBookedJadwals($request->selected_dates, $request->ruangan_id ?? null, $request->sarana_id ?? null);
+        
+        // Ambil data tanggal merah
+        $holidayService = new HolidayService();
+        $holidayDates = $holidayService->getHolidayDates();
         
         // Hitung jam lembur berdasarkan bulan dari tanggal yang dipilih
         $dates = json_decode($selectedDates);
@@ -66,7 +71,7 @@ class PeminjamanController extends Controller
             if ($ruangan->kelas) {
                 session()->flash('warning', 'Ruangan ini merupakan ruangan kelas yang hanya dapat dipinjam pada hari Sabtu dan Minggu.');
             }
-            return view('peminjaman', compact('sarana', 'ruangan', 'selectedDates', 'jadwals', 'bookedJadwals', 'jamLemburPerBulan'));
+            return view('peminjaman', compact('sarana', 'ruangan', 'selectedDates', 'jadwals', 'bookedJadwals', 'jamLemburPerBulan', 'holidayDates'));
         }
     
         $sarana = Sarana::findOrFail($request->sarana_id);
@@ -82,7 +87,7 @@ class PeminjamanController extends Controller
             return redirect()->route('home')->with('error', 'Sarana ini hanya dapat diakses oleh pengguna dari fakultas.');
         }
 
-        return view('peminjaman', compact('sarana', 'selectedDates', 'jadwals', 'bookedJadwals', 'jamLemburPerBulan'));
+        return view('peminjaman', compact('sarana', 'selectedDates', 'jadwals', 'bookedJadwals', 'jamLemburPerBulan', 'holidayDates'));
     }
 
     private function getBookedJadwals($selectedDates, $ruanganId = null, $saranaId = null)
@@ -131,6 +136,7 @@ class PeminjamanController extends Controller
         
         $peminjamans = $query->get();
         $totalJamLembur = 0;
+        $holidayService = new HolidayService();
         
         foreach ($peminjamans as $peminjaman) {
             foreach ($peminjaman->tanggalPeminjaman as $tanggalPeminjaman) {
@@ -146,15 +152,15 @@ class PeminjamanController extends Controller
                 $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
                 $hours = $endTime->diffInHours($start);
                 
-                $isWeekend = $date->isWeekend();
+                $isWeekendOrHoliday = $holidayService->isWeekendOrHoliday($date);
                 $isAfterHours = $start->hour >= 16 || $endTime->hour >= 16;
                 
-                // Hanya hitung jam lembur (weekend atau after hours)
-                if ($isWeekend || $isAfterHours) {
+                // Hanya hitung jam lembur (weekend/tanggal merah atau after hours)
+                if ($isWeekendOrHoliday || $isAfterHours) {
                     $chargeableHours = $hours;
                     
-                    // Jika bukan weekend tapi after hours, hitung hanya bagian setelah jam 16:00
-                    if (!$isWeekend && $isAfterHours && $start->hour < 16) {
+                    // Jika bukan weekend/tanggal merah tapi after hours, hitung hanya bagian setelah jam 16:00
+                    if (!$isWeekendOrHoliday && $isAfterHours && $start->hour < 16) {
                         $cutoffTime = Carbon::createFromFormat('H:i:s', '16:00:00');
                         $chargeableHours = $endTime->diffInHours($cutoffTime);
                     }
@@ -280,6 +286,7 @@ class PeminjamanController extends Controller
                 
                 // Hitung jam yang akan digunakan di bulan tersebut dari peminjaman saat ini
                 $requestedHours = 0;
+                $holidayService = new HolidayService();
                 foreach ($validated['jadwal_dates'] as $booking) {
                     $date = Carbon::parse($booking['date']);
                     if ($date->format('Y-m') == $yearMonth) {
@@ -288,14 +295,14 @@ class PeminjamanController extends Controller
                         $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
                         $hours = $endTime->diffInHours($start);
                         
-                        $isWeekend = $date->isWeekend();
+                        $isWeekendOrHoliday = $holidayService->isWeekendOrHoliday($date);
                         $isAfterHours = $start->hour > 16 || ($start->hour == 16 && $start->minute > 0) || 
                                     $endTime->hour > 16 || ($endTime->hour == 16 && $endTime->minute > 0);
                         
-                        if ($isWeekend || $isAfterHours) {
+                        if ($isWeekendOrHoliday || $isAfterHours) {
                             $chargeableHours = $hours;
                             
-                            if (!$isWeekend && $isAfterHours && $start->hour < 16) {
+                            if (!$isWeekendOrHoliday && $isAfterHours && $start->hour < 16) {
                                 $cutoffTime = Carbon::createFromFormat('H:i:s', '16:00:00');
                                 $chargeableHours = $endTime->diffInHours($cutoffTime);
                             }

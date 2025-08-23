@@ -107,7 +107,7 @@
                <select id="saranaFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5 w-full sm:w-48">
                   <option value="">Semua Sarana</option>
                   @foreach($saranas as $sarana)
-                  <option value="{{ $sarana->id }}">{{ $sarana->nama }}</option>
+                  <option value="{{ $sarana->hashed_id }}">{{ $sarana->nama }}</option>
                   @endforeach
                </select>
                <select id="statusFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5 w-full sm:w-48">

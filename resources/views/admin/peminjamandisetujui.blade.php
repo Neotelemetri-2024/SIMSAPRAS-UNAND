@@ -229,7 +229,7 @@
     </div>
 
     @foreach ($peminjamanDisetujui as $item)
-    <div id="editModalDisetujui{{ $item->id }}" tabindex="-1" aria-hidden="true"
+    <div id="editModalDisetujui{{ $item->hashed_id }}" tabindex="-1" aria-hidden="true"
         class="fixed inset-0 z-[60] hidden overflow-hidden" data-modal-backdrop="static">
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModalDisetujui{{ $item->id }}"></div>
         
@@ -514,7 +514,7 @@
     @endforeach
     @foreach ($peminjamanDisetujui as $item)
 <!-- Modal Pembatalan -->
-<div id='batalModalDisetujui{{ $item->id }}' tabindex="-1" aria-hidden="true" 
+<div id="batalModalDisetujui{{ $item->hashed_id }}" tabindex="-1" aria-hidden="true" 
     class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
     <!-- Backdrop with higher z-index -->
     <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="batalModalDisetujui{{ $item->id }}"></div>
@@ -549,7 +549,7 @@
                         Apakah Anda yakin ingin membatalkan peminjaman ini? Harap berikan alasan pembatalan:
                     </p>
                     <div class="mt-4">
-                        <textarea id="feedbackPembatalan{{ $item->id }}" 
+                        <textarea id="feedbackPembatalan{{ $item->hashed_id }}" 
                             rows="4" 
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" 
                             placeholder="Masukkan alasan pembatalan..."></textarea>

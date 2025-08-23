@@ -20,7 +20,7 @@
 
         <!-- Search Bar -->
         <div class="p-5 border-b border-gray-200 dark:border-gray-700">
-            <form id="searchForm"  method="GET" action="{{ route('ruangan.index', $sarana->id) }}" class="flex gap-3">
+            <form id="searchForm"  method="GET" action="{{ route('ruangan.index', $sarana->hashed_id) }}" class="flex gap-3">
                 <div class="flex-1">
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -115,7 +115,7 @@
                                     <!-- Tombol Sampah (Hanya jika status Nonaktif) -->
                                     @if($item->status == "aktif")
                                     <!-- Tombol Edit -->
-                                    <button data-modal-target="editModal{{ $item->id }}"
+                                    <button data-modal-target="editModal{{ $item->hashed_id }}"
                                         data-modal-toggle="editModal{{ $item->id }}"
                                         class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,7 +256,7 @@
                     </svg>
                 </button>
             </div>
-            <form id="ruanganForm" action="{{ route('ruangan.store', $sarana->id) }}" method="POST" enctype="multipart/form-data">
+            <form id="ruanganForm" action="{{ route('ruangan.store', $sarana->hashed_id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="p-6">
                     <div class="grid grid-cols-2 gap-6">
@@ -324,14 +324,14 @@
 
 <!-- Edit Modal -->
 @foreach($ruangan as $item)
-<div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+<div id="editModal{{ $item->hashed_id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
     <!-- Backdrop with higher z-index -->
-    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModal{{ $item->id }}"></div>
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModal{{ $item->hashed_id }}"></div>
     <div class="relative w-full max-w-4xl max-h-full">
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Edit Ruangan</h3>
-                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center" data-modal-hide="editModal{{ $item->id }}">
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center" data-modal-hide="editModal{{ $item->hashed_id }}">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                     </svg>
@@ -411,10 +411,10 @@
 
                                         <!-- Tombol Delete dengan Icon Trash -->
                                         <div class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <input type="checkbox" name="delete_images[]" value="{{ $gambar->id }}"
-                                                   id="delete_image_{{ $gambar->id }}"
+                                            <input type="checkbox" name="delete_images[]" value="{{ $gambar->hashed_id }}"
+                                                   id="delete_image_{{ $gambar->hashed_id }}"
                                                    class="hidden">
-                                            <label for="delete_image_{{ $gambar->id }}"
+                                            <label for="delete_image_{{ $gambar->hashed_id }}"
                                                    class="p-1 bg-red-500 hover:bg-red-600 rounded-lg cursor-pointer text-white flex items-center justify-center
                                                           transition-colors deleteImageBtn">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -443,7 +443,7 @@
                 </div>
                 <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200">
                     <button type="submit" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">Simpan Perubahan</button>
-                    <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5" data-modal-hide="editModal{{ $item->id }}">Batal</button>
+                    <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5" data-modal-hide="editModal{{ $item->hashed_id }}">Batal</button>
                 </div>
             </form>
         </div>

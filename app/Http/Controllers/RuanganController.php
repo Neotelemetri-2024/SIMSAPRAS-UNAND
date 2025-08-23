@@ -146,7 +146,7 @@ class RuanganController extends Controller
             if ($request->has('delete_images')) {
                 $deleteImages = is_array($request->delete_images) ? $request->delete_images : [$request->delete_images];
                 foreach ($deleteImages as $imageId) {
-                    $gambar = GambarRuangan::find($imageId);
+                    $gambar = GambarRuangan::findOrFail($imageId);
                     if ($gambar && $gambar->idRuangan == $id) {
                         Storage::delete($gambar->gambar);
                         $gambar->delete();

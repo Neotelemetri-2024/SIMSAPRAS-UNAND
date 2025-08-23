@@ -40,7 +40,7 @@ class PenjagaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'idSarana' => 'required|exists:sarana,id',
+            "idSarana" => "required|string|required",
             'nama' => 'required|string|max:255',
             'kontak' => 'required|string|max:255',
         ]);
@@ -57,7 +57,7 @@ class PenjagaController extends Controller
     public function update(Request $request, Penjaga $penjaga)
     {
         $validated = $request->validate([
-            'idSarana' => 'required|exists:sarana,id',
+            "idSarana" => "required|string|required",
             'nama' => 'required|string|max:255',
             'kontak' => 'required|string|max:255',
         ]);

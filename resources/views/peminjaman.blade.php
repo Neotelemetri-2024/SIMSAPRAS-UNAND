@@ -399,7 +399,7 @@
                                 
                                 <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
                                     <p class="text-sm text-blue-700">
-                                        <i>Jam lembur dihitung untuk peminjaman di hari Sabtu/Minggu atau setelah pukul 16:00</i>
+                                        <i>Jam lembur dihitung untuk peminjaman di hari Sabtu/Minggu, tanggal merah, atau setelah pukul 16:00</i>
                                     </p>
                                 </div>
                             </div>
@@ -583,12 +583,17 @@ function confirmCancel() {
 
         let totalTarif = 0;
     
+        // Ambil data tanggal merah dari server
+        const holidayDates = @json($holidayDates ?? []);
+        
         dates.forEach((date, index) => {
             const jadwalId = jadwalSelects[index].value;
             if (!jadwalId) return;
     
             const dayOfWeek = new Date(date).getDay();
-            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; 
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            const isHoliday = holidayDates.includes(date);
+            const isWeekendOrHoliday = isWeekend || isHoliday;
     
             const selectedOption = jadwalSelects[index].options[jadwalSelects[index].selectedIndex];
             const timeText = selectedOption.text;
@@ -603,7 +608,7 @@ function confirmCancel() {
             
             const isAfterHours = startHour > 16 || (startHour === 16 && startMinute > 0) || endHour > 16 || (endHour === 16 && endMinute > 0);
     
-            if (isLapangan || isWeekend || isAfterHours || statusPeminjam === 'umum') {
+            if (isLapangan || isWeekendOrHoliday || isAfterHours || statusPeminjam === 'umum') {
                 if (isHourlyRate && hoursPerUnit > 0) {
                     const startMinutes = parseInt(startTime.split(':')[1]) || 0;
                     const endMinutes = parseInt(endTime.split(':')[1]) || 0;

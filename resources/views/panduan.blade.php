@@ -128,9 +128,29 @@
                         <p class="mb-2 text-gray-500">Peminjaman sarana dan prasarana di Universitas Andalas hanya akan dikenakan tarif pada kondisi sebagai berikut:</p>
                             <ul class="ps-5 text-gray-500 list-disc">
                                 <li>Peminjaman dilakukan di hari Sabtu atau Minggu</li>
+                                <li>Peminjaman dilakukan di tanggal merah (hari libur nasional)</li>
                                 <li>Peminjaman dilakukan setelah pukul 16:00 WIB (4 sore)</li>
                                 <li>Peminjam berstatus Umum akan selalu dikenakan tarif sesuai SK yang berlaku</li>
                             </ul>
+                            
+                            <!-- Informasi Rekening Pembayaran -->
+                            <div class="mt-4 p-4 bg-white rounded-lg border border-blue-200">
+                                <h5 class="font-semibold text-gray-900 mb-3">Informasi Rekening Pembayaran</h5>
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-gray-600">Bank</span>
+                                        <span class="font-medium">Bank Mandiri</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-gray-600">Nomor Rekening</span>
+                                        <span class="font-medium">1110010521405</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-gray-600">Atas Nama</span>
+                                        <span class="font-medium">RPL UNAND OPR BLU SEWA</span>
+                                    </div>
+                                </div>
+                            </div>
                             
                             <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100 flex items-center">
                                 <svg class="w-8 h-8 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

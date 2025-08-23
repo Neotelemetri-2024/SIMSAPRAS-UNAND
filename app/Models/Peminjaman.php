@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Traits\FiltersSaranaAccess;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Services\HolidayService;
 
 class Peminjaman extends Model
 {
@@ -129,6 +130,7 @@ class Peminjaman extends Model
     {
         $totalTarif = 0;
         $targetEntity = $ruangan ?? $sarana;
+        $holidayService = new HolidayService();
 
         $isLapangan = false;
         if ($sarana && $sarana->kategoriSarana && strtolower($sarana->kategoriSarana->jenis) === 'lapangan') {
@@ -143,12 +145,12 @@ class Peminjaman extends Model
                 $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
                 $hours = $endTime->diffInHours($start);
 
-                // Untuk Lapangan, semua slot dianggap berbayar
-                $isWeekday = !$date->isWeekend();
+                // Cek apakah weekend atau tanggal merah
+                $isWeekendOrHoliday = $holidayService->isWeekendOrHoliday($date);
                 $isBeforeFourPM = $start->hour <= 16 && $endTime->hour <= 16;
-                $isFreeTimeSlot = $isWeekday && $isBeforeFourPM && $statusPeminjam !== 'umum';
+                $isFreeTimeSlot = !$isWeekendOrHoliday && $isBeforeFourPM && $statusPeminjam !== 'umum';
 
-                // Jika Lapangan, slot reguler juga berbayar
+                // Jika Lapangan, semua slot dianggap berbayar
                 if ($isLapangan || !$isFreeTimeSlot) {
                     $baseRate = match($statusPeminjam) {
                         'ormawa' => $targetEntity->tariformawa,
@@ -180,9 +182,10 @@ class Peminjaman extends Model
                     ];
                 }
 
-                $isWeekday = !$date->isWeekend();
+                // Cek apakah weekend atau tanggal merah
+                $isWeekendOrHoliday = $holidayService->isWeekendOrHoliday($date);
                 $isBeforeFourPM = $start->hour <= 16 && $endTime->hour <= 16;
-                $isFreeTimeSlot = $isWeekday && $isBeforeFourPM && $statusPeminjam !== 'umum';
+                $isFreeTimeSlot = !$isWeekendOrHoliday && $isBeforeFourPM && $statusPeminjam !== 'umum';
 
                 // Jika Lapangan, slot reguler juga berbayar
                 if ($isLapangan || !$isFreeTimeSlot) {

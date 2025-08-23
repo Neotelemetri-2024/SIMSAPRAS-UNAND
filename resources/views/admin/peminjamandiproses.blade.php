@@ -217,7 +217,7 @@
    </div>
 </div>
 @foreach ($peminjamanDiproses as $item)
-<div id="editModalDiproses{{ $item->id }}" tabindex="-1" aria-hidden="true"
+<div id="editModalDiproses{{ $item->hashed_id }}" tabindex="-1" aria-hidden="true"
    class="fixed inset-0 z-[60] hidden overflow-hidden" data-modal-backdrop="static">
    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModalDiproses{{ $item->id }}"></div>
    <div class="flex min-h-full items-center justify-center p-4">
@@ -450,7 +450,7 @@
                         @endif
                      </div>
                   </div>
-                  <form id="updateForm{{ $item->id }}" action="{{ route('peminjaman.updateStatusDiproses', $item->id) }}" method="POST">
+                  <form id="updateForm{{ $item->hashed_id }}" action="{{ route('peminjaman.updateStatusDiproses', $item->hashed_id) }}" method="POST">
                      @csrf
                      @method('PUT')
                      <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
@@ -464,7 +464,7 @@
                         <div class="space-y-4">
                            <div>
                               <label class="block text-sm font-medium text-gray-700 mb-2">Update Status</label>
-                              <select id="statusSelect{{ $item->id }}" name="status"
+                              <select id="statusSelect{{ $item->hashed_id }}" name="status"
                                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                                  required onchange="handleStatusChange({{ $item->id }})">
                                  <option value="" disabled selected hidden>Pilih Status</option>
@@ -472,7 +472,7 @@
                                  <option value="ditolak">Tolak</option>
                               </select>
                            </div>
-                           <div id="fileUploadForm{{ $item->id }}" class="hidden">
+                           <div id="fileUploadForm{{ $item->hashed_id }}" class="hidden">
                               <label class="block text-sm font-medium text-gray-700 mb-2">
                                   Upload Surat Disposisi
                               </label>
@@ -485,7 +485,7 @@
                                              required 
                                              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                                              onchange="updateFileInfo(this, 'fileInfo{{ $item->id }}')">
-                                      <div class="text-center" id="fileInfo{{ $item->id }}">
+                                      <div class="text-center" id="fileInfo{{ $item->hashed_id }}">
                                           <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
@@ -495,15 +495,15 @@
                                           </p>
                                           <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX, JPG, JPEG, atau PNG (Maks. 2MB)</p>
                                       </div>
-                                      <div id="filePreview{{ $item->id }}" class="hidden mt-3">
+                                      <div id="filePreview{{ $item->hashed_id }}" class="hidden mt-3">
                                           <div class="flex items-center p-3 bg-white rounded-lg border border-gray-200">
                                               <svg class="w-8 h-8 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                               </svg>
                                               <div class="flex-1 min-w-0">
-                                                  <p class="text-sm font-medium text-gray-900 truncate" id="fileName{{ $item->id }}"></p>
-                                                  <p class="text-sm text-gray-500" id="fileSize{{ $item->id }}"></p>
+                                                  <p class="text-sm font-medium text-gray-900 truncate" id="fileName{{ $item->hashed_id }}"></p>
+                                                  <p class="text-sm text-gray-500" id="fileSize{{ $item->hashed_id }}"></p>
                                               </div>
                                               <button type="button" onclick="removeFile('dropzone-file{{ $item->id }}', 'fileInfo{{ $item->id }}', 'filePreview{{ $item->id }}')"
                                                       class="ml-3 text-sm font-medium text-red-500 hover:text-red-600 p-1">
@@ -519,7 +519,7 @@
                                   @enderror
                               </div>
                           </div>                  
-                           <div id="feedbackForm{{ $item->id }}" class="hidden">
+                           <div id="feedbackForm{{ $item->hashed_id }}" class="hidden">
                               <label class="block text-sm font-medium text-gray-700 mb-2">
                               Alasan Penolakan
                               </label>
@@ -558,7 +558,7 @@
 </div>
 @endforeach
 @foreach ($peminjamanDiproses as $item)
-<div id="batalModalDiproses{{ $item->id }}" tabindex="-1" aria-hidden="true" 
+<div id="batalModalDiproses{{ $item->hashed_id }}" tabindex="-1" aria-hidden="true" 
    class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="batalModalDiproses{{ $item->id }}"></div>
    <div class="flex items-center justify-center min-h-screen p-4">
@@ -586,7 +586,7 @@
                   Apakah Anda yakin ingin membatalkan peminjaman ini? Harap berikan alasan pembatalan:
                </p>
                <div class="mt-4">
-                  <textarea id="feedbackPembatalan{{ $item->id }}" 
+                  <textarea id="feedbackPembatalan{{ $item->hashed_id }}" 
                      rows="4" 
                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" 
                      placeholder="Masukkan alasan pembatalan..."></textarea>

@@ -120,7 +120,7 @@
                     <div class="space-y-4">
                         @foreach($pengumuman->take(3) as $item)
                         <div class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-all duration-200 cursor-pointer border border-gray-100" 
-                             onclick="openPengumumanModal('{{ $item->id }}')">
+                             onclick="openPengumumanModal('{{ $item->hashed_id }}')">
                             <div class="flex items-center justify-between">
                                 <div class="flex-1 min-w-0 pr-4">
                                     <p class="text-sm font-semibold text-gray-900 truncate">
@@ -172,7 +172,7 @@
 
 
 @foreach($pengumuman->take(3) as $item)
-<div id="pengumumanModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden">
+<div id="pengumumanModal{{ $item->hashed_id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden">
     <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
     <div class="flex min-h-screen items-center justify-center p-4">
         <div class="relative w-full max-w-2xl">
@@ -181,7 +181,7 @@
                     <h3 class="text-xl font-semibold text-gray-900">
                         {{ $item->judul }}
                     </h3>
-                    <button type="button" onclick="closePengumumanModal('{{ $item->id }}')"
+                    <button type="button" onclick="closePengumumanModal('{{ $item->hashed_id }}')"
                         class="text-gray-400 hover:bg-gray-100 hover:text-gray-900 rounded-lg p-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

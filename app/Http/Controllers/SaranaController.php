@@ -10,6 +10,7 @@ use App\Models\Pengumuman;
 use App\Models\Ruangan;
 use App\Models\User;
 use App\Models\FacilityUsage;
+use App\Services\HolidayService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Models\TanggalPeminjaman;
@@ -81,7 +82,7 @@ class SaranaController extends Controller
             }
 
             $validationRules = [
-                'IdKategori' => 'required|exists:kategori_sarana,id',
+                "IdKategori" => "required|string|required",
                 'nama' => 'required|string|max:255',
                 'isRoom' => 'required|boolean',
                 'deskripsi' => 'required|string',
@@ -175,7 +176,7 @@ class SaranaController extends Controller
             }
 
             $validationRules = [
-                'IdKategori' => 'required|exists:kategori_sarana,id',
+                "IdKategori" => "required|string|required",
                 'nama' => 'required|string|max:255|unique:sarana,nama,'.$sarana->id,
                 'isRoom' => 'required|boolean',
                 'deskripsi' => 'required|string',
@@ -545,6 +546,7 @@ class SaranaController extends Controller
         
         $peminjamans = $query->get();
         $totalJamLembur = 0;
+        $holidayService = new HolidayService();
         
         foreach ($peminjamans as $peminjaman) {
             foreach ($peminjaman->tanggalPeminjaman as $tanggalPeminjaman) {
@@ -560,15 +562,15 @@ class SaranaController extends Controller
                 $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
                 $hours = $endTime->diffInHours($start);
                 
-                $isWeekend = $date->isWeekend();
+                $isWeekendOrHoliday = $holidayService->isWeekendOrHoliday($date);
                 $isAfterHours = $start->hour >= 16 || $endTime->hour >= 16;
                 
-                // Hanya hitung jam lembur (weekend atau after hours)
-                if ($isWeekend || $isAfterHours) {
+                // Hanya hitung jam lembur (weekend/tanggal merah atau after hours)
+                if ($isWeekendOrHoliday || $isAfterHours) {
                     $chargeableHours = $hours;
                     
-                    // Jika bukan weekend tapi after hours, hitung hanya bagian setelah jam 16:00
-                    if (!$isWeekend && $isAfterHours && $start->hour < 16) {
+                    // Jika bukan weekend/tanggal merah tapi after hours, hitung hanya bagian setelah jam 16:00
+                    if (!$isWeekendOrHoliday && $isAfterHours && $start->hour < 16) {
                         $cutoffTime = Carbon::createFromFormat('H:i:s', '16:00:00');
                         $chargeableHours = $endTime->diffInHours($cutoffTime);
                     }
