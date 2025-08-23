@@ -117,6 +117,21 @@
    background-color: rgba(203, 213, 225, 0.3) !important;
    cursor: not-allowed !important;
    }
+   .fc-day.fc-holiday, .fc-daygrid-day.fc-holiday {
+        background-color: #fee2e2 !important;
+        position: relative;
+    }
+    .fc-day.fc-holiday .fc-daygrid-day-number,
+    .fc-daygrid-day.fc-holiday .fc-daygrid-day-number {
+        color: #dc2626 !important;
+        font-weight: bold;
+    }
+    .fc-holiday-event, .fc-event.fc-holiday-event {
+        color: #dc2626 !important;
+        background: transparent !important;
+        border: none !important;
+        font-weight: bold;
+    }
    /* Centered warning popup with close button */
    .warning-popup {
    position: fixed !important;
@@ -607,6 +622,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var selectedDatesDisplay = document.getElementById('selectedDatesDisplay');
     var submitBtn = document.getElementById('submitBtn');
     var selectedDatesInput = document.getElementById('selectedDates');
+
+    const holidayDates = @json($holidayDates ?? []);
     
     // Get date 1 week from now
     var minDate = new Date();
@@ -625,30 +642,32 @@ document.addEventListener('DOMContentLoaded', function() {
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
         events: @json($events).map(event => {
-                const start = new Date(event.start);
-                const end = new Date(event.end);
-                
-                // Set the appropriate class based on status
-                let statusClass;
-                switch(event.status) {
-                    case 'disetujui':
-                        statusClass = 'status-disetujui';
-                        break;
-                    case 'diproses':
-                    case 'diajukan':
-                    case 'diajukanbatal':
-                        statusClass = 'status-' + event.status;
-                        break;
-                    default:
-                        statusClass = '';
-                }
-                
-                return {
-                    ...event,
-                    title: `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}-${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`,
-                    className: statusClass
-                };
-            }),
+            const start = new Date(event.start);
+            const end = new Date(event.end);
+            
+            if (event.allDay && event.className && event.className.includes('fc-holiday-event')) {
+                return event;
+            }
+            let statusClass;
+            switch(event.status) {
+                case 'disetujui':
+                    statusClass = 'status-disetujui';
+                    break;
+                case 'diproses':
+                case 'diajukan':
+                case 'diajukanbatal':
+                    statusClass = 'status-' + event.status;
+                    break;
+                default:
+                    statusClass = '';
+            }
+            
+            return {
+                ...event,
+                title: `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}-${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`,
+                className: statusClass
+            };
+        }),
         displayEventTime: false,
         selectable: true,
         selectConstraint: {
@@ -686,7 +705,12 @@ document.addEventListener('DOMContentLoaded', function() {
             updateSelectedDatesDisplay();
         },
         dayCellDidMount: function(arg) {
-            // Disable weekday selection for classrooms
+            // Tandai hari libur nasional
+            const dateStr = arg.date.toLocaleDateString('en-CA'); // YYYY-MM-DD
+            if (holidayDates.includes(dateStr)) {
+                arg.el.classList.add('fc-holiday');
+            }
+            // Disable weekday selection for classrooms (jika perlu)
             if (isClassroom) {
                 const day = arg.date.getDay();
                 if (day !== 0 && day !== 6) {

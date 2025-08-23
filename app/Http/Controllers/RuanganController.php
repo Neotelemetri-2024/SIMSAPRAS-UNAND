@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class RuanganController extends Controller
 {
@@ -253,8 +254,66 @@ class RuanganController extends Controller
                 ];
             }
         }
-        
-        return view('detailruangan', compact('ruangan', 'events', 'admin'));
+
+        $holidayEvents = [];
+        $holidayDates = [];
+        // try {
+        //     $client = new \Google\Client();
+        //     $client->setDeveloperKey(env('GOOGLE_API_KEY'));
+        //     $service = new \Google\Service\Calendar($client);
+        //     $calendarId = env('GOOGLE_CALENDAR_ID');
+        //     $params = [
+        //         'timeMin' => now()->startOfYear()->toRfc3339String(),
+        //         'timeMax' => now()->endOfYear()->toRfc3339String(),
+        //         'singleEvents' => true,
+        //         'orderBy' => 'startTime',
+        //     ];
+        //     $results = $service->events->listEvents($calendarId, $params);
+        //     $holidays = $results->getItems();
+
+        //     foreach ($holidays as $holiday) {
+        //         $holidayDate = $holiday->getStart()->getDate();
+        //         $holidayEvents[] = [
+        //             'title'   => $holiday->getSummary(),
+        //             'start'   => $holidayDate,
+        //             'allDay'  => true,
+        //             'display' => 'background',
+        //             'color'   => '#ef4444',
+        //             'className' => ['fc-holiday-event'],
+        //         ];
+        //         $holidayDates[] = $holidayDate;
+        //     }
+        // } catch (\Exception $e) {
+        //     Log::error('Error fetching Google Calendar events: ' . $e->getMessage());
+        // }
+
+        try {
+            $liburApiUrl = env('LIBUR_API_URL', 'https://libur.deno.dev/api');
+            $response = @file_get_contents($liburApiUrl);
+            if ($response !== false) {
+                $holidays = json_decode($response, true);
+                if (is_array($holidays)) {
+                    foreach ($holidays as $holiday) {
+                        // Sesuaikan dengan struktur: ['date' => 'YYYY-MM-DD', 'name' => 'Nama Libur']
+                        $holidayEvents[] = [
+                            'title'   => $holiday['name'],
+                            'start'   => $holiday['date'],
+                            'allDay'  => true,
+                            'display' => 'background',
+                            'color'   => '#ef4444',
+                            'className' => ['fc-holiday-event'],
+                        ];
+                        $holidayDates[] = $holiday['date'];
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Error fetching Libur Nasional API: ' . $e->getMessage());
+        }
+
+        $events = array_merge($events, $holidayEvents);
+
+        return view('detailruangan', compact('ruangan', 'events', 'admin', 'holidayDates'));
     }
 
     public function activate($idSarana, $id)

@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Models\Peminjaman;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -14,6 +15,9 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('app:reset-monthly-usage')->monthlyOn(1, '00:00');
+        $schedule->call(function () {
+            Peminjaman::autoCancelExpired();
+        })->everyMinute();
     }
 
     /**

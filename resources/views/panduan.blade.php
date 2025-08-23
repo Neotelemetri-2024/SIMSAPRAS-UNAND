@@ -3,31 +3,6 @@
 @section('content')
     <div class="pt-24 px-4 max-w-screen-xl mx-auto min-h-screen">
         <div class="mb-8">
-            <nav class="flex mb-4" aria-label="Breadcrumb">
-                <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                    <li class="inline-flex items-center">
-                        <a href="{{ route('home') }}" class="inline-flex items-center text-gray-700 hover:text-green-600">
-                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                                </path>
-                            </svg>
-                            Beranda
-                        </a>
-                    </li>
-                    <li aria-current="page">
-                        <div class="flex items-center">
-                            <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                fill="none" viewBox="0 0 6 10">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="m1 9 4-4-4-4" />
-                            </svg>
-                            <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Panduan Pengguna</span>
-                        </div>
-                    </li>
-                </ol>
-            </nav>
             <div class="flex flex-col items-center">
                 <h1 class="text-3xl font-bold text-gray-900 mb-2">Panduan Pengguna SIMSAPRAS</h1>
                 <p class="text-gray-600">Pelajari cara menggunakan sistem peminjaman sarana dan prasarana Universitas
@@ -153,6 +128,7 @@
                         <p class="mb-2 text-gray-500">Peminjaman sarana dan prasarana di Universitas Andalas hanya akan dikenakan tarif pada kondisi sebagai berikut:</p>
                             <ul class="ps-5 text-gray-500 list-disc">
                                 <li>Peminjaman dilakukan di hari Sabtu atau Minggu</li>
+                                <li>Peminjaman dilakukan di tanggal merah (hari libur nasional)</li>
                                 <li>Peminjaman dilakukan setelah pukul 16:00 WIB (4 sore)</li>
                                 <li>Peminjam berstatus Umum akan selalu dikenakan tarif sesuai SK yang berlaku</li>
                             </ul>
@@ -193,6 +169,60 @@
                                     </a>
                                 </div>
                             </div>
+                    </div>
+                </div>
+
+                <h3 id="accordion-flush-heading-3">
+                    <button type="button"
+                        class="flex items-center justify-between w-full py-5 font-medium rtl:text-right text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400"
+                        data-accordion-target="#accordion-flush-body-3" aria-expanded="true"
+                        aria-controls="accordion-flush-body-3">
+                        <span>Bagaimana cara melakukan pembayaran dan ke rekening mana?</span>
+                        <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5 5 1 1 5" />
+                        </svg>
+                    </button>
+                </h3>
+                <div id="accordion-flush-body-3" class="hidden" aria-labelledby="accordion-flush-heading-3">
+                    <div class="py-5 border-b border-gray-200 dark:border-gray-700">
+                        <p class="mb-4 text-gray-500">Untuk melakukan pembayaran, ikuti langkah-langkah berikut:</p>
+                        <ol class="ps-5 text-gray-500 list-decimal mb-4">
+                            <li>Transfer ke rekening resmi Universitas Andalas</li>
+                            <li>Simpan bukti pembayaran</li>
+                            <li>Upload bukti pembayaran melalui sistem</li>
+                            <li>Tunggu konfirmasi dari admin</li>
+                        </ol>
+                        
+                        <div class="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                            <h5 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                </svg>
+                                Informasi Rekening Pembayaran
+                            </h5>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Bank:</span>
+                                    <span class="font-medium text-gray-900">Bank Mandiri</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Nomor Rekening:</span>
+                                    <span class="font-medium text-gray-900">1110010521405</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Atas Nama:</span>
+                                    <span class="font-medium text-gray-900">RPL UNAND OPR BLU SEWA</span>
+                                </div>
+                            </div>
+                            <div class="mt-3 p-3 bg-yellow-50 rounded border border-yellow-200">
+                                <p class="text-sm text-yellow-800">
+                                    <strong>Catatan:</strong> Pastikan transfer dilakukan ke rekening resmi di atas. Pembayaran harus diselesaikan dalam waktu 3 hari setelah peminjaman disetujui.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -67,6 +67,7 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     
     Route::get('/overview', [OverviewController::class, 'overview'])->name('admin.overview');
+    Route::post('/peminjaman', [OverviewController::class, 'store'])->name('admin.overview.store');
     Route::get('/peminjaman-diajukan', [PeminjamanDiajukanController::class, 'index'])->name('peminjaman.admin.diajukan');
     Route::put('/peminjaman/{id}/update-status-diajukan', [PeminjamanDiajukanController::class, 'updateStatusDiajukan'])->name('peminjaman.updateStatusDiajukan');
     Route::get('/peminjaman-diproses', [PeminjamanDiprosesController::class, 'index'])->name('peminjaman.admin.diproses');
@@ -134,6 +135,8 @@ Route::group(['middleware' => ['checkRole:superadmin,pimpinan', 'verified']], fu
 
 Route::group(['middleware' => ['checkRole:superadmin', 'verified']], function () {
     Route::resource('pengguna', PenggunaController::class);
+    Route::get('/admin', [PenggunaController::class, 'showAdmins'])->name('admin.index');
+    Route::get('/pimpinan', [PenggunaController::class, 'showPimpinans'])->name('pimpinan.index');
 });
 
 Route::get('/pengumuman', [PengumumanController::class, 'indexUser'])->name('pengumuman.user');

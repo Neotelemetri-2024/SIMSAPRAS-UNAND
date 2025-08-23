@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y \
     nano \
     vim \
     less \
-    nginx
+    nginx \
+    cron
 
 # Install Node.js dan NPM
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - \

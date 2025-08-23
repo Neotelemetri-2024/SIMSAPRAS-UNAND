@@ -1,6 +1,7 @@
 @extends('layouts.main')
 @section('styles')
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet'>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
    .fc { 
    height: 100%;
@@ -59,6 +60,11 @@
    transform: scale(1);
    opacity: 1;
    }
+   .booked-date {
+        background: #fbbf24 !important;
+        color: #fff !important;
+        border-radius: 50%;
+    }
 </style>
 @endsection
 @section('content')
@@ -119,7 +125,7 @@
       </div>
    </div>
    @canany(['is-superadmin', 'is-pimpinan'])
-   <div class="flex justify-end mb-4">
+   <div class="flex justify-end mb-4 mt-4">
       <button data-modal-toggle="bookingModal" data-modal-target="bookingModal" 
       type="button" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -157,8 +163,8 @@
                         <select id="bookingSarana" name="idSarana" onchange="checkSaranaType()" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             <option value="">Pilih Sarana</option>
                             @foreach($saranas as $sarana)
-                            <option value="{{ $sarana->hashed_id }}"
-                                data-kategori="{{ $sarana->kategoriSarana->jenis }}"
+                            <option value="{{ $sarana->id }}"
+                                data-kategori="{{ $sarana->isRoom }}"
                                 data-ruangan='@json($sarana->ruangan)'>
                                 {{ $sarana->nama }}
                             </option>
@@ -189,6 +195,11 @@
                         <button type="button" onclick="addDateEntry()" class="mt-2 px-4 py-2 text-sm font-medium text-green-600 hover:text-green-700">
                             + Tambah Tanggal
                         </button>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Tarif (Opsional)</label>
+                        <input type="text" name="totalTarif" inputmode="numeric" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
                     </div>
                 </form>
             </div>
@@ -252,6 +263,10 @@
                      <span class="text-sm text-gray-600">Tanggal</span>
                      <div id="modalTanggal" class="text-sm text-gray-900"></div>
                   </div>
+                  <div class="flex justify-between items-center py-2 border-b">
+                     <span class="text-sm text-gray-600">Jadwal</span>
+                     <div id="modalJadwal" class="text-sm text-gray-900"></div>
+                  </div>
                   <!-- Sarana -->
                   <div class="flex justify-between items-center py-2 border-b">
                      <span class="text-sm text-gray-600">Sarana</span>
@@ -284,9 +299,11 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales/id.global.min.js'></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-   document.addEventListener('DOMContentLoaded', function() {
+    window.bookedJadwals = @json($booked);
+
+    document.addEventListener('DOMContentLoaded', function() {
        const calendarEl = document.getElementById('calendar-container');
        const events = @json($events);
        const modal = document.getElementById('eventModal');
@@ -340,13 +357,13 @@
                // Set status with appropriate styling
                const statusEl = document.getElementById('modalStatus');
                const statusMap = {
-    'disetujui': ['bg-green-100 text-green-800'],
-    'diproses': ['bg-yellow-100 text-yellow-800'],
-    'ditolak': ['bg-red-100 text-red-800'],
-    'diajukan': ['bg-blue-100 text-blue-800'],
-    'dibatalkan': ['bg-gray-100 text-gray-800'],
-    'diajukanbatal': ['bg-purple-100 text-purple-800']
-};
+                    'disetujui': ['bg-green-100 text-green-800'],
+                    'diproses': ['bg-yellow-100 text-yellow-800'],
+                    'ditolak': ['bg-red-100 text-red-800'],
+                    'diajukan': ['bg-blue-100 text-blue-800'],
+                    'dibatalkan': ['bg-gray-100 text-gray-800'],
+                    'diajukanbatal': ['bg-purple-100 text-purple-800']
+                };
                const [statusClass] = statusMap[info.event.extendedProps.status] || ['bg-gray-100 text-gray-800', ''];
                
                statusEl.innerHTML = `
@@ -370,7 +387,8 @@
                    month: 'long',
                    day: 'numeric'
                });
-   
+               document.getElementById('modalJadwal').textContent = info.event.extendedProps.jadwal || '-';
+
                // Show modal with animation
                modal.classList.remove('hidden');
                setTimeout(() => {
@@ -445,69 +463,68 @@
        // Add custom CSS for event colors
        const styleSheet = document.createElement('style');
        styleSheet.textContent = `
-
-       .status-dibatalkan { 
-        background-color: #6b7280 !important;
-        border-color: #4b5563 !important;
-    }
-    .status-diajukanbatal { 
-        background-color: #8b5cf6 !important;
-        border-color: #7c3aed !important;
-    }
-           .status-disetujui { 
-               background-color: #059669 !important;
-               border-color: #047857 !important;
-           }
-        .status-diproses { 
-    background-color: #facc15 !important; /* kuning */
-    border-color: #eab308 !important; /* kuning yang lebih gelap untuk border */
-}
-           .status-ditolak { 
-               background-color: #dc2626 !important;
-               border-color: #b91c1c !important;
-           }
-           .status-diajukan { 
-               background-color: #3b82f6 !important;
-               border-color: #2563eb !important;
-           }
-           .fc .fc-button {
-               background-color: #ffffff;
-               border: 1px solid #e5e7eb;
-               color: #374151;
-           }
-           .fc .fc-button:hover {
-               background-color: #f9fafb;
-               border-color: #d1d5db;
-           }
-         .fc .fc-button-primary:not(:disabled).fc-button-active,
-.fc .fc-button-primary:not(:disabled):active {
-    background-color: #059669 !important;
-    border-color: #047857 !important;
-    color: #ffffff;
-}
-           .fc .fc-button-primary:disabled {
-               background-color: #f3f4f6;
-               border-color: #e5e7eb;
-               color: #9ca3af;
-           }
-           .fc .fc-toolbar-title {
-               font-size: 1.25rem;
-               font-weight: 600;
-               color: #111827;
-           }
-           .fc-theme-standard td, 
-           .fc-theme-standard th {
-               border-color: #f3f4f6;
-           }
-           .fc .fc-day-today {
-               background-color: #f0f9ff !important;
-           }
-           .fc-event {
-               padding: 2px 4px;
-               font-size: 0.875rem;
-               border-radius: 4px;
-               color: white !important;
-           }
+        .status-dibatalkan { 
+                background-color: #6b7280 !important;
+                border-color: #4b5563 !important;
+            }
+            .status-diajukanbatal { 
+                background-color: #8b5cf6 !important;
+                border-color: #7c3aed !important;
+            }
+            .status-disetujui { 
+                background-color: #059669 !important;
+                border-color: #047857 !important;
+            }
+            .status-diproses { 
+                background-color: #facc15 !important; /* kuning */
+                border-color: #eab308 !important; /* kuning yang lebih gelap untuk border */
+            }
+            .status-ditolak { 
+                background-color: #dc2626 !important;
+                border-color: #b91c1c !important;
+            }
+            .status-diajukan { 
+                background-color: #3b82f6 !important;
+                border-color: #2563eb !important;
+            }
+            .fc .fc-button {
+                background-color: #ffffff;
+                border: 1px solid #e5e7eb;
+                color: #374151;
+            }
+            .fc .fc-button:hover {
+                background-color: #f9fafb;
+                border-color: #d1d5db;
+            }
+            .fc .fc-button-primary:not(:disabled).fc-button-active,
+            .fc .fc-button-primary:not(:disabled):active {
+                background-color: #059669 !important;
+                border-color: #047857 !important;
+                color: #ffffff;
+            }
+            .fc .fc-button-primary:disabled {
+                background-color: #f3f4f6;
+                border-color: #e5e7eb;
+                color: #9ca3af;
+            }
+            .fc .fc-toolbar-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #111827;
+            }
+            .fc-theme-standard td, 
+            .fc-theme-standard th {
+                border-color: #f3f4f6;
+            }
+            .fc .fc-day-today {
+                background-color: #f0f9ff !important;
+            }
+            .fc-event {
+                padding: 2px 4px;
+                font-size: 0.875rem;
+                border-radius: 4px;
+                color: white !important;
+            }
        `;
        document.head.appendChild(styleSheet);
    });
@@ -528,9 +545,9 @@ function checkSaranaType() {
         return;
     }
 
-    const kategori = selectedOption.getAttribute('data-kategori');
+    const beruangan = selectedOption.getAttribute('data-kategori');
     
-    if (kategori === 'Gedung Beruangan') {
+    if (beruangan === '1') {
         ruanganSection.classList.remove('hidden');
         ruanganSelect.innerHTML = '<option value="">Pilih Ruangan</option>';
         const ruangans = JSON.parse(selectedOption.getAttribute('data-ruangan'));
@@ -548,25 +565,82 @@ function checkSaranaType() {
         saranaSelect.classList.add('bg-green-100');
     }
 }
+
+const bookedDates = window.bookedJadwals.map(b => b.tanggal);
+
+function timeToMinutes(time) {
+    const [h, m] = time.split(':').map(Number);
+    return h * 60 + m;
+}
+
+function isOverlap(startA, endA, startB, endB) {
+    return startA < endB && startB < endA;
+}
+
+function getAvailableJadwals(selectedDate, saranaId, ruanganId) {
+    const booked = window.bookedJadwals || [];
+    return window.jadwals.map(jadwal => {
+        // Cek hanya jika jadwal_id sama pada tanggal & sarana/ruangan yang sama
+        const isBooked = booked.some(b =>
+            b.tanggal === selectedDate &&
+            b.jadwal_id == jadwal.id &&
+            (b.sarana_id == saranaId || (ruanganId && b.ruangan_id == ruanganId))
+        );
+        return {
+            ...jadwal,
+            disabled: isBooked // hanya untuk label, option tetap bisa dipilih
+        };
+    });
+}
+
+function getFilteredBookedDates(saranaId, ruanganId) {
+    return (window.bookedJadwals || [])
+        .filter(b => {
+            // Jika ada ruanganId, filter berdasarkan ruangan_id
+            if (ruanganId) {
+                return b.ruangan_id == ruanganId;
+            }
+            // Jika tidak ada ruanganId, filter berdasarkan sarana_id
+            return b.sarana_id == saranaId;
+        })
+        .map(b => b.tanggal); // Ambil hanya tanggalnya
+}
+
 // Function untuk menambah entry tanggal dan jadwal
+// Ganti fungsi addDateEntry Anda dengan yang ini
+
 let dateCounter = 0;
 function addDateEntry() {
     const container = document.getElementById('dateContainer');
     const dateId = dateCounter++;
-    
+    const saranaId = document.getElementById('bookingSarana').value;
+    const ruanganId = document.getElementById('ruanganSelect') ? document.getElementById('ruanganSelect').value : null;
+
+    if (!saranaId) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Peringatan',
+            text: 'Silakan pilih sarana terlebih dahulu.',
+            confirmButtonColor: '#059669'
+        });
+        return;
+    }
+
     const dateEntry = document.createElement('div');
     dateEntry.className = 'flex items-center gap-4 p-4 bg-gray-50 rounded-lg relative';
     dateEntry.id = `date_entry_${dateId}`;
-    
+
     dateEntry.innerHTML = `
         <div class="flex-1">
-            <input type="date" 
+            <input type="text" 
                    name="jadwal_dates[${dateId}][date]" 
-                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                   class="datepicker block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                   placeholder="Pilih Tanggal..."
                    required>
         </div>
         <div class="flex-1">
             <select name="jadwal_dates[${dateId}][jadwal_id]"
+                    id="jadwalSelect_${dateId}"
                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     required>
                 <option value="">Pilih Jadwal</option>
@@ -583,9 +657,63 @@ function addDateEntry() {
             </svg>
         </button>
     `;
-    
     container.appendChild(dateEntry);
+
+    const filteredBookedDates = getFilteredBookedDates(saranaId, ruanganId);
+
+    flatpickr(dateEntry.querySelector('.datepicker'), {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        onChange: function(selectedDates, dateStr, instance) {
+            updateJadwalOptions(dateId, dateStr); 
+        },
+        onDayCreate: function(dObj, dStr, fp, dayElem) {
+            
+            const year = dayElem.dateObj.getFullYear();
+            const month = String(dayElem.dateObj.getMonth() + 1).padStart(2, '0'); 
+            const day = String(dayElem.dateObj.getDate()).padStart(2, '0');
+            const localDateString = `${year}-${month}-${day}`;
+
+            if (filteredBookedDates.includes(localDateString)) {
+                dayElem.classList.add('booked-date');
+            }
+        }
+    });
 }
+
+function updateJadwalOptions(dateId, selectedDate) {
+    const jadwalSelect = document.getElementById(`jadwalSelect_${dateId}`);
+    const saranaId = document.getElementById('bookingSarana').value;
+    const ruanganId = document.getElementById('ruanganSelect').value;
+
+    // Pastikan sarana sudah dipilih
+    if (!saranaId) {
+        jadwalSelect.innerHTML = '<option value="">Pilih Sarana terlebih dahulu</option>';
+        return;
+    }
+
+    // Dapatkan jadwal yang tersedia menggunakan fungsi yang sudah ada
+    const availableJadwals = getAvailableJadwals(selectedDate, saranaId, ruanganId);
+    
+    // Perbarui opsi pada elemen <select>
+    let optionsHTML = '<option value="">Pilih Jadwal</option>';
+    availableJadwals.forEach(jadwal => {
+        // Selalu bisa dipilih, tapi beri label (Terisi) jika jadwal.disabled true
+        const label = `${jadwal.mulai} - ${jadwal.selesai}${jadwal.disabled ? ' (Terisi)' : ''}`;
+        optionsHTML += `<option value="${jadwal.id}">${label}</option>`;
+    });
+    jadwalSelect.innerHTML = optionsHTML;
+}
+
+document.getElementById('bookingSarana').addEventListener('change', function() {
+    // Kosongkan container tanggal setiap kali sarana utama berubah
+    document.getElementById('dateContainer').innerHTML = '';
+});
+
+document.getElementById('ruanganSelect').addEventListener('change', function() {
+    // Kosongkan juga container tanggal jika ruangan berubah
+    document.getElementById('dateContainer').innerHTML = '';
+});
 
 // Function untuk menghapus entry tanggal
 function removeDateEntry(dateId) {

@@ -4,6 +4,8 @@ use App\Models\Sarana;
 use App\Models\Jadwal;
 use App\Models\Peminjaman;
 use Illuminate\Http\Request;
+use App\Models\TanggalPeminjaman;
+use Illuminate\Support\Facades\DB;
 
 class OverviewController extends Controller
 {
@@ -31,7 +33,8 @@ class OverviewController extends Controller
                 'saranaName' => $peminjaman->sarana->nama,
                 'kegiatan' => $peminjaman->kegiatan,
                 'start' => optional($tanggal)->tanggal,
-                'jadwal' => optional($tanggal)->jadwal,
+                // Jadwal HARUS string, bukan object!
+                'jadwal' => $tanggal && $tanggal->jadwal ? $tanggal->jadwal->mulai . ' - ' . $tanggal->jadwal->selesai : '-',
                 'status' => $peminjaman->status,
                 'peminjam' => $peminjaman->user->name ?? 'Anonim',
                 'instansi' => $peminjaman->instansi ?? '-',
@@ -62,7 +65,7 @@ class OverviewController extends Controller
                     'kegiatan' => $peminjaman->kegiatan ?? '-',
                     'sarana' => $peminjaman->sarana->nama ?? '-',
                     'ruangan' => $peminjaman->ruangan->nama ?? '-',
-                    'jadwal' => optional($tanggal->jadwal)->mulai . ' - ' . optional($tanggal->jadwal)->selesai,
+                    'jadwal' => $tanggal && $tanggal->jadwal ? $tanggal->jadwal->mulai . ' - ' . $tanggal->jadwal->selesai : '-',
                     'estimasiPeserta' => $peminjaman->estimasiPeserta
                 ]
             ];
@@ -70,6 +73,76 @@ class OverviewController extends Controller
             return !empty($event['start']);
         })->values();
 
-        return view('admin.overview', compact('events', 'saranas', 'jadwals'));
+        $booked = TanggalPeminjaman::with(['jadwal', 'peminjaman'])
+            ->whereHas('peminjaman', function($q) {
+                $q->whereIn('status', ['diajukan', 'diproses', 'disetujui']);
+            })
+            ->get()
+            ->map(function($item) {
+                // Pastikan relasi peminjaman dan jadwal ada untuk menghindari error
+                if (!$item->peminjaman || !$item->jadwal) {
+                    return null;
+                }
+                
+                return [
+                    'tanggal'    => $item->tanggal,
+                    'jadwal_id'  => $item->idJadwal,
+                    'sarana_id'  => $item->peminjaman->idSarana,
+                    'ruangan_id' => $item->peminjaman->idRuangan,
+                    'mulai'      => $item->jadwal->mulai,  // Tambahkan ini
+                    'selesai'    => $item->jadwal->selesai, // Tambahkan ini
+                ];
+            })
+            ->filter() // Hapus item yang null
+            ->values(); // Reset key array
+
+        return view('admin.overview', compact('events', 'saranas', 'jadwals', 'booked'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'idSarana' => 'required|exists:sarana,id',
+            'kegiatan' => 'required|string|max:255',
+            'jadwal_dates' => 'required|array|min:1',
+            'jadwal_dates.*.date' => 'required|date',
+            'jadwal_dates.*.jadwal_id' => 'required|exists:jadwal,id',
+            'idRuangan' => 'nullable|exists:ruangan,id',
+            'totalTarif' =>'nullable|integer|min:0',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $data = [
+                'idUser' => auth()->id(),
+                'idSarana' => $request->idSarana,
+                'kegiatan' => $request->kegiatan,
+                'status' => 'disetujui',
+                'instansi' => 'Superadmin SIMSAPRAS',
+                'statusPeminjam' => 'unit',
+                'totalTarif' => $request->totalTarif ?? 0,
+                'statusPembayaran' => 'lunas',
+            ];
+
+            if ($request->filled('idRuangan')) {
+                $data['idRuangan'] = $request->idRuangan;
+            }
+
+            $peminjaman = Peminjaman::create($data);
+
+            foreach ($request->jadwal_dates as $jadwal) {
+                TanggalPeminjaman::create([
+                    'idPeminjaman' => $peminjaman->id,
+                    'tanggal' => $jadwal['date'],
+                    'idJadwal' => $jadwal['jadwal_id'],
+                ]);
+            }
+
+            DB::commit();
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 }
