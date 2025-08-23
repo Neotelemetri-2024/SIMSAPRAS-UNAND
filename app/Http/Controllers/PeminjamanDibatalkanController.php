@@ -23,7 +23,7 @@ class PeminjamanDibatalkanController extends Controller
         $sort = $request->input('sort');
         $today = now();
 
-        $query = Peminjaman::with(['user', 'sarana', 'tanggalPeminjaman.jadwal'])
+        $query = Peminjaman::with(['user', 'sarana', 'tanggalPeminjaman.jadwal', 'dibatalkanOleh'])
             ->where('status', 'dibatalkan');
         $query->filterByUserAccess(auth()->user());
 
@@ -58,5 +58,6 @@ class PeminjamanDibatalkanController extends Controller
 
         return view('admin.peminjamandibatalkan', compact('peminjamanDibatalkan', 'search', 'sort', 'title'));
     }
+
 
 }

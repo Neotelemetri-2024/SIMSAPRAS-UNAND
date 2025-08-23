@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Services\NotificationService;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PeminjamanExport;
+use App\Exports\PeminjamanExportAdvanced;
 use Illuminate\Support\Facades\Log; // Tambahkan ini
 
 
@@ -111,25 +112,49 @@ class PeminjamanSelesaiController extends Controller
             ], 500);
         }
     }
+
+
     
     public function export(Request $request)
     {
         try {
-            $request->validate([
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after_or_equal:start_date',
-                'filter_type' => 'required|in:created,booking'
+            // Debug: log semua request data
+            Log::info('Export request received:', [
+                'all_data' => $request->all(),
+                'method' => $request->method(),
+                'url' => $request->url()
+            ]);
+            
+            // Validasi sederhana
+            if (!$request->has('start_date') || !$request->has('end_date') || !$request->has('filter_type')) {
+                Log::error('Missing required parameters');
+                return back()->with('error', 'Parameter yang diperlukan tidak lengkap');
+            }
+            
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+            $filterType = $request->filter_type;
+            
+            // Format nama file yang lebih informatif
+            $startDateFormatted = \Carbon\Carbon::parse($startDate)->format('d-m-Y');
+            $endDateFormatted = \Carbon\Carbon::parse($endDate)->format('d-m-Y');
+            $filterTypeText = $filterType === 'created' ? 'Tanggal_Pengajuan' : 'Tanggal_Peminjaman';
+            
+            $filename = "Laporan_Peminjaman_Selesai_{$filterTypeText}_{$startDateFormatted}_sampai_{$endDateFormatted}.xlsx";
+            
+            Log::info('Starting export with params:', [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'filter_type' => $filterType,
+                'filename' => $filename
             ]);
     
-            $filename = 'peminjaman_selesai_' . date('Y-m-d') . '.xlsx';
-            
-            Log::info('Starting export with params:', $request->all());
-    
+            // Export dengan class sederhana (satu sheet saja)
             return Excel::download(
                 new PeminjamanExport(
-                    $request->start_date, 
-                    $request->end_date,
-                    $request->filter_type
+                    $startDate, 
+                    $endDate,
+                    $filterType
                 ), 
                 $filename
             );

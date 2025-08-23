@@ -62,6 +62,7 @@
                                 <th scope="col" class="px-6 py-3">Tanggal & Jadwal Peminjaman</th>
                                 <th scope="col" class="px-6 py-3">Sarana yang Dipinjam</th>
                                 <th scope="col" class="px-6 py-3">Kegiatan</th>
+                                <th scope="col" class="px-6 py-3">Disetujui Oleh</th>
                                 <th scope="col" class="px-6 py-3">Status</th>
                                 <th scope="col" class="px-6 py-3">Aksi</th>
                             </tr>
@@ -85,6 +86,14 @@
                                     </td>
                                     <td class="px-6 py-4">{{ $item->ruangan ? $item->ruangan->nama : $item->sarana->nama }}</td>
                                     <td class="px-6 py-4">{{ $item->kegiatan }}</td>
+                                    <td class="px-6 py-4">
+                                        @if($item->dibatalkanOleh)
+                                            <div class="font-medium">{{ $item->dibatalkanOleh->name }}</div>
+                                            <div class="text-sm text-gray-600">{{ $item->dibatalkan_at ? \Carbon\Carbon::parse($item->dibatalkan_at)->format('d/m/Y H:i') : '-' }}</div>
+                                        @else
+                                            <span class="text-gray-400">-</span>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4">
                                         <span
                                                     class="inline-flex items-center bg-red-100 text-red-800 text-sm font-medium px-3 py-1.5 rounded-full dark:bg-red-900 dark:text-red-300">

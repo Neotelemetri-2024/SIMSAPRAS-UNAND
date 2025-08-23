@@ -538,11 +538,11 @@
     <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="exportModal"></div>
     
     <div class="flex min-h-screen items-center justify-center p-4">
-        <div class="relative w-full max-w-md">
+        <div class="relative w-full max-w-lg">
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <div class="flex items-start justify-between p-4 border-b rounded-t">
                     <h3 class="text-xl font-semibold text-gray-900">
-                        Export Data Peminjaman
+                        Export Data Peminjaman Selesai
                     </h3>
                     <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center" data-modal-hide="exportModal">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -550,30 +550,43 @@
                         </svg>
                     </button>
                 </div>
+                
+                <!-- Informasi Export -->
+
+                
                 <form action="{{ route('peminjaman.export') }}" method="GET">
                     <div class="p-6 space-y-6">
                         <div class="space-y-4">
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Filter Berdasarkan</label>
-                                <select name="filter_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5">
+                                <select name="filter_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
                                     <option value="created">Tanggal Pengajuan</option>
                                     <option value="booking">Tanggal Peminjaman</option>
                                 </select>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    Pilih berdasarkan kapan peminjaman diajukan atau kapan peminjaman dilaksanakan
+                                </p>
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Tanggal Mulai</label>
-                                <input type="date" name="start_date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" required>
+                                <input type="date" name="start_date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Tanggal Akhir</label>
-                                <input type="date" name="end_date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5" required>
+                                <input type="date" name="end_date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                             </div>
                         </div>
+                        
+
                     </div>
                     <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b">
-                        <button type="submit" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                        <button type="submit" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
                             Export Excel
                         </button>
+
                         <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900" data-modal-hide="exportModal">
                             Batal
                         </button>
@@ -645,6 +658,7 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Handle evaluasi forms
             document.querySelectorAll('[id^="evaluasiForm"]').forEach(form => {
                 form.addEventListener('submit', function(e) {
                     e.preventDefault();
@@ -653,6 +667,8 @@
                     submitEvaluasi(peminjamanId);
                 });
             });
+
+
         });
 
         function submitEvaluasi(id) {
@@ -738,5 +754,7 @@
                 }
             });
         }
+
+
     </script>
 @endsection
