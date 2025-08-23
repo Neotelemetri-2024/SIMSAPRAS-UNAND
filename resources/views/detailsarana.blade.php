@@ -117,6 +117,21 @@
    background-color: rgba(203, 213, 225, 0.3) !important;
    cursor: not-allowed !important;
    }
+   .fc-day.fc-holiday, .fc-daygrid-day.fc-holiday {
+        background-color: #fee2e2 !important; /* merah muda */
+        position: relative;
+    }
+    .fc-day.fc-holiday .fc-daygrid-day-number,
+    .fc-daygrid-day.fc-holiday .fc-daygrid-day-number {
+        color: #dc2626 !important; /* merah tua untuk angka tanggal */
+        font-weight: bold;
+    }
+    .fc-holiday-event, .fc-event.fc-holiday-event {
+        color: #dc2626 !important;
+        background: transparent !important;
+        border: none !important;
+        font-weight: bold;
+    }
    /* Centered warning popup with close button */
    .warning-popup {
    position: fixed !important;
@@ -412,6 +427,10 @@
                         <h2 class="text-2xl font-semibold text-gray-900">Jadwal Peminjaman</h2>
                         <div class="flex items-center gap-6">
                             <div class="flex items-center gap-2">
+                                <div class="w-4 h-4 rounded bg-[#ef4444]/50 border border-red-400"></div>
+                                <span class="text-sm text-gray-600">Libur Nasional</span>
+                            </div>
+                            <div class="flex items-center gap-2">
                                 <div class="w-4 h-4 rounded bg-[#059669]"></div>
                                 <span class="text-sm text-gray-600">Disetujui</span>
                             </div>
@@ -510,343 +529,368 @@
 </section>
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    let currentSlide = 0;
-    let autoplayInterval = null;
-    let progressInterval = null;
-    const carouselContainer = document.querySelector('.carousel-container');
-    const slides = document.querySelectorAll('.carousel-item');
-    const indicators = document.querySelectorAll('.bottom-4 button');
-    const progressBar = document.querySelector('.progress-bar');
-    const totalSlides = slides.length;
-    let isTransitioning = false;
-    
-    if (!slides.length) return;
+    document.addEventListener('DOMContentLoaded', function() {
+        let currentSlide = 0;
+        let autoplayInterval = null;
+        let progressInterval = null;
+        const carouselContainer = document.querySelector('.carousel-container');
+        const slides = document.querySelectorAll('.carousel-item');
+        const indicators = document.querySelectorAll('.bottom-4 button');
+        const progressBar = document.querySelector('.progress-bar');
+        const totalSlides = slides.length;
+        let isTransitioning = false;
+        
+        if (!slides.length) return;
 
-    function updateSlidePosition(animate = true) {
-        if (!animate) {
-            carouselContainer.style.transition = 'none';
-            requestAnimationFrame(() => {
-                carouselContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+        function updateSlidePosition(animate = true) {
+            if (!animate) {
+                carouselContainer.style.transition = 'none';
                 requestAnimationFrame(() => {
-                    carouselContainer.style.transition = '';
+                    carouselContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+                    requestAnimationFrame(() => {
+                        carouselContainer.style.transition = '';
+                    });
                 });
+            } else {
+                carouselContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+            }
+            
+            // Update indicators with scale effect
+            indicators.forEach((indicator, index) => {
+                if (index === currentSlide) {
+                    indicator.classList.add('bg-white', 'scale-125');
+                    indicator.classList.remove('bg-white/50', 'scale-100');
+                } else {
+                    indicator.classList.remove('bg-white', 'scale-125');
+                    indicator.classList.add('bg-white/50', 'scale-100');
+                }
             });
-        } else {
-            carouselContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+            // Reset and start progress bar
+            resetProgressBar();
         }
-        
-        // Update indicators with scale effect
-        indicators.forEach((indicator, index) => {
-            if (index === currentSlide) {
-                indicator.classList.add('bg-white', 'scale-125');
-                indicator.classList.remove('bg-white/50', 'scale-100');
-            } else {
-                indicator.classList.remove('bg-white', 'scale-125');
-                indicator.classList.add('bg-white/50', 'scale-100');
-            }
-        });
 
-        // Reset and start progress bar
-        resetProgressBar();
-    }
-
-    function moveSlide(direction) {
-        if (isTransitioning) return;
-        isTransitioning = true;
-        
-        currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
-        updateSlidePosition();
-        
-        setTimeout(() => {
-            isTransitioning = false;
-        }, 700); // Match transition duration
-    }
-
-    function goToSlide(index) {
-        if (isTransitioning || currentSlide === index) return;
-        
-        currentSlide = index;
-        updateSlidePosition();
-    }
-
-    function resetProgressBar() {
-        progressBar.style.animation = 'none';
-        progressBar.offsetHeight; // Trigger reflow
-        progressBar.style.animation = '';
-        progressBar.style.animationName = 'progressBar';
-    }
-
-    function startAutoplay() {
-        if (autoplayInterval) clearInterval(autoplayInterval);
-        
-        autoplayInterval = setInterval(() => {
-            moveSlide(1);
-        }, 5000);
-
-        // Start progress bar
-        resetProgressBar();
-    }
-
-    function stopAutoplay() {
-        if (autoplayInterval) {
-            clearInterval(autoplayInterval);
-            autoplayInterval = null;
+        function moveSlide(direction) {
+            if (isTransitioning) return;
+            isTransitioning = true;
+            
+            currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+            updateSlidePosition();
+            
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 700); // Match transition duration
         }
-        // Pause progress bar animation
-        progressBar.style.animationPlayState = 'paused';
-    }
 
-    // Make functions globally available
-    window.moveSlide = moveSlide;
-    window.goToSlide = goToSlide;
-
-    // Initialize carousel
-    updateSlidePosition(false);
-    startAutoplay();
-
-    // Enhanced touch handling
-    let touchStartX = 0;
-    let touchEndX = 0;
-    let isDragging = false;
-    let startTranslate = 0;
-    let currentTranslate = 0;
-
-    const carousel = document.getElementById('carousel');
-    
-    carousel.addEventListener('mouseenter', () => {
-        stopAutoplay();
-    });
-
-    carousel.addEventListener('mouseleave', () => {
-        startAutoplay();
-    });
-
-    carousel.addEventListener('touchstart', e => {
-        touchStartX = e.touches[0].clientX;
-        isDragging = true;
-        startTranslate = currentSlide * -100;
-        
-        stopAutoplay();
-    }, { passive: true });
-
-    carousel.addEventListener('touchmove', e => {
-        if (!isDragging) return;
-        
-        const currentX = e.touches[0].clientX;
-        const diff = (currentX - touchStartX) / carousel.offsetWidth * 100;
-        currentTranslate = startTranslate - diff;
-        
-        // Limit dragging to one slide at a time
-        if (currentTranslate > (currentSlide + 1) * 100 || currentTranslate < (currentSlide - 1) * 100) return;
-        
-        carouselContainer.style.transform = `translateX(${-currentTranslate}%)`;
-    }, { passive: true });
-
-    carousel.addEventListener('touchend', e => {
-        isDragging = false;
-        touchEndX = e.changedTouches[0].clientX;
-        
-        const movePercentage = ((touchStartX - touchEndX) / carousel.offsetWidth) * 100;
-        
-        if (Math.abs(movePercentage) > 20) { // 20% threshold for slide change
-            if (movePercentage > 0) {
-                moveSlide(1);
-            } else {
-                moveSlide(-1);
-            }
-        } else {
-            // Reset to current slide if threshold not met
+        function goToSlide(index) {
+            if (isTransitioning || currentSlide === index) return;
+            
+            currentSlide = index;
             updateSlidePosition();
         }
-        
+
+        function resetProgressBar() {
+            progressBar.style.animation = 'none';
+            progressBar.offsetHeight; // Trigger reflow
+            progressBar.style.animation = '';
+            progressBar.style.animationName = 'progressBar';
+        }
+
+        function startAutoplay() {
+            if (autoplayInterval) clearInterval(autoplayInterval);
+            
+            autoplayInterval = setInterval(() => {
+                moveSlide(1);
+            }, 5000);
+
+            // Start progress bar
+            resetProgressBar();
+        }
+
+        function stopAutoplay() {
+            if (autoplayInterval) {
+                clearInterval(autoplayInterval);
+                autoplayInterval = null;
+            }
+            // Pause progress bar animation
+            progressBar.style.animationPlayState = 'paused';
+        }
+
+        // Make functions globally available
+        window.moveSlide = moveSlide;
+        window.goToSlide = goToSlide;
+
+        // Initialize carousel
+        updateSlidePosition(false);
         startAutoplay();
-    });
 
-    // Keyboard navigation
-    document.addEventListener('keydown', e => {
-        if (e.key === 'ArrowLeft') {
-            moveSlide(-1);
-        } else if (e.key === 'ArrowRight') {
-            moveSlide(1);
-        }
-    });
+        // Enhanced touch handling
+        let touchStartX = 0;
+        let touchEndX = 0;
+        let isDragging = false;
+        let startTranslate = 0;
+        let currentTranslate = 0;
 
-    // Cleanup
-    window.addEventListener('beforeunload', () => {
-        stopAutoplay();
-        clearInterval(progressInterval);
-    });
-
-    // Visibility change handling
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
+        const carousel = document.getElementById('carousel');
+        
+        carousel.addEventListener('mouseenter', () => {
             stopAutoplay();
-        } else {
-            startAutoplay();
-        }
-    });
+        });
 
-    // Toggle Jam Lembur functionality
-    const toggleBtn = document.getElementById('toggleJamLembur');
-    const dataSection = document.getElementById('dataJamLembur');
-    const toggleText = document.getElementById('toggleText');
-    const toggleIcon = toggleBtn.querySelector('svg');
-    
-    if (toggleBtn && dataSection) {
-        toggleBtn.addEventListener('click', function() {
-            if (dataSection.classList.contains('hidden')) {
-                // Show data
-                dataSection.classList.remove('hidden');
-                toggleText.textContent = 'Sembunyikan Data Bulan Lainnya';
-                toggleIcon.style.transform = 'rotate(180deg)';
+        carousel.addEventListener('mouseleave', () => {
+            startAutoplay();
+        });
+
+        carousel.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+            isDragging = true;
+            startTranslate = currentSlide * -100;
+            
+            stopAutoplay();
+        }, { passive: true });
+
+        carousel.addEventListener('touchmove', e => {
+            if (!isDragging) return;
+            
+            const currentX = e.touches[0].clientX;
+            const diff = (currentX - touchStartX) / carousel.offsetWidth * 100;
+            currentTranslate = startTranslate - diff;
+            
+            // Limit dragging to one slide at a time
+            if (currentTranslate > (currentSlide + 1) * 100 || currentTranslate < (currentSlide - 1) * 100) return;
+            
+            carouselContainer.style.transform = `translateX(${-currentTranslate}%)`;
+        }, { passive: true });
+
+        carousel.addEventListener('touchend', e => {
+            isDragging = false;
+            touchEndX = e.changedTouches[0].clientX;
+            
+            const movePercentage = ((touchStartX - touchEndX) / carousel.offsetWidth) * 100;
+            
+            if (Math.abs(movePercentage) > 20) { // 20% threshold for slide change
+                if (movePercentage > 0) {
+                    moveSlide(1);
+                } else {
+                    moveSlide(-1);
+                }
             } else {
-                // Hide data
-                dataSection.classList.add('hidden');
-                toggleText.textContent = 'Lihat Data Bulan Lainnya';
-                toggleIcon.style.transform = 'rotate(0deg)';
+                // Reset to current slide if threshold not met
+                updateSlidePosition();
+            }
+            
+            startAutoplay();
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowLeft') {
+                moveSlide(-1);
+            } else if (e.key === 'ArrowRight') {
+                moveSlide(1);
             }
         });
-    }
-});
-</script>
-@if($sarana->kategoriSarana->jenis !== 'Gedung Beruangan')
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
-<script>
-   document.addEventListener('DOMContentLoaded', function() {
-       var calendarEl = document.getElementById('calendar');
-       var selectedDates = new Set();
-       var selectedDatesDisplay = document.getElementById('selectedDatesDisplay');
-       var submitBtn = document.getElementById('submitBtn');
-       var selectedDatesInput = document.getElementById('selectedDates');
-       
-       // Get date 1 week from now
-       var minDate = new Date();
-       minDate.setDate(minDate.getDate() + 4);
-       
-       var calendar = new FullCalendar.Calendar(calendarEl, {
-           initialView: 'dayGridMonth',
-           locale: 'id',
-           headerToolbar: {
-               left: 'prev,next today',
-               center: 'title',
-               right: 'dayGridMonth,timeGridWeek,timeGridDay'
-           },
-           events: @json($events).map(event => {
-                const start = new Date(event.start);
-                const end = new Date(event.end);
-                
-                let statusClass;
-                switch(event.status) {
-                    case 'disetujui':
-                        statusClass = 'status-disetujui';
-                        break;
-                    case 'diproses':
-                    case 'diajukan':
-                    case 'diajukanbatal':
-                        statusClass = 'status-' + event.status;
-                        break;
-                    default:
-                        statusClass = '';
+
+        // Cleanup
+        window.addEventListener('beforeunload', () => {
+            stopAutoplay();
+            clearInterval(progressInterval);
+        });
+
+        // Visibility change handling
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopAutoplay();
+            } else {
+                startAutoplay();
+            }
+        });
+
+        // Toggle Jam Lembur functionality
+        const toggleBtn = document.getElementById('toggleJamLembur');
+        const dataSection = document.getElementById('dataJamLembur');
+        const toggleText = document.getElementById('toggleText');
+        const toggleIcon = toggleBtn.querySelector('svg');
+        
+        if (toggleBtn && dataSection) {
+            toggleBtn.addEventListener('click', function() {
+                if (dataSection.classList.contains('hidden')) {
+                    // Show data
+                    dataSection.classList.remove('hidden');
+                    toggleText.textContent = 'Sembunyikan Data Bulan Lainnya';
+                    toggleIcon.style.transform = 'rotate(180deg)';
+                } else {
+                    // Hide data
+                    dataSection.classList.add('hidden');
+                    toggleText.textContent = 'Lihat Data Bulan Lainnya';
+                    toggleIcon.style.transform = 'rotate(0deg)';
                 }
-                
-                return {
-                    ...event,
-                    title: `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}-${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`,
-                    className: statusClass
-                };
-            }),
-           displayEventTime: false,
-           selectable: true,
-           selectConstraint: {
-               start: minDate.toISOString().split('T')[0],
-           },
-           selectAllow: function(selectInfo) {
-               return selectInfo.start >= minDate;
-           },
-           dateClick: function(info) {
-               const clickedDate = new Date(info.dateStr);
-               
-               // Check if date is before minimum date
-               if (clickedDate < minDate) {
-                   showWarning('Peminjaman harus dilakukan minimal 5 hari sebelum jadwal yang diinginkan');
-                   return;
-               }
-   
-               // Handle date selection
-               if (selectedDates.has(info.dateStr)) {
-                   selectedDates.delete(info.dateStr);
-                   info.dayEl.classList.remove('selected-date');
-               } else {
-                   selectedDates.add(info.dateStr);
-                   info.dayEl.classList.add('selected-date');
-               }
-               updateSelectedDatesDisplay();
-           },
-           height: 'auto',
-           buttonText: {
-               today: 'Hari Ini',
-               month: 'Bulan',
-               week: 'Minggu',
-               day: 'Hari'
-           }
-       });
-   
-       function showWarning(message) {
-           const warningMessage = document.createElement('div');
-           warningMessage.className = 'warning-popup';
-           warningMessage.innerHTML = `
-               <div class="warning-content">
-                   <p>${message}</p>
-                   <button class="warning-close-btn" onclick="this.closest('.warning-popup').remove()">Tutup</button>
-               </div>
-           `;
-           document.body.appendChild(warningMessage);
-       }
-       
-       function updateSelectedDatesDisplay() {
-           if (selectedDates.size === 0) {
-               selectedDatesDisplay.innerHTML = '<p class="text-gray-500">Belum ada tanggal yang dipilih</p>';
-               submitBtn.disabled = true;
-           } else {
-               const datesList = Array.from(selectedDates)
-                   .sort()
-                   .map(date => {
-                       const formattedDate = new Date(date).toLocaleDateString('id-ID', {
-                           weekday: 'long',
-                           year: 'numeric',
-                           month: 'long',
-                           day: 'numeric'
-                       });
-                       return `
-                           <div class="flex items-center justify-between bg-white p-2 rounded mb-2">
-                               <span>${formattedDate}</span>
-                               <button type="button" onclick="removeDate('${date}')" 
-                                       class="text-red-500 hover:text-red-700">
-                                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                   </svg>
-                               </button>
-                           </div>`;
-                   }).join('');
-               selectedDatesDisplay.innerHTML = datesList;
-               submitBtn.disabled = false;
-           }
-           selectedDatesInput.value = JSON.stringify(Array.from(selectedDates));
-       }
-       
-       window.removeDate = function(date) {
-           selectedDates.delete(date);
-           const dateEl = calendar.el.querySelector(`[data-date="${date}"]`);
-           if (dateEl) {
-               dateEl.classList.remove('selected-date');
-           }
-           updateSelectedDatesDisplay();
-       };
-       
-       calendar.render();
-   });
+            });
+        }
+    });
 </script>
+@if($sarana->isRoom == 0)
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var selectedDates = new Set();
+            var selectedDatesDisplay = document.getElementById('selectedDatesDisplay');
+            var submitBtn = document.getElementById('submitBtn');
+            var selectedDatesInput = document.getElementById('selectedDates');
+
+            const holidayDates = @json($holidayDates);
+            
+            // Get date 1 week from now
+            var minDate = new Date();
+            minDate.setDate(minDate.getDate() + 4);
+            
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                timeZone: 'Asia/Jakarta',
+                locale: 'id',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: @json($events).map(event => {
+                    // This part can be simplified since the controller now handles holidays
+                    if (event.display === 'background') {
+                        return event; // Return holiday events as is
+                    }
+
+                    const start = new Date(event.start);
+                    const end = new Date(event.end);
+                    
+                    let statusClass;
+                    switch(event.status) {
+                        case 'disetujui':
+                            statusClass = 'status-disetujui';
+                            break;
+                        case 'diproses':
+                        case 'diajukan':
+                        case 'diajukanbatal':
+                            statusClass = 'status-' + event.status;
+                            break;
+                        default:
+                            statusClass = '';
+                    }
+                    
+                    return {
+                        ...event,
+                        title: `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}-${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`,
+                        className: statusClass
+                    };
+                }),
+                displayEventTime: false,
+                selectable: true,
+                selectConstraint: {
+                    start: minDate.toISOString().split('T')[0],
+                },
+                selectAllow: function(selectInfo) {
+                    const selectedDateStr = selectInfo.startStr.split('T')[0];
+                    // // PREVENT SELECTION IF IT'S A HOLIDAY
+                    // if (holidayDates.includes(selectedDateStr)) {
+                    //     return false; 
+                    // }
+                    return selectInfo.start >= minDate;
+                },
+                dateClick: function(info) {
+                    const clickedDate = new Date(info.dateStr);
+                    const clickedDateStr = info.dateStr;
+
+                    // // SHOW WARNING IF A HOLIDAY IS CLICKED
+                    // if (holidayDates.includes(clickedDateStr)) {
+                    //     showWarning('Anda tidak dapat memilih tanggal libur nasional.');
+                    //     return;
+                    // }
+
+                    if (clickedDate < minDate) {
+                        showWarning('Peminjaman harus dilakukan minimal 5 hari sebelum jadwal yang diinginkan');
+                        return;
+                    }
+
+                    if (selectedDates.has(info.dateStr)) {
+                        selectedDates.delete(info.dateStr);
+                        info.dayEl.classList.remove('selected-date');
+                    } else {
+                        selectedDates.add(info.dateStr);
+                        info.dayEl.classList.add('selected-date');
+                    }
+                    updateSelectedDatesDisplay();
+                },
+                // Add this to apply the disabled class to holiday dates
+                dayCellDidMount: function(arg) {
+                    const dateStr = arg.date.toISOString().split('T')[0];
+                    if (holidayDates.includes(dateStr)) {
+                        arg.el.classList.add('fc-holiday');
+                    }
+                },
+                height: 'auto',
+                buttonText: {
+                    today: 'Hari Ini',
+                    month: 'Bulan',
+                    week: 'Minggu',
+                    day: 'Hari'
+                }
+            });
+        
+            function showWarning(message) {
+                const warningMessage = document.createElement('div');
+                warningMessage.className = 'warning-popup';
+                warningMessage.innerHTML = `
+                    <div class="warning-content">
+                        <p>${message}</p>
+                        <button class="warning-close-btn" onclick="this.closest('.warning-popup').remove()">Tutup</button>
+                    </div>
+                `;
+                document.body.appendChild(warningMessage);
+            }
+            
+            function updateSelectedDatesDisplay() {
+                if (selectedDates.size === 0) {
+                    selectedDatesDisplay.innerHTML = '<p class="text-gray-500">Belum ada tanggal yang dipilih</p>';
+                    submitBtn.disabled = true;
+                } else {
+                    const datesList = Array.from(selectedDates)
+                        .sort()
+                        .map(date => {
+                            const formattedDate = new Date(date).toLocaleDateString('id-ID', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            });
+                            return `
+                                <div class="flex items-center justify-between bg-white p-2 rounded mb-2">
+                                    <span>${formattedDate}</span>
+                                    <button type="button" onclick="removeDate('${date}')" 
+                                            class="text-red-500 hover:text-red-700">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
+                                </div>`;
+                        }).join('');
+                    selectedDatesDisplay.innerHTML = datesList;
+                    submitBtn.disabled = false;
+                }
+                selectedDatesInput.value = JSON.stringify(Array.from(selectedDates));
+            }
+            
+            window.removeDate = function(date) {
+                selectedDates.delete(date);
+                const dateEl = calendar.el.querySelector(`[data-date="${date}"]`);
+                if (dateEl) {
+                    dateEl.classList.remove('selected-date');
+                }
+                updateSelectedDatesDisplay();
+            };
+            
+            calendar.render();
+        });
+    </script>
 @endif
 @endpush
 @endsection
