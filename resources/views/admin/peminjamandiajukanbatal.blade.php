@@ -229,7 +229,7 @@
     </div>
 
     @foreach ($peminjamanDiajukanbatal as $item)
-    <div id="editModalDiajukanbatal{{ $item->hashed_id }}" tabindex="-1" aria-hidden="true"
+    <div id="editModalDiajukanbatal{{ $item->id }}" tabindex="-1" aria-hidden="true"
         class="fixed inset-0 z-[60] hidden overflow-hidden" data-modal-backdrop="static">
         <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModalDiajukanbatal{{ $item->id }}"></div>
         
@@ -480,7 +480,7 @@
                                     @endif
                                 </div>
                              </div>
-                            <form id="updateForm{{ $item->hashed_id }}" action="{{ route('peminjaman.updateStatusDiajukanbatal', $item->hashed_id) }}" method="POST">
+                            <form id="updateForm{{ $item->id }}" action="{{ route('peminjaman.updateStatusDiajukanbatal', $item->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
@@ -494,7 +494,7 @@
                                     <div class="space-y-4">
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Update Status</label>
-                                            <select id="statusSelect{{ $item->hashed_id }}" name="status"
+                                            <select id="statusSelect{{ $item->id }}" name="status"
                                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                                                 required onchange="toggleFeedbackForm({{ $item->id }})">
                                                     <option value="dibatalkan">Setujui Pembatalan</option>
@@ -502,7 +502,7 @@
                                             </select>
                                         </div>
 
-                                        <div id="feedbackForm{{ $item->hashed_id }}" class="hidden">
+                                        <div id="feedbackForm{{ $item->id }}" class="hidden">
                                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                                 Alasan Penolakan Pembatalan
                                             </label>
@@ -535,7 +535,7 @@
 </div>
 @endforeach
 @foreach ($peminjamanDiajukanbatal as $item)
-<div id="batalModalDiajukanbatal{{ $item->hashed_id }}" tabindex="-1" aria-hidden="true" 
+<div id="batalModalDiajukanbatal{{ $item->id }}" tabindex="-1" aria-hidden="true" 
     class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
     <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="batalModalDiajukanbatal{{ $item->id }}"></div>
         <div class="flex items-center justify-center min-h-screen p-4">
@@ -565,7 +565,7 @@
                         Apakah Anda yakin ingin membatalkan peminjaman ini? Harap berikan alasan pembatalan:
                     </p>
                     <div class="mt-4">
-                        <textarea id="feedbackPembatalan{{ $item->hashed_id }}" 
+                        <textarea id="feedbackPembatalan{{ $item->id }}" 
                             rows="4" 
                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" 
                             placeholder="Masukkan alasan pembatalan..."></textarea>

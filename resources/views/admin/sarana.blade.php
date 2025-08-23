@@ -114,21 +114,21 @@
                      <td class="px-6 py-4">
                         <div class="flex space-x-2">
                             @if($item->status == "aktif")
-                            <button data-modal-target="editModal{{ $item->hashed_id }}"
+                            <button data-modal-target="editModal{{ $item->id }}"
                                     data-modal-toggle="editModal{{ $item->id }}"
                                     class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-300 rounded-lg hover:bg-yellow-400 focus:ring-4 focus:ring-yellow-200">
                               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                               </svg>
                            </button>
-                            <button onclick="confirmDelete('{{ route('sarana.destroy', $item->hashed_id) }}')"
+                            <button onclick="confirmDelete('{{ route('sarana.destroy', $item->id) }}')"
                                     class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                 </svg>
                             </button>
                             @else
-                            <button onclick="activateSarana('{{ route('sarana.activate', $item->hashed_id) }}')"
+                            <button onclick="activateSarana('{{ route('sarana.activate', $item->id) }}')"
                               class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200">
                               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -255,7 +255,7 @@
                         <select name="IdKategori" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                            <option value="" disabled selected hidden>Pilih Kategori</option>
                            @foreach($kategori as $kat)
-                           <option value="{{ $kat->hashed_id }}">{{ $kat->jenis }}</option>
+                           <option value="{{ $kat->id }}">{{ $kat->jenis }}</option>
                            @endforeach
                         </select>
                      </div>
@@ -355,19 +355,19 @@
             </div>
 
             @foreach($sarana as $item)
-            <div id="editModal{{ $item->hashed_id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
-               <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModal{{ $item->hashed_id }}"></div>
+            <div id="editModal{{ $item->id }}" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
+               <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="editModal{{ $item->id }}"></div>
                <div class="relative w-full max-w-4xl max-h-full">
                   <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                      <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Edit Sarana</h3>
-                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center" data-modal-hide="editModal{{ $item->hashed_id }}">
+                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center" data-modal-hide="editModal{{ $item->id }}">
                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                            </svg>
                         </button>
                      </div>
-                     <form id="editSaranaForm" action="{{ route('sarana.update', $item->hashed_id) }}" method="POST" enctype="multipart/form-data">
+                     <form id="editSaranaForm" action="{{ route('sarana.update', $item->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="p-6">
@@ -377,7 +377,7 @@
                                     <label class="block mb-2 text-sm font-medium text-gray-900">Kategori</label>
                                     <select name="IdKategori" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                                        @foreach($kategori as $kat)
-                                       <option value="{{ $kat->hashed_id }}" {{ $item->IdKategori == $kat->id ? 'selected' : '' }}>
+                                       <option value="{{ $kat->id }}" {{ $item->IdKategori == $kat->id ? 'selected' : '' }}>
                                           {{ $kat->jenis }}
                                        </option>
                                        @endforeach
@@ -440,7 +440,7 @@
                                  </label>
                              </div>
                              
-                             <div id="hourlyConfig{{ $item->hashed_id }}" class="{{ $item->is_hourly_rate ? '' : 'hidden' }}">
+                             <div id="hourlyConfig{{ $item->id }}" class="{{ $item->is_hourly_rate ? '' : 'hidden' }}">
                                  <div class="mb-4">
                                      <label class="block mb-2 text-sm font-medium text-gray-900">Jam per Unit</label>
                                      <input type="number" name="hours_per_unit" min="1" max="24" 
@@ -483,10 +483,10 @@
 
                                              <!-- Tombol Delete dengan Icon Trash -->
                                              <div class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <input type="checkbox" name="delete_images[]" value="{{ $gambar->hashed_id }}"
-                                                      id="delete_image_{{ $gambar->hashed_id }}"
+                                                <input type="checkbox" name="delete_images[]" value="{{ $gambar->id }}"
+                                                      id="delete_image_{{ $gambar->id }}"
                                                       class="hidden">
-                                                <label for="delete_image_{{ $gambar->hashed_id }}"
+                                                <label for="delete_image_{{ $gambar->id }}"
                                                       class="p-1 bg-red-500 hover:bg-red-600 rounded-lg cursor-pointer text-white flex items-center justify-center
                                                                transition-colors deleteImageBtn">
                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -513,7 +513,7 @@
                         </div>
                         <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200">
                            <button type="submit" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5">Simpan Perubahan</button>
-                           <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5" data-modal-hide="editModal{{ $item->hashed_id }}">Batal</button>
+                           <button type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5" data-modal-hide="editModal{{ $item->id }}">Batal</button>
                         </div>
                      </form>
                   </div>
