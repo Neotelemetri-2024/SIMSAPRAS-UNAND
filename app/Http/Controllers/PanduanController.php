@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Rekening;
 
 class PanduanController extends Controller
 {
     public function index()
     {
-        return view('panduan');
+        $rekeningAktif = Rekening::getRekeningAktif();
+        return view('panduan', compact('rekeningAktif'));
     }
 
     public function status()
