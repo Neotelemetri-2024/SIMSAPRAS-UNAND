@@ -20,6 +20,17 @@
         </li>
          @endcanany
          
+         @can('is-superadmin')
+         <li>
+            <a href="{{ route('admin.rekening.index') }}" class="flex items-center p-2 rounded-lg group transition-colors duration-200 {{ request()->routeIs('admin.rekening.*') ? 'text-green-600' : 'text-gray-900 hover:bg-gray-100' }}">
+                <svg class="w-5 h-5 transition duration-75 {{ request()->routeIs('admin.rekening.*') ? 'text-green-600' : 'text-gray-500 group-hover:text-gray-900' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h6m2.25-6H3.75m0 0a2.25 2.25 0 01-2.25-2.25V6.75c0-1.183.956-2.25 2.25-2.25h16.5c1.183 0 2.25.967 2.25 2.25v4.5c0 1.183-.967 2.25-2.25 2.25H3.75z" />
+                </svg>
+                <span class="ml-3">Pengelolaan Rekening</span>
+            </a>
+        </li>
+         @endcan
+         
           @php
              $peminjamanRoutes = [
                  'admin.overview',

@@ -29,6 +29,8 @@ use App\Http\Controllers\PeminjamanDibatalkanController;
 use App\Http\Controllers\PeminjamanSelesaiController;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\BuktiController;
+use App\Http\Controllers\RekeningController;
+use App\Http\Controllers\ProfileController;
 
 
 /*
@@ -56,6 +58,9 @@ Route::get('/panduan/cara', [PanduanController::class, 'cara'])->name('panduan.c
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [DetailProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/pengaduan', [PengaduanController::class, 'userShow'])->name('user.pengaduan.show');
     Route::post('/pengaduan', [PengaduanController::class, 'store'])->name('user.pengaduan.store');
     Route::get('/change-password', [PasswordChangeController::class, 'edit'])->name('password.change');
@@ -137,6 +142,17 @@ Route::group(['middleware' => ['checkRole:superadmin', 'verified']], function ()
     Route::resource('pengguna', PenggunaController::class);
     Route::get('/admin', [PenggunaController::class, 'showAdmins'])->name('admin.index');
     Route::get('/pimpinan', [PenggunaController::class, 'showPimpinans'])->name('pimpinan.index');
+    
+    Route::resource('rekening', RekeningController::class)->names([
+        'index' => 'admin.rekening.index',
+        'create' => 'admin.rekening.create',
+        'store' => 'admin.rekening.store',
+        'show' => 'admin.rekening.show',
+        'edit' => 'admin.rekening.edit',
+        'update' => 'admin.rekening.update',
+        'destroy' => 'admin.rekening.destroy',
+    ]);
+    Route::post('/rekening/{rekening}/activate', [RekeningController::class, 'activate'])->name('admin.rekening.activate');
 });
 
 Route::get('/pengumuman', [PengumumanController::class, 'indexUser'])->name('pengumuman.user');

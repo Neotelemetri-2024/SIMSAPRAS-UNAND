@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Peminjaman;
+use App\Models\Rekening;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -33,8 +34,11 @@ class RiwayatController extends Controller
             ->paginate(5)
             ->appends(['sort' => $sort, 'status' => $status]);
     
+        // Get active rekening
+        $rekeningAktif = Rekening::getRekeningAktif();
+        
         // Pass status to view for maintaining filter state
-        return view('riwayat', compact('peminjaman', 'sort', 'status'));
+        return view('riwayat', compact('peminjaman', 'sort', 'status', 'rekeningAktif'));
     }
 
 

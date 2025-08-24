@@ -134,23 +134,30 @@
                             </ul>
                             
                             <!-- Informasi Rekening Pembayaran -->
+                            @if($rekeningAktif)
                             <div class="mt-4 p-4 bg-white rounded-lg border border-blue-200">
                                 <h5 class="font-semibold text-gray-900 mb-3">Informasi Rekening Pembayaran</h5>
                                 <div class="space-y-3">
                                     <div class="flex items-center justify-between">
                                         <span class="text-sm text-gray-600">Bank</span>
-                                        <span class="font-medium">Bank Mandiri</span>
+                                        <span class="font-medium">{{ $rekeningAktif->nama_bank }}</span>
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <span class="text-sm text-gray-600">Nomor Rekening</span>
-                                        <span class="font-medium">1110010521405</span>
+                                        <span class="font-medium">{{ $rekeningAktif->nomor_rekening }}</span>
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <span class="text-sm text-gray-600">Atas Nama</span>
-                                        <span class="font-medium">RPL UNAND OPR BLU SEWA</span>
+                                        <span class="font-medium">{{ $rekeningAktif->nama_pemilik }}</span>
                                     </div>
                                 </div>
                             </div>
+                            @else
+                            <div class="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                                <h5 class="font-semibold text-gray-900 mb-3">Informasi Rekening Pembayaran</h5>
+                                <p class="text-sm text-yellow-800">Informasi rekening pembayaran sedang tidak tersedia. Silakan hubungi admin untuk informasi lebih lanjut.</p>
+                            </div>
+                            @endif
                             
                             <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-100 flex items-center">
                                 <svg class="w-8 h-8 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -195,6 +202,7 @@
                             <li>Tunggu konfirmasi dari admin</li>
                         </ol>
                         
+                        @if($rekeningAktif)
                         <div class="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
                             <h5 class="font-semibold text-gray-900 mb-3 flex items-center">
                                 <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -206,17 +214,29 @@
                             <div class="space-y-2 text-sm">
                                 <div class="flex items-center justify-between">
                                     <span class="text-gray-600">Bank:</span>
-                                    <span class="font-medium text-gray-900">Bank Mandiri</span>
+                                    <span class="font-medium text-gray-900">{{ $rekeningAktif->nama_bank }}</span>
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-gray-600">Nomor Rekening:</span>
-                                    <span class="font-medium text-gray-900">1110010521405</span>
+                                    <span class="font-medium text-gray-900">{{ $rekeningAktif->nomor_rekening }}</span>
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-gray-600">Atas Nama:</span>
-                                    <span class="font-medium text-gray-900">RPL UNAND OPR BLU SEWA</span>
+                                    <span class="font-medium text-gray-900">{{ $rekeningAktif->nama_pemilik }}</span>
                                 </div>
                             </div>
+                        @else
+                        <div class="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                            <h5 class="font-semibold text-gray-900 mb-3 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                </svg>
+                                Informasi Rekening Pembayaran
+                            </h5>
+                            <p class="text-sm text-yellow-800">Informasi rekening pembayaran sedang tidak tersedia. Silakan hubungi admin untuk informasi lebih lanjut.</p>
+                        </div>
+                        @endif
                             <div class="mt-3 p-3 bg-yellow-50 rounded border border-yellow-200">
                                 <p class="text-sm text-yellow-800">
                                     <strong>Catatan:</strong> Pastikan transfer dilakukan ke rekening resmi di atas. Pembayaran harus diselesaikan dalam waktu 3 hari setelah peminjaman disetujui.
@@ -229,3 +249,4 @@
         </div>
     </div>
 @endsection
+

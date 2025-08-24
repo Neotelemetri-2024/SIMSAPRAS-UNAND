@@ -441,23 +441,30 @@
                                 </div>
 
                                 <!-- Informasi Rekening -->
+                                @if($rekeningAktif)
                                 <div class="mb-6 p-4 bg-white rounded-lg border border-blue-200">
                                     <h5 class="font-semibold text-gray-900 mb-3">Informasi Rekening Pembayaran</h5>
                                     <div class="space-y-3">
                                         <div class="flex items-center justify-between">
                                             <span class="text-sm text-gray-600">Bank</span>
-                                            <span class="font-medium">Bank Mandiri</span>
+                                            <span class="font-medium">{{ $rekeningAktif->nama_bank }}</span>
                                         </div>
                                         <div class="flex items-center justify-between">
                                             <span class="text-sm text-gray-600">Nomor Rekening</span>
-                                            <span class="font-medium">1110010521405</span>
+                                            <span class="font-medium">{{ $rekeningAktif->nomor_rekening }}</span>
                                         </div>
                                         <div class="flex items-center justify-between">
                                             <span class="text-sm text-gray-600">Atas Nama</span>
-                                            <span class="font-medium">RPL UNAND OPR BLU SEWA</span>
+                                            <span class="font-medium">{{ $rekeningAktif->nama_pemilik }}</span>
                                         </div>
                                     </div>
                                 </div>
+                                @else
+                                <div class="mb-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                                    <h5 class="font-semibold text-gray-900 mb-3">Informasi Rekening Pembayaran</h5>
+                                    <p class="text-sm text-yellow-800">Informasi rekening pembayaran sedang tidak tersedia. Silakan hubungi admin untuk informasi lebih lanjut.</p>
+                                </div>
+                                @endif
 
                                 <!-- Status Pembayaran dan Upload -->
                                 <div class="mb-6">
@@ -817,4 +824,5 @@
         });
     }
 </script>
+@endsection
 @endsection
