@@ -107,7 +107,7 @@
                         </div>
                         <div class="pt-4 text-center">
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">Login</h3>
-                            <p class="text-gray-600">Masuk menggunakan akun email institusi Anda</p>
+                            <p class="text-gray-600">Masuk menggunakan akun email institusi/pribadi Anda</p>
                         </div>
                     </div>
 
@@ -152,7 +152,7 @@
                         <span class="text-base font-semibold text-gray-900">Bagaimana cara mendaftar di SIMSAPRAS?</span>
                     </div>
                     <div class="px-4 pb-5 sm:px-6 sm:pb-6">
-                        <p class="text-gray-600">Pendaftaran SIMSAPRAS menggunakan akun email institusi Anda. Ikuti proses verifikasi yang sederhana untuk mulai menggunakan sistem.</p>
+                        <p class="text-gray-600">Pendaftaran SIMSAPRAS menggunakan akun email institusi/pribadi Anda. Ikuti proses verifikasi yang sederhana untuk mulai menggunakan sistem.</p>
                     </div>
                 </div>
 

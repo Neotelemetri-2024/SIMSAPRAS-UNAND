@@ -84,6 +84,11 @@
                             <p class="mt-4 text-sm text-gray-500">Tidak ada notifikasi baru</p>
                         </div>
                     @endforelse
+                    @if($unreadNotifications->hasPages())
+                        <div class="mt-4">
+                            {{ $unreadNotifications->withQueryString()->links() }}
+                        </div>
+                    @endif
                 </div>
 
                 <div id="read-content" class="hidden p-4 space-y-4">
@@ -121,6 +126,11 @@
                             <p class="mt-4 text-sm text-gray-500">Tidak ada notifikasi yang sudah dibaca</p>
                         </div>
                     @endforelse
+                    @if($readNotifications->hasPages())
+                        <div class="mt-4">
+                            {{ $readNotifications->withQueryString()->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

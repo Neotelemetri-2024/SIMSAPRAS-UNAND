@@ -209,9 +209,9 @@
                    <input type="text" name="kontak" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                 </div>
                 <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-900">Gedung</label>
+                    <label class="block mb-2 text-sm font-medium text-gray-900">Sarana/Prasarana</label>
                     <select name="idSarana" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
-                       <option value="">Pilih Gedung</option>
+                       <option value="">Pilih Sarana/Prasarana</option>
                        @foreach($sarana as $sar)
                        <option value="{{ $sar->id }}">{{ $sar->nama }}</option>
                        @endforeach
@@ -256,14 +256,14 @@
                    <input type="text" name="kontak" value="{{ $item->kontak }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
                 </div>
                 <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-900">Gedung</label>
+                    <label class="block mb-2 text-sm font-medium text-gray-900">Sarana/Prasarana</label>
                     <select name="idSarana" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
-    @foreach($sarana as $sar)
-    <option value="{{ $sar->id }}" {{ $sar->id == $item->idSarana ? 'selected' : '' }}>
-        {{ $sar->nama }}
-    </option>
-    @endforeach
-</select>
+                        @foreach($sarana as $sar)
+                        <option value="{{ $sar->id }}" {{ $sar->id == $item->idSarana ? 'selected' : '' }}>
+                            {{ $sar->nama }}
+                        </option>
+                        @endforeach
+                    </select>
                  </div>
              </div>
              <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">

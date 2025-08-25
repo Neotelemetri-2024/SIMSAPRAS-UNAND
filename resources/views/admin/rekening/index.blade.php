@@ -84,11 +84,12 @@
                                     @endif
 
                                     @if(!$item->is_aktif)
-                                        <form action="{{ route('admin.rekening.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus rekening ini?')">
+                                        <form action="{{ route('admin.rekening.destroy', $item->id) }}" method="POST" class="inline delete-form">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" 
-                                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200">
+                                            <button type="button" 
+                                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-200"
+                                                    onclick="confirmDelete(this)">
                                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                                 </svg>
@@ -227,6 +228,8 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 function openCreateModal() {
     document.getElementById('createModal').classList.remove('hidden');
@@ -238,7 +241,7 @@ function closeCreateModal() {
 
 function openEditModal(id, namaBank, nomorRekening, namaPemilik) {
     document.getElementById('editModal').classList.remove('hidden');
-    document.getElementById('editForm').action = `/admin/rekening/${id}`;
+    document.getElementById('editForm').action = `/rekening/${id}`;
     document.getElementById('edit_nama_bank').value = namaBank;
     document.getElementById('edit_nomor_rekening').value = nomorRekening;
     document.getElementById('edit_nama_pemilik').value = namaPemilik;
@@ -246,6 +249,24 @@ function openEditModal(id, namaBank, nomorRekening, namaPemilik) {
 
 function closeEditModal() {
     document.getElementById('editModal').classList.add('hidden');
+}
+
+function confirmDelete(button) {
+    Swal.fire({
+        title: 'Yakin ingin menghapus rekening ini?',
+        text: "Data yang dihapus tidak dapat dikembalikan.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Cari form terdekat dan submit
+            button.closest('form').submit();
+        }
+    });
 }
 </script>
 @endsection

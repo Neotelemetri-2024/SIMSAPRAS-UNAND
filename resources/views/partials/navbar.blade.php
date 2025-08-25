@@ -26,11 +26,11 @@
 
             <!-- Bagian kanan (notifications & profile) -->
             <div class="flex items-center space-x-3">
-                <!-- Notification button -->
+                {{-- <!-- Notification button -->
                 <button type="button"
                     class="notification-button p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 transition-colors">
 
-                </button>
+                </button> --}}
 
                 <!-- Profile dropdown -->
                 <div class="relative">

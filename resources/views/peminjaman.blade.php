@@ -337,6 +337,7 @@
                                     <p class="text-sm text-yellow-800 font-medium mb-2">Catatan:</p>
                                     <ul class="text-sm text-yellow-700 space-y-1">
                                         <li>• Sabtu/Minggu atau setelah 16:00</li>
+                                        <li>• Tanggal merah (hari libur nasional)</li>
                                         <li>• Status Umum selalu dikenakan tarif</li>
                                         @if(isset($ruangan) ? $ruangan->is_hourly_rate : $sarana->is_hourly_rate)
                                         <li>• Per {{ isset($ruangan) ? $ruangan->hours_per_unit : $sarana->hours_per_unit }} jam</li>

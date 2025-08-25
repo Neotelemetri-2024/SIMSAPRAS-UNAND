@@ -14,8 +14,6 @@ class RekeningController extends Controller
         return view('admin.rekening.index', compact('rekening'));
     }
 
-
-
     public function store(Request $request)
     {
         $request->validate([
@@ -40,8 +38,6 @@ class RekeningController extends Controller
 
         return redirect()->route('admin.rekening.index')->with('success', $message);
     }
-
-
 
     public function update(Request $request, Rekening $rekening)
     {
@@ -79,6 +75,4 @@ class RekeningController extends Controller
 
         return redirect()->route('admin.rekening.index')->with('success', 'Rekening berhasil diaktifkan');
     }
-
-
 }
