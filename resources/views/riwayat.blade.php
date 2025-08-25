@@ -825,4 +825,3 @@
     }
 </script>
 @endsection
-@endsection

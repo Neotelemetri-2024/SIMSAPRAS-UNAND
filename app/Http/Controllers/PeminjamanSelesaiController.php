@@ -65,7 +65,7 @@ class PeminjamanSelesaiController extends Controller
         $peminjamanSelesai = $query
             ->paginate(10)
             ->appends(['search' => $search, 'sort' => $sort]);
-        $title = 'Pengajuan Selesai';
+        $title = 'Peminjaman Selesai';
 
         return view('admin.peminjamanselesai', compact('peminjamanSelesai', 'search', 'sort', 'title'));
     }

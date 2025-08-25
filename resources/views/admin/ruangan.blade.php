@@ -686,8 +686,8 @@ function handleDeleteButtonClick(e) {
 
 async function confirmDelete(url) {
     const result = await Swal.fire({
-        title: 'Apakah Anda yakin?',
-        text: "Data akan dinonaktifkan dan tidak dapat dikembalikan!",
+        title: 'Konfirmasi',
+        text: "Apakah Anda yakin ingin menonaktifkan ruangan ini?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
