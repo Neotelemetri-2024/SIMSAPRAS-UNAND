@@ -96,7 +96,7 @@
 
             {{-- "View All" Button --}}
             <div class="mt-8 text-center">
-                <a href="{{ route('pengumuman.index') }}" class="text-sm font-semibold text-yellow-700 hover:text-yellow-800 hover:underline transition-colors duration-200">
+                <a href="{{ route('pengumuman.user') }}" class="text-sm font-semibold text-yellow-700 hover:text-yellow-800 hover:underline transition-colors duration-200">
                     Lihat Semua Pengumuman →
                 </a>
             </div>
