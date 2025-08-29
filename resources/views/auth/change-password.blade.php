@@ -82,7 +82,7 @@
                         </div>
     
                         <div class="flex space-x-4">
-                            <a href="{{ url()->previous() }}" 
+                            <a href="{{ auth()->user()->role === 'user' ? route('profile.index') : route('dashboard.index') }}" 
                                 class="flex-1 flex items-center justify-center px-4 py-2.5 text-gray-700 bg-gray-100 font-medium rounded-lg hover:bg-gray-200 focus:ring-4 focus:ring-gray-300 transition-colors">
                                 <i class="fas fa-arrow-left mr-2"></i>
                                 Kembali

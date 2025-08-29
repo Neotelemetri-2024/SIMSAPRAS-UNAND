@@ -303,11 +303,11 @@
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Utama</label>
-                                <input type="file" name="gambar" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50" required>
+                                <input type="file" name="gambar" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50" required accept=".jpg,.jpeg,.png,image/jpeg,image/png">
                             </div>
                             <div>
                                 <label class="block mb-2 text-sm font-medium text-gray-900">Gambar Tambahan</label>
-                                <input type="file" name="additional_images[]" multiple class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50">
+                                <input type="file" name="additional_images[]" multiple class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
                                 <p class="mt-1 text-xs text-gray-500">Bisa pilih lebih dari satu gambar (opsional)</p>
                             </div>
                         </div>
@@ -395,7 +395,7 @@
                                          alt="Gambar Utama">
                                 </div>
                                 @endif
-                                <input type="file" name="gambar" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50">
+                                <input type="file" name="gambar" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
                             </div>
                             <!-- Gambar Tambahan -->
                             <div>
@@ -435,7 +435,7 @@
                                 </div>
                                 @endif
                                 <input type="file" name="additional_images[]" multiple
-                                       class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50">
+                                       class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
                                 <p class="mt-1 text-xs text-gray-500">Tambah gambar baru (opsional)</p>
                             </div>
                         </div>

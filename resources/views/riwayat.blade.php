@@ -591,7 +591,7 @@
                                 Pembatalan Peminjaman
                             </h4>
                             <div class="space-y-3">
-                                <p class="text-sm text-gray-600">Anda dapat membatalkan peminjaman ini karena:</p>
+                                <p class="text-sm text-gray-600">Anda dapat membatalkan peminjaman ini apabila:</p>
                                 <ul class="list-disc list-inside text-sm text-gray-600 ml-2">
                                     <li>Status peminjaman masih dalam tahap diajukan/diproses/disetujui</li>
                                     <li>Masih lebih dari 3 hari sebelum tanggal peminjaman</li>
@@ -823,5 +823,23 @@
             });
         });
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('form input[type="file"][name="buktiPembayaran"]').forEach(function(input) {
+            input.form.addEventListener('submit', function(e) {
+                const file = input.files[0];
+                if (file && file.size > 2 * 1024 * 1024) { // 2MB
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ukuran file terlalu besar!',
+                        text: 'Ukuran maksimal file adalah 2MB.',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    });
 </script>
 @endsection

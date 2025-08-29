@@ -22,6 +22,13 @@ class PengaduanController extends Controller
                 'deskripsi' => 'required',
                 'id_sarana' => 'required',
                 'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            ], [
+                'judul.required' => 'Judul wajib diisi.',
+                'deskripsi.required' => 'Deskripsi wajib diisi.',
+                'id_sarana.required' => 'Sarana wajib dipilih.',
+                'foto.image' => 'File harus berupa gambar.',
+                'foto.mimes' => 'Format gambar harus jpeg, png, atau jpg.',
+                'foto.max' => 'Ukuran gambar maksimal 2MB.',
             ]);
 
             $data = [
@@ -45,6 +52,12 @@ class PengaduanController extends Controller
                 'message' => 'Pengaduan berhasil dikirim!',
             ]);
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors(),
+                'message' => 'Validasi gagal. Periksa input Anda. Perhatikan ukuran file foto.',
+            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
