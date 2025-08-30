@@ -363,51 +363,57 @@
                 </div>
             </div>
 
-            <!-- Jam Lembur Section - Compact for Mobile -->
+            <!-- Jam Lembur Section - Tampilkan Semua Data -->
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
                 <h3 class="text-lg font-semibold text-blue-800 mb-4">Informasi Jam Lembur Tahun {{ now()->year }}</h3>
                 
-                <!-- Jam Lembur Bulan Berjalan - Prominent -->
+                <!-- Jam Lembur Bulan Berjalan -->
                 <div class="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <h4 class="text-md font-semibold text-blue-700 mb-3">{{ $bulanIni }} (Bulan Berjalan)</h4>
+                    <h4 class="text-md font-semibold text-blue-700 mb-3">{{ $bulanIni ?? 'Bulan Berjalan' }} (Bulan Berjalan)</h4>
                     <div class="flex items-center mb-2">
                         <div class="w-full bg-gray-200 rounded-full h-3">
-                            <div class="bg-blue-600 h-3 rounded-full" style="width: {{ min(100, ($jamLemburBulanIni / 40) * 100) }}%"></div>
+                            <div class="bg-blue-600 h-3 rounded-full" style="width: {{ min(100, (($jamLemburBulanIni ?? 0) / 40) * 100) }}%"></div>
                         </div>
-                        <span class="ml-3 text-sm font-medium text-blue-700">{{ min(100, round(($jamLemburBulanIni / 40) * 100)) }}%</span>
+                        <span class="ml-3 text-sm font-medium text-blue-700">{{ min(100, round((($jamLemburBulanIni ?? 0) / 40) * 100)) }}%</span>
                     </div>
                     <p class="text-sm text-blue-700">
-                        <span class="font-medium">Terpakai:</span> {{ $jamLemburBulanIni }} jam | 
-                        <span class="font-medium">Sisa:</span> {{ max(0, 40 - $jamLemburBulanIni) }} jam dari 40 jam
+                        <span class="font-medium">Terpakai:</span> {{ $jamLemburBulanIni ?? 0 }} jam | 
+                        <span class="font-medium">Sisa:</span> {{ max(0, 40 - ($jamLemburBulanIni ?? 0)) }} jam dari 40 jam
                     </p>
                 </div>
                 
-                <!-- Toggle untuk Data Bulan Lain -->
-                <div class="text-center">
-                    <button id="toggleJamLembur" class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                        <span id="toggleText">Lihat Data Bulan Lainnya</span>
-                    </button>
-                </div>
-                
-                <!-- Data Bulan Lain - Tersembunyi by Default -->
-                <div id="dataJamLembur" class="hidden mt-6">
+                <!-- Data Semua Bulan - Tampilkan Langsung -->
+                <div class="mt-6">
+                    <h4 class="text-md font-semibold text-blue-700 mb-4 text-center">Data Jam Lembur Semua Bulan</h4>
                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                        @foreach($dataJamLembur as $data)
-                            @if(!$data['is_current'])
-                            <div class="p-3 bg-white rounded-lg border border-gray-200 text-center">
-                                <h5 class="text-xs font-semibold text-gray-700 mb-2">{{ substr($data['bulan'], 0, 3) }}</h5>
+                        @if(isset($dataJamLembur) && count($dataJamLembur) > 0)
+                            @foreach($dataJamLembur as $data)
+                            <div class="p-3 bg-white rounded-lg border border-gray-200 text-center {{ $data['is_current'] ? 'ring-2 ring-blue-300 bg-blue-50' : '' }}">
+                                <h5 class="text-xs font-semibold text-gray-700 mb-2">
+                                    {{ substr($data['bulan'], 0, 3) }}
+                                    @if($data['is_current'])
+                                        <span class="text-blue-600">(Berjalan)</span>
+                                    @endif
+                                </h5>
                                 <div class="flex items-center justify-center mb-1">
                                     <div class="w-full bg-gray-200 rounded-full h-1.5">
                                         <div class="bg-blue-500 h-1.5 rounded-full" style="width: {{ $data['persentase'] }}%"></div>
                                     </div>
                                 </div>
                                 <p class="text-xs text-gray-600">{{ $data['jam_terpakai'] }}/40</p>
+                                <p class="text-xs text-gray-500 mt-1">{{ $data['sisa_jam'] }} sisa</p>
                             </div>
-                            @endif
-                        @endforeach
+                            @endforeach
+                        @else
+                            <div class="col-span-full text-center py-8">
+                                <div class="bg-gray-50 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <p class="text-gray-500">Data jam lembur tidak tersedia</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
                 
@@ -705,28 +711,6 @@
                 startAutoplay();
             }
         });
-
-        // Toggle Jam Lembur functionality
-        const toggleBtn = document.getElementById('toggleJamLembur');
-        const dataSection = document.getElementById('dataJamLembur');
-        const toggleText = document.getElementById('toggleText');
-        const toggleIcon = toggleBtn.querySelector('svg');
-        
-        if (toggleBtn && dataSection) {
-            toggleBtn.addEventListener('click', function() {
-                if (dataSection.classList.contains('hidden')) {
-                    // Show data
-                    dataSection.classList.remove('hidden');
-                    toggleText.textContent = 'Sembunyikan Data Bulan Lainnya';
-                    toggleIcon.style.transform = 'rotate(180deg)';
-                } else {
-                    // Hide data
-                    dataSection.classList.add('hidden');
-                    toggleText.textContent = 'Lihat Data Bulan Lainnya';
-                    toggleIcon.style.transform = 'rotate(0deg)';
-                }
-            });
-        }
     });
 </script>
 @if($sarana->isRoom == 0)
