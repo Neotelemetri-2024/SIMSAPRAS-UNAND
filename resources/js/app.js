@@ -8,4 +8,4 @@ window.Chart = Chart;
 window.Alpine = Alpine;
 
 Alpine.start();
-Chart.start();
+// Chart.start();
