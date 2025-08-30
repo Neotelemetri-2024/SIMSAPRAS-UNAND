@@ -297,11 +297,12 @@
                                 <div class="mb-6">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Status Peminjam</label>
                                 @if(auth()->user()->isFakultas)
-                                    <input type="hidden" name="statusPeminjam" value="unit">
-                                        <div class="border border-gray-200 rounded-lg px-4 py-3 text-gray-700 bg-white">
-                                        <span class="font-medium">Fakultas/Unit</span>
-                                    </div>
-                                        <p class="mt-1 text-xs text-green-600">Status otomatis: Fakultas/Unit</p>
+                                    <select name="statusPeminjam" id="statusPeminjam" 
+                                                class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500 py-3"
+                                            required>
+                                        <option value="" disabled selected hidden>Pilih Status</option>
+                                        <option value="unit">Fakultas/Unit</option>
+                                    </select>
                                 @else
                                     <select name="statusPeminjam" id="statusPeminjam" 
                                                 class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500 py-3"
