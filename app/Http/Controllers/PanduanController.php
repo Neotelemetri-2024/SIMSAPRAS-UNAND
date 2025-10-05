@@ -106,4 +106,25 @@ class PanduanController extends Controller
     public function cara () {
         return view('cara');
     }
+
+
+    public function downloadManualBook($filename)
+    {
+        $filePath = public_path('manualBooks/' . $filename);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        // Check if it's a preview request (from iframe)
+        if (request()->has('preview')) {
+            return response()->file($filePath, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $filename . '"'
+            ]);
+        }
+
+        // Default download behavior
+        return response()->download($filePath);
+    }
 }

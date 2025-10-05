@@ -2,8 +2,9 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
     <!-- Main Content -->
-    <div class="max-w-screen-xl mx-auto px-4 py-8 pt-20">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    <div class="min-h-screen flex items-center justify-center px-4 py-8">
+        <div class="w-full max-w-6xl">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <!-- Left Side - Login Form -->
             <div class="bg-white rounded-2xl shadow-xl p-8">
                 <div class="mb-8 text-center">
@@ -145,6 +146,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     </div>

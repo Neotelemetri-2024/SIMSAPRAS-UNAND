@@ -1,6 +1,7 @@
 <x-guest-layout>
-    <div class="max-w-screen-xl mx-auto pt-10 pb-10">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    <div class="min-h-screen flex items-center justify-center px-4 py-8">
+        <div class="w-full max-w-6xl">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <!-- Left Side - Register Form -->
             <div class="bg-white rounded-2xl shadow-xl p-8">
                 <div class="mb-8 text-center">
@@ -160,6 +161,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     </div>

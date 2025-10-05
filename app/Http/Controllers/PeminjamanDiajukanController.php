@@ -19,6 +19,8 @@ class PeminjamanDiajukanController extends Controller
 
     public function index(Request $request)
     {
+        $this->updateExpiredPeminjaman();
+        
         $search = $request->input('search');
         $sort = $request->input('sort');
         $saranaFilter = $request->input('sarana');
@@ -188,4 +190,42 @@ class PeminjamanDiajukanController extends Controller
             ], 500);
         }
     }
+
+    public function updateExpiredPeminjaman()
+    {
+        $today = now();
+        
+        $expiredPeminjaman = Peminjaman::where('status', 'diajukan')
+            ->whereHas('tanggalPeminjaman', function ($query) use ($today) {
+                $query->where('tanggal', '<', $today);
+            })
+            ->get();
+
+        foreach ($expiredPeminjaman as $peminjaman) {
+            $allDatesPassed = $peminjaman->tanggalPeminjaman->every(function($tanggal) use ($today) {
+                return \Carbon\Carbon::parse($tanggal->tanggal)->lt($today);
+            });
+
+            if ($allDatesPassed) {
+                $peminjaman->status = 'selesai';
+                $peminjaman->save();
+
+                Notifikasi::create([
+                    'idPeminjaman' => $peminjaman->id,
+                    'penerima' => $peminjaman->user->id,
+                    'judul' => "Peminjaman Selesai",
+                    'isi' => "Peminjaman Anda telah otomatis diselesaikan karena sudah melewati tanggal yang dijadwalkan.",
+                    'isRead' => false
+                ]);
+
+                $this->notificationService->sendToUser(
+                    $peminjaman->user->id,
+                    "Peminjaman Selesai",
+                    "Peminjaman Anda telah otomatis diselesaikan karena sudah melewati tanggal yang dijadwalkan.",
+                    $peminjaman->id
+                );
+            }
+        }
+    }
+
 }

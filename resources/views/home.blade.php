@@ -44,83 +44,57 @@
     </section>
 
     @if($pengumuman->count())
-    <section class="py-12 bg-gradient-to-r from-yellow-50 to-orange-50 border-y border-yellow-200">
+    <section class="py-12 bg-white border-t border-gray-100">
         <div class="max-w-screen-xl mx-auto px-4">
-            <div class="mb-6 flex items-center gap-2">
-                <div class="animate-pulse">
-                    <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-4v14c-1.543-2.766-5.067-4-9.168-4H7a3.988 3.988 0 01-1.564-.317z"/>
-                    </svg>
-                </div>
-                <h2 class="text-xl font-bold text-yellow-700">Pengumuman Terbaru</h2>
+            <div class="text-center mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-2">Informasi Terbaru</h2>
+                <p class="text-gray-600 text-sm">Pantau pengumuman dan informasi penting dari SIMSAPRAS</p>
             </div>
-
-            {{-- Carousel Container - MODIFIED --}}
-            <div class="relative">
-                {{-- This is the main scrolling container --}}
-                <div id="pengumumanCarousel" class="grid grid-flow-col auto-cols-[90%] sm:auto-cols-[48%] md:auto-cols-[32%] gap-4 overflow-x-auto scroll-snap-type-x-mandatory scroll-smooth pb-4 -mb-4" style="-ms-overflow-style: none; scrollbar-width: none;">
-                    @foreach($pengumuman->take(5) as $item)
-                    {{-- Carousel Item - MODIFIED --}}
-                    <div class="scroll-snap-align-start h-full">
-                        <div class="bg-white border-l-4 border-yellow-400 rounded-lg p-4 shadow-md h-full flex flex-col">
-                            <div class="flex-1">
-                                <h3 class="font-semibold text-gray-800 mb-1 line-clamp-2">{{ $item->judul }}</h3>
-                                <p class="text-gray-600 text-sm mb-2 line-clamp-3">
-                                    {{ strip_tags($item->isi) }}
-                                </p>
-                            </div>
-                            <div class="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
-                                <span class="text-xs text-gray-400">{{ $item->created_at->format('d M Y') }}</span>
-                                <button onclick="showPengumuman('{{ addslashes($item->judul) }}', `{!! addslashes($item->isi) !!}`)"
-                                        class="text-yellow-600 text-sm hover:underline font-medium">Selengkapnya →</button>
-                            </div>
-                        </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach($pengumuman->take(3) as $item)
+                <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs text-gray-500">{{ $item->created_at->format('d M Y') }}</span>
                     </div>
-                    @endforeach
+                    <h3 class="font-medium text-gray-900 mb-2 line-clamp-2 text-sm">{{ $item->judul }}</h3>
+                    <p class="text-gray-600 text-xs mb-3 line-clamp-2">
+                        {{ strip_tags($item->isi) }}
+                    </p>
+                    <button onclick="showPengumuman('{{ addslashes($item->judul) }}', `{!! addslashes($item->isi) !!}`)"
+                            class="text-green-600 text-xs hover:text-green-700 font-medium">Baca selengkapnya →</button>
                 </div>
-
-                {{-- Navigation Buttons - MODIFIED (positioning) --}}
-                @if($pengumuman->count() > 3)
-                <button onclick="prevSlide()" class="absolute top-1/2 -translate-y-1/2 -left-4 bg-white/80 hover:bg-white rounded-full p-2 z-20 shadow-md transition-all duration-200 hidden md:block">
-                    <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                    </svg>
-                </button>
-                <button onclick="nextSlide()" class="absolute top-1/2 -translate-y-1/2 -right-4 bg-white/80 hover:bg-white rounded-full p-2 z-20 shadow-md transition-all duration-200 hidden md:block">
-                    <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-                </button>
-                @endif
+                @endforeach
             </div>
-
-            {{-- "View All" Button --}}
-            <div class="mt-8 text-center">
-                <a href="{{ route('pengumuman.user') }}" class="text-sm font-semibold text-yellow-700 hover:text-yellow-800 hover:underline transition-colors duration-200">
-                    Lihat Semua Pengumuman →
+            
+            @if($pengumuman->count() > 3)
+            <div class="text-center mt-6">
+                <a href="{{ route('pengumuman.user') }}" class="text-sm text-green-600 hover:text-green-700 font-medium">
+                    Lihat semua pengumuman →
                 </a>
             </div>
+            @endif
         </div>
     </section>
     @endif
 
 
-    {{-- Toast & Modal Sections (No changes here) --}}
+    {{-- Toast & Modal Sections - Minimalis --}}
     @if($pengumuman->count())
-    <div id="pengumumanToast" class="fixed top-20 right-4 z-50 max-w-sm bg-white border-l-4 border-yellow-400 rounded-lg shadow-lg p-4 transform translate-x-full transition-transform duration-300">
+    <div id="pengumumanToast" class="fixed top-20 right-4 z-50 max-w-md bg-white border border-gray-200 rounded-lg shadow-lg p-4 transform translate-x-full transition-transform duration-300">
         <div class="flex items-start">
             <div class="flex-shrink-0">
-                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                 </svg>
             </div>
             <div class="ml-3 flex-1">
-                <p class="text-sm font-medium text-gray-900">Pengumuman Baru!</p>
+                <p class="text-sm font-medium text-gray-900">Informasi Baru</p>
                 <p class="text-sm text-gray-600 mt-1">{{ $pengumuman->first()->judul }}</p>
-                <div class="mt-2 flex space-x-2">
+                <div class="mt-3 flex space-x-3">
                     <button onclick="showPengumuman('{{ addslashes($pengumuman->first()->judul) }}', `{!! addslashes($pengumuman->first()->isi) !!}`)"
-                            class="text-xs text-yellow-600 hover:underline">Lihat</button>
-                    <button onclick="closeToast()" class="text-xs text-gray-400 hover:text-gray-600">Tutup</button>
+                            class="text-sm text-green-600 hover:underline font-medium">Lihat</button>
+                    <button onclick="closeToast()" class="text-sm text-gray-400 hover:text-gray-600">Tutup</button>
                 </div>
             </div>
         </div>
@@ -128,18 +102,18 @@
     @endif
 
     @if($pengumuman->count())
-    <div id="pengumumanBanner" class="fixed top-0 left-0 right-0 z-30 bg-gradient-to-r from-yellow-400 to-orange-400 text-white py-2 transform -translate-y-full transition-transform duration-300">
+    <div id="pengumumanBanner" class="fixed top-0 left-0 right-0 z-30 bg-green-50 border-b border-green-200 text-gray-800 py-2 transform -translate-y-full transition-transform duration-300">
         <div class="max-w-screen-xl mx-auto px-4 flex items-center justify-between">
             <div class="flex items-center space-x-2">
-                <svg class="w-4 h-4 animate-bounce" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 2L3 7v11a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V7l-7-5z"/>
+                <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                 </svg>
                 <span class="text-sm font-medium">{{ $pengumuman->first()->judul }}</span>
             </div>
             <div class="flex items-center space-x-3">
                 <button onclick="showPengumuman('{{ addslashes($pengumuman->first()->judul) }}', `{!! addslashes($pengumuman->first()->isi) !!}`)"
-                        class="text-xs bg-white/20 px-2 py-1 rounded hover:bg-white/30 transition">Lihat</button>
-                <button onclick="closeBanner()" class="text-white/80 hover:text-white">
+                        class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200 transition">Lihat</button>
+                <button onclick="closeBanner()" class="text-gray-500 hover:text-gray-700">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -161,122 +135,116 @@
         </div>
     </div>
 
-    <section id="features" class="py-20 bg-white">
+    <section id="features" class="py-16 bg-gray-50">
         <div class="max-w-screen-xl px-4 mx-auto">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-3xl font-bold text-gray-900 mb-4">Fitur Utama</h2>
-                <p class="text-gray-600">Nikmati kemudahan dalam peminjaman sarana dan prasarana</p>
+            <div class="text-center mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-3">Fitur Utama</h2>
+                <p class="text-gray-600 text-sm">Nikmati kemudahan dalam peminjaman sarana dan prasarana</p>
             </div>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="group p-6 bg-white rounded-xl border border-gray-100 hover:border-green-100 transition-all duration-200 hover:shadow-lg">
-                    <div class="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-lg bg-green-50 text-green-600 group-hover:bg-green-100 transition-colors duration-200">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="text-center p-6 bg-white rounded-lg shadow-sm">
+                    <div class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-green-50 text-green-600 mb-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                     </div>
-                    <h3 class="mb-3 text-xl font-semibold text-gray-900">Cek Ketersediaan</h3>
-                    <p class="text-gray-600 leading-relaxed">Lihat jadwal dan ketersediaan sarana secara langsung melalui kalender interaktif.</p>
+                    <h3 class="mb-2 text-lg font-semibold text-gray-900">Cek Ketersediaan</h3>
+                    <p class="text-gray-600 text-sm">Lihat jadwal dan ketersediaan sarana secara langsung</p>
                 </div>
 
-                <div class="group p-6 bg-white rounded-xl border border-gray-100 hover:border-green-100 transition-all duration-200 hover:shadow-lg">
-                    <div class="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-lg bg-green-50 text-green-600 group-hover:bg-green-100 transition-colors duration-200">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="text-center p-6 bg-white rounded-lg shadow-sm">
+                    <div class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-green-50 text-green-600 mb-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
                     </div>
-                    <h3 class="mb-3 text-xl font-semibold text-gray-900">Peminjaman Mudah</h3>
-                    <p class="text-gray-600 leading-relaxed">Ajukan peminjaman kapan saja dan di mana saja dengan proses yang sederhana.</p>
+                    <h3 class="mb-2 text-lg font-semibold text-gray-900">Peminjaman Mudah</h3>
+                    <p class="text-gray-600 text-sm">Ajukan peminjaman kapan saja dengan proses sederhana</p>
                 </div>
 
-                <div class="group p-6 bg-white rounded-xl border border-gray-100 hover:border-green-100 transition-all duration-200 hover:shadow-lg">
-                    <div class="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-lg bg-green-50 text-green-600 group-hover:bg-green-100 transition-colors duration-200">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="text-center p-6 bg-white rounded-lg shadow-sm">
+                    <div class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-green-50 text-green-600 mb-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <h3 class="mb-3 text-xl font-semibold text-gray-900">Pantau Status</h3>
-                    <p class="text-gray-600 leading-relaxed">Lacak status peminjaman Anda dan terima notifikasi pembaruan secara langsung.</p>
+                    <h3 class="mb-2 text-lg font-semibold text-gray-900">Pantau Status</h3>
+                    <p class="text-gray-600 text-sm">Lacak status peminjaman dan terima notifikasi</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="how-it-works" class="py-20 bg-gray-50">
+    <section id="how-it-works" class="py-16 bg-white">
         <div class="max-w-screen-xl px-4 mx-auto">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-3xl font-bold text-gray-900 mb-4">Cara Kerja</h2>
-                <p class="text-gray-600">Proses peminjaman yang sederhana dalam tiga langkah mudah</p>
-            </div>
-            <div class="relative">
-                <div class="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-green-100 transform -translate-y-1/2"></div>
-                
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="relative bg-white p-6 rounded-xl shadow-sm">
-                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-600 text-white font-semibold">1</span>
-                        </div>
-                        <div class="pt-4 text-center">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Login</h3>
-                            <p class="text-gray-600">Masuk menggunakan akun email institusi/pribadi Anda</p>
-                        </div>
-                    </div>
-
-                    <div class="relative bg-white p-6 rounded-xl shadow-sm">
-                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-600 text-white font-semibold">2</span>
-                        </div>
-                        <div class="pt-4 text-center">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Pilih Ruangan</h3>
-                            <p class="text-gray-600">Pilih ruangan yang tersedia sesuai kebutuhan</p>
-                        </div>
-                    </div>
-
-                    <div class="relative bg-white p-6 rounded-xl shadow-sm">
-                        <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-600 text-white font-semibold">3</span>
-                        </div>
-                        <div class="pt-4 text-center">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Konfirmasi</h3>
-                            <p class="text-gray-600">Terima konfirmasi dan gunakan fasilitas</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="faq" class="py-20 bg-white">
-        <div class="max-w-3xl mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold text-gray-900 mb-4">Pertanyaan Umum</h2>
-                <p class="text-gray-600">Temukan jawaban untuk pertanyaan yang sering diajukan</p>
+            <div class="text-center mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-3">Cara Kerja</h2>
+                <p class="text-gray-600 text-sm">Proses peminjaman yang sederhana dalam tiga langkah mudah</p>
             </div>
             
-            <div class="space-y-4">
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="text-center p-6 bg-gray-50 rounded-lg">
+                    <div class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-600 text-white font-semibold mb-3">1</div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Login</h3>
+                    <p class="text-gray-600 text-sm">Masuk menggunakan akun email institusi/pribadi Anda</p>
+                </div>
+
+                <div class="text-center p-6 bg-gray-50 rounded-lg">
+                    <div class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-600 text-white font-semibold mb-3">2</div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Pilih Ruangan</h3>
+                    <p class="text-gray-600 text-sm">Pilih ruangan yang tersedia sesuai kebutuhan</p>
+                </div>
+
+                <div class="text-center p-6 bg-gray-50 rounded-lg">
+                    <div class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-600 text-white font-semibold mb-3">3</div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Konfirmasi</h3>
+                    <p class="text-gray-600 text-sm">Terima konfirmasi dan gunakan fasilitas</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-16 bg-gray-50">
+        <div class="max-w-3xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-3">Pertanyaan Umum</h2>
+                <p class="text-gray-600 text-sm">Temukan jawaban untuk pertanyaan yang sering diajukan</p>
+            </div>
+            
+            <div class="space-y-3">
                 <div class="border border-gray-200 rounded-lg">
-                    <div class="flex items-center justify-between w-full px-4 py-5 sm:p-6 text-left">
-                        <span class="text-base font-semibold text-gray-900">Bagaimana cara mendaftar di SIMSAPRAS?</span>
-                    </div>
-                    <div class="px-4 pb-5 sm:px-6 sm:pb-6">
-                        <p class="text-gray-600">Pendaftaran SIMSAPRAS menggunakan akun email institusi/pribadi Anda. Ikuti proses verifikasi yang sederhana untuk mulai menggunakan sistem.</p>
+                    <button onclick="toggleFAQ(1)" class="flex items-center justify-between w-full px-4 py-4 text-left hover:bg-gray-50 transition-colors">
+                        <span class="text-sm font-semibold text-gray-900">Bagaimana cara mendaftar di SIMSAPRAS?</span>
+                        <svg id="icon-1" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div id="answer-1" class="hidden px-4 pb-4">
+                        <p class="text-sm text-gray-600">Pendaftaran SIMSAPRAS menggunakan akun email institusi/pribadi Anda. Ikuti proses verifikasi yang sederhana untuk mulai menggunakan sistem.</p>
                     </div>
                 </div>
 
                 <div class="border border-gray-200 rounded-lg">
-                    <div class="flex items-center justify-between w-full px-4 py-5 sm:p-6 text-left">
-                        <span class="text-base font-semibold text-gray-900">Berapa lama proses persetujuan peminjaman?</span>
-                    </div>
-                    <div class="px-4 pb-5 sm:px-6 sm:pb-6">
-                        <p class="text-gray-600">Proses persetujuan peminjaman membutuhkan waktu maksimal 1x24 jam kerja. Untuk keperluan mendesak, silakan hubungi admin.</p>
+                    <button onclick="toggleFAQ(2)" class="flex items-center justify-between w-full px-4 py-4 text-left hover:bg-gray-50 transition-colors">
+                        <span class="text-sm font-semibold text-gray-900">Berapa lama proses persetujuan peminjaman?</span>
+                        <svg id="icon-2" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div id="answer-2" class="hidden px-4 pb-4">
+                        <p class="text-sm text-gray-600">Proses persetujuan peminjaman membutuhkan waktu maksimal 1x24 jam kerja. Untuk keperluan mendesak, silakan hubungi admin.</p>
                     </div>
                 </div>
 
                 <div class="border border-gray-200 rounded-lg">
-                    <div class="flex items-center justify-between w-full px-4 py-5 sm:p-6 text-left">
-                        <span class="text-base font-semibold text-gray-900">Apa saja persyaratan peminjaman ruangan?</span>
-                    </div>
-                    <div class="px-4 pb-5 sm:px-6 sm:pb-6">
-                        <p class="text-gray-600">Persyaratan utama meliputi status aktif sebagai mahasiswa/staff Unand, surat peminjaman resmi, dan rundown kegiatan.</p>
+                    <button onclick="toggleFAQ(3)" class="flex items-center justify-between w-full px-4 py-4 text-left hover:bg-gray-50 transition-colors">
+                        <span class="text-sm font-semibold text-gray-900">Apa saja persyaratan peminjaman ruangan?</span>
+                        <svg id="icon-3" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div id="answer-3" class="hidden px-4 pb-4">
+                        <p class="text-sm text-gray-600">Persyaratan utama meliputi status aktif sebagai mahasiswa/staff Unand, surat peminjaman resmi, dan rundown kegiatan.</p>
                     </div>
                 </div>
             </div>
@@ -284,26 +252,22 @@
     </section>
 
     @can('not-user')
-    <section class="relative py-20 bg-gradient-to-br from-green-600 to-green-700 overflow-hidden">
-        <div class="absolute inset-0 bg-grid-white/[0.1] bg-[size:16px]"></div>
-        <div class="relative max-w-screen-xl mx-auto px-4">
+    <section class="py-16 bg-green-600">
+        <div class="max-w-screen-xl mx-auto px-4">
             <div class="max-w-2xl mx-auto text-center">
-                <h2 class="text-3xl font-bold text-white mb-4">
+                <h2 class="text-2xl font-bold text-white mb-3">
                     Mulai Gunakan SIMSAPRAS
                 </h2>
-                <p class="text-lg text-green-100 mb-8">
+                <p class="text-green-100 mb-6 text-sm">
                     Pinjam sarana dan prasarana dengan lebih efisien melalui sistem modern kami
                 </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
                     <a href="{{ route('register') }}"
-                        class="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-green-600 bg-white rounded-lg shadow-sm hover:bg-green-50 transition duration-200">
+                        class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-green-600 bg-white rounded-lg hover:bg-green-50 transition duration-200">
                         Daftar Sekarang
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                        </svg>
                     </a>
                     <a href="{{ route('panduan.index') }}"
-                        class="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white border border-white/20 rounded-lg hover:bg-white/10 transition duration-200">
+                        class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white border border-white/20 rounded-lg hover:bg-white/10 transition duration-200">
                         Pelajari Lebih Lanjut
                     </a>
                 </div>
@@ -314,67 +278,6 @@
     @push('scripts')
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const totalSlides = {{ $pengumuman->count() }};
-        
-        if (totalSlides > 0) {
-            const carousel = document.getElementById('pengumumanCarousel');
-            let autoSlideInterval;
-
-            const getScrollAmount = () => {
-                // Get the first item in the carousel
-                const firstItem = carousel.querySelector(':first-child');
-                if (!firstItem) return 0;
-
-                // Get the gap from the parent grid style
-                const gap = parseFloat(getComputedStyle(carousel).gap) || 16;
-                return firstItem.offsetWidth + gap;
-            };
-
-            window.nextSlide = () => {
-                const scrollAmount = getScrollAmount();
-                // If scrolling would go past the end, snap to the end
-                if (carousel.scrollLeft + scrollAmount >= carousel.scrollWidth - carousel.clientWidth) {
-                    carousel.scrollLeft = carousel.scrollWidth - carousel.clientWidth;
-                } else {
-                    carousel.scrollLeft += scrollAmount;
-                }
-                resetInterval();
-            };
-
-            window.prevSlide = () => {
-                const scrollAmount = getScrollAmount();
-                carousel.scrollLeft -= scrollAmount;
-                resetInterval();
-            };
-            
-            const autoScroll = () => {
-                // If we are at the end, loop back to the beginning
-                const isAtEnd = Math.ceil(carousel.scrollLeft) >= carousel.scrollWidth - carousel.clientWidth;
-                if (isAtEnd) {
-                    carousel.scrollLeft = 0;
-                } else {
-                    carousel.scrollLeft += getScrollAmount();
-                }
-            };
-            
-            const startInterval = () => {
-                if (totalSlides > 1) { // Only auto-scroll if there's more than one item
-                    autoSlideInterval = setInterval(autoScroll, 5000);
-                }
-            };
-            
-            const resetInterval = () => {
-                clearInterval(autoSlideInterval);
-                startInterval();
-            };
-
-            // Start auto-scrolling
-            startInterval();
-            
-            // Pause auto-scrolling when the user hovers over the carousel
-            carousel.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
-            carousel.addEventListener('mouseleave', startInterval);
-        }
 
         // Toast notification
         setTimeout(() => {
@@ -405,6 +308,20 @@
             const banner = document.getElementById('pengumumanBanner');
             if (banner) {
                 banner.classList.add('-translate-y-full');
+            }
+        }
+
+        // FAQ Toggle function
+        window.toggleFAQ = function(id) {
+            const answer = document.getElementById('answer-' + id);
+            const icon = document.getElementById('icon-' + id);
+            
+            if (answer.classList.contains('hidden')) {
+                answer.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                answer.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
             }
         }
 

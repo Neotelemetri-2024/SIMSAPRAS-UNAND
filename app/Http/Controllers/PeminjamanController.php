@@ -218,6 +218,15 @@ class PeminjamanController extends Controller
 
             $validated = $request->validate($validationRules);
 
+            // Validasi status peminjam berdasarkan role user
+            $user = auth()->user();
+            if ($validated['statusPeminjam'] === 'unit' && !$user->isFakultas) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Status peminjam "Fakultas/Unit" hanya dapat dipilih oleh akun fakultas/unit. Silakan gunakan akun fakultas/unit yang sesuai atau pilih status peminjam lainnya.'
+                ], 422);
+            }
+
             // CEK OVERLAP JADWAL
             foreach ($validated['jadwal_dates'] as $booking) {
                 $date = $booking['date'];

@@ -296,22 +296,17 @@
                                 <!-- Status Peminjam -->
                                 <div class="mb-6">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Status Peminjam</label>
-                                @if(auth()->user()->isFakultas)
-                                    <select name="statusPeminjam" id="statusPeminjam" 
-                                                class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500 py-3"
-                                            required>
-                                        <option value="" disabled selected hidden>Pilih Status</option>
-                                        <option value="unit">Fakultas/Unit</option>
-                                    </select>
-                                @else
-                                    <select name="statusPeminjam" id="statusPeminjam" 
-                                                class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500 py-3"
-                                            required>
-                                        <option value="" disabled selected hidden>Pilih Status</option>
-                                        <option value="ormawa">Ormawa</option>
-                                        <option value="umum">Umum</option>
-                                    </select>
-                                @endif
+                                <select name="statusPeminjam" id="statusPeminjam" 
+                                            class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500 py-3"
+                                        required>
+                                    <option value="" disabled selected hidden>Pilih Status</option>
+                                    <option value="unit">Fakultas/Unit</option>
+                                    <option value="ormawa">Ormawa</option>
+                                    <option value="umum">Umum</option>
+                                </select>
+                                <div id="statusInfo" class="mt-2 text-sm hidden">
+                                    <p id="statusMessage"></p>
+                                </div>
                             </div>
 
                             <!-- Tariff Information -->
@@ -470,6 +465,20 @@ function resetFileInput(inputId, infoId, previewId) {
 
 document.getElementById('peminjamanForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    
+    // Validasi status peminjam
+    const statusPeminjam = document.getElementById('statusPeminjam').value;
+    const isFakultas = {{ auth()->user()->isFakultas ? 'true' : 'false' }};
+    
+    if (statusPeminjam === 'unit' && !isFakultas) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Status Peminjam Tidak Valid',
+            text: 'Status peminjam "Fakultas/Unit" hanya dapat dipilih oleh akun fakultas/unit. Silakan gunakan akun fakultas/unit yang sesuai atau pilih status peminjam lainnya.',
+            confirmButtonColor: '#059669'
+        });
+        return;
+    }
     
     Swal.fire({
         title: 'Konfirmasi Pengajuan',
@@ -633,7 +642,56 @@ function confirmCancel() {
         document.getElementById('totalTarif').textContent = `Rp${totalTarif.toLocaleString('id-ID')}`;
     }
     
-    document.getElementById('statusPeminjam').addEventListener('change', calculateEstimatedTarif);
+    document.getElementById('statusPeminjam').addEventListener('change', function() {
+        calculateEstimatedTarif();
+        showStatusInfo();
+    });
+    
+    function showStatusInfo() {
+        const statusPeminjam = document.getElementById('statusPeminjam').value;
+        const isFakultas = {{ auth()->user()->isFakultas ? 'true' : 'false' }};
+        const statusInfo = document.getElementById('statusInfo');
+        const statusMessage = document.getElementById('statusMessage');
+        
+        if (!statusPeminjam) {
+            statusInfo.classList.add('hidden');
+            return;
+        }
+        
+        statusInfo.classList.remove('hidden');
+        
+        if (statusPeminjam === 'unit') {
+            if (isFakultas) {
+                statusMessage.innerHTML = `
+                    <svg class="w-4 h-4 inline mr-1 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-green-600">Akun fakultas/unit terdeteksi. Anda dapat meminjam dengan tarif fakultas/unit.</span>
+                `;
+            } else {
+                statusMessage.innerHTML = `
+                    <svg class="w-4 h-4 inline mr-1 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-red-600">Status ini hanya untuk akun fakultas/unit. Peminjaman akan ditolak jika menggunakan akun ini.</span>
+                `;
+            }
+        } else if (statusPeminjam === 'ormawa') {
+            statusMessage.innerHTML = `
+                <svg class="w-4 h-4 inline mr-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-blue-600">Status untuk organisasi mahasiswa (Ormawa).</span>
+            `;
+        } else if (statusPeminjam === 'umum') {
+            statusMessage.innerHTML = `
+                <svg class="w-4 h-4 inline mr-1 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-gray-600">Status untuk peminjam umum (non-akademik).</span>
+            `;
+        }
+    }
     document.querySelectorAll('select[name^="jadwal_dates"][name$="[jadwal_id]"]').forEach(select => {
         select.addEventListener('change', calculateEstimatedTarif);
     });

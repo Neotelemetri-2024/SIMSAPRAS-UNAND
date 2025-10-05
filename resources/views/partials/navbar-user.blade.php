@@ -1,3 +1,6 @@
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
 <nav class="bg-white dark:bg-gray-900 fixed w-full z-50 border-b border-gray-200 h-20">
     <div class="max-w-screen-xl h-full flex flex-wrap items-center justify-between mx-auto px-4">
         <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -62,28 +65,15 @@
                         </ul>
                     </div>
                 </li>
-                @can('is-user')
-                    <li class="flex items-center h-full">
-                        <a href="{{ route('riwayat.index') }}"
-                            class="block py-2 px-3 {{ request()->routeIs('riwayat*') ? 'text-green-600' : 'text-gray-900' }} rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-600 md:p-0">
-                            Riwayat
-                        </a>
-                    </li>
-                @endcan
-                @can('not-user')
-                    <li class="flex items-center h-full md:ml-8">
-                        <a href="{{ route('login') }}"
-                            class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
-                                </path>
-                            </svg>
-                            Login
-                        </a>
-                    </li>
-                @endcan
-                @can('is-user')
+                @auth
+                    @can('is-user')
+                        <li class="flex items-center h-full">
+                            <a href="{{ route('riwayat.index') }}"
+                                class="block py-2 px-3 {{ request()->routeIs('riwayat*') ? 'text-green-600' : 'text-gray-900' }} rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-green-600 md:p-0">
+                                Riwayat
+                            </a>
+                        </li>
+                    @endcan
                     <li class="relative flex items-center h-full md:ml-8">
                         <div class="flex items-center space-x-3">
                             <button type="button"
@@ -128,7 +118,19 @@
                             </div>
                         </div>
                     </li>
-                @endcan
+                @else
+                    <li class="flex items-center h-full md:ml-8">
+                        <a href="{{ route('login') }}"
+                            class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
+                                </path>
+                            </svg>
+                            Login
+                        </a>
+                    </li>
+                @endauth
             </ul>
         </div>
     </div>

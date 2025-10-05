@@ -55,6 +55,7 @@ Route::get('/panduan', [PanduanController::class, 'index'])->name('panduan.index
 Route::get('/panduan/status', [PanduanController::class, 'status'])->name('panduan.status');
 Route::get('/panduan/syarat', [PanduanController::class, 'syarat'])->name('panduan.syarat');
 Route::get('/panduan/cara', [PanduanController::class, 'cara'])->name('panduan.cara');
+Route::get('/panduan/manual-book/download/{filename}', [PanduanController::class, 'downloadManualBook'])->name('panduan.manual-book.download');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [DetailProfileController::class, 'index'])->name('profile.index');

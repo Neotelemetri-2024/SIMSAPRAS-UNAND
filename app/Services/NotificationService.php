@@ -12,14 +12,28 @@ class NotificationService
 
     public function __construct()
     {
-        $this->beams = new PushNotifications([
-            'instanceId' => config('services.pusher.beams_instance_id'),
-            'secretKey' => config('services.pusher.beams_secret_key'),
-        ]);
+        $instanceId = config('services.pusher.beams_instance_id');
+        $secretKey = config('services.pusher.beams_secret_key');
+        
+        // Only initialize Pusher Beams if credentials are available
+        if (!empty($instanceId) && !empty($secretKey)) {
+            $this->beams = new PushNotifications([
+                'instanceId' => $instanceId,
+                'secretKey' => $secretKey,
+            ]);
+        } else {
+            $this->beams = null;
+            \Log::warning('Pusher Beams credentials not configured. Push notifications disabled.');
+        }
     }
 
     public function sendToUser(int $userId, string $title, string $message): bool
     {
+        if ($this->beams === null) {
+            \Log::info('Push notification skipped - Pusher Beams not configured');
+            return false;
+        }
+
         try {
             $this->beams->publishToUsers(
                 [strval($userId)],
@@ -43,6 +57,11 @@ class NotificationService
 
     public function sendToAll(string $title, string $message): bool
     {
+        if ($this->beams === null) {
+            \Log::info('Broadcast notification skipped - Pusher Beams not configured');
+            return false;
+        }
+
         try {
             $this->beams->publishToInterests(
                 ['peminjamanadmin'], // array of interests
