@@ -20,30 +20,60 @@
                   <div class="flex gap-2">
                      <input type="text" name="search"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                        placeholder="Cari data peminjaman..." value="{{ $search }}">
+                        placeholder="Cari nama, instansi, atau kegiatan..." value="{{ $search }}">
                      <button type="submit"
                         class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800">
-                     Cari
+                        Cari
                      </button>
                   </div>
                </div>
             </form>
-            <!-- Form Filter/Sort -->
-            <form method="GET" action="{{ url()->current() }}" class="flex gap-3">
+            <!-- Filter Form -->
+            <form method="GET" action="{{ url()->current() }}" class="flex flex-wrap gap-3">
                @if ($search)
                <input type="hidden" name="search" value="{{ $search }}">
                @endif
+
+               <!-- Filter Sarana -->
+               <div class="w-48">
+                  <select name="sarana"
+                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                     <option value="">Semua Sarana</option>
+                     @foreach($saranas as $sarana)
+                     <option value="{{ $sarana->id }}" {{ $saranaFilter == $sarana->id ? 'selected' : '' }}>
+                        {{ $sarana->nama }}
+                     </option>
+                     @endforeach
+                  </select>
+               </div>
+
+               <!-- Filter Tanggal Dari -->
+               <div class="w-40">
+                  <input type="date" name="date_from" value="{{ $dateFrom }}"
+                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                     placeholder="Dari Tanggal">
+               </div>
+
+               <!-- Filter Tanggal Sampai -->
+               <div class="w-40">
+                  <input type="date" name="date_to" value="{{ $dateTo }}"
+                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                     placeholder="Sampai Tanggal">
+               </div>
+
+               <!-- Sort -->
                <div class="w-48">
                   <select name="sort"
                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                  <option value="" {{ !request('sort') ? 'selected' : '' }}>Urutkan Tanggal</option>
-                  <option value="asc" {{ request('sort') === 'asc' ? 'selected' : '' }}>Terlama</option>
-                  <option value="desc" {{ request('sort') === 'desc' ? 'selected' : '' }}>Terbaru</option>
+                     <option value="" {{ !request('sort') ? 'selected' : '' }}>Urutkan Tanggal</option>
+                     <option value="asc" {{ request('sort') === 'asc' ? 'selected' : '' }}>Terlama</option>
+                     <option value="desc" {{ request('sort') === 'desc' ? 'selected' : '' }}>Terbaru</option>
                   </select>
                </div>
+
                <button type="submit"
                   class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800">
-               Terapkan
+                  Terapkan
                </button>
             </form>
          </div>
@@ -117,23 +147,23 @@
                @if ($peminjamanDiproses->onFirstPage())
                <span
                   class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-lg">
-               Previous
+                  Previous
                </span>
                @else
                <a href="{{ $peminjamanDiproses->previousPageUrl() }}"
                   class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700">
-               Previous
+                  Previous
                </a>
                @endif
                @if ($peminjamanDiproses->hasMorePages())
                <a href="{{ $peminjamanDiproses->nextPageUrl() }}"
                   class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:text-gray-500 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700">
-               Next
+                  Next
                </a>
                @else
                <span
                   class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-lg">
-               Next
+                  Next
                </span>
                @endif
             </div>
@@ -176,13 +206,13 @@
                      @foreach ($peminjamanDiproses->getUrlRange(1, $peminjamanDiproses->lastPage()) as $page => $url)
                      @if ($page == $peminjamanDiproses->currentPage())
                      <span aria-current="page">
-                     <span
-                        class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-blue-600 bg-blue-50 border border-gray-300 cursor-default leading-5">{{ $page }}</span>
+                        <span
+                           class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-blue-600 bg-blue-50 border border-gray-300 cursor-default leading-5">{{ $page }}</span>
                      </span>
                      @else
                      <a href="{{ $url }}"
                         class="relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150">
-                     {{ $page }}
+                        {{ $page }}
                      </a>
                      @endif
                      @endforeach
@@ -270,9 +300,9 @@
                            <p class="flex items-center">
                               <span class="font-medium w-32">Status</span>
                               <span class="text-gray-600">
-                              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                              Diproses
-                              </span>
+                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    Diproses
+                                 </span>
                               </span>
                            </p>
                            <p class="flex items-center">
@@ -341,7 +371,7 @@
                         <div class="flex items-center text-yellow-600">
                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                            </svg>
                            <div>
                               <span class="font-medium">Diproses oleh {{ optional($item->diprosesOleh)->name }}</span>
@@ -355,7 +385,7 @@
                         <div class="flex items-center text-green-600">
                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                            </svg>
                            <div>
                               <span class="font-medium">Disetujui oleh {{ optional($item->disetujuiOleh)->name }}</span>
@@ -369,7 +399,7 @@
                         <div class="flex items-center text-red-600">
                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                            </svg>
                            <div>
                               <span class="font-medium">Ditolak oleh {{ optional($item->ditolakOleh)->name }}</span>
@@ -388,7 +418,7 @@
                         <div class="flex items-center text-gray-600">
                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                            </svg>
                            <div>
                               <span class="font-medium">Dibatalkan oleh {{ optional($item->dibatalkanOleh)->name }}</span>
@@ -474,54 +504,54 @@
                            </div>
                            <div id="fileUploadForm{{ $item->id }}" class="hidden">
                               <label class="block text-sm font-medium text-gray-700 mb-2">
-                                  Upload Surat Disposisi
+                                 Upload Surat Disposisi
                               </label>
                               <div class="mt-2">
-                                  <div class="relative border-2 border-gray-300 border-dashed rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-all duration-200">
-                                      <input type="file" 
-                                             id="dropzone-file{{ $item->id }}" 
-                                             name="suratDisposisi" 
-                                             class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                             required 
-                                             accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                                             onchange="updateFileInfo(this, 'fileInfo{{ $item->id }}')">
-                                      <div class="text-center" id="fileInfo{{ $item->id }}">
-                                          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                 <div class="relative border-2 border-gray-300 border-dashed rounded-lg p-6 bg-gray-50 hover:bg-gray-100 transition-all duration-200">
+                                    <input type="file"
+                                       id="dropzone-file{{ $item->id }}"
+                                       name="suratDisposisi"
+                                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                       required
+                                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                       onchange="updateFileInfo(this, 'fileInfo{{ $item->id }}')">
+                                    <div class="text-center" id="fileInfo{{ $item->id }}">
+                                       <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                             d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                       </svg>
+                                       <p class="mt-2 text-sm text-gray-600">
+                                          <span class="font-semibold">Klik untuk upload</span> atau drag and drop
+                                       </p>
+                                       <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX, JPG, JPEG, atau PNG (Maks. 2MB)</p>
+                                    </div>
+                                    <div id="filePreview{{ $item->id }}" class="hidden mt-3">
+                                       <div class="flex items-center p-3 bg-white rounded-lg border border-gray-200">
+                                          <svg class="w-8 h-8 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                           </svg>
-                                          <p class="mt-2 text-sm text-gray-600">
-                                              <span class="font-semibold">Klik untuk upload</span> atau drag and drop
-                                          </p>
-                                          <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX, JPG, JPEG, atau PNG (Maks. 2MB)</p>
-                                      </div>
-                                      <div id="filePreview{{ $item->id }}" class="hidden mt-3">
-                                          <div class="flex items-center p-3 bg-white rounded-lg border border-gray-200">
-                                              <svg class="w-8 h-8 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                              </svg>
-                                              <div class="flex-1 min-w-0">
-                                                  <p class="text-sm font-medium text-gray-900 truncate" id="fileName{{ $item->id }}"></p>
-                                                  <p class="text-sm text-gray-500" id="fileSize{{ $item->id }}"></p>
-                                              </div>
-                                              <button type="button" onclick="removeFile('dropzone-file{{ $item->id }}', 'fileInfo{{ $item->id }}', 'filePreview{{ $item->id }}')"
-                                                      class="ml-3 text-sm font-medium text-red-500 hover:text-red-600 p-1">
-                                                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                                  </svg>
-                                              </button>
+                                          <div class="flex-1 min-w-0">
+                                             <p class="text-sm font-medium text-gray-900 truncate" id="fileName{{ $item->id }}"></p>
+                                             <p class="text-sm text-gray-500" id="fileSize{{ $item->id }}"></p>
                                           </div>
-                                      </div>
-                                  </div>
-                                  @error('suratDisposisi')
-                                      <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                  @enderror
+                                          <button type="button" onclick="removeFile('dropzone-file{{ $item->id }}', 'fileInfo{{ $item->id }}', 'filePreview{{ $item->id }}')"
+                                             class="ml-3 text-sm font-medium text-red-500 hover:text-red-600 p-1">
+                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                             </svg>
+                                          </button>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 @error('suratDisposisi')
+                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                 @enderror
                               </div>
-                          </div>                  
+                           </div>
                            <div id="feedbackForm{{ $item->id }}" class="hidden">
                               <label class="block text-sm font-medium text-gray-700 mb-2">
-                              Alasan Penolakan
+                                 Alasan Penolakan
                               </label>
                               <textarea name="feedbackPenolakan" rows="3"
                                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
@@ -535,19 +565,19 @@
             <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 bg-gray-50 rounded-b">
                <button type="button" onclick="confirmUpdate({{ $item->id }})"
                   class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-               Simpan Perubahan
+                  Simpan Perubahan
                </button>
                @if(auth()->user()->role === 'superadmin' || auth()->user()->role === 'pimpinan')
                <button data-modal-toggle="batalModalDiproses{{ $item->id }}"
                   data-modal-target="batalModalDiproses{{ $item->id }}"
                   class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-               Batalkan Peminjaman
+                  Batalkan Peminjaman
                </button>
                @endif
-               <button 
+               <button
                   class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900"
                   data-modal-hide="editModalDiproses{{ $item->id }}">
-               Tutup
+                  Tutup
                </button>
             </div>
          </div>
@@ -558,7 +588,7 @@
 </div>
 @endforeach
 @foreach ($peminjamanDiproses as $item)
-<div id="batalModalDiproses{{ $item->id }}" tabindex="-1" aria-hidden="true" 
+<div id="batalModalDiproses{{ $item->id }}" tabindex="-1" aria-hidden="true"
    class="fixed inset-0 z-[60] hidden overflow-y-auto overflow-x-hidden" data-modal-backdrop="static">
    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-hide="batalModalDiproses{{ $item->id }}"></div>
    <div class="flex items-center justify-center min-h-screen p-4">
@@ -567,18 +597,18 @@
             <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
                <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
                   <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                   Pembatalan Peminjaman
                </h3>
-               <button type="button" 
-               class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-               data-modal-hide="batalModalDiproses{{ $item->id }}"
-               <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-               </svg>
-               <span class="sr-only">Close modal</span>
+               <button type="button"
+                  class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                  data-modal-hide="batalModalDiproses{{ $item->id }}"
+                  <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                  </svg>
+                  <span class="sr-only">Close modal</span>
                </button>
             </div>
             <div class="p-6 space-y-6">
@@ -586,25 +616,25 @@
                   Apakah Anda yakin ingin membatalkan peminjaman ini? Harap berikan alasan pembatalan:
                </p>
                <div class="mt-4">
-                  <textarea id="feedbackPembatalan{{ $item->id }}" 
-                     rows="4" 
-                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" 
+                  <textarea id="feedbackPembatalan{{ $item->id }}"
+                     rows="4"
+                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
                      placeholder="Masukkan alasan pembatalan..."></textarea>
                </div>
             </div>
             <div class="flex items-center justify-end p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
-               <button type="button" 
+               <button type="button"
                   onclick="konfirmasiBatalkan({{ $item->id }})"
                   class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
                   <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                   Batalkan Peminjaman
                </button>
                <button data-modal-hide="batalModalDiproses{{ $item->id }}"
                   class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600 inline-flex items-center">
                   <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                   Batal
                </button>
@@ -616,341 +646,364 @@
 @endforeach
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-
    function updateFileInfo(input, infoId) {
-        const file = input.files[0];
-        if (!file) {
-            resetFileInput(input.id, infoId, infoId.replace('fileInfo', 'filePreview'));
-            return;
-        }
+      const file = input.files[0];
+      if (!file) {
+         resetFileInput(input.id, infoId, infoId.replace('fileInfo', 'filePreview'));
+         return;
+      }
 
-        // Validasi ukuran file (max 2MB)
-        if (file.size > 2 * 1024 * 1024) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'Ukuran file tidak boleh lebih dari 2MB!',
-                confirmButtonColor: '#3085d6'
-            });
-            resetFileInput(input.id, infoId, infoId.replace('fileInfo', 'filePreview'));
-            return;
-        }
+      // Validasi ukuran file (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+         Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'Ukuran file tidak boleh lebih dari 2MB!',
+            confirmButtonColor: '#3085d6'
+         });
+         resetFileInput(input.id, infoId, infoId.replace('fileInfo', 'filePreview'));
+         return;
+      }
 
-        // Validasi tipe file
-        const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'image/jpg'];
-        if (!validTypes.includes(file.type)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'File harus berupa PDF, DOC/DOCX, atau gambar (JPG, JPEG, PNG)!',
-                confirmButtonColor: '#3085d6'
-            });
-            resetFileInput(input.id, infoId, infoId.replace('fileInfo', 'filePreview'));
-            return;
-        }
+      // Validasi tipe file
+      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'image/jpg'];
+      if (!validTypes.includes(file.type)) {
+         Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'File harus berupa PDF, DOC/DOCX, atau gambar (JPG, JPEG, PNG)!',
+            confirmButtonColor: '#3085d6'
+         });
+         resetFileInput(input.id, infoId, infoId.replace('fileInfo', 'filePreview'));
+         return;
+      }
 
-        // Format ukuran file
-        const size = (file.size / 1024).toFixed(2);
-        const formattedSize = size > 1024 ? (size / 1024).toFixed(2) + ' MB' : size + ' KB';
+      // Format ukuran file
+      const size = (file.size / 1024).toFixed(2);
+      const formattedSize = size > 1024 ? (size / 1024).toFixed(2) + ' MB' : size + ' KB';
 
-        // Update tampilan
-        const fileInfo = document.getElementById(infoId);
-        const filePreview = document.getElementById(infoId.replace('fileInfo', 'filePreview'));
-        const fileName = document.getElementById(infoId.replace('fileInfo', 'fileName'));
-        const fileSize = document.getElementById(infoId.replace('fileInfo', 'fileSize'));
+      // Update tampilan
+      const fileInfo = document.getElementById(infoId);
+      const filePreview = document.getElementById(infoId.replace('fileInfo', 'filePreview'));
+      const fileName = document.getElementById(infoId.replace('fileInfo', 'fileName'));
+      const fileSize = document.getElementById(infoId.replace('fileInfo', 'fileSize'));
 
-        fileInfo.classList.add('hidden');
-        filePreview.classList.remove('hidden');
-        fileName.textContent = file.name;
-        fileSize.textContent = formattedSize;
-    }
+      fileInfo.classList.add('hidden');
+      filePreview.classList.remove('hidden');
+      fileName.textContent = file.name;
+      fileSize.textContent = formattedSize;
+   }
 
-    function removeFile(inputId, infoId, previewId) {
-        resetFileInput(inputId, infoId, previewId);
-    }
+   function removeFile(inputId, infoId, previewId) {
+      resetFileInput(inputId, infoId, previewId);
+   }
 
-    function resetFileInput(inputId, infoId, previewId) {
-        const input = document.getElementById(inputId);
-        const info = document.getElementById(infoId);
-        const preview = document.getElementById(previewId);
-        
-        if (input) input.value = '';
-        if (info) info.classList.remove('hidden');
-        if (preview) preview.classList.add('hidden');
-    }
+   function resetFileInput(inputId, infoId, previewId) {
+      const input = document.getElementById(inputId);
+      const info = document.getElementById(infoId);
+      const preview = document.getElementById(previewId);
+
+      if (input) input.value = '';
+      if (info) info.classList.remove('hidden');
+      if (preview) preview.classList.add('hidden');
+   }
 
    function closeModal(modalId) {
-       const modalElement = document.getElementById(modalId);
-       if (modalElement) {
-           modalElement.classList.add('hidden');
-           document.body.classList.remove('overflow-hidden'); 
-       }
+      const modalElement = document.getElementById(modalId);
+      if (modalElement) {
+         modalElement.classList.add('hidden');
+         document.body.classList.remove('overflow-hidden');
+      }
    }
-   
+
    document.addEventListener('DOMContentLoaded', function() {
-       document.querySelectorAll('[data-modal-toggle]').forEach(button => {
-           button.addEventListener('click', function(e) {
-               e.preventDefault();
-               const modalId = this.getAttribute('data-modal-target');
-               const modal = document.getElementById(modalId);
-               if (modal) {
-                   modal.classList.remove('hidden');
-                   document.body.classList.add('overflow-hidden');
-               }
-           });
-       });
-   
-       document.querySelectorAll('[data-modal-hide]').forEach(element => {
-           element.addEventListener('click', function(e) {
-               e.preventDefault();
-               const modalId = this.getAttribute('data-modal-hide');
-               const modal = document.getElementById(modalId);
-               if (modal) {
-                   modal.classList.add('hidden');
-                   document.body.classList.remove('overflow-hidden');
-               }
-           });
-       });
-   });
-   
-   
-   window.addEventListener('click', function(event) {
-       const modals = document.querySelectorAll('[id^="editModalDiproses"]');
-       modals.forEach(modal => {
-           if (event.target === modal) {
-               closeModal(modal.id);
-           }
-       });
-   });
-   
-   function handleStatusChange(id) {
-        const statusSelect = document.getElementById(`statusSelect${id}`);
-        const feedbackForm = document.getElementById(`feedbackForm${id}`);
-        const fileUploadForm = document.getElementById(`fileUploadForm${id}`);
-        const fileInput = document.getElementById(`dropzone-file${id}`);
-        
-        feedbackForm.classList.add('hidden');
-        fileUploadForm.classList.add('hidden');
-        
-        const textarea = feedbackForm.querySelector('textarea');
-        if (textarea) textarea.removeAttribute('required');
-        if (fileInput) {
-            fileInput.removeAttribute('required');
-            resetFileInput(
-                `dropzone-file${id}`, 
-                `fileInfo${id}`, 
-                `filePreview${id}`
-            );
-        }
-        
-        if (statusSelect.value === 'ditolak') {
-            feedbackForm.classList.remove('hidden');
-            textarea.setAttribute('required', 'required');
-        } else if (statusSelect.value === 'disetujui') {
-            fileUploadForm.classList.remove('hidden');
-            fileInput.setAttribute('required', 'required');
-        }
-    }
-   
-   function confirmUpdate(id) {
-       event.preventDefault();
-       
-       const status = document.getElementById(`statusSelect${id}`).value;
-       let title, text;
-       
-       switch(status) {
-           case 'disetujui':
-               title = 'Konfirmasi Persetujuan';
-               text = 'Apakah Anda yakin ingin menyetujui peminjaman ini?';
-               break;
-           case 'ditolak':
-               title = 'Konfirmasi Penolakan';
-               text = 'Apakah Anda yakin ingin menolak peminjaman ini?';
-               break;
-           case 'dibatalkan':
-               title = 'Konfirmasi Pembatalan';
-               text = 'Apakah Anda yakin ingin menyetujui pembatalan peminjaman ini?';
-               break;
-           default:
-               title = 'Konfirmasi Perubahan';
-               text = 'Apakah Anda yakin ingin mengubah status peminjaman ini?';
-   }
-   
-       Swal.fire({
-           title: title,
-           text: text,
-           icon: 'warning',
-           showCancelButton: true,
-           confirmButtonColor: '#3085d6',
-           cancelButtonColor: '#d33',
-           confirmButtonText: 'Ya, Lanjutkan!',
-           cancelButtonText: 'Batal'
-       }).then((result) => {
-           if (result.isConfirmed) {
-               submitForm(id);
-           }
-       });
-   }
-   
-   function submitForm(id) {
-   const form = document.getElementById(`updateForm${id}`);
-   const formData = new FormData(form);
-   const status = document.getElementById(`statusSelect${id}`).value;
-   
-   formData.append('_token', '{{ csrf_token() }}');
-   formData.append('_method', 'PUT');
-   
-   fetch(form.action, {
-   method: 'POST',
-   body: formData,
-   headers: {
-       'X-CSRF-TOKEN': '{{ csrf_token() }}',
-       'X-Requested-With': 'XMLHttpRequest'
-   }
-   })
-   .then(response => response.json())
-   .then(data => {
-   if (data.success) {
-       let successMessage;
-       switch(status) {
-           case 'disetujui':
-               successMessage = 'Peminjaman berhasil disetujui';
-               break;
-           case 'ditolak':
-               successMessage = 'Peminjaman berhasil ditolak';
-               break;
-           case 'dibatalkan':
-               successMessage = 'Pembatalan peminjaman berhasil disetujui';
-               break;
-           default:
-               successMessage = 'Status peminjaman berhasil diperbarui';
-       }
-   
-       Swal.fire({
-           icon: 'success',
-           title: 'Berhasil!',
-           text: successMessage,
-           timer: 1500,
-           showConfirmButton: false
-       }).then(() => {
-           window.location.reload();
-       });
-   } else {
-       Swal.fire({
-           icon: 'error',
-           title: 'Gagal!',
-           text: data.message || 'Terjadi kesalahan saat memperbarui status',
-           confirmButtonColor: '#3085d6'
-       });
-   }
-   })
-   .catch(error => {
-   console.error('Error:', error);
-   Swal.fire({
-       icon: 'error',
-       title: 'Error!',
-       text: 'Terjadi kesalahan saat memproses permintaan',
-       confirmButtonColor: '#3085d6'
-   });
-   });
-   }
-   document.addEventListener('DOMContentLoaded', function() {
-       const modals = document.querySelectorAll('[id^="editModalDiproses"]');
-       modals.forEach(modal => {
-           const id = modal.id.replace('editModalDiproses', '');
-           const select = document.getElementById(`statusSelect${id}`);
-           if (select) {
-               toggleFeedbackForm(id);
-           }
-       });
-   });
-   
-   function konfirmasiBatalkan(id) {
-            const feedbackPembatalan = document.getElementById(`feedbackPembatalan${id}`).value;
-            
-            if (!feedbackPembatalan.trim()) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: 'Harap isi alasan pembatalan!',
-                    confirmButtonColor: '#3085d6'
-                });
-                return;
+      document.querySelectorAll('[data-modal-toggle]').forEach(button => {
+         button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const modalId = this.getAttribute('data-modal-target');
+            const modal = document.getElementById(modalId);
+            if (modal) {
+               modal.classList.remove('hidden');
+               document.body.classList.add('overflow-hidden');
             }
+         });
+      });
 
+      document.querySelectorAll('[data-modal-hide]').forEach(element => {
+         element.addEventListener('click', function(e) {
+            e.preventDefault();
+            const modalId = this.getAttribute('data-modal-hide');
+            const modal = document.getElementById(modalId);
+            if (modal) {
+               modal.classList.add('hidden');
+               document.body.classList.remove('overflow-hidden');
+            }
+         });
+      });
+   });
+
+
+   window.addEventListener('click', function(event) {
+      const modals = document.querySelectorAll('[id^="editModalDiproses"]');
+      modals.forEach(modal => {
+         if (event.target === modal) {
+            closeModal(modal.id);
+         }
+      });
+   });
+
+   function handleStatusChange(id) {
+      const statusSelect = document.getElementById(`statusSelect${id}`);
+      const feedbackForm = document.getElementById(`feedbackForm${id}`);
+      const fileUploadForm = document.getElementById(`fileUploadForm${id}`);
+      const fileInput = document.getElementById(`dropzone-file${id}`);
+
+      feedbackForm.classList.add('hidden');
+      fileUploadForm.classList.add('hidden');
+
+      const textarea = feedbackForm.querySelector('textarea');
+      if (textarea) textarea.removeAttribute('required');
+      if (fileInput) {
+         fileInput.removeAttribute('required');
+         resetFileInput(
+            `dropzone-file${id}`,
+            `fileInfo${id}`,
+            `filePreview${id}`
+         );
+      }
+
+      if (statusSelect.value === 'ditolak') {
+         feedbackForm.classList.remove('hidden');
+         textarea.setAttribute('required', 'required');
+      } else if (statusSelect.value === 'disetujui') {
+         fileUploadForm.classList.remove('hidden');
+         fileInput.setAttribute('required', 'required');
+      }
+   }
+
+   function confirmUpdate(id) {
+      event.preventDefault();
+
+      const status = document.getElementById(`statusSelect${id}`).value;
+      let title, text;
+
+      switch (status) {
+         case 'disetujui':
+            title = 'Konfirmasi Persetujuan';
+            text = 'Apakah Anda yakin ingin menyetujui peminjaman ini?';
+            break;
+         case 'ditolak':
+            title = 'Konfirmasi Penolakan';
+            text = 'Apakah Anda yakin ingin menolak peminjaman ini?';
+            break;
+         case 'dibatalkan':
+            title = 'Konfirmasi Pembatalan';
+            text = 'Apakah Anda yakin ingin menyetujui pembatalan peminjaman ini?';
+            break;
+         default:
+            title = 'Konfirmasi Perubahan';
+            text = 'Apakah Anda yakin ingin mengubah status peminjaman ini?';
+      }
+
+      Swal.fire({
+         title: title,
+         text: text,
+         icon: 'warning',
+         showCancelButton: true,
+         confirmButtonColor: '#3085d6',
+         cancelButtonColor: '#d33',
+         confirmButtonText: 'Ya, Lanjutkan!',
+         cancelButtonText: 'Batal'
+      }).then((result) => {
+         if (result.isConfirmed) {
+            submitForm(id);
+         }
+      });
+   }
+
+   function submitForm(id) {
+      const form = document.getElementById(`updateForm${id}`);
+      const formData = new FormData(form);
+      const status = document.getElementById(`statusSelect${id}`).value;
+
+      formData.append('_token', '{{ csrf_token() }}');
+      formData.append('_method', 'PUT');
+
+      fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+               'X-CSRF-TOKEN': '{{ csrf_token() }}',
+               'X-Requested-With': 'XMLHttpRequest'
+            }
+         })
+         .then(response => response.json())
+         .then(data => {
+            if (data.success) {
+               let successMessage;
+               switch (status) {
+                  case 'disetujui':
+                     successMessage = 'Peminjaman berhasil disetujui';
+                     break;
+                  case 'ditolak':
+                     successMessage = 'Peminjaman berhasil ditolak';
+                     break;
+                  case 'dibatalkan':
+                     successMessage = 'Pembatalan peminjaman berhasil disetujui';
+                     break;
+                  default:
+                     successMessage = 'Status peminjaman berhasil diperbarui';
+               }
+
+               Swal.fire({
+                  icon: 'success',
+                  title: 'Berhasil!',
+                  text: successMessage,
+                  timer: 1500,
+                  showConfirmButton: false
+               }).then(() => {
+                  window.location.reload();
+               });
+            } else {
+               Swal.fire({
+                  icon: 'error',
+                  title: 'Gagal!',
+                  text: data.message || 'Terjadi kesalahan saat memperbarui status',
+                  confirmButtonColor: '#3085d6'
+               });
+            }
+         })
+         .catch(error => {
+            console.error('Error:', error);
             Swal.fire({
-                title: 'Konfirmasi Pembatalan',
-                text: "Apakah Anda yakin ingin membatalkan peminjaman ini?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Batalkan!',
-                cancelButtonText: 'Tidak',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Memproses...',
-                        text: 'Mohon tunggu sebentar',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                        showConfirmButton: false,
-                        didOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-
-                    // Siapkan data untuk dikirim
-                    const formData = new FormData();
-                    formData.append('status', 'dibatalkan');
-                    formData.append('feedbackPembatalan', feedbackPembatalan);
-                    formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-                    formData.append('_method', 'PUT');
-
-                    // Kirim request dengan FormData
-                    fetch(`/admin/peminjaman/${id}/update-status-diproses`, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'Accept': 'application/json'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Tutup modal pembatalan
-                            const modal = document.getElementById(`batalModalDiproses${id}`);
-                            if (modal) {
-                                modal.classList.add('hidden');
-                                document.body.classList.remove('overflow-hidden');
-                            }
-
-                            // Tampilkan pesan sukses
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: 'Peminjaman berhasil dibatalkan',
-                                timer: 1500,
-                                showConfirmButton: false
-                            }).then(() => {
-                                window.location.reload();
-                            });
-                        } else {
-                            throw new Error(data.message || 'Terjadi kesalahan saat membatalkan peminjaman');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: error.message || 'Terjadi kesalahan saat memproses pembatalan',
-                            confirmButtonColor: '#3085d6'
-                        });
-                    });
-                }
+               icon: 'error',
+               title: 'Error!',
+               text: 'Terjadi kesalahan saat memproses permintaan',
+               confirmButtonColor: '#3085d6'
             });
-        }
+         });
+   }
+   document.addEventListener('DOMContentLoaded', function() {
+      const modals = document.querySelectorAll('[id^="editModalDiproses"]');
+      modals.forEach(modal => {
+         const id = modal.id.replace('editModalDiproses', '');
+         const select = document.getElementById(`statusSelect${id}`);
+         if (select) {
+            toggleFeedbackForm(id);
+         }
+      });
+
+      // Auto-open modal if open_modal parameter exists in URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const openModalId = urlParams.get('open_modal');
+      if (openModalId) {
+         const modal = document.getElementById(`editModalDiproses${openModalId}`);
+         if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            // Remove the parameter from URL without reloading
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+         }
+      }
+   });
+
+   function toggleFeedbackForm(id) {
+      const status = document.getElementById(`statusSelect${id}`).value;
+      const feedbackForm = document.getElementById(`feedbackForm${id}`);
+      if (status === 'ditolak' || status === 'diajukan') {
+         feedbackForm.classList.remove('hidden');
+      } else {
+         feedbackForm.classList.add('hidden');
+      }
+   }
+
+   function konfirmasiBatalkan(id) {
+      const feedbackPembatalan = document.getElementById(`feedbackPembatalan${id}`).value;
+
+      if (!feedbackPembatalan.trim()) {
+         Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'Harap isi alasan pembatalan!',
+            confirmButtonColor: '#3085d6'
+         });
+         return;
+      }
+
+      Swal.fire({
+         title: 'Konfirmasi Pembatalan',
+         text: "Apakah Anda yakin ingin membatalkan peminjaman ini?",
+         icon: 'warning',
+         showCancelButton: true,
+         confirmButtonColor: '#d33',
+         cancelButtonColor: '#3085d6',
+         confirmButtonText: 'Ya, Batalkan!',
+         cancelButtonText: 'Tidak',
+      }).then((result) => {
+         if (result.isConfirmed) {
+            Swal.fire({
+               title: 'Memproses...',
+               text: 'Mohon tunggu sebentar',
+               allowOutsideClick: false,
+               allowEscapeKey: false,
+               showConfirmButton: false,
+               didOpen: () => {
+                  Swal.showLoading();
+               }
+            });
+
+            // Siapkan data untuk dikirim
+            const formData = new FormData();
+            formData.append('status', 'dibatalkan');
+            formData.append('feedbackPembatalan', feedbackPembatalan);
+            formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+            formData.append('_method', 'PUT');
+
+            // Kirim request dengan FormData
+            fetch(`/admin/peminjaman/${id}/update-status-diproses`, {
+                  method: 'POST',
+                  body: formData,
+                  headers: {
+                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                     'Accept': 'application/json'
+                  }
+               })
+               .then(response => response.json())
+               .then(data => {
+                  if (data.success) {
+                     // Tutup modal pembatalan
+                     const modal = document.getElementById(`batalModalDiproses${id}`);
+                     if (modal) {
+                        modal.classList.add('hidden');
+                        document.body.classList.remove('overflow-hidden');
+                     }
+
+                     // Tampilkan pesan sukses
+                     Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Peminjaman berhasil dibatalkan',
+                        timer: 1500,
+                        showConfirmButton: false
+                     }).then(() => {
+                        window.location.reload();
+                     });
+                  } else {
+                     throw new Error(data.message || 'Terjadi kesalahan saat membatalkan peminjaman');
+                  }
+               })
+               .catch(error => {
+                  console.error('Error:', error);
+                  Swal.fire({
+                     icon: 'error',
+                     title: 'Error!',
+                     text: error.message || 'Terjadi kesalahan saat memproses pembatalan',
+                     confirmButtonColor: '#3085d6'
+                  });
+               });
+         }
+      });
+   }
 </script>
 @endsection

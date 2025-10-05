@@ -21,6 +21,9 @@ class PeminjamanDiprosesController extends Controller
     {
         $search = $request->input('search');
         $sort = $request->input('sort');
+        $saranaFilter = $request->input('sarana');
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
         $today = now();
 
         $query = Peminjaman::with(['user', 'sarana', 'tanggalPeminjaman.jadwal'])
@@ -28,35 +31,59 @@ class PeminjamanDiprosesController extends Controller
         $query->filterByUserAccess(auth()->user());
 
         if ($search) {
-            $query->whereHas('user', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', "%{$search}%");
+                })
+                    ->orWhere('instansi', 'like', "%{$search}%")
+                    ->orWhere('kegiatan', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by sarana
+        if ($saranaFilter) {
+            $query->where('idSarana', $saranaFilter);
+        }
+
+        // Filter by date range
+        if ($dateFrom) {
+            $query->whereHas('tanggalPeminjaman', function ($q) use ($dateFrom) {
+                $q->where('tanggal', '>=', $dateFrom);
+            });
+        }
+        if ($dateTo) {
+            $query->whereHas('tanggalPeminjaman', function ($q) use ($dateTo) {
+                $q->where('tanggal', '<=', $dateTo);
             });
         }
 
         if ($sort === 'pass') {
-            $query->whereHas('tanggalPeminjaman', function($q) use ($today) {
+            $query->whereHas('tanggalPeminjaman', function ($q) use ($today) {
                 $q->where('tanggal', '<', $today);
             });
         } elseif (in_array($sort, ['asc', 'desc'])) {
-            $query->whereHas('tanggalPeminjaman', function($q) {
+            $query->whereHas('tanggalPeminjaman', function ($q) {
                 $q->select('idPeminjaman');
             })
-            ->addSelect(['earliest_date' => function($query) {
-                $query->select('tanggal')
-                    ->from('tanggalpeminjaman')
-                    ->whereColumn('idPeminjaman', 'peminjaman.id')
-                    ->orderBy('tanggal', 'asc')
-                    ->limit(1);
-            }])
-            ->orderBy('earliest_date', $sort);
+                ->addSelect(['earliest_date' => function ($query) {
+                    $query->select('tanggal')
+                        ->from('tanggalpeminjaman')
+                        ->whereColumn('idPeminjaman', 'peminjaman.id')
+                        ->orderBy('tanggal', 'asc')
+                        ->limit(1);
+                }])
+                ->orderBy('earliest_date', $sort);
         }
 
         $peminjamanDiproses = $query
             ->paginate(10)
-            ->appends(['search' => $search, 'sort' => $sort]);
+            ->appends(['search' => $search, 'sort' => $sort, 'sarana' => $saranaFilter, 'date_from' => $dateFrom, 'date_to' => $dateTo]);
         $title = 'Peminjaman Diproses';
 
-        return view('admin.peminjamandiproses', compact('peminjamanDiproses', 'search', 'sort', 'title'));
+        // Get sarana list for filter
+        $saranas = \App\Models\Sarana::where('status', 'aktif')->get();
+
+        return view('admin.peminjamandiproses', compact('peminjamanDiproses', 'search', 'sort', 'title', 'saranas', 'saranaFilter', 'dateFrom', 'dateTo'));
     }
 
     public function updateStatusDiproses(Request $request, $id)
@@ -67,17 +94,17 @@ class PeminjamanDiprosesController extends Controller
                 'feedbackPenolakan' => 'nullable|required_if:status,ditolak|string|max:500',
                 'suratDisposisi' => 'required_if:status,disetujui|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
             ]);
-    
+
             $peminjaman = Peminjaman::with('user')->findOrFail($id);
             $oldStatus = $peminjaman->status;
-    
+
             if ($request->status === 'disetujui' && !$peminjaman->buktiPembayaran) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Peminjaman tidak dapat disetujui karena belum ada bukti pembayaran.'
                 ], 422);
             }
-    
+
             if ($request->status === 'disetujui') {
                 $peminjaman->disetujui_oleh = auth()->id();
                 $peminjaman->disetujui_at = now();
@@ -85,7 +112,7 @@ class PeminjamanDiprosesController extends Controller
                 $peminjaman->statusPembayaran = 'lunas';
             }
 
-        if ($request->status === 'disetujui') {
+            if ($request->status === 'disetujui') {
                 $peminjaman->disetujui_oleh = auth()->id();
                 $peminjaman->disetujui_at = now();
                 $peminjaman->suratDisposisi = $request->file('suratDisposisi')->store('peminjaman/disposisi', 'public');
@@ -100,7 +127,7 @@ class PeminjamanDiprosesController extends Controller
                 $peminjaman->dibatalkan_oleh = auth()->id();
                 $peminjaman->dibatalkan_at = now();
             }
-    
+
             if ($request->status === 'diajukan') {
                 $peminjaman->status = $peminjaman->statusSebelumBatal;
                 $peminjaman->alasanTolakBatal = $request->alasanTolakBatal;
@@ -120,19 +147,18 @@ class PeminjamanDiprosesController extends Controller
                 if ($request->has('tarif')) {
                     $peminjaman->tarif = $request->tarif;
                 }
-    
+
                 if ($request->status === 'disetujui') {
                     $peminjaman->status = 'disetujui';
                 } elseif ($request->status === 'ditolak') {
                     $peminjaman->feedbackPenolakan = $request->feedbackPenolakan;
                     $peminjaman->status = 'ditolak';
-                } 
-    
+                }
             }
-    
+
             $peminjaman->save();
-    
-            $userMessage = match($peminjaman->status) {
+
+            $userMessage = match ($peminjaman->status) {
                 'ditolak' => "Peminjaman Anda ditolak dengan alasan " . $request->feedbackPenolakan,
                 'diproses' => "Peminjaman Anda sedang diproses. Silakan melakukan pembayaran sebesar Rp " . number_format($peminjaman->totalTarif, 0, ',', '.'),
                 'disetujui' => "Selamat! Peminjaman Anda telah disetujui. Silakan print surat disposisi dan berikan kepada penjaga gedung.",
@@ -140,7 +166,7 @@ class PeminjamanDiprosesController extends Controller
                 'diajukan' => "Pembatalan peminjaman Anda ditolak dengan alasan " . $request->alasanTolakBatal,
                 default => "Status peminjaman Anda telah diubah menjadi " . $peminjaman->status
             };
-    
+
             // Tulis ke database
             Notifikasi::create([
                 'idPeminjaman' => $peminjaman->id,
@@ -149,10 +175,10 @@ class PeminjamanDiprosesController extends Controller
                 'isi' => $userMessage,
                 'isRead' => false
             ]);
-    
+
             // Kirim response sukses
             $response = ['success' => true, 'message' => 'Status peminjaman berhasil diperbarui'];
-    
+
             // Kirim notifikasi Pusher
             $this->notificationService->sendToUser(
                 $peminjaman->user->id,
@@ -160,9 +186,8 @@ class PeminjamanDiprosesController extends Controller
                 $userMessage,
                 $peminjaman->id
             );
-    
+
             return response()->json($response);
-    
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -170,5 +195,4 @@ class PeminjamanDiprosesController extends Controller
             ], 500);
         }
     }
-
 }

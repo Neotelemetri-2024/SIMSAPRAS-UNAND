@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\Sarana;
 use App\Models\Jadwal;
 use App\Models\Peminjaman;
@@ -27,63 +29,71 @@ class OverviewController extends Controller
         $query->filterByUserAccess($user);
         $peminjamans = $query->get();
 
-        $events = $peminjamans->map(function($peminjaman) {
-            $tanggal = $peminjaman->tanggalPeminjaman->first();
-            return [
-                'saranaName' => $peminjaman->sarana->nama,
-                'kegiatan' => $peminjaman->kegiatan,
-                'start' => optional($tanggal)->tanggal,
-                // Jadwal HARUS string, bukan object!
-                'jadwal' => $tanggal && $tanggal->jadwal ? $tanggal->jadwal->mulai . ' - ' . $tanggal->jadwal->selesai : '-',
-                'status' => $peminjaman->status,
-                'peminjam' => $peminjaman->user->name ?? 'Anonim',
-                'instansi' => $peminjaman->instansi ?? '-',
-                'sarana' => $peminjaman->sarana->nama ?? '-',
-                'ruangan' => $peminjaman->ruangan->nama ?? '-',
-                'saranaId' => $peminjaman->sarana->id,
-                'estimasiPeserta' => $peminjaman->estimasiPeserta,
-                'backgroundColor' => match($peminjaman->status) {
-                    'disetujui' => '#059669',
-                    'diproses' => '#f97316',
-                    'ditolak' => '#dc2626',
-                    'diajukan' => '#3b82f6',
-                    'selesai' => '#D4A373',
-                    default => '#6b7280'
-                },
-                'borderColor' => match($peminjaman->status) {
-                    'disetujui' => '#047857',
-                    'diproses' => '#ea580c',
-                    'ditolak' => '#b91c1c',
-                    'diajukan' => '#2563eb',
-                    'selesai' => '#A47551',
-                    default => '#4b5563'
-                },
-                'extendedProps' => [
+        $events = collect();
+
+        foreach ($peminjamans as $peminjaman) {
+            // Loop melalui semua tanggal peminjaman, bukan hanya yang pertama
+            foreach ($peminjaman->tanggalPeminjaman as $tanggal) {
+                $events->push([
+                    'saranaName' => $peminjaman->sarana->nama,
+                    'kegiatan' => $peminjaman->kegiatan,
+                    'start' => $tanggal->tanggal,
+                    // Jadwal HARUS string, bukan object!
+                    'jadwal' => $tanggal->jadwal ? $tanggal->jadwal->mulai . ' - ' . $tanggal->jadwal->selesai : '-',
                     'status' => $peminjaman->status,
                     'peminjam' => $peminjaman->user->name ?? 'Anonim',
                     'instansi' => $peminjaman->instansi ?? '-',
-                    'kegiatan' => $peminjaman->kegiatan ?? '-',
                     'sarana' => $peminjaman->sarana->nama ?? '-',
                     'ruangan' => $peminjaman->ruangan->nama ?? '-',
-                    'jadwal' => $tanggal && $tanggal->jadwal ? $tanggal->jadwal->mulai . ' - ' . $tanggal->jadwal->selesai : '-',
-                    'estimasiPeserta' => $peminjaman->estimasiPeserta
-                ]
-            ];
-        })->filter(function ($event) {
+                    'saranaId' => $peminjaman->sarana->id,
+                    'peminjamanId' => $peminjaman->id,
+                    'estimasiPeserta' => $peminjaman->estimasiPeserta,
+                    'backgroundColor' => match ($peminjaman->status) {
+                        'disetujui' => '#059669',
+                        'diproses' => '#f97316',
+                        'ditolak' => '#dc2626',
+                        'diajukan' => '#3b82f6',
+                        'selesai' => '#D4A373',
+                        default => '#6b7280'
+                    },
+                    'borderColor' => match ($peminjaman->status) {
+                        'disetujui' => '#047857',
+                        'diproses' => '#ea580c',
+                        'ditolak' => '#b91c1c',
+                        'diajukan' => '#2563eb',
+                        'selesai' => '#A47551',
+                        default => '#4b5563'
+                    },
+                    'extendedProps' => [
+                        'status' => $peminjaman->status,
+                        'peminjam' => $peminjaman->user->name ?? 'Anonim',
+                        'instansi' => $peminjaman->instansi ?? '-',
+                        'kegiatan' => $peminjaman->kegiatan ?? '-',
+                        'sarana' => $peminjaman->sarana->nama ?? '-',
+                        'ruangan' => $peminjaman->ruangan->nama ?? '-',
+                        'jadwal' => $tanggal->jadwal ? $tanggal->jadwal->mulai . ' - ' . $tanggal->jadwal->selesai : '-',
+                        'estimasiPeserta' => $peminjaman->estimasiPeserta,
+                        'peminjamanId' => $peminjaman->id
+                    ]
+                ]);
+            }
+        }
+
+        $events = $events->filter(function ($event) {
             return !empty($event['start']);
         })->values();
 
         $booked = TanggalPeminjaman::with(['jadwal', 'peminjaman'])
-            ->whereHas('peminjaman', function($q) {
+            ->whereHas('peminjaman', function ($q) {
                 $q->whereIn('status', ['diajukan', 'diproses', 'disetujui']);
             })
             ->get()
-            ->map(function($item) {
+            ->map(function ($item) {
                 // Pastikan relasi peminjaman dan jadwal ada untuk menghindari error
                 if (!$item->peminjaman || !$item->jadwal) {
                     return null;
                 }
-                
+
                 return [
                     'tanggal'    => $item->tanggal,
                     'jadwal_id'  => $item->idJadwal,
@@ -108,7 +118,7 @@ class OverviewController extends Controller
             'jadwal_dates.*.date' => 'required|date',
             'jadwal_dates.*.jadwal_id' => 'required|exists:jadwal,id',
             'idRuangan' => 'nullable|exists:ruangan,id',
-            'totalTarif' =>'nullable|integer|min:0',
+            'totalTarif' => 'nullable|integer|min:0',
         ]);
 
         DB::beginTransaction();
