@@ -470,7 +470,8 @@
     function previewPdf(filename) {
         currentPdfFilename = filename;
         const pdfUrl = `/panduan/manual-book/download/${filename}?preview=1`;
-        const pdfJsUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(window.location.origin + pdfUrl)}`;
+        
+        console.log('Loading PDF:', pdfUrl); // Debug log
         
         // Show loading
         document.getElementById('pdfLoading').classList.remove('hidden');
@@ -483,12 +484,29 @@
         // Set timeout for error handling
         setTimeout(() => {
             if (document.getElementById('pdfViewer').classList.contains('hidden')) {
+                console.log('PDF loading timeout, showing error'); // Debug log
                 showError();
             }
-        }, 10000);
+        }, 8000);
         
-        // Try PDF.js first, fallback to direct PDF
-        document.getElementById('pdfViewer').src = pdfJsUrl;
+        // Try direct PDF embedding first
+        const iframe = document.getElementById('pdfViewer');
+        
+        // Reset iframe
+        iframe.onload = function() {
+            console.log('PDF loaded successfully'); // Debug log
+            hideLoading();
+        };
+        
+        iframe.onerror = function() {
+            console.log('PDF direct load failed, trying Google Docs Viewer'); // Debug log
+            // Try Google Docs Viewer as fallback
+            const googleDocsUrl = `https://docs.google.com/gview?url=${encodeURIComponent(window.location.origin + pdfUrl)}&embedded=true`;
+            iframe.src = googleDocsUrl;
+        };
+        
+        // Load PDF
+        iframe.src = pdfUrl;
     }
 
     function downloadCurrentPdf() {

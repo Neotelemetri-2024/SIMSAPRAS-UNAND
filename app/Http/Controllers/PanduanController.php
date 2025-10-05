@@ -120,7 +120,9 @@ class PanduanController extends Controller
         if (request()->has('preview')) {
             return response()->file($filePath, [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="' . $filename . '"'
+                'Content-Disposition' => 'inline; filename="' . $filename . '"',
+                'Cache-Control' => 'public, max-age=3600',
+                'X-Frame-Options' => 'SAMEORIGIN'
             ]);
         }
 
