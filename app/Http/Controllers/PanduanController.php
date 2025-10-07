@@ -103,7 +103,8 @@ class PanduanController extends Controller
         return view('syarat', compact('requirements'));
     }
 
-    public function cara () {
+    public function cara()
+    {
         return view('cara');
     }
 
@@ -111,7 +112,7 @@ class PanduanController extends Controller
     public function downloadManualBook($filename)
     {
         $filePath = public_path('manualBooks/' . $filename);
-        
+
         if (!file_exists($filePath)) {
             abort(404, 'File tidak ditemukan');
         }
@@ -128,5 +129,33 @@ class PanduanController extends Controller
 
         // Default download behavior
         return response()->download($filePath);
+    }
+
+    public function adminIndex()
+    {
+        $user = auth()->user();
+        $manualBook = null;
+
+        if ($user->role === 'superadmin') {
+            $manualBook = [
+                'title' => 'Manual Book Super Admin',
+                'filename' => 'Manual-Book-Super-Admin.pdf',
+                'description' => 'Panduan lengkap untuk super admin dalam mengelola seluruh sistem SIMSAPRAS'
+            ];
+        } elseif ($user->role === 'pimpinan') {
+            $manualBook = [
+                'title' => 'Manual Book Pimpinan',
+                'filename' => 'Manual-Book-Pimpinan.pdf',
+                'description' => 'Panduan untuk pimpinan dalam mengelola dan memantau sistem SIMSAPRAS'
+            ];
+        } elseif ($user->role === 'admin') {
+            $manualBook = [
+                'title' => 'Manual Book Admin',
+                'filename' => 'Manual-Book-Admin.pdf',
+                'description' => 'Panduan lengkap untuk admin dalam mengelola sarana dan prasarana'
+            ];
+        }
+
+        return view('admin.manual-book.index', compact('manualBook'));
     }
 }

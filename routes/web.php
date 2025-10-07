@@ -71,7 +71,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'], 'prefix' => 'admin'], function () {
     Route::resource('dashboard', DashboardController::class);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-    
+
     Route::get('/overview', [OverviewController::class, 'overview'])->name('admin.overview');
     Route::post('/peminjaman', [OverviewController::class, 'store'])->name('admin.overview.store');
     Route::get('/peminjaman-diajukan', [PeminjamanDiajukanController::class, 'index'])->name('peminjaman.admin.diajukan');
@@ -106,7 +106,7 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
     Route::delete('/sarana/{idSarana}/ruangan/delete-image/{id}', [RuanganController::class, 'deleteImage'])->name('ruangan.delete-image');
     Route::patch('/sarana/{idSarana}/ruangan/{ruangan}/activate', [RuanganController::class, 'activate'])->name('ruangan.activate');
 
-    Route::resource('jadwal', JadwalController::class)->except(['show']); 
+    Route::resource('jadwal', JadwalController::class)->except(['show']);
     Route::patch('/jadwal/{jadwal}/activate', [JadwalController::class, 'activate'])->name('jadwal.activate');
 
     Route::resource('penjaga', PenjagaController::class)->except(['index']);
@@ -114,6 +114,8 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
 
     Route::get('/notifikasi', [NotifikasiAdminController::class, 'index'])->name('notifikasi.admin.index');
     Route::post('/notifikasi/{notifikasi}/mark-as-read', [NotifikasiAdminController::class, 'markAsRead'])->name('notifikasi.admin.mark-as-read');
+
+    Route::get('/manual-book', [PanduanController::class, 'adminIndex'])->name('admin.manual-book.index');
 });
 
 Route::group(['middleware' => ['checkRole:user', 'verified']], function () {
@@ -143,7 +145,7 @@ Route::group(['middleware' => ['checkRole:superadmin', 'verified']], function ()
     Route::resource('pengguna', PenggunaController::class);
     Route::get('/admin', [PenggunaController::class, 'showAdmins'])->name('admin.index');
     Route::get('/pimpinan', [PenggunaController::class, 'showPimpinans'])->name('pimpinan.index');
-    
+
     Route::resource('rekening', RekeningController::class)->names([
         'index' => 'admin.rekening.index',
         'create' => 'admin.rekening.create',
