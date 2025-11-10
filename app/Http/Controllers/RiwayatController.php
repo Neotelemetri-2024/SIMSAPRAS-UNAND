@@ -9,19 +9,20 @@ use Illuminate\Support\Facades\Storage;
 
 class RiwayatController extends Controller
 {
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $user = auth()->user();
         $sort = $request->input('sort', 'newest'); // Default to newest
         $status = $request->input('status'); // Get status filter
-    
+
         $peminjaman = Peminjaman::with([
-            'user', 
-            'sarana', 
+            'user',
+            'sarana',
             'tanggalPeminjaman.jadwal'
         ])
             ->where('idUser', $user->id)
             // Add status filter
-            ->when($status, function($query) use ($status) {
+            ->when($status, function ($query) use ($status) {
                 return $query->where('status', $status);
             })
             // Sorting
@@ -33,10 +34,10 @@ class RiwayatController extends Controller
             })
             ->paginate(5)
             ->appends(['sort' => $sort, 'status' => $status]);
-    
+
         // Get active rekening
         $rekeningAktif = Rekening::getRekeningAktif();
-        
+
         // Pass status to view for maintaining filter state
         return view('riwayat', compact('peminjaman', 'sort', 'status', 'rekeningAktif'));
     }
@@ -73,7 +74,6 @@ class RiwayatController extends Controller
             }
 
             return redirect()->back()->with('error', 'Terjadi kesalahan saat upload file');
-
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }

@@ -73,6 +73,8 @@ Route::group(['middleware' => ['checkRole:superadmin,admin,pimpinan', 'verified'
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
     Route::get('/overview', [OverviewController::class, 'overview'])->name('admin.overview');
+    Route::get('/overview/events', [OverviewController::class, 'fetchEvents'])->name('admin.overview.events');
+    Route::get('/overview/booked-dates', [OverviewController::class, 'fetchBookedDates'])->name('admin.overview.booked-dates');
     Route::post('/peminjaman', [OverviewController::class, 'store'])->name('admin.overview.store');
     Route::get('/peminjaman-diajukan', [PeminjamanDiajukanController::class, 'index'])->name('peminjaman.admin.diajukan');
     Route::put('/peminjaman/{id}/update-status-diajukan', [PeminjamanDiajukanController::class, 'updateStatusDiajukan'])->name('peminjaman.updateStatusDiajukan');

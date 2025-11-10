@@ -168,7 +168,7 @@
 
                 <!-- Modal body -->
                 <div class="p-4">
-                    <form id="adminBookingForm" class="space-y-4">
+                    <form id="adminBookingForm" class="space-y-4" enctype="multipart/form-data">
                         @csrf
                         <!-- Sarana -->
                         <div>
@@ -212,7 +212,21 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Tarif (Opsional)</label>
-                            <input type="text" name="totalTarif" inputmode="numeric" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                            <input type="number" name="totalTarif" inputmode="numeric" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+
+                        <!-- Bukti Pembayaran (Opsional) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Bukti Pembayaran (Opsional)</label>
+                            <input type="file"
+                                name="buktiPembayaran"
+                                id="buktiPembayaran"
+                                accept="image/*"
+                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-md focus:border-green-500 focus:ring-green-500">
+                            <p class="mt-1 text-xs text-gray-500">Format: JPG, JPEG, PNG (Max. 2MB)</p>
+                            <div id="buktiPreview" class="mt-2 hidden">
+                                <img id="buktiPreviewImg" src="" alt="Preview" class="max-w-xs rounded-lg border border-gray-300">
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -320,23 +334,35 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-    // Data dari server
-    const bookedJadwals = @json($booked);
+    // Data dari server (hanya untuk bulan saat ini)
+    let bookedJadwals = @json($booked);
     const eventsData = @json($events);
     const jadwalsData = @json($jadwals);
 
     // Global variable untuk menyimpan data event yang sedang dipilih
     let currentEventData = null;
+    let allEventsCache = []; // Cache untuk filter
+    let currentSaranaFilter = '';
+    let currentStatusFilter = '';
+    let calendar = null; // Global calendar instance
+
+    // Function untuk apply filter ke events (didefinisikan sebelum digunakan)
+    const applyFiltersToEvents = (events) => {
+        return events.filter(event => {
+            const matchesSarana = currentSaranaFilter ? event.saranaId === parseInt(currentSaranaFilter) : true;
+            const matchesStatus = currentStatusFilter ? event.status === currentStatusFilter : true;
+            return matchesSarana && matchesStatus;
+        });
+    };
 
     document.addEventListener('DOMContentLoaded', function() {
         const calendarEl = document.getElementById('calendar-container');
-        const events = eventsData;
         const modal = document.getElementById('eventModal');
         const modalContent = modal.querySelector('.modal-content');
         let currentView = 'all';
 
-        // Initialize FullCalendar
-        const calendar = new FullCalendar.Calendar(calendarEl, {
+        // Initialize FullCalendar dengan event source dinamis
+        calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'id',
             headerToolbar: {
@@ -344,11 +370,75 @@
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
-            events: events.map(event => ({
-                ...event,
-                title: event.saranaName,
-                className: `status-${event.status}`
-            })),
+            // Menggunakan function untuk lazy loading events
+            events: function(info, successCallback, failureCallback) {
+                // Tampilkan loading state
+                calendarEl.style.opacity = '0.5';
+
+                // Fetch events dari API berdasarkan rentang tanggal
+                fetch(`/admin/overview/events?start=${info.startStr}&end=${info.endStr}`, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Pastikan data adalah array
+                        if (!Array.isArray(data)) {
+                            console.warn('Response is not an array, using empty array');
+                            data = [];
+                        }
+
+                        // Update cache
+                        allEventsCache = data;
+
+                        // Apply filter jika ada
+                        const filteredEvents = applyFiltersToEvents(data);
+
+                        // Format events untuk FullCalendar
+                        const formattedEvents = filteredEvents.map(event => ({
+                            ...event,
+                            title: currentSaranaFilter ? event.kegiatan : event.saranaName,
+                            className: `status-${event.status}`
+                        }));
+
+                        // Sembunyikan loading state
+                        calendarEl.style.opacity = '1';
+
+                        successCallback(formattedEvents);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching events:', error);
+                        calendarEl.style.opacity = '1';
+                        // Return empty array instead of calling failureCallback
+                        successCallback([]);
+                    });
+            },
+            // Update booked dates saat view berubah
+            datesSet: function(info) {
+                // Fetch booked dates untuk rentang tanggal yang ditampilkan
+                fetch(`/admin/overview/booked-dates?start=${info.startStr}&end=${info.endStr}`, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        bookedJadwals = data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching booked dates:', error);
+                    });
+            },
             eventTimeFormat: {
                 hour: '2-digit',
                 minute: '2-digit',
@@ -460,26 +550,15 @@
 
         // Filter functionality with enhanced animation
         const applyFilters = () => {
-            const saranaId = document.getElementById('saranaFilter').value;
-            const status = document.getElementById('statusFilter').value;
+            currentSaranaFilter = document.getElementById('saranaFilter').value;
+            currentStatusFilter = document.getElementById('statusFilter').value;
 
             // Add loading state to calendar
             calendarEl.style.opacity = '0.5';
             calendarEl.style.transition = 'opacity 0.3s ease';
 
-            const filteredEvents = events.filter(event => {
-                const matchesSarana = saranaId ? event.saranaId === parseInt(saranaId) : true;
-                const matchesStatus = status ? event.status === status : true;
-                return matchesSarana && matchesStatus;
-            }).map(event => ({
-                ...event,
-                title: saranaId ? event.kegiatan : event.saranaName,
-                className: `status-${event.status}`
-            }));
-
-            calendar.removeAllEvents();
-            calendar.addEventSource(filteredEvents);
-            currentView = saranaId ? 'filtered' : 'all';
+            // Refetch events dengan filter
+            calendar.refetchEvents();
 
             // Remove loading state
             setTimeout(() => {
@@ -778,6 +857,52 @@
         document.getElementById('dateContainer').innerHTML = '';
     });
 
+    // Preview bukti pembayaran
+    document.getElementById('buktiPembayaran').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const preview = document.getElementById('buktiPreview');
+        const previewImg = document.getElementById('buktiPreviewImg');
+
+        if (file) {
+            // Validasi ukuran file (max 2MB)
+            if (file.size > 2048 * 1024) {
+                Swal.fire({
+                    title: 'File Terlalu Besar',
+                    text: 'Ukuran file maksimal 2MB',
+                    icon: 'error',
+                    confirmButtonColor: '#ef4444'
+                });
+                e.target.value = '';
+                preview.classList.add('hidden');
+                return;
+            }
+
+            // Validasi tipe file
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (!validTypes.includes(file.type)) {
+                Swal.fire({
+                    title: 'Format File Tidak Valid',
+                    text: 'Hanya file JPG, JPEG, atau PNG yang diperbolehkan',
+                    icon: 'error',
+                    confirmButtonColor: '#ef4444'
+                });
+                e.target.value = '';
+                preview.classList.add('hidden');
+                return;
+            }
+
+            // Tampilkan preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                preview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.classList.add('hidden');
+        }
+    });
+
     // Function untuk menghapus entry tanggal
     function removeDateEntry(dateId) {
         const entry = document.getElementById(`date_entry_${dateId}`);
@@ -822,26 +947,76 @@
                 const response = await fetch('/admin/peminjaman', {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: formData
                 });
 
-                const result = await response.json();
+                // Cek apakah response adalah JSON
+                const contentType = response.headers.get('content-type');
+                let result;
+
+                if (contentType && contentType.includes('application/json')) {
+                    result = await response.json();
+                } else {
+                    // Jika bukan JSON, berarti ada error validasi atau server error
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+
+                    let errorMessage = 'Terjadi kesalahan saat memproses data';
+
+                    // Coba extract error dari HTML jika ada
+                    if (response.status === 422) {
+                        errorMessage = 'Data yang diinput tidak valid. Pastikan semua field diisi dengan benar.';
+                    } else if (response.status === 500) {
+                        errorMessage = 'Terjadi kesalahan server. Silakan coba lagi.';
+                    }
+
+                    await Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error',
+                        confirmButtonColor: '#ef4444'
+                    });
+                    return;
+                }
 
                 if (result.success) {
                     await Swal.fire({
                         title: 'Berhasil!',
-                        text: 'Peminjaman berhasil ditambahkan',
+                        text: result.message || 'Peminjaman berhasil ditambahkan',
                         icon: 'success',
                         confirmButtonColor: '#22c55e'
                     });
                     closeModal('bookingModal');
-                    window.location.reload();
+                    // Refetch events dan booked dates tanpa reload halaman
+                    if (calendar) {
+                        calendar.refetchEvents();
+                    }
+                    // Reset form
+                    document.getElementById('adminBookingForm').reset();
+                    document.getElementById('dateContainer').innerHTML = '';
+                    // Reset preview bukti pembayaran
+                    document.getElementById('buktiPreview').classList.add('hidden');
+                    document.getElementById('buktiPreviewImg').src = '';
                 } else {
+                    // Tampilkan error validasi jika ada
+                    let errorMessage = result.message || 'Terjadi kesalahan';
+
+                    if (result.errors) {
+                        // Format error messages
+                        const errorMessages = [];
+                        for (const [field, messages] of Object.entries(result.errors)) {
+                            errorMessages.push(...messages);
+                        }
+                        errorMessage = errorMessages.join('<br>');
+                    }
+
                     await Swal.fire({
                         title: 'Gagal!',
-                        text: result.message || 'Terjadi kesalahan',
+                        html: errorMessage,
                         icon: 'error',
                         confirmButtonColor: '#ef4444'
                     });
