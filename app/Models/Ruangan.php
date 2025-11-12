@@ -29,7 +29,7 @@ class Ruangan extends Model
         return $this->belongsTo(Sarana::class, 'idSarana', 'id');
     }
 
-     public function gambarRuangan()
+    public function gambarRuangan()
     {
         return $this->hasMany(GambarRuangan::class, 'idRuangan', 'id');
     }
@@ -37,5 +37,21 @@ class Ruangan extends Model
     public function peminjaman()
     {
         return $this->hasMany(Peminjaman::class, 'idRuangan', 'id');
+    }
+
+    /**
+     * Accessor untuk is_hourly_rate dari sarana
+     */
+    public function getIsHourlyRateAttribute()
+    {
+        return $this->sarana ? $this->sarana->is_hourly_rate : false;
+    }
+
+    /**
+     * Accessor untuk hours_per_unit dari sarana
+     */
+    public function getHoursPerUnitAttribute()
+    {
+        return $this->sarana ? $this->sarana->hours_per_unit : null;
     }
 }

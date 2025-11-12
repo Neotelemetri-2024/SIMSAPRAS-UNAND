@@ -27,33 +27,33 @@ class SaranaController extends Controller
     {
         $search = $request->input("search");
         $filter = $request->input("filter");
-        
+
         $query = Sarana::with(['kategoriSarana', 'gambarSarana']);
         $query->filterByUserAccess(auth()->user());
-        
+
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('nama', 'like', "%{$search}%")
-                  ->orWhere('deskripsi', 'like', "%{$search}%")
-                  ->orWhere('fasilitas', 'like', "%{$search}%");
+                    ->orWhere('deskripsi', 'like', "%{$search}%")
+                    ->orWhere('fasilitas', 'like', "%{$search}%");
             });
         }
-        
+
         if ($filter) {
             if (str_starts_with($filter, 'kategori_')) {
-                $kategoriId = substr($filter, 9); 
+                $kategoriId = substr($filter, 9);
                 $query->where('IdKategori', $kategoriId);
             } elseif (str_starts_with($filter, 'status_')) {
-                $status = substr($filter, 7); 
+                $status = substr($filter, 7);
                 $query->where('status', $status);
             }
         }
-        
+
         $sarana = $query->latest()
-        ->paginate(5)
-        ->appends($request->except('page'));
+            ->paginate(5)
+            ->appends($request->except('page'));
         $kategori = KategoriSarana::where('status', 'aktif')->get();
-                
+
         return view('admin.sarana', compact('sarana', 'kategori', 'search', 'filter'));
     }
 
@@ -62,7 +62,7 @@ class SaranaController extends Controller
         try {
             if ($request->hasFile('gambar')) {
                 $mainImage = $request->file('gambar');
-                if ($mainImage->getSize() > 2048 * 1024) { 
+                if ($mainImage->getSize() > 2048 * 1024) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Gambar utama tidak boleh lebih dari 2MB'
@@ -72,7 +72,7 @@ class SaranaController extends Controller
 
             if ($request->hasFile('gambar_tambahan')) {
                 foreach ($request->file('gambar_tambahan') as $index => $image) {
-                    if ($image->getSize() > 2048 * 1024) { 
+                    if ($image->getSize() > 2048 * 1024) {
                         return response()->json([
                             'success' => false,
                             'message' => 'Gambar tambahan ke-' . ($index + 1) . ' tidak boleh lebih dari 2MB'
@@ -97,12 +97,12 @@ class SaranaController extends Controller
                 'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
                 'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ];
-            
+
             // Adjust hours_per_unit validation based on is_hourly_rate
             if ($request->boolean('is_hourly_rate')) {
                 $validationRules['hours_per_unit'] = 'required|integer|min:1|max:24';
             }
-            
+
             // Now validate with the complete rules
             $validated = $request->validate($validationRules, [
                 'gambar.max' => 'Gambar utama tidak boleh lebih dari 2MB',
@@ -120,7 +120,7 @@ class SaranaController extends Controller
                     'message' => 'Sarana dengan nama tersebut sudah ada dan masih aktif'
                 ]);
             }
-            
+
             if ($request->hasFile('gambar')) {
                 $validated['gambar'] = $request->file('gambar')->store('sarana', 'public');
             }
@@ -141,7 +141,6 @@ class SaranaController extends Controller
                 'message' => 'Data berhasil disimpan',
                 'redirect' => route('sarana.index')
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -156,7 +155,7 @@ class SaranaController extends Controller
         try {
             if ($request->hasFile('gambar')) {
                 $mainImage = $request->file('gambar');
-                if ($mainImage->getSize() > 2048 * 1024) { 
+                if ($mainImage->getSize() > 2048 * 1024) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Gambar utama tidak boleh lebih dari 2MB'
@@ -166,7 +165,7 @@ class SaranaController extends Controller
 
             if ($request->hasFile('gambar_tambahan')) {
                 foreach ($request->file('gambar_tambahan') as $index => $image) {
-                    if ($image->getSize() > 2048 * 1024) { 
+                    if ($image->getSize() > 2048 * 1024) {
                         return response()->json([
                             'success' => false,
                             'message' => 'Gambar tambahan ke-' . ($index + 1) . ' tidak boleh lebih dari 2MB'
@@ -177,7 +176,7 @@ class SaranaController extends Controller
 
             $validationRules = [
                 "IdKategori" => "required|string|required",
-                'nama' => 'required|string|max:255|unique:sarana,nama,'.$sarana->id,
+                'nama' => 'required|string|max:255|unique:sarana,nama,' . $sarana->id,
                 'isRoom' => 'required|boolean',
                 'deskripsi' => 'required|string',
                 'fasilitas' => 'required|string',
@@ -185,19 +184,19 @@ class SaranaController extends Controller
                 'tariformawa' => 'nullable|integer|min:0',
                 'tarifunit' => 'nullable|integer|min:0',
                 'tarifumum' => 'nullable|integer|min:0',
-                'is_hourly_rate' =>'boolean',
+                'is_hourly_rate' => 'boolean',
                 'requiresFaculty' => 'boolean',
                 'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'gambar_tambahan.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ];
-            
+
             // Only require hours_per_unit if is_hourly_rate is true
             if ($request->boolean('is_hourly_rate')) {
                 $validationRules['hours_per_unit'] = 'required|integer|min:1|max:24';
             } else {
                 $validationRules['hours_per_unit'] = 'nullable|integer|min:0';
             }
-    
+
             $validated = $request->validate($validationRules, [
                 'gambar.max' => 'Gambar utama tidak boleh lebih dari 2MB',
                 'gambar_tambahan.*.max' => 'Gambar tambahan tidak boleh lebih dari 2MB',
@@ -206,7 +205,7 @@ class SaranaController extends Controller
 
             if ($request->has('delete_images')) {
                 $deleteImages = is_array($request->delete_images) ? $request->delete_images : [$request->delete_images];
-                
+
                 foreach ($deleteImages as $imageId) {
                     $gambar = DB::table('gambar_sarana')->where('id', $imageId)->first();
                     if ($gambar) {
@@ -239,7 +238,6 @@ class SaranaController extends Controller
                 'success' => true,
                 'message' => 'Data Sarana berhasil diperbarui'
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -247,7 +245,7 @@ class SaranaController extends Controller
             ]);
         }
     }
-    
+
     public function daftarSarana(Request $request)
     {
         $search = $request->input("search");
@@ -259,19 +257,19 @@ class SaranaController extends Controller
         $sarana = Sarana::withCount('peminjaman')
             ->with('kategoriSarana')
             ->when($search, function ($query, $search) {
-                $query->where(function($q) use ($search) {
+                $query->where(function ($q) use ($search) {
                     $q->where('nama', 'like', "%{$search}%")
-                      ->orWhere('deskripsi', 'like', "%{$search}%")
-                      ->orWhere('fasilitas', 'like', "%{$search}%");
+                        ->orWhere('deskripsi', 'like', "%{$search}%")
+                        ->orWhere('fasilitas', 'like', "%{$search}%");
                 });
             })
             ->when($filterKategori, function ($query, $filterKategori) {
                 $query->where('IdKategori', $filterKategori);
             })
             ->when(!$isFacultyUser, function ($query) {
-                $query->where(function($q) {
+                $query->where(function ($q) {
                     $q->where('requiresFaculty', false)
-                    ->orWhereNull('requiresFaculty');
+                        ->orWhereNull('requiresFaculty');
                 });
             })
             ->orderBy('peminjaman_count', 'desc')
@@ -299,7 +297,7 @@ class SaranaController extends Controller
             'sarana',
             'search',
             'filterKategori',
-            'kategori', 
+            'kategori',
             'trendData',
             'topBorrowed',
             'pengumuman'
@@ -309,15 +307,15 @@ class SaranaController extends Controller
     public function userShow(Sarana $sarana, Request $request)
     {
         $search = $request->input('search');
-        
-        $sarana->load(['kategoriSarana', 'gambarSarana', 'penjaga']);
-        
-        $ruangan = collect();
-        $events = []; 
 
-        $admin = User::whereHas('saranaAccess', function($query) use ($sarana) {
+        $sarana->load(['kategoriSarana', 'gambarSarana', 'penjaga']);
+
+        $ruangan = collect();
+        $events = [];
+
+        $admin = User::whereHas('saranaAccess', function ($query) use ($sarana) {
             $query->where('sarana_id', $sarana->id);
-        })->where('role', 'admin')->first();    
+        })->where('role', 'admin')->first();
 
         $user = User::find(auth()->id());
 
@@ -329,36 +327,41 @@ class SaranaController extends Controller
             return redirect()->route('user.sarana')->with('faculty-error', 'Sarana ini hanya dapat diakses oleh pengguna dari fakultas/unit.');
         }
 
-        // Hitung jam lembur bulan ini
+        // Hitung jam lembur bulan ini (hanya jika bukan hourly rate)
         $currentMonth = Carbon::now()->format('Y-m');
         $bulanIni = Carbon::now()->translatedFormat('F Y');
-        
-        // Data jam lembur bulan ini berdasarkan peminjaman aktif
-        $jamLemburBulanIni = $this->calculateOvertimeHours($sarana->id, $currentMonth);
-        
-        // Data jam lembur seluruh bulan dalam setahun
-        $tahunIni = Carbon::now()->year;
+
+        $jamLemburBulanIni = 0;
         $dataJamLembur = [];
-        
-        // Mengumpulkan data untuk 12 bulan
-        for ($i = 1; $i <= 12; $i++) {
-            $bulan = Carbon::createFromDate($tahunIni, $i, 1);
-            $bulanFormat = $bulan->format('Y-m');
-            $namaBulan = $bulan->translatedFormat('F Y');
-            
-            $jamLembur = $this->calculateOvertimeHours($sarana->id, $bulanFormat);
-            
-            $dataJamLembur[] = [
-                'bulan' => $namaBulan,
-                'bulan_format' => $bulanFormat,
-                'jam_terpakai' => $jamLembur,
-                'sisa_jam' => 40 - $jamLembur,
-                'persentase' => ($jamLembur / 40) * 100,
-                'is_current' => $bulanFormat === $currentMonth
-            ];
+
+        // Data jam lembur hanya dihitung untuk sarana yang bukan hourly rate
+        if (!$sarana->is_hourly_rate) {
+            // Data jam lembur bulan ini berdasarkan peminjaman aktif
+            $jamLemburBulanIni = $this->calculateOvertimeHours($sarana->id, $currentMonth);
+
+            // Data jam lembur seluruh bulan dalam setahun
+            $tahunIni = Carbon::now()->year;
+
+            // Mengumpulkan data untuk 12 bulan
+            for ($i = 1; $i <= 12; $i++) {
+                $bulan = Carbon::createFromDate($tahunIni, $i, 1);
+                $bulanFormat = $bulan->format('Y-m');
+                $namaBulan = $bulan->translatedFormat('F Y');
+
+                $jamLembur = $this->calculateOvertimeHours($sarana->id, $bulanFormat);
+
+                $dataJamLembur[] = [
+                    'bulan' => $namaBulan,
+                    'bulan_format' => $bulanFormat,
+                    'jam_terpakai' => $jamLembur,
+                    'sisa_jam' => 40 - $jamLembur,
+                    'persentase' => ($jamLembur / 40) * 100,
+                    'is_current' => $bulanFormat === $currentMonth
+                ];
+            }
         }
 
-        $events = []; 
+        $events = [];
         $holidayEvents = [];
         $holidayDates = [];
 
@@ -367,9 +370,9 @@ class SaranaController extends Controller
         //     $client->setDeveloperKey(env('GOOGLE_API_KEY')); // Ambil API Key dari .env
 
         //     $service = new GoogleCalendar($client);
-            
+
         //     $calendarId = env('GOOGLE_CALENDAR_ID'); // Ambil Calendar ID dari .env
-            
+
         //     // Atur rentang waktu (misal: seluruh tahun ini)
         //     $params = [
         //         'timeMin' => now()->startOfYear()->toRfc3339String(),
@@ -383,7 +386,7 @@ class SaranaController extends Controller
 
         //     foreach ($holidays as $holiday) {
         //         $holidayDate = $holiday->getStart()->getDate(); // Format: YYYY-MM-DD
-                
+
         //         // Tambahkan ke events array untuk ditampilkan di kalender
         //         $holidayEvents[] = [
         //             'title'   => $holiday->getSummary(),
@@ -427,27 +430,27 @@ class SaranaController extends Controller
         }
 
         // dd($holidayDates);
-        
+
         if ($sarana->isRoom == 1) {
             $ruangan = $sarana->ruangan()
-                ->where('idSarana', $sarana->id) 
+                ->where('idSarana', $sarana->id)
                 ->when($search, function ($query, $search) {
-                    $query->where(function($q) use ($search) {
+                    $query->where(function ($q) use ($search) {
                         $q->where('nama', 'like', "%{$search}%")
-                          ->orWhere('deskripsi', 'like', "%{$search}%");
+                            ->orWhere('deskripsi', 'like', "%{$search}%");
                     });
                 })
                 ->latest()
                 ->where('status', 'aktif')
                 ->paginate(6);
         } else {
-            $peminjaman = Peminjaman::with(['tanggalPeminjaman.jadwal']) 
+            $peminjaman = Peminjaman::with(['tanggalPeminjaman.jadwal'])
                 ->where('idSarana', $sarana->id)
                 ->whereIn('status', ['diajukan', 'disetujui', 'diproses', 'diajukanbatal'])
                 ->get();
-                
-            foreach($peminjaman as $item) {
-                foreach($item->tanggalPeminjaman as $tanggal) {
+
+            foreach ($peminjaman as $item) {
+                foreach ($item->tanggalPeminjaman as $tanggal) {
                     $events[] = [
                         'id' => $item->id,
                         'title' => $item->kegiatan,
@@ -459,14 +462,21 @@ class SaranaController extends Controller
             }
             $events = array_merge($events, $holidayEvents);
         }
-        
+
         return view('detailsarana', compact(
-            'sarana', 'ruangan', 'search', 'events', 'admin', 
-            'jamLemburBulanIni', 'bulanIni', 'dataJamLembur', 'currentMonth',
+            'sarana',
+            'ruangan',
+            'search',
+            'events',
+            'admin',
+            'jamLemburBulanIni',
+            'bulanIni',
+            'dataJamLembur',
+            'currentMonth',
             'holidayDates'
         ));
     }
-    
+
     public function destroy(Sarana $sarana)
     {
         try {
@@ -483,10 +493,9 @@ class SaranaController extends Controller
                 'message' => 'Sarana berhasil dinonaktifkan',
                 'redirect' => route('sarana.index')
             ]);
-                
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
@@ -499,11 +508,11 @@ class SaranaController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             $sarana->update(['status' => 'aktif']);
-            
+
             $ruangans = Ruangan::where('IdSarana', $sarana->id)->get();
-            
+
             foreach ($ruangans as $ruangan) {
                 $ruangan->update(['status' => 'aktif']);
             }
@@ -515,7 +524,7 @@ class SaranaController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
@@ -533,53 +542,53 @@ class SaranaController extends Controller
             ->where('idSarana', $saranaId)
             ->whereIn('status', ['diajukan', 'diproses', 'disetujui', 'diajukanbatal'])
             ->where('instansi', '!=', 'Superadmin SIMSAPRAS');
-            
+
         if ($ruanganId) {
             $query->where('idRuangan', $ruanganId);
         }
-        
+
         if ($bulanFilter) {
-            $query->whereHas('tanggalPeminjaman', function($q) use ($bulanFilter) {
+            $query->whereHas('tanggalPeminjaman', function ($q) use ($bulanFilter) {
                 $q->whereRaw("DATE_FORMAT(tanggal, '%Y-%m') = ?", [$bulanFilter]);
             });
         }
-        
+
         $peminjamans = $query->get();
         $totalJamLembur = 0;
         $holidayService = new HolidayService();
-        
+
         foreach ($peminjamans as $peminjaman) {
             foreach ($peminjaman->tanggalPeminjaman as $tanggalPeminjaman) {
                 if ($bulanFilter && Carbon::parse($tanggalPeminjaman->tanggal)->format('Y-m') !== $bulanFilter) {
                     continue;
                 }
-                
+
                 $jadwal = $tanggalPeminjaman->jadwal;
                 if (!$jadwal) continue;
-                
+
                 $date = Carbon::parse($tanggalPeminjaman->tanggal);
                 $start = Carbon::createFromFormat('H:i:s', $jadwal->mulai);
                 $endTime = Carbon::createFromFormat('H:i:s', $jadwal->selesai);
                 $hours = $endTime->diffInHours($start);
-                
+
                 $isWeekendOrHoliday = $holidayService->isWeekendOrHoliday($date);
                 $isAfterHours = $start->hour >= 16 || $endTime->hour >= 16;
-                
+
                 // Hanya hitung jam lembur (weekend/tanggal merah atau after hours)
                 if ($isWeekendOrHoliday || $isAfterHours) {
                     $chargeableHours = $hours;
-                    
+
                     // Jika bukan weekend/tanggal merah tapi after hours, hitung hanya bagian setelah jam 16:00
                     if (!$isWeekendOrHoliday && $isAfterHours && $start->hour < 16) {
                         $cutoffTime = Carbon::createFromFormat('H:i:s', '16:00:00');
                         $chargeableHours = $endTime->diffInHours($cutoffTime);
                     }
-                    
+
                     $totalJamLembur += $chargeableHours;
                 }
             }
         }
-        
+
         return $totalJamLembur;
     }
 }

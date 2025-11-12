@@ -288,28 +288,29 @@
                             Tarif & Jam Lembur
                         </h2>
                         
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                        <div class="grid grid-cols-1 {{ !(isset($ruangan) ? $ruangan->is_hourly_rate : $sarana->is_hourly_rate) ? 'lg:grid-cols-2' : '' }} gap-8">
                             <!-- Kolom Kiri: Informasi Tarif -->
                             <div>
                                 <h3 class="font-medium text-gray-900 mb-4">Informasi Tarif</h3>
-                                
+
                                 <!-- Status Peminjam -->
                                 <div class="mb-6">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Status Peminjam</label>
-                                <select name="statusPeminjam" id="statusPeminjam" 
-                                            class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500 py-3"
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Status Peminjam</label>
+                                    <select name="statusPeminjam" id="statusPeminjam"
+                                        class="w-full rounded-lg border-gray-200 focus:border-green-500 focus:ring-green-500 py-3"
                                         required>
-                                    <option value="" disabled selected hidden>Pilih Status</option>
-                                    <option value="unit">Fakultas/Unit</option>
-                                    <option value="ormawa">Ormawa</option>
-                                    <option value="umum">Umum</option>
-                                </select>
-                                <div id="statusInfo" class="mt-2 text-sm hidden">
-                                    <p id="statusMessage"></p>
+                                        <option value="" disabled selected hidden>Pilih Status</option>
+                                        <option value="unit">Fakultas/Unit</option>
+                                        <option value="ormawa">Ormawa</option>
+                                        <option value="umum">Umum</option>
+                                    </select>
+                                    <div id="statusInfo" class="mt-2 text-sm hidden">
+                                        <p id="statusMessage"></p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- Tariff Information -->
+                                <!-- Tariff Information -->
                                 <div class="mb-6">
                                     <h4 class="font-medium text-gray-900 mb-3">Daftar Tarif:</h4>
                                     <div class="space-y-3">
@@ -349,60 +350,61 @@
                                 </div>
                             </div>
 
-                            <!-- Kolom Kanan: Informasi Jam Lembur -->
+                            <!-- Kolom Kanan: Informasi Jam Lembur (hanya untuk non-hourly rate) -->
+                            @if(!(isset($ruangan) ? $ruangan->is_hourly_rate : $sarana->is_hourly_rate))
                             <div>
                                 <h3 class="font-medium text-gray-900 mb-4">
                                     Jam Lembur {{ isset($ruangan) ? $ruangan->sarana->nama : $sarana->nama }}
                                 </h3>
-                                
+
                                 @foreach($jamLemburPerBulan as $monthKey => $monthData)
-                                    <div class="mb-4 {{ !$loop->last ? 'border-b border-gray-200 pb-4' : '' }}">
-                                        <p class="text-sm text-gray-600 mb-3 font-medium">{{ $monthData['month_name'] }}</p>
-                                        
+                                <div class="mb-4 {{ !$loop->last ? 'border-b border-gray-200 pb-4' : '' }}">
+                                    <p class="text-sm text-gray-600 mb-3 font-medium">{{ $monthData['month_name'] }}</p>
+
                                     @php
-                                            $jamTerpakai = $monthData['hours'];
-                                            $totalJamPerBulan = 40;
-                                            $sisaJam = max(0, $totalJamPerBulan - $jamTerpakai);
-                                            $persen = max(0, min(100, ($jamTerpakai / $totalJamPerBulan) * 100));
+                                    $jamTerpakai = $monthData['hours'];
+                                    $totalJamPerBulan = 40;
+                                    $sisaJam = max(0, $totalJamPerBulan - $jamTerpakai);
+                                    $persen = max(0, min(100, ($jamTerpakai / $totalJamPerBulan) * 100));
                                     @endphp
-                                        
-                                        <!-- Info Jam Lembur dalam satu row -->
-                                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-white mb-3">
-                                            <div class="flex items-center space-x-4">
-                                                <span class="text-sm text-gray-700">Terpakai: <span class="font-medium">{{ $jamTerpakai }} jam</span></span>
-                                                <span class="text-sm text-gray-700">Sisa: <span class="font-medium">{{ $sisaJam }} jam</span></span>
-                                                <span class="text-sm text-gray-700">Limit: <span class="font-medium">{{ $totalJamPerBulan }} jam</span></span>
-                                            </div>
-                                            <span class="text-sm font-medium text-gray-900">{{ number_format($persen, 1) }}%</span>
+
+                                    <!-- Info Jam Lembur dalam satu row -->
+                                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-white mb-3">
+                                        <div class="flex items-center space-x-4">
+                                            <span class="text-sm text-gray-700">Terpakai: <span class="font-medium">{{ $jamTerpakai }} jam</span></span>
+                                            <span class="text-sm text-gray-700">Sisa: <span class="font-medium">{{ $sisaJam }} jam</span></span>
+                                            <span class="text-sm text-gray-700">Limit: <span class="font-medium">{{ $totalJamPerBulan }} jam</span></span>
                                         </div>
-                                        
-                                        <!-- Progress Bar -->
-                                        <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
-                                            <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: {{ $persen }}%"></div>
-                                        </div>
-                                        
-                                        @if($sisaJam <= 5)
-                                            <div class="p-3 bg-red-50 border border-red-200 rounded-lg mb-3">
-                                                <p class="text-sm text-red-700 font-medium flex items-center">
-                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                                                    </svg>
-                                                    Peringatan: Sisa jam lembur hampir habis!
-                                                </p>
-                                            </div>
-                                        @endif
+                                        <span class="text-sm font-medium text-gray-900">{{ number_format($persen, 1) }}%</span>
                                     </div>
-                                @endforeach
-                                
-                                <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                                    <p class="text-sm text-blue-700">
-                                        <i>Jam lembur dihitung untuk peminjaman di hari Sabtu/Minggu, tanggal merah, atau setelah pukul 16:00</i>
-                                    </p>
+
+                                    <!-- Progress Bar -->
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+                                        <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: {{ $persen }}%"></div>
+                                    </div>
+
+                                    @if($sisaJam <= 5)
+                                        <div class="p-3 bg-red-50 border border-red-200 rounded-lg mb-3">
+                                        <p class="text-sm text-red-700 font-medium flex items-center">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                            </svg>
+                                            Peringatan: Sisa jam lembur hampir habis!
+                                        </p>
                                 </div>
+                                @endif
+                            </div>
+                            @endforeach
+
+                            <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <p class="text-sm text-blue-700">
+                                    <i>Jam lembur dihitung untuk peminjaman di hari Sabtu/Minggu, tanggal merah, atau setelah pukul 16:00</i>
+                                </p>
                             </div>
                         </div>
+                        @endif
                     </div>
-
+                </div>
                     <!-- Submit Buttons -->
                     <div class="flex justify-end space-x-4 pt-6">
                         <button type="button" onclick="confirmCancel()"
